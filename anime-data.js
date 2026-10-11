@@ -53,9 +53,7 @@
     if(n<100000000)return under10000(Math.floor(n/10000))+"man"+under10000(n%10000);
     return String(n);
   }
-  function compare(a,b){
-    // 各ローマ字音節を五十音の位置へ変換。
-    // 例: kya→きゃ→「き」行、sha→しゃ→「し」行、chi→ち、tsu→つ。
+  // Reuse sorting lookup tables across comparisons; sorting can call this thousands of times.
     const syllables=[
       ["kya","ki"],["kyu","ki"],["kyo","ki"],["gya","ki"],["gyu","ki"],["gyo","ki"],
       ["sha","shi"],["shu","shi"],["sho","shi"],["ja","shi"],["ju","shi"],["jo","shi"],["jya","shi"],["jyu","shi"],["jyo","shi"],
@@ -83,8 +81,11 @@
       ["wa","wa"],["wo","wo"],["n","n"]
     ];
     const baseOrder=["a","i","u","e","o","ka","ki","ku","ke","ko","sa","shi","su","se","so","ta","chi","tsu","te","to","na","ni","nu","ne","no","ha","hi","fu","he","ho","ma","mi","mu","me","mo","ya","yu","yo","ra","ri","ru","re","ro","wa","wo","n"];
-    const map=new Map(syllables);
-    const rank=new Map(baseOrder.map((x,i)=>[x,i]));
+  const rank=new Map(baseOrder.map((x,i)=>[x,i]));
+
+  function compare(a,b){
+    // 各ローマ字音節を五十音の位置へ変換。
+    // 例: kya→きゃ→「き」行、sha→しゃ→「し」行、chi→ち、tsu→つ。
     const key=s=>{
       s=reading(s);
       const result=[];
