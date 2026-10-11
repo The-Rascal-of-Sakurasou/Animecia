@@ -776,3 +776,143 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
  html{scroll-behavior:auto!important}
  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
+
+
+/* Page-specific refinement: discovery, ranking, detail, and community */
+.ranking-page{padding-top:28px;padding-bottom:48px}
+.ranking-hero,.discover-v6>.hero,.season-v7>.hero,.recommendations-v6>.hero{
+  border-radius:18px;
+  overflow:hidden;
+}
+.ranking-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:20px 0;
+}
+.ranking-tab{
+  border:1px solid var(--ac-line,#e4e7eb);
+  border-radius:999px;
+  padding:9px 16px;
+  background:#fff;
+  color:var(--ac-ink,#17191d);
+}
+.ranking-tab.active{
+  background:var(--ac-navy,#101827);
+  color:#fff;
+  border-color:var(--ac-navy,#101827);
+}
+.ranking-row{
+  border:1px solid var(--ac-line,#e4e7eb);
+  border-radius:13px;
+  background:#fff;
+  margin-bottom:10px;
+  transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+.ranking-row:hover{
+  border-color:#d5d6fa;
+  box-shadow:0 8px 22px rgba(16,24,39,.07);
+  transform:translateY(-1px);
+}
+.rank-number{font-variant-numeric:tabular-nums}
+.discover-v6 .panel,.season-v7 .panel,.recommendations-v6 .panel{
+  margin-bottom:18px;
+}
+.discover-v6 .chips,.recommendations-v6 .chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.discover-v6 .chip,.recommendations-v6 .chip{
+  border:1px solid var(--ac-line,#e4e7eb);
+  border-radius:999px;
+  transition:background-color .15s ease,border-color .15s ease;
+}
+.discover-v6 .chip:hover,.recommendations-v6 .chip:hover{
+  border-color:#c9caf7;
+  background:#f3f3ff;
+}
+.season-v7 .season-toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px;
+}
+.season-v7 .season-button{
+  border-radius:999px;
+}
+.season-v7 .feature-card,.season-v7 .card{
+  overflow:hidden;
+  border-radius:14px;
+}
+.season-v7 .cover img,.season-v7 img.cover{
+  background:#eceef3;
+}
+.recommendations-v6 .question{
+  border:1px solid var(--ac-line,#e4e7eb);
+  border-radius:13px;
+  padding:16px;
+  background:#fff;
+}
+.recommendations-v6 .actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.anime-detail-page .content-section,
+.anime-detail-page .side-column>section,
+.anime-detail-page .editorial-review{
+  border-radius:14px;
+}
+.anime-detail-page .action-area{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.anime-detail-page .action-button{
+  border-radius:10px;
+}
+.anime-detail-page .genre-tag{
+  border-radius:999px;
+}
+.anime-detail-page .review-form,
+.anime-detail-page .status-form{
+  border-radius:13px;
+}
+.community-page .panel,.layout>.panel{
+  border-radius:14px;
+}
+.community-page .post,.community-page .reply{
+  border:1px solid var(--ac-line,#e4e7eb);
+  border-radius:13px;
+  background:#fff;
+}
+.community-page .post-actions button,.community-page .btn{
+  border-radius:9px;
+}
+.mypage-function-scroll{scrollbar-width:thin}
+.mypage-overview,.profile-card,.activity-panel,.settings-panel,.side-panel{
+  border-radius:14px;
+}
+.mypage-overview-links .overview-link,.quick-actions .quick-action{
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;
+}
+.mypage-overview-links .overview-link:hover,.quick-actions .quick-action:hover{
+  transform:translateY(-1px);
+  border-color:#d5d6fa;
+  box-shadow:0 7px 20px rgba(16,24,39,.06);
+}
+@media(max-width:700px){
+  .ranking-page{padding-top:18px}
+  .ranking-tabs{gap:6px}
+  .ranking-tab{padding:8px 12px}
+  .ranking-row{border-radius:11px}
+  .recommendations-v6 .question{padding:13px}
+  .anime-detail-page .action-area>*{flex:1 1 140px}
+}
+@media(prefers-reduced-motion:reduce){
+  .ranking-row,.discover-v6 .chip,.recommendations-v6 .chip,
+  .mypage-overview-links .overview-link,.quick-actions .quick-action{
+    transition:none!important;
+  }
+}
