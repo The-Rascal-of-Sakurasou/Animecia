@@ -184,6 +184,9 @@ jobs:
           for sid, group in by_source.items():
               c=classified.get(sid)
               if not c: continue
+              # Preserve any existing sensitive flag; AniList tags may add flags but must never clear them.
+              c=dict(c)
+              c["is_sensitive_visual"]=bool(c.get("is_sensitive_visual")) or any(bool(r.get("is_sensitive_visual")) for r in group)
               classification_groups[json.dumps(c,sort_keys=True)].extend(int(r["id"]) for r in group)
           for serialized, ids in classification_groups.items():
               patch_many(ids,json.loads(serialized))
