@@ -171,9 +171,10 @@ async function init(){
  const genreNames=new Map();
  (catalogRows||[]).forEach(a=>String(a.genre||"").split(/[,、/]/).map(x=>x.trim()).filter(Boolean).forEach(name=>genreNames.set(name,name)));
  const sourceGenres=genres.length?genres:[...genreNames.keys()].sort((a,b)=>a.localeCompare(b,"ja"));
+ const genreIdByName=new Map(sourceGenres.map(x=>{const name=x.name||x;return [name,x.id??name];}));
  rows=(catalogRows||[]).map(a=>{
    const gn=String(a.genre||"").split(/[,、/]/).map(x=>x.trim()).filter(Boolean);
-   const g=gn.map(name=>sourceGenres.find(x=>(x.name||x)===name)?.id??name);
+   const g=gn.map(name=>genreIdByName.get(name)??name);
    const avg=a.average_score==null?null:Number(a.average_score);
    return {...a,g,gn,e:{average_rating:Number.isFinite(avg)?avg:null,favorite_count:Number(a.favourites_count||0),review_count:0}};
  });
