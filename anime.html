@@ -2636,7 +2636,50 @@ function compareAnimeTitles(a,b){ return AnimeciaData.compare(a,b); }
                 result = await supabaseClient.rpc("search_anime_catalog", rpcParams);
             }
 
-            const { data, error } = result;
+            let data = result.data;
+            let error = result.error;
+
+            /*
+             * RPCが両方失敗しても、公開ビューから一覧を取得する。
+             * これによりRPCの未作成・スキーマキャッシュ不整合時にも
+             * 一覧ページ全体が読み込み失敗にならないようにする。
+             */
+            if (error) {
+                console.warn("Catalog RPCs unavailable; trying public view fallback:", error);
+                let query = supabaseClient.from("animecia_public_anime").select(
+                    "id,title,title_japanese,title_native,title_user_preferred,title_romaji,title_english,english_title,cover_image,banner_image,format,genre,description,review,synopsis,official_url,site_url,streaming_links,start_date,end_date,episodes,duration,season,season_year,status,source,average_score,popularity,favourites_count",
+                    { count: "exact" }
+                ).gte("start_date", "1963-01-01");
+
+                const q = rpcParams.p_query;
+                if (q) {
+                    const safeQ = q.replace(/[,%()]/g, " ").trim();
+                    if (safeQ) {
+                        query = query.or(
+                            "title.ilike.%"+safeQ+"%,title_japanese.ilike.%"+safeQ+"%,title_native.ilike.%"+safeQ+"%,title_romaji.ilike.%"+safeQ+"%,title_english.ilike.%"+safeQ+"%,english_title.ilike.%"+safeQ+"%"
+                        );
+                    }
+                }
+                if (rpcParams.p_year != null) query = query.eq("season_year", rpcParams.p_year);
+                if (rpcParams.p_season) query = query.eq("season", rpcParams.p_season);
+                if (rpcParams.p_status) query = query.eq("status", rpcParams.p_status);
+                if (rpcParams.p_format) query = query.eq("format", rpcParams.p_format);
+                if (rpcParams.p_sort === "score") query = query.order("average_score", { ascending: false, nullsFirst: false });
+                else if (rpcParams.p_sort === "popularity") query = query.order("favourites_count", { ascending: false, nullsFirst: false });
+                else if (rpcParams.p_sort === "newest") query = query.order("start_date", { ascending: false, nullsFirst: false });
+                else if (rpcParams.p_sort === "oldest") query = query.order("start_date", { ascending: true, nullsFirst: false });
+                else query = query.order("title_japanese", { ascending: true, nullsFirst: false });
+
+                const offset = rpcParams.p_offset;
+                const limit = rpcParams.p_limit;
+                const direct = await query.order("id", { ascending: true }).range(offset, offset + limit - 1);
+                data = direct.data;
+                error = direct.error;
+                if (!error) {
+                    const total = Number(direct.count || 0);
+                    data = (data || []).map(row => ({ ...row, total_count: total }));
+                }
+            }
 
             if (error) {
                 throw error;
