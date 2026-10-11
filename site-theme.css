@@ -568,3 +568,42 @@ main{width:min(1280px,calc(100% - 36px))!important;max-width:1280px!important;ma
 button,.btn,.button,input[type=submit],input[type=button]{border-radius:10px!important;transition:transform .15s ease,box-shadow .15s ease,background .15s ease!important}button:hover,.btn:hover,.button:hover,input[type=submit]:hover,input[type=button]:hover{filter:brightness(1.03)}input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:10px!important;border-color:#d5dce7!important;background-color:#fff}input:not([type=checkbox]):not([type=radio]):focus,select:focus,textarea:focus{border-color:#e99a3b!important;box-shadow:0 0 0 3px rgba(240,138,24,.13)!important;outline:0!important}
 table{border-collapse:separate!important;border-spacing:0!important;border:1px solid var(--ac-line)!important;border-radius:12px!important;overflow:hidden!important;background:#fff}th{background:#f0f3f8!important;color:#344054!important;font-weight:800!important}th,td{padding:11px 13px!important;border-bottom:1px solid #e9edf3!important}tr:last-child td{border-bottom:0!important}hr{border:0!important;border-top:1px solid var(--ac-line)!important}footer{background:#111c2e!important;color:#d1d8e3!important}footer a{color:#d1d8e3!important}
 @media(max-width:700px){main{width:calc(100% - 22px)!important;padding-top:23px!important;padding-bottom:50px!important}.hero,.page-intro,.home-hero{border-radius:15px!important}.panel,.section-panel,.content-panel{border-radius:13px!important;padding:16px!important}th,td{padding:9px!important}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+
+/* Animecia quality pass — keyboard access, motion preferences, and compact screens */
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{
+  outline:3px solid #e87900!important;
+  outline-offset:3px!important;
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+    scroll-behavior:auto!important;
+  }
+}
+img{height:auto}
+@media(max-width:430px){
+  /* Keep important work-list actions reachable on phones instead of hiding them. */
+  .user-anime-actions{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    gap:5px!important;
+  }
+  .user-anime-actions button,.user-anime-actions a{
+    min-height:34px!important;
+    padding:6px 8px!important;
+    font-size:10px!important;
+  }
+  .anime-compare-button{
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    min-height:32px!important;
+    margin-top:5px!important;
+    padding:5px 8px!important;
+    font-size:10px!important;
+  }
+}
