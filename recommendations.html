@@ -216,7 +216,7 @@ function run(){
  const format=document.getElementById("format").value,length=document.getElementById("length").value,min=Number(document.getElementById("rating").value||0),status=document.getElementById("status").value;
  const hasConditions=selected.size>0||!!format||!!length||!!min||!!status;
  let r=rows.filter(a=>{
-  if(selected.size && !a.g.some(g=>selected.has(g))) return false;
+  if(selected.size && ![...selected].every(g=>a.g.includes(g))) return false;
   if(format&&a.format!==format)return false;
   if(status&&a.status!==status)return false;
   const n=Number(a.episodes||0);
