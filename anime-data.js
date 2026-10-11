@@ -82,6 +82,8 @@
     ];
     const baseOrder=["a","i","u","e","o","ka","ki","ku","ke","ko","sa","shi","su","se","so","ta","chi","tsu","te","to","na","ni","nu","ne","no","ha","hi","fu","he","ho","ma","mi","mu","me","mo","ya","yu","yo","ra","ri","ru","re","ro","wa","wo","n"];
   const rank=new Map(baseOrder.map((x,i)=>[x,i]));
+  // Prefer the longest matching syllable first, then stop at the first match.
+  syllables.sort((a,b)=>b[0].length-a[0].length);
 
   function compare(a,b){
     // 各ローマ字音節を五十音の位置へ変換。
@@ -97,7 +99,7 @@
           s=numberToRomaji(n)+s.slice(j);continue;
         }
         let hit=null;
-        for(const [romaji,base] of syllables){if(s.startsWith(romaji,i)&&(hit===null||romaji.length>hit[0].length))hit=[romaji,base];}
+        for(const [romaji,base] of syllables){if(s.startsWith(romaji,i)){hit=[romaji,base];break;}}
         if(hit){result.push(rank.get(hit[1]));i+=hit[0].length;}
         else {result.push(999);i++;}
       }
