@@ -144,58 +144,55 @@ let s=null;
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const title=a=>AnimeciaData.title(a);
 let rows=[],genres=[],selected=new Set(),userSignals=new Map(),recommendationsReady=false;
-async function fetchCatalogRows(){
-  const all=[];
-  for(let offset=0;;offset+=1000){
-    const {data,error}=await s.rpc("search_anime_catalog_v2",{
-      p_query:null,p_genre_id:null,p_studio_id:null,p_year:null,p_season:null,
-      p_status:null,p_format:null,p_sort:"title",p_limit:1000,p_offset:offset
-    });
-    if(error) throw error;
-    const batch=data||[];
-    all.push(...batch);
-    if(batch.length<1000) break;
-  }
-  return all;
+const normGenre=name=>String(name??"").normalize("NFKC").trim().toLocaleLowerCase("ja");
+let genreIdByName=new Map();
+async function fetchCatalogRows({genreIds=[],format=null,minRating=null,status=null}={}){
+ const all=[],limit=300,maxRows=1500;
+ for(let offset=0;offset<maxRows;offset+=limit){
+  const {data,error}=await s.rpc("search_anime_catalog_v3",{
+   p_query:null,p_year:null,p_season:null,p_status:status||null,p_format:format||null,
+   p_genre_ids:genreIds,p_studio_id:null,p_min_rating:minRating>0?minRating:null,
+   p_sort:"popular",p_limit:limit,p_offset:offset
+  });
+  if(error)throw error;
+  const batch=data||[];
+  all.push(...batch);
+  if(batch.length<limit)break;
+  const total=Number(batch[0]?.total_count||0);
+  if(total&&offset+batch.length>=total)break;
+ }
+ return all;
 }
 async function init(){
  await AnimeciaAuth.init();
  s=AnimeciaAuth.client();
- const [catalogRows,gr,auth]=await Promise.all([
-  fetchCatalogRows(),
+ const [genreResult,genreCountResult,auth]=await Promise.all([
   s.rpc("get_catalog_genres"),
+  s.rpc("get_catalog_genre_counts"),
   s.auth.getUser()
  ]);
- if(gr.error) console.warn("Animecia recommendations: genre RPC unavailable; deriving genres from catalog.",gr.error);
- genres=(gr.data||[]).map(g=>({id:Number(g.id),name:String(g.name||"").trim()})).filter(g=>g.name);
- const genreNames=new Map();
- (catalogRows||[]).forEach(a=>String(a.genre||"").split(/[,、/]/).map(x=>x.trim()).filter(Boolean).forEach(name=>genreNames.set(name,name)));
- const sourceGenres=genres.length?genres:[...genreNames.keys()].sort((a,b)=>a.localeCompare(b,"ja"));
- const normGenre=name=>String(name??"").normalize("NFKC").trim().toLocaleLowerCase("ja");
- const genreIdByName=new Map(sourceGenres.map(x=>{const name=x.name||x;return [normGenre(name),x.id??name];}));
- rows=(catalogRows||[]).map(a=>{
-   const gn=String(a.genre||"").split(/[,、/]/).map(x=>x.trim()).filter(Boolean);
-   const g=gn.map(name=>genreIdByName.get(normGenre(name))??name);
-   const avg=a.average_score==null?null:Number(a.average_score);
-   return {...a,g,gn,e:{average_rating:Number.isFinite(avg)?avg:null,favorite_count:Number(a.favourites_count||0),review_count:0}};
- });
+ const genreSource=!genreResult.error&&(genreResult.data||[]).length?genreResult.data:(genreCountResult.data||[]);
+ if(genreResult.error)console.warn("Animecia recommendations: using genre-count fallback.",genreResult.error);
+ if(genreCountResult.error)console.warn("Animecia recommendations: genre counts unavailable.",genreCountResult.error);
+ genres=genreSource.map(g=>({id:Number(g.id),name:String(g.name||"").trim()})).filter(g=>g.name&&Number.isInteger(g.id));
+ genreIdByName=new Map(genres.map(g=>[normGenre(g.name),g.id]));
  renderGenres();
  if(auth.data.user&&!auth.data.user.is_anonymous){
-   const uid=auth.data.user.id;
-   const [rt,st,fv]=await Promise.all([
-     s.from("user_ratings").select("anime_id,rating").eq("user_id",uid),
-     s.from("user_anime_status").select("anime_id,status").eq("user_id",uid),
-     s.from("favorites").select("anime_id").eq("user_id",uid)
-   ]);
-   if(rt.error) console.warn("Animecia recommendations: user_ratings unavailable.",rt.error);
-   if(st.error) console.warn("Animecia recommendations: user_anime_status unavailable.",st.error);
-   if(fv.error) console.warn("Animecia recommendations: favorites unavailable.",fv.error);
-   (rt.data||[]).forEach(x=>userSignals.set(Number(x.anime_id),{rating:Number(x.rating)}));
-   (st.data||[]).forEach(x=>userSignals.set(Number(x.anime_id),{...(userSignals.get(Number(x.anime_id))||{}),status:x.status}));
-   (fv.data||[]).forEach(x=>userSignals.set(Number(x.anime_id),{...(userSignals.get(Number(x.anime_id))||{}),favorite:true}));
+  const uid=auth.data.user.id;
+  const [rt,st,fv]=await Promise.all([
+   s.from("user_ratings").select("anime_id,rating").eq("user_id",uid),
+   s.from("user_anime_status").select("anime_id,status").eq("user_id",uid),
+   s.from("favorites").select("anime_id").eq("user_id",uid)
+  ]);
+  if(rt.error)console.warn("Animecia recommendations: user_ratings unavailable.",rt.error);
+  if(st.error)console.warn("Animecia recommendations: user_anime_status unavailable.",st.error);
+  if(fv.error)console.warn("Animecia recommendations: favorites unavailable.",fv.error);
+  (rt.data||[]).forEach(x=>userSignals.set(Number(x.anime_id),{rating:Number(x.rating)}));
+  (st.data||[]).forEach(x=>userSignals.set(Number(x.anime_id),{...(userSignals.get(Number(x.anime_id))||{}),status:x.status}));
+  (fv.data||[]).forEach(x=>userSignals.set(Number(x.anime_id),{...(userSignals.get(Number(x.anime_id))||{}),favorite:true}));
  }
  recommendationsReady=true;
- run();
+ await run();
 }
 function renderGenres(){document.getElementById("genres").innerHTML=genres.map(g=>'<button type="button" class="chip" data-id="'+esc(g.id??g.name)+'" aria-pressed="false"><span class="chip-check" aria-hidden="true">✓</span><span>'+esc(g.name)+'</span></button>').join("");document.querySelectorAll("#genres .chip").forEach(b=>b.onclick=()=>{const raw=b.dataset.id;const id=Number.isFinite(Number(raw))?Number(raw):raw;const on=!selected.has(id);on?selected.add(id):selected.delete(id);b.classList.toggle("active",on);b.setAttribute("aria-pressed",String(on));updateGenreSelected()})}
 function updateGenreSelected(){const el=document.getElementById("genre-selected");if(el)el.textContent=selected.size+"件選択中";}
@@ -212,26 +209,52 @@ function score(a,format,length,min,status){
  if(sig?.rating>=8){const overlap=match;score+=overlap*6;if(overlap)reason.push("過去の高評価作品と傾向が近い")}
  return {score,reason:reason.slice(0,2).join(" / ")||"評価・人気・作品情報から選定"};
 }
-function run(){
- const format=document.getElementById("format").value,length=document.getElementById("length").value,min=Number(document.getElementById("rating").value||0),status=document.getElementById("status").value;
+async function run(){
+ if(!recommendationsReady)return;
+ const button=document.getElementById("find");
+ if(button)button.disabled=true;
+ const format=document.getElementById("format").value||null;
+ const length=document.getElementById("length").value;
+ const min=Number(document.getElementById("rating").value||0);
+ const status=document.getElementById("status").value||null;
  const hasConditions=selected.size>0||!!format||!!length||!!min||!!status;
- let r=rows.filter(a=>{
-  if(selected.size && ![...selected].every(g=>a.g.includes(g))) return false;
-  if(format&&a.format!==format)return false;
-  if(status&&a.status!==status)return false;
-  const n=Number(a.episodes||0);
-  if(length==="short"&&(!n||n>13))return false;
-  if(length==="medium"&&(n<14||n>26))return false;
-  if(length==="long"&&n<27)return false;
-  if(min&&Number(a.e.average_rating||0)<min)return false;
-  return true;
-}).map(a=>({...a,m:score(a,format,length,min,status)}))
-.sort((a,b)=>b.m.score-a.m.score || Number(b.e.favorite_count||0)-Number(a.e.favorite_count||0))
-.slice(0,30);
- document.getElementById("result-sub").textContent=(selected.size?"選択ジャンル "+selected.size+"件 / ":"")+"作品データからおすすめ順に表示。"+(hasConditions?" 指定した条件も反映しています。":" 条件未指定のため、評価・人気などから選定しています。")+(userSignals.size?" あなたの視聴・評価履歴も反映中。":"");
- if(!rows.length){document.getElementById("results").innerHTML='<div class="empty">おすすめ作品のデータを読み込めていません。ページを再読み込みしてください。</div>';return;}
- document.getElementById("results").innerHTML=r.map((a,i)=>'<a class="item" href="anime-detail.html?id='+a.id+'"><div class="rank">'+(i+1)+'</div>'+(a.cover_image?'<img class="thumb" src="'+esc(a.cover_image)+'" alt="'+esc(title(a))+'" loading="lazy" decoding="async" fetchpriority="high">':'<div class="thumb"></div>')+'<div class="grow"><div class="title">'+esc(title(a))+'</div><div class="reason">'+esc(a.m.reason)+'</div><div class="meta"><span class="pill">★ '+(a.e.average_rating!=null?Number(a.e.average_rating).toFixed(1):"—")+'</span><span class="pill">'+esc(a.format||"")+'</span><span class="pill">'+(a.episodes?esc(a.episodes)+"話":"話数不明")+'</span></div></div><div class="match">MATCH '+Math.round(Math.min(99,a.m.score))+'%</div></a>').join("")||'<div class="empty">条件に合う作品が見つかりませんでした。条件を少し緩めてみてください。</div>';
+ document.getElementById("results").innerHTML='<div class="empty">条件に合う候補を検索しています…</div>';
+ try{
+  const selectedIds=[...selected].map(Number).filter(Number.isInteger);
+  const serverGenreIds=selectedIds.length===selected.size?selectedIds:[];
+  const candidateRows=await fetchCatalogRows({genreIds:serverGenreIds,format,minRating:min,status});
+  rows=candidateRows.map(a=>{
+   const gn=String(a.genre||"").split(/[,、/]/).map(x=>x.trim()).filter(Boolean);
+   const raw=a.average_score==null?null:Number(a.average_score);
+   const averageRating=raw==null||!Number.isFinite(raw)?null:(raw>10?raw/10:raw);
+   const g=serverGenreIds.length?serverGenreIds:gn.map(name=>genreIdByName.get(normGenre(name))??name);
+   return {...a,g,gn,e:{average_rating:averageRating,favorite_count:Number(a.favourites_count||0),review_count:0}};
+  });
+  const result=rows.filter(a=>{
+   if(selected.size&&![...selected].every(g=>a.g.includes(g)))return false;
+   if(format&&a.format!==format)return false;
+   if(status&&a.status!==status)return false;
+   const n=Number(a.episodes||0);
+   if(length==="short"&&(!n||n>13))return false;
+   if(length==="medium"&&(n<14||n>26))return false;
+   if(length==="long"&&n<27)return false;
+   if(min&&Number(a.e.average_rating||0)<min)return false;
+   return true;
+  }).map(a=>({...a,m:score(a,format,length,min,status)}))
+   .sort((a,b)=>b.m.score-a.m.score||Number(b.e.favorite_count||0)-Number(a.e.favorite_count||0))
+   .slice(0,30);
+  const total=Number(rows[0]?.total_count||rows.length);
+  document.getElementById("result-sub").textContent=(selected.size?"選択ジャンル "+selected.size+"件 / ":"")+"条件に合う作品 "+total.toLocaleString("ja-JP")+"件からおすすめ順に表示。"+(hasConditions?" 指定した条件も反映しています。":" 条件未指定のため、評価・人気などから選定しています。")+(userSignals.size?" あなたの視聴・評価履歴も反映中。":"");
+  document.getElementById("results").innerHTML=result.map((a,i)=>'<a class="item" href="anime-detail.html?id='+a.id+'"><div class="rank">'+(i+1)+'</div>'+(a.cover_image?'<img class="thumb" src="'+esc(a.cover_image)+'" alt="'+esc(title(a))+'" loading="'+(i===0?'eager':'lazy')+'" decoding="async"'+(i===0?' fetchpriority="high"':'')+'>':'<div class="thumb"></div>')+'<div class="grow"><div class="title">'+esc(title(a))+'</div><div class="reason">'+esc(a.m.reason)+'</div><div class="meta"><span class="pill">★ '+(a.e.average_rating!=null?Number(a.e.average_rating).toFixed(1):"—")+'</span><span class="pill">'+esc(a.format||"")+'</span><span class="pill">'+(a.episodes?esc(a.episodes)+"話":"話数不明")+'</span></div></div><div class="match">MATCH '+Math.round(Math.min(99,a.m.score))+'%</div></a>').join("")||'<div class="empty">条件に合う作品が見つかりませんでした。条件を少し緩めてみてください。</div>';
+ }catch(error){
+  console.error("Animecia recommendation search failed",error);
+  document.getElementById("results").innerHTML='<div class="empty">おすすめ作品を取得できませんでした。条件を変えるか、時間をおいて再度お試しください。</div>';
+  document.getElementById("result-sub").textContent="作品データの取得に失敗しました。";
+ }finally{
+  if(button)button.disabled=false;
+ }
 }
+
 document.getElementById("find").onclick=()=>{if(!recommendationsReady){document.getElementById("result-sub").textContent="作品データを読み込み中です。少し待ってからお試しください。";return;}run();};
 document.getElementById("clear").onclick=()=>{selected.clear();updateGenreSelected();document.querySelectorAll(".chip.active").forEach(x=>{x.classList.remove("active");x.setAttribute("aria-pressed","false")});["format","length","rating","status"].forEach(id=>document.getElementById(id).value=id==="rating"?"0":"");document.getElementById("results").innerHTML='<div class="empty">あなたの好みから作品を探します。</div>';document.getElementById("result-sub").textContent="条件を設定して「この条件で探す」を押してください。"};
 init().catch(err=>{
