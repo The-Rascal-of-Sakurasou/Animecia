@@ -25,11 +25,16 @@ async function load(){
  const gr=genreResult.status==="fulfilled"?genreResult.value:{data:[],error:genreResult.reason};
  const ar=await AnimeciaData.withEngagement(s,catalogRows);
  if(gr.error) console.warn("Genre metadata unavailable; catalog will still be displayed.",gr.error);
- (gr.data||[]).forEach(g=>genreMap.set(Number(g.id),g.name));
  const normGenre=v=>String(v??"").normalize("NFKC").trim().toLowerCase();
+ const genreNameToId=new Map();
+ (gr.data||[]).forEach(g=>{
+   const id=Number(g.id);
+   genreMap.set(id,g.name);
+   genreNameToId.set(normGenre(g.name),id);
+ });
  rows=(ar||[]).map(a=>{
    const names=String(a.genre||"").split(",").map(normGenre).filter(Boolean);
-   const g=[...genreMap.entries()].filter(([,name])=>names.includes(normGenre(name))).map(([id])=>id);
+   const g=names.map(name=>genreNameToId.get(name)).filter(id=>id!==undefined);
    return {...a,e:{
      average_rating:a._animecia_rating,
      favorite_count:a._animecia_engagement?.favorite_count||0,
