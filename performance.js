@@ -2,7 +2,7 @@
   // Establish connections only for origins this page actually uses.
   const scripts=Array.from(document.scripts).map(s=>s.src).filter(Boolean);
   const origins=[];
-  if(scripts.some(src=>/supabase-js|supabase/i.test(src))) origins.push('https://bhgdjuwlxvbaeraaivmh.supabase.co');
+  if(scripts.some(src=>/supabase-js|supabase|auth-core\.js|auth-required\.js/i.test(src))) origins.push('https://bhgdjuwlxvbaeraaivmh.supabase.co');
   if(scripts.some(src=>src.startsWith('https://cdn.jsdelivr.net/'))) origins.push('https://cdn.jsdelivr.net');
   for(const href of origins){
     if(!document.head.querySelector('link[rel="preconnect"][href="'+href+'"]')){
