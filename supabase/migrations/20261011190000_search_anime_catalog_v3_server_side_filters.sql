@@ -59,6 +59,7 @@ AS $function$
       a.official_url, a.site_url, a.streaming_links, a.start_date, a.end_date,
       a.episodes, a.duration, a.season, a.season_year, a.status, a.source,
       COALESCE(e.average_rating, a.average_score)::numeric AS average_score,
+      COALESCE(e.average_rating, a.average_score / 10.0)::numeric AS sort_rating,
       a.popularity,
       COALESCE(e.favorite_count, a.favourites_count, 0)::integer AS favourites_count,
       count(*) OVER() AS total_count,
@@ -127,7 +128,7 @@ AS $function$
     source, average_score, popularity, favourites_count, search_rank, total_count
   FROM base
   ORDER BY
-    CASE WHEN p_sort IN ('score','rating') THEN COALESCE(average_score / 10.0, 0) END DESC NULLS LAST,
+    CASE WHEN p_sort IN ('score','rating') THEN sort_rating END DESC NULLS LAST,
     CASE WHEN p_sort = 'popular' THEN favourites_count END DESC NULLS LAST,
     CASE WHEN p_sort IN ('new','newest') THEN start_date END DESC NULLS LAST,
     CASE WHEN p_sort = 'oldest' THEN start_date END ASC NULLS LAST,
