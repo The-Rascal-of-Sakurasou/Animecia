@@ -659,7 +659,7 @@ async function load(){
     const rr=await safe(sb.from("animecia_public_anime")
       .select("id,title,title_japanese,title_native,title_user_preferred,title_romaji,title_english,cover_image,start_date,format,season_year,anime_verification_status,is_japanese,is_adult,is_kids,is_sensitive_visual")
       .in("id",reviewIds));
-    reviewAnime=(rr.data||[]).filter(a=>a && a.anime_verification_status==="verified" && a.is_japanese===true && a.is_adult!==true && a.is_kids!==true && a.is_sensitive_visual!==true);
+    reviewAnime=(rr.data||[]).filter(a=>a && a.anime_verification_status==="verified" && a.is_sensitive_visual!==true);
   }
   renderReviews(reviewRows,new Map(reviewAnime.map(a=>[String(a.id),a])));
 }
