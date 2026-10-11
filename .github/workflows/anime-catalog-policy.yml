@@ -30,7 +30,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 <<'PY'
-          import json, os, time, urllib.error, urllib.parse, urllib.request
+          import json, os, re, time, urllib.error, urllib.parse, urllib.request
           from collections import defaultdict
 
           BASE=os.environ["SUPABASE_URL"].rstrip("/")
@@ -116,7 +116,7 @@ jobs:
           page_size=1000
           while True:
               page=sb("/rest/v1/anime",params={
-                  "select":"id,source_provider,source_id,external_id,anime_verification_status,is_japanese,original_country_code,original_country_status,original_country_review_reason,start_date,format,is_adult,is_preschool,is_sensitive_visual",
+                  "select":"id,title,title_japanese,title_native,title_english,title_romaji,english_title,title_user_preferred,source_metadata,source_provider,source_id,external_id,anime_verification_status,is_japanese,original_country_code,original_country_status,original_country_review_reason,start_date,format,is_adult,is_preschool,is_sensitive_visual",
                   "order":"id.asc",
                   "limit":str(page_size),
                   "offset":str(offset)
@@ -255,7 +255,8 @@ jobs:
                   "duplicate_of_id":cid,
                   "duplicate_review_reason":"Exact provider/source identity match; canonical record selected automatically.",
                   "catalog_policy_decision":"exclude",
-                  "catalog_policy_reasons":["exact_duplicate"]
+                  "catalog_policy_reasons":["exact_duplicate"],
+                  "anime_verification_status":"blocked"
               })
               duplicate_count+=len(ids)
 
@@ -306,19 +307,41 @@ jobs:
                   origin_code=str(r.get("original_country_code") or "").strip().upper() or None
                   origin_status=r.get("original_country_status")
               reason=None
-              if (c and c.get("is_sensitive_visual")) or bool(r.get("is_sensitive_visual")):
-                  reason="sensitive_visual_exclusion"
-              elif r.get("start_date") and str(r["start_date"])[:10] < cutoff.isoformat():
+              fmt=str(r.get("format") or "").strip().upper()
+              first_release=str(r.get("start_date") or "")[:10]
+              title_blob=" ".join(str(r.get(k) or "") for k in (
+                  "title","title_japanese","title_native","title_english",
+                  "title_romaji","english_title","title_user_preferred"
+              ))
+              metadata=r.get("source_metadata") if isinstance(r.get("source_metadata"),dict) else {}
+              metadata_type=str(metadata.get("type") or "")
+              promo_pattern=re.compile(
+                  r'(^|[\s【(（])PV([\s】)）]|$)|(^|[\s【(（])CM([\s】)）]|$)|'
+                  r'trailer|teaser|promotional[\s-]+video|advertisement|commercial|'
+                  r'予告編|予告映像|ティザー映像|ティーザー映像|宣伝映像|広告動画|特報',
+                  re.IGNORECASE
+              )
+              allowed_formats={"TV","TV_SHORT","MOVIE","OVA","OAV","ONA","SPECIAL"}
+              if not first_release:
+                  reason="unknown_first_release_date"
+              elif first_release < cutoff.isoformat():
                   reason="before_1963-01-01"
-              elif (c["is_adult"] if c else bool(r.get("is_adult"))) and str(r.get("format") or "").upper() not in ("TV","TV_SHORT"):
+              elif fmt not in allowed_formats:
+                  reason="not_general_anime_format"
+              elif promo_pattern.search(title_blob) or re.search(
+                  r'trailer|teaser|promotional|advertisement|commercial|(^|[\s])PV([\s]|$)|(^|[\s])CM([\s]|$)',
+                  metadata_type,re.IGNORECASE
+              ):
+                  reason="promotional_or_preview_media"
+              elif (c["is_adult"] if c else bool(r.get("is_adult"))) and fmt not in ("TV","TV_SHORT"):
                   reason="adult_anilist_isAdult"
-              elif (c["is_preschool"] if c else bool(r.get("is_preschool"))) and str(r.get("format") or "").upper() not in ("TV","TV_SHORT"):
+              elif (c["is_preschool"] if c else bool(r.get("is_preschool"))) and fmt not in ("TV","TV_SHORT"):
                   reason="preschool_anilist_tag"
               elif origin_status == "verified_non_jp":
                   reason="non_japanese_original"
                   non_japanese_excluded+=1
-              # Unknown origin alone is not an exclusion. The public view still
-              # enforces verification, duplicate, date, format, title and safety rules.
+              # Unknown origin and sensitive-visual metadata alone are not exclusions.
+              # The full publication rules are applied here before changing verification status.
               if reason:
                   policy_groups[("exclude",reason,"")].append(rid)
                   excluded+=1
@@ -331,7 +354,8 @@ jobs:
               body={
                   "catalog_policy_decision":decision,
                   "catalog_policy_reasons":[reason] if reason else ([extra] if extra else []),
-                  "catalog_policy_version":"anilist-authoritative-v8"
+                  "anime_verification_status":"blocked" if decision=="exclude" else "verified",
+                  "catalog_policy_version":"anilist-authoritative-v9"
               }
               patch_many(ids,body)
 
@@ -340,7 +364,7 @@ jobs:
               "anilist_classified":classified_count,
               "exact_duplicates_excluded":duplicate_count,
               "excluded_total":excluded,
-              "policy_version":"anilist-authoritative-v8",
+              "policy_version":"anilist-authoritative-v9",
               "included":included,
               "physical_deletes":0,
               "non_japanese_originals_excluded":non_japanese_excluded,
