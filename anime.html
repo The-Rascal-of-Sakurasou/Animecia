@@ -3242,8 +3242,9 @@ function compareAnimeTitles(a,b){ return AnimeciaData.compare(a,b); }
                             title
                         )}のキービジュアル"
                         loading="lazy"
+                        decoding="async"
                         onerror="this.style.visibility='hidden';this.nextElementSibling&&(this.nextElementSibling.style.display='grid');"
-                     decoding="async" fetchpriority="high">
+                    >
 
                     <div
                         class="image-placeholder"
@@ -4166,20 +4167,34 @@ function compareAnimeTitles(a,b){ return AnimeciaData.compare(a,b); }
 
     async function initializeAnimePage() {
         /*
-         * フィルター候補の非同期取得が、ユーザー操作中に<select>を書き換えないよう、
-         * 候補を先に読み込んでからURLの条件を復元する。
+         * 一覧の初回取得をフィルター候補の取得から切り離す。
+         * 年・ジャンル・制作会社の候補取得が遅い場合も、一覧表示を先に開始する。
          */
-        await Promise.allSettled([
+        loadURLParameters();
+        bindMemoButtons();
+        updateMemoUI();
+
+        const params = new URLSearchParams(window.location.search);
+        const hasFilterParams = [
+            "year", "season", "status", "format", "genre", "studio", "sort"
+        ].some(key => params.has(key)) || params.has("filter");
+
+        const initialLoad = loadAnime();
+        const optionsLoad = Promise.allSettled([
             createYearOptions(),
             createGenreOptions(),
             createStudioOptions()
         ]);
 
-        loadURLParameters();
-        bindMemoButtons();
-        updateMemoUI();
+        await optionsLoad;
 
-        await loadAnime();
+        // 候補がそろったあとでURL条件を復元し、指定条件がある場合だけ再検索する。
+        loadURLParameters();
+        if (hasFilterParams) {
+            await loadAnime();
+        }
+
+        await initialLoad;
     }
 
     initializeAnimePage();
