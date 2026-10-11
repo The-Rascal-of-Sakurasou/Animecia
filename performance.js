@@ -1,8 +1,12 @@
 (()=>{try{
-  const links=[['preconnect','https://bhgdjuwlxvbaeraaivmh.supabase.co'],['preconnect','https://cdn.jsdelivr.net']];
-  for(const [rel,href] of links){
-    if(!document.head.querySelector('link[rel="'+rel+'"][href="'+href+'"]')){
-      const l=document.createElement('link');l.rel=rel;l.href=href;l.crossOrigin='anonymous';document.head.appendChild(l);
+  // Establish connections only for origins this page actually uses.
+  const scripts=Array.from(document.scripts).map(s=>s.src).filter(Boolean);
+  const origins=[];
+  if(scripts.some(src=>/supabase-js|supabase/i.test(src))) origins.push('https://bhgdjuwlxvbaeraaivmh.supabase.co');
+  if(scripts.some(src=>src.startsWith('https://cdn.jsdelivr.net/'))) origins.push('https://cdn.jsdelivr.net');
+  for(const href of origins){
+    if(!document.head.querySelector('link[rel="preconnect"][href="'+href+'"]')){
+      const l=document.createElement('link');l.rel='preconnect';l.href=href;l.crossOrigin='anonymous';document.head.appendChild(l);
     }
   }
   if('serviceWorker' in navigator) window.addEventListener('load',()=>{
