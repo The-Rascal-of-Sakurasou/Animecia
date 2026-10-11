@@ -143,21 +143,21 @@ async function loadFeed({append=false}={}){
    if(r2.error)throw r2.error;
    const byId=new Map((r2.data||[]).map(x=>[x.id,x]));
    rows=ids.map(id=>byId.get(id)).filter(Boolean);
+  }else if(currentMode==="following"&&currentUser){
+   const followResult=await sb.from("user_follows").select("following_id").eq("follower_id",currentUser.id);
+   if(followResult.error)throw followResult.error;
+   const followedIds=[...new Set([currentUser.id,...(followResult.data||[]).map(x=>x.following_id)])];
+   const r=await sb.from("social_posts").select("id,author_id,body,attachment_url,attachment_path,attachment_type,reply_to_id,quote_post_id,created_at,updated_at").in("author_id",followedIds).is("deleted_at",null).is("reply_to_id",null).order("created_at",{ascending:false}).range(feedOffset,feedOffset+FEED_PAGE_SIZE-1);
+   if(r.error)throw r.error;
+   rows=r.data||[];
+   if(rows.length<FEED_PAGE_SIZE)feedHasMore=false;
+   feedOffset+=rows.length;
   }else{
    const r=await sb.from("social_posts").select("id,author_id,body,attachment_url,attachment_path,attachment_type,reply_to_id,quote_post_id,created_at,updated_at").is("deleted_at",null).is("reply_to_id",null).order("created_at",{ascending:false}).range(feedOffset,feedOffset+FEED_PAGE_SIZE-1);
    if(r.error)throw r.error;
    rows=r.data||[];
    if(rows.length<FEED_PAGE_SIZE)feedHasMore=false;
    feedOffset+=rows.length;
-   if(currentMode==="following"&&currentUser){
-    try{
-     const followResult=await sb.from("user_follows").select("following_id").eq("follower_id",currentUser.id);
-     if(!followResult.error){
-      const followed=new Set((followResult.data||[]).map(x=>x.following_id));
-      rows=rows.filter(x=>followed.has(x.author_id)||x.author_id===currentUser.id);
-     }
-    }catch(_){}
-   }
   }
   if(!rows.length){
    if(!append)el.innerHTML='<div class="empty">まだ投稿がありません。</div>';
