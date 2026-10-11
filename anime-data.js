@@ -155,7 +155,7 @@
     if(!a.start_date || String(a.start_date)<"1963-01-01") return false;
     if(a.original_country_code && String(a.original_country_code).toUpperCase()!=="JP") return false;
     if(a.original_country_status==="verified_non_jp") return false;
-    if(a.duplicate_status==="duplicate" || a.is_sensitive_visual===true) return false;
+    if(a.duplicate_status==="duplicate") return false;
     const broadcast=["TV","TV_SHORT"].includes(format);
     if(a.is_adult===true && !broadcast) return false;
     if(a.is_preschool===true && !broadcast) return false;
