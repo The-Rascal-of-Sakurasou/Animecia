@@ -31,8 +31,7 @@ BEGIN
     reasons := array_append(reasons, 'promotional_or_preview_media');
   END IF;
 
-  IF (new.original_country_code IS NOT NULL AND upper(new.original_country_code) <> 'JP')
-     OR country_status = 'verified_non_jp' THEN
+  IF country_status = 'verified_non_jp' THEN
     reasons := array_append(reasons, 'non_japanese_original');
   END IF;
 
@@ -78,11 +77,9 @@ SELECT
   original_country_status, catalog_policy_decision, catalog_policy_reasons, catalog_policy_version
 FROM public.anime a
 WHERE anime_verification_status = 'verified'
+  AND COALESCE(catalog_policy_decision, 'include') <> 'exclude'
   AND COALESCE(duplicate_status, 'unique') = 'unique'
-  AND (
-    original_country_code = 'JP'
-    OR (original_country_code IS NULL AND COALESCE(original_country_status, 'unknown') <> 'verified_non_jp')
-  )
+  AND COALESCE(original_country_status, 'unknown') <> 'verified_non_jp'
   AND start_date IS NOT NULL
   AND start_date >= DATE '1963-01-01'
   AND upper(COALESCE(format, '')) = ANY (ARRAY['TV','TV_SHORT','MOVIE','OVA','OAV','ONA','SPECIAL'])
@@ -97,6 +94,6 @@ WHERE anime_verification_status = 'verified'
 
 -- Re-evaluate only records previously excluded for this unrequested flag.
 UPDATE public.anime
-SET title = title
+SET is_sensitive_visual = COALESCE(is_sensitive_visual, false)
 WHERE COALESCE(is_sensitive_visual, false) = true
   AND catalog_policy_reasons @> ARRAY['sensitive_visual_manual_review']::text[];
