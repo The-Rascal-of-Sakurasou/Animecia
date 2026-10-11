@@ -125,20 +125,27 @@
     const source=Array.isArray(rows)?rows:[];
     const ids=[...new Set(source.map(a=>Number(a?.id)).filter(Number.isInteger))];
     const map=new Map();
-    for(let i=0;i<ids.length;i+=500){
-      try{
-        const {data,error}=await client.from("anime_engagement_summary")
-          .select("anime_id,average_rating,rating_count,favorite_count,review_count")
-          .in("anime_id",ids.slice(i,i+500));
-        if(error){
-          console.warn("AnimeciaData.withEngagement: engagement summary unavailable; catalog data will still be shown.",error);
-          break;
+    const batches=[];
+    for(let i=0;i<ids.length;i+=500) batches.push(ids.slice(i,i+500));
+    // Run a small number of summary requests concurrently instead of waiting
+    // for every 500-ID batch serially on large catalog pages.
+    for(let start=0;start<batches.length;start+=4){
+      const results=await Promise.all(batches.slice(start,start+4).map(async batch=>{
+        try{
+          const {data,error}=await client.from("anime_engagement_summary")
+            .select("anime_id,average_rating,rating_count,favorite_count,review_count")
+            .in("anime_id",batch);
+          if(error){
+            console.warn("AnimeciaData.withEngagement: engagement summary unavailable; catalog data will still be shown.",error);
+            return [];
+          }
+          return data||[];
+        }catch(error){
+          console.warn("AnimeciaData.withEngagement: engagement summary request failed; catalog data will still be shown.",error);
+          return [];
         }
-        (data||[]).forEach(x=>map.set(String(x.anime_id),x));
-      }catch(error){
-        console.warn("AnimeciaData.withEngagement: engagement summary request failed; catalog data will still be shown.",error);
-        break;
-      }
+      }));
+      results.flat().forEach(x=>map.set(String(x.anime_id),x));
     }
     return source.map(a=>({...a,
       _animecia_rating:map.get(String(a.id))?.average_rating??null,
