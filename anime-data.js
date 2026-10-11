@@ -155,7 +155,11 @@
     if(!a.start_date || String(a.start_date)<"1963-01-01") return false;
     if(a.original_country_code && String(a.original_country_code).toUpperCase()!=="JP") return false;
     if(a.original_country_status==="verified_non_jp") return false;
-    if(a.duplicate_status==="duplicate") return false;
+    if(a.duplicate_status==="duplicate" || a.is_sensitive_visual===true) return false;
+    const titleBlob=[a.title,a.title_japanese,a.title_native,a.title_english,a.title_romaji,a.english_title,a.title_user_preferred].filter(Boolean).join(" ");
+    const promoPattern=/(^|[\s【(（])PV([\s】)）]|$)|(^|[\s【(（])CM([\s】)）]|$)|trailer|teaser|promotional[\s-]+video|advertisement|commercial|予告編|予告映像|ティザー映像|ティーザー映像|宣伝映像|広告動画|特報/i;
+    const metadataType=String(a.source_metadata?.type||"");
+    if(promoPattern.test(titleBlob) || /trailer|teaser|promotional|advertisement|commercial|(^|\s)PV(\s|$)|(^|\s)CM(\s|$)/i.test(metadataType)) return false;
     const broadcast=["TV","TV_SHORT"].includes(format);
     if(a.is_adult===true && !broadcast) return false;
     if(a.is_preschool===true && !broadcast) return false;
