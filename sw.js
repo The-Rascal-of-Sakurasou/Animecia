@@ -4,7 +4,7 @@ const STATIC=/\.(?:css|js|woff2?|png|jpe?g|webp|gif|svg)(?:\?.*)?$/i;
 self.addEventListener("install",e=>e.waitUntil(self.skipWaiting()));
 self.addEventListener("activate",e=>e.waitUntil(
   caches.keys()
-    .then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))
+    .then(keys=>Promise.all(keys.filter(k=>k.startsWith("animecia-")&&k!==CACHE).map(k=>caches.delete(k))))
     .then(()=>self.registration.navigationPreload?.enable())
     .then(()=>self.clients.claim())
 ));
