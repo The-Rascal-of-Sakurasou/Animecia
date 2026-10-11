@@ -141,8 +141,6 @@
 </main>
 <footer><div class="container footer-inner"><div><div class="footer-brand">Animecia</div><div class="footer-copy">アニメを探す、評価する、記録する。</div></div><div class="footer-links"><a href="anime.html">アニメを探す</a><a href="season.html">今期アニメ</a><a href="discover.html">ジャンル</a><a href="recommendations.html">おすすめ</a><a href="memo.html">メモ</a><a href="community.html">コミュニティ</a><a href="mypage.html">マイページ</a></div></div></footer>
 <script>
-const SUPABASE_URL="https://bhgdjuwlxvbaeraaivmh.supabase.co";
-const SUPABASE_KEY="sb_publishable_-rZ4HusVezs5IlZQnUQ-Kw_SLUd8R0c";
 let sb=null;
 function waitForSupabase(){
   return new Promise((resolve,reject)=>{
@@ -221,7 +219,7 @@ function sortAndRender(){
  render(rows);
 }
 document.querySelectorAll(".ranking-tab").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".ranking-tab").forEach(x=>x.classList.remove("active"));btn.classList.add("active");mode=btn.dataset.mode;sortAndRender();}));
-waitForSupabase().then(load).catch(err=>{console.error(err);document.getElementById("ranking-list").innerHTML='<div class="state">ランキングの読み込みに失敗しました。時間をおいて再読み込みしてください。</div>';});
+load().catch(err=>{console.error(err);document.getElementById("ranking-list").innerHTML='<div class="state">ランキングの読み込みに失敗しました。時間をおいて再読み込みしてください。</div>';});
 </script>
 \n</body>
 </html>
