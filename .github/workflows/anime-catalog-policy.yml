@@ -116,7 +116,7 @@ jobs:
           page_size=1000
           while True:
               page=sb("/rest/v1/anime",params={
-                  "select":"id,source_provider,source_id,external_id,anime_verification_status,is_japanese,original_country_code,original_country_status,original_country_review_reason,start_date",
+                  "select":"id,source_provider,source_id,external_id,anime_verification_status,is_japanese,original_country_code,original_country_status,original_country_review_reason,start_date,format,is_adult,is_preschool",
                   "order":"id.asc",
                   "limit":str(page_size),
                   "offset":str(offset)
@@ -308,11 +308,11 @@ jobs:
               reason=None
               if r.get("start_date") and str(r["start_date"])[:10] < cutoff.isoformat():
                   reason="before_1963-01-01"
-              elif c and c["is_adult"]:
+              elif (c["is_adult"] if c else bool(r.get("is_adult"))) and str(r.get("format") or "").upper() not in ("TV","TV_SHORT"):
                   reason="adult_anilist_isAdult"
-              elif c and c["is_preschool"]:
+              elif (c["is_preschool"] if c else bool(r.get("is_preschool"))) and str(r.get("format") or "").upper() not in ("TV","TV_SHORT"):
                   reason="preschool_anilist_tag"
-              elif origin_code and origin_code != "JP":
+              elif origin_status == "verified_non_jp":
                   reason="non_japanese_original"
                   non_japanese_excluded+=1
               # Unknown origin alone is not an exclusion. The public view still
