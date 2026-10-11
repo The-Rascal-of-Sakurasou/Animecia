@@ -146,12 +146,15 @@
     }));
   }
   function isPublic(a){
-    // Public catalog is Japan-origin only. Unknown or unverified origin is hidden
-    // until the catalog policy has positively classified the work.
+    // Unknown country of origin remains visible unless it is confirmed non-Japanese.
+    // Preserve release-date, duplicate, and adult-only exclusions in catalog_policy_decision.
+    // General-broadcast children's anime and visual-sensitive titles are not excluded by
+    // these flags alone; preschool-only works remain excluded.
     return !!a && a.anime_verification_status==="verified" &&
-      a.original_country_code==="JP" && a.original_country_status==="verified_jp" &&
+      a.original_country_status!=="verified_non_jp" &&
+      a.original_country_code!=="CN" && a.original_country_code!=="KR" &&
       a.catalog_policy_decision!=="exclude" &&
-      a.is_adult!==true && a.is_kids!==true && a.is_sensitive_visual!==true;
+      a.is_adult!==true && a.is_preschool!==true;
   }
   global.AnimeciaData={title,subtitle,year,season,seasonCode,format,status,image,score,reading,compare,genres,withEngagement,isPublic,seasonNames,formatNames,statusNames};
 })(window);
