@@ -139,7 +139,7 @@ function page(anime) {
 ${image ? `<meta property="og:image" content="${esc(image)}">` : ""}
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">${jsonLd(schema)}</script>
-<link rel="stylesheet" href="../../site-theme.css?v=20261011">
+<link rel="stylesheet" href="../../site-theme.css?v=20261012">
 <style>
 body{margin:0;background:#f6f6f6;color:#222;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Yu Gothic",Meiryo,sans-serif;line-height:1.7}
 main{max-width:900px;margin:0 auto;padding:32px 20px}
@@ -185,7 +185,7 @@ const genrePage = (genre, works) => {
   return "<!doctype html><html lang=\"ja\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">" +
     "<title>" + esc(title) + "アニメ一覧 | Animecia</title><meta name=\"description\" content=\"" + esc(title + "に関連するアニメ作品をAnimeciaで一覧できます。") + "\"><meta name=\"robots\" content=\"index,follow\"><link rel=\"canonical\" href=\"" + esc(canonical) + "\">" +
     "<meta property=\"og:title\" content=\"" + esc(title) + "アニメ一覧 | Animecia\"><meta property=\"og:url\" content=\"" + esc(canonical) + "\"><script type=\"application/ld+json\">" + jsonLd(schema) + "</script>" +
-    "<link rel=\"stylesheet\" href=\"../../site-theme.css?v=20261011\">" +
+    "<link rel=\"stylesheet\" href=\"../../site-theme.css?v=20261012\">" +
     "<style>body{margin:0;background:#f6f6f6;color:#222;font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Yu Gothic\",Meiryo,sans-serif;line-height:1.7}main{max-width:1000px;margin:0 auto;padding:28px 18px}.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.06)}.grid{display:grid;gap:14px}.work{display:grid;grid-template-columns:90px 1fr;gap:16px;padding:14px 0;border-bottom:1px solid #eee}.work img{width:90px;height:125px;object-fit:cover;border-radius:8px}.work h2{font-size:1.05rem;margin:0 0 6px}.work a{color:#111}.work p{margin:5px 0;font-size:.92rem;color:#555}</style></head><body><main><div class=\"card\"><p><small>Animecia / ジャンル</small></p>" +
     "<h1>" + esc(title) + "のアニメ一覧</h1><p>" + esc(title) + "に関連する作品を、Animeciaの作品データをもとに一覧表示しています。</p><section class=\"grid\">" + (workHtml || "<p>現在、このジャンルの作品は登録されていません。</p>") + "</section></div></main></body></html>";
 };
