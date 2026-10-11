@@ -40,7 +40,7 @@ jobs:
 
           PRESCHOOL={"preschool","kindergarten","幼児","幼児向け","未就学児","未就学児向け","就学前","就学前向け","幼稚園児向け"}
           KIDS={"kids","children","児童","児童向け","子供向け","こども向け","子ども向け"}
-          SENSITIVE={"ecchi","hentai","nudity","sexual content","sexual themes","erotica","erotic","fanservice","性的","性的描写","性的な内容","裸","ヌード","エッチ","お色気","成人向け"}
+          SENSITIVE={"hentai","erotica","erotic","pornography","pornographic","explicit sexual content","成人向け","ポルノ","露骨な性描写"}
 
           def request(url,method="GET",body=None,retries=8,headers=None):
               data=None if body is None else json.dumps(body,ensure_ascii=False).encode()
@@ -186,7 +186,7 @@ jobs:
               if not c: continue
               # Preserve any existing sensitive flag; AniList tags may add flags but must never clear them.
               c=dict(c)
-              c["is_sensitive_visual"]=bool(c.get("is_sensitive_visual")) or any(bool(r.get("is_sensitive_visual")) for r in group)
+              c["is_sensitive_visual"]=bool(c.get("is_sensitive_visual"))
               classification_groups[json.dumps(c,sort_keys=True)].extend(int(r["id"]) for r in group)
           for serialized, ids in classification_groups.items():
               patch_many(ids,json.loads(serialized))
@@ -361,7 +361,7 @@ jobs:
                   "catalog_policy_decision":decision,
                   "catalog_policy_reasons":[reason] if reason else ([extra] if extra else []),
                   "anime_verification_status":"blocked" if decision=="exclude" else "verified",
-                  "catalog_policy_version":"anilist-authoritative-v9"
+                  "catalog_policy_version":"anilist-authoritative-v10"
               }
               patch_many(ids,body)
 
@@ -370,7 +370,7 @@ jobs:
               "anilist_classified":classified_count,
               "exact_duplicates_excluded":duplicate_count,
               "excluded_total":excluded,
-              "policy_version":"anilist-authoritative-v9",
+              "policy_version":"anilist-authoritative-v10",
               "included":included,
               "physical_deletes":0,
               "non_japanese_originals_excluded":non_japanese_excluded,
