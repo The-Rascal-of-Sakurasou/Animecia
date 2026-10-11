@@ -72,3 +72,30 @@ Supabaseのプロジェクト状態は `ACTIVE_HEALTHY`。公開カタログの 
 - 変更後は `pg_policies` と Supabase security advisors で再検証する。
 - 認証済みというだけで管理者権限を与えない。所有者・管理者の認可条件を明示する。
 - 個人メッセージやユーザー固有データのアクセス制御を優先して検査する。
+
+
+## 2026-10-11 追加監査（再確認）
+
+### セキュリティ診断の再取得
+- 現在のSecurity Advisorでは、前回の `security_definer_view` 警告は表示されなくなった。
+- SQLで `public.animecia_public_anime` の `pg_class.reloptions` を確認すると `security_invoker=true` が既に設定済み。よってこの点は修正作業を追加せず、Advisorの再検査結果を正とする。
+- 残るSecurity Advisor項目：RLS有効・ポリシーなし2テーブル、mutable search_path関数20件、publicスキーマの `pg_net`、anon実行可能なSECURITY DEFINER関数3件、authenticated実行可能なSECURITY DEFINER関数16件、漏えい済みパスワード保護が無効。
+- SECURITY DEFINER関数のうち、search_pathが設定されていないものとして `trigger_refresh_anime_covers()` が検出された。ただしACLはpostgres/service_roleのみで、anon/authenticatedへの実行許可は確認されなかった。トリガー用途と関数定義を確認してから固定する。
+- パフォーマンスAdvisor：RLS式の関数再評価52件、未使用インデックス39件、複数のPERMISSIVEポリシー39件。未使用インデックスは観測期間が短い可能性があるため、即削除せずクエリ利用状況と依存関係を確認する。
+
+### RLSポリシーなしテーブル
+- `animecia_public_genre_audit`: 4,272行、ジャンル分類監査情報。RLS有効・ポリシーなしなので、現状はAPI経由のアクセスが遮断される設計と考えられる。管理用途かを確認し、公開許可は追加しない。
+- `user_conversations`: 0行、参加者IDを持つ会話テーブル。RLS有効・ポリシーなしは、会話機能が意図的に未公開である可能性がある。参加者だけが読めるポリシーを設計できるまで、公開アクセスを許可しない。
+
+### 公開サイト・SEOのコード確認
+- `index.html` に日本語のtitle/description、canonical、Open Graph、WebSite/SearchAction構造化データがある。
+- `sitemap-pages.xml` はトップ、作品一覧、ランキング、比較、季節、ジャンル、発見ページに加えて、ジャンルID固定のURLを列挙している。DB側の現行ジャンルID・実際に生成されるルートとの一致確認が必要。
+- 個別ページのcanonical/noindex、sitemap内URLのHTTP状態、作品詳細URLの大量登録方式、GitHub Pagesのベースパスを追加検証する。
+- `privacy.html` と `terms.html` は現状noindex,nofollow。検索結果に出す必要は必ずしもないが、フッターからアクセス可能であることと、広告・解析導入前に内容を実装と一致させることを確認する。
+
+### 次の優先順位
+1. 公開データAPIのアクセス範囲とSECURITY DEFINER関数の権限・関数本体を個別に確認。
+2. 広告、コメント、いいね、おすすめ作品の過剰に許可的な重複ポリシーを、実際のフロントエンド利用箇所を確認した後に整理。
+3. サイト内の全HTML/JSからAPI参照先・存在しないリンク・古いテーブル名を抽出。
+4. sitemapのURLとDBジャンルIDを照合し、存在しない/重複したURLを整理。
+5. RLS最適化は、既存のアクセス制御を維持するテストを用意してから着手。
