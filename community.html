@@ -97,64 +97,87 @@ main{max-width:1080px;margin:auto;padding:24px 14px 70px}.layout{display:grid;gr
 <main><div class="layout"><section>
 <div class="panel composer" style="margin-bottom:12px"><div id="composer-state" class="small">投稿する</div><textarea id="post-body" maxlength="4000" placeholder="アニメについて投稿してみましょう。"></textarea><div class="photo-row"><input id="post-image" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif" multiple hidden><button id="photo-button" class="photo-btn" type="button">写真を追加</button><span id="photo-count" class="small">最大4枚・各10MB以下</span></div><div id="photo-preview" class="photo-preview"></div><div class="composer-bottom"><span id="post-count" class="count">0 / 4000</span><button id="post-submit" class="btn" type="button">投稿</button></div></div>
 <div class="tabs"><button class="tab active" data-mode="latest">おすすめ</button><button class="tab" data-mode="following">フォロー中</button><button class="tab" data-mode="bookmarks">ブックマーク</button></div>
-<div class="panel"><div id="feed" class="loading">読み込み中…</div></div></section>
+<div class="panel"><div id="feed" class="loading">読み込み中…</div><div id="feed-more-wrap" class="empty" hidden><button id="feed-more" class="btn secondary" type="button">もっと読み込む</button></div></div></section>
 <aside>
 <div class="panel"><div class="side-title">ユーザーを探す</div><div class="search-box"><input id="user-search" placeholder="@ユーザー名・表示名"><button id="user-search-btn" class="btn secondary" type="button">検索</button></div><div id="user-results"></div></div>
 <div class="panel" style="margin-top:12px"><div class="side-title">コミュニティ</div><p class="small">投稿、返信、いいね、リポスト、ブックマークでアニメの感想を共有できます。</p><a class="btn secondary" href="mypage.html" style="width:100%;text-align:center">マイページ</a></div>
 </aside></div></main>
 <script>
 const U="https://bhgdjuwlxvbaeraaivmh.supabase.co",K="sb_publishable_-rZ4HusVezs5IlZQnUQ-Kw_SLUd8R0c",sb=AnimeciaAuth.client();
-let currentUser=null,currentMode="latest",postsCache=new Map();
+let currentUser=null,currentMode="latest",postsCache=new Map(),feedOffset=0,feedHasMore=true,feedLoading=false;const FEED_PAGE_SIZE=40;
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=d=>new Date(d).toLocaleString("ja-JP",{year:"numeric",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});const mediaUrl=(url,stamp)=>{if(!url)return "";try{const u=new URL(url,location.href);if(stamp)u.searchParams.set("v",String(new Date(stamp).getTime()));return u.href}catch(_){return url}};
 function avatar(p,cls="avatar"){if(!p?.avatar_url)return '<div class="'+cls+' avatar-fallback">'+esc((p?.display_name||p?.username||"A").slice(0,1))+'</div>';const x=Number.isFinite(Number(p.avatar_position_x))?Number(p.avatar_position_x):50;const y=Number.isFinite(Number(p.avatar_position_y))?Number(p.avatar_position_y):50;const z=Number.isFinite(Number(p.avatar_zoom))?Number(p.avatar_zoom):100;return '<img class="'+cls+'" src="'+esc(mediaUrl(p.avatar_url,p.updated_at))+'" alt="" style="object-position:'+x+'% '+y+'%;transform:scale('+(z/100)+');" decoding="async" loading="eager" fetchpriority="high">'}
 async function getProfiles(ids){const u=[...new Set(ids.filter(Boolean))];if(!u.length)return new Map();const {data,error}=await sb.from("profiles").select("id,username,display_name,avatar_url,avatar_position_x,avatar_position_y,avatar_zoom,updated_at").in("id",u);if(error)throw error;return new Map((data||[]).map(p=>[p.id,p]))}
-async function loadFeed(){
- const el=document.getElementById("feed");
- el.innerHTML='<div class="loading">読み込み中…</div>';
+async function loadFeed({append=false}={}){
+ const el=document.getElementById("feed"),wrap=document.getElementById("feed-more-wrap"),moreBtn=document.getElementById("feed-more");
+ if(feedLoading)return;
+ feedLoading=true;
+ if(!append){
+  feedOffset=0;feedHasMore=true;postsCache=new Map();
+  el.innerHTML='<div class="loading">読み込み中…</div>';
+  if(wrap)wrap.hidden=true;
+ }else if(moreBtn){moreBtn.disabled=true;moreBtn.textContent="読み込み中…";}
+ const updateMore=()=>{
+  if(wrap)wrap.hidden=!feedHasMore;
+  if(moreBtn){moreBtn.disabled=feedLoading;moreBtn.textContent=feedLoading&&append?"読み込み中…":"もっと読み込む";}
+ };
  try{
   let rows=[];
   if(currentMode==="bookmarks"){
-   if(!currentUser){el.innerHTML='<div class="empty">ログインするとブックマークを利用できます。</div>';return}
-   const r=await sb.from("social_post_bookmarks").select("post_id,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(80);
+   if(!currentUser){
+    if(!append)el.innerHTML='<div class="empty">ログインするとブックマークを利用できます。</div>';
+    feedHasMore=false;updateMore();return;
+   }
+   const r=await sb.from("social_post_bookmarks").select("post_id,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).range(feedOffset,feedOffset+FEED_PAGE_SIZE-1);
    if(r.error)throw r.error;
-   const ids=(r.data||[]).map(x=>x.post_id);
-   if(!ids.length){el.innerHTML='<div class="empty">ブックマークはありません。</div>';return}
+   const bookmarkRows=r.data||[];
+   if(bookmarkRows.length<FEED_PAGE_SIZE)feedHasMore=false;
+   feedOffset+=bookmarkRows.length;
+   const ids=bookmarkRows.map(x=>x.post_id);
+   if(!ids.length){
+    if(!append)el.innerHTML='<div class="empty">ブックマークはありません。</div>';
+    updateMore();return;
+   }
    const r2=await sb.from("social_posts").select("id,author_id,body,attachment_url,attachment_path,attachment_type,reply_to_id,quote_post_id,created_at,updated_at").in("id",ids).is("deleted_at",null);
    if(r2.error)throw r2.error;
-   rows=r2.data||[];
+   const byId=new Map((r2.data||[]).map(x=>[x.id,x]));
+   rows=ids.map(id=>byId.get(id)).filter(Boolean);
   }else{
-   const r=await sb.from("social_posts").select("id,author_id,body,attachment_url,attachment_path,attachment_type,reply_to_id,quote_post_id,created_at,updated_at").is("deleted_at",null).is("reply_to_id",null).order("created_at",{ascending:false}).limit(80);
+   const r=await sb.from("social_posts").select("id,author_id,body,attachment_url,attachment_path,attachment_type,reply_to_id,quote_post_id,created_at,updated_at").is("deleted_at",null).is("reply_to_id",null).order("created_at",{ascending:false}).range(feedOffset,feedOffset+FEED_PAGE_SIZE-1);
    if(r.error)throw r.error;
    rows=r.data||[];
+   if(rows.length<FEED_PAGE_SIZE)feedHasMore=false;
+   feedOffset+=rows.length;
    if(currentMode==="following"&&currentUser){
     try{
-     const f=await sb.from("user_follows").select("following_id").eq("follower_id",currentUser.id);
-     if(!f.error){const ids=new Set((f.data||[]).map(x=>x.following_id));rows=rows.filter(x=>ids.has(x.author_id)||x.author_id===currentUser.id)}
+     const followResult=await sb.from("user_follows").select("following_id").eq("follower_id",currentUser.id);
+     if(!followResult.error){
+      const followed=new Set((followResult.data||[]).map(x=>x.following_id));
+      rows=rows.filter(x=>followed.has(x.author_id)||x.author_id===currentUser.id);
+     }
     }catch(_){}
    }
   }
-  if(!rows.length){el.innerHTML='<div class="empty">まだ投稿がありません。</div>';return}
-  postsCache=new Map(rows.map(x=>[x.id,x]));
-
+  if(!rows.length){
+   if(!append)el.innerHTML='<div class="empty">まだ投稿がありません。</div>';
+   updateMore();return;
+  }
+  rows.forEach(x=>postsCache.set(x.id,x));
   let authors=new Map();
   try{authors=await getProfiles(rows.map(x=>x.author_id))}catch(e){console.warn("プロフィール取得をスキップ",e)}
-
   const mediaMap=new Map();
   try{
    const r=await sb.from("social_post_media").select("id,post_id,public_url,mime_type,sort_order").in("post_id",rows.map(x=>x.id)).order("sort_order",{ascending:true});
    if(!r.error)(r.data||[]).forEach(x=>{if(!mediaMap.has(x.post_id))mediaMap.set(x.post_id,[]);mediaMap.get(x.post_id).push(x)});
   }catch(e){console.warn("投稿写真取得をスキップ",e)}
-
-  const ids=rows.map(x=>x.id);
-  const repliesMap=new Map();
+  const ids=rows.map(x=>x.id),repliesMap=new Map();
   if(ids.length){
    try{
     const rr=await sb.from("social_posts").select("id,author_id,body,reply_to_id,created_at,updated_at,deleted_at").in("reply_to_id",ids).is("deleted_at",null).order("created_at",{ascending:true}).limit(300);
     if(!rr.error)(rr.data||[]).forEach(x=>{if(!repliesMap.has(x.reply_to_id))repliesMap.set(x.reply_to_id,[]);repliesMap.get(x.reply_to_id).push(x)});
    }catch(e){console.warn("返信取得をスキップ",e)}
   }
-
   const lc=new Map(),rc=new Map(),liked=new Set(),reposted=new Set(),saved=new Set();
   try{
    const r=await sb.from("social_post_likes").select("post_id,user_id").in("post_id",ids);
@@ -170,15 +193,19 @@ async function loadFeed(){
     if(!r.error)(r.data||[]).forEach(x=>saved.add(x.post_id));
    }catch(e){console.warn("ブックマーク情報取得をスキップ",e)}
   }
-
   const replyAuthorIds=[...(repliesMap.values())].flat().map(x=>x.author_id);
   let replyAuthors=new Map();
   try{replyAuthors=await getProfiles(replyAuthorIds)}catch(e){console.warn("返信プロフィール取得をスキップ",e)}
-  el.innerHTML=rows.map(p=>renderPost(p,authors.get(p.author_id),mediaMap.get(p.id)||[],lc.get(p.id)||0,rc.get(p.id)||0,liked.has(p.id),reposted.has(p.id),saved.has(p.id),repliesMap.get(p.id)||[],replyAuthors)).join("");
+  const html=rows.map(p=>renderPost(p,authors.get(p.author_id),mediaMap.get(p.id)||[],lc.get(p.id)||0,rc.get(p.id)||0,liked.has(p.id),reposted.has(p.id),saved.has(p.id),repliesMap.get(p.id)||[],replyAuthors)).join("");
+  if(append)el.insertAdjacentHTML("beforeend",html);else el.innerHTML=html;
   bindActions();
  }catch(e){
   console.error("コミュニティ読み込みエラー",e);
-  el.innerHTML='<div class="error">コミュニティを読み込めませんでした。<br><small>'+esc(e.message||"データ取得エラー")+'</small><br><button type="button" class="btn secondary" onclick="loadFeed()">再読み込み</button></div>';
+  const errorHtml='<div class="error">コミュニティを読み込めませんでした。<br><small>'+esc(e.message||"データ取得エラー")+'</small><br><button type="button" class="btn secondary" onclick="loadFeed()">再読み込み</button></div>';
+  if(append)el.insertAdjacentHTML("beforeend",errorHtml);else el.innerHTML=errorHtml;
+ }finally{
+  feedLoading=false;
+  updateMore();
  }
 }
 function renderPost(p,author,media,lc,rc,isLiked,isReposted,isSaved,replies=[],replyAuthors=new Map()){
@@ -214,7 +241,7 @@ function updatePhotoPreview(){
 function setPostFiles(files){const dt=new DataTransfer();files.slice(0,4).forEach(f=>dt.items.add(f));document.getElementById("post-image").files=dt.files;updatePhotoPreview()}
 function removePostPhoto(index){const input=document.getElementById("post-image");setPostFiles([...(input.files||[])].filter((_,i)=>i!==index))}
 function clearPostPhotos(){document.getElementById("post-image").value="";updatePhotoPreview()}
-async function init(){const {data,error}=await sb.auth.getSession();if(error)console.error(error);currentUser=data?.session?.user||null;document.getElementById("post-submit").onclick=createPost;document.getElementById("photo-button").onclick=()=>document.getElementById("post-image").click();document.getElementById("post-image").addEventListener("change",updatePhotoPreview);document.getElementById("post-body").addEventListener("input",e=>document.getElementById("post-count").textContent=e.target.value.length+" / 4000");document.getElementById("user-search-btn").onclick=searchUsers;document.getElementById("user-search").onkeydown=e=>{if(e.key==="Enter")searchUsers()};document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");currentMode=b.dataset.mode;loadFeed()});await loadFeed()}
+async function init(){const {data,error}=await sb.auth.getSession();if(error)console.error(error);currentUser=data?.session?.user||null;document.getElementById("post-submit").onclick=createPost;document.getElementById("photo-button").onclick=()=>document.getElementById("post-image").click();document.getElementById("post-image").addEventListener("change",updatePhotoPreview);document.getElementById("post-body").addEventListener("input",e=>document.getElementById("post-count").textContent=e.target.value.length+" / 4000");document.getElementById("user-search-btn").onclick=searchUsers;document.getElementById("user-search").onkeydown=e=>{if(e.key==="Enter")searchUsers()};document.getElementById("feed-more").onclick=()=>loadFeed({append:true});document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");currentMode=b.dataset.mode;loadFeed()});await loadFeed()}
 document.addEventListener("DOMContentLoaded",init);
 </script>
 <script src="auth-required.js"></script>
