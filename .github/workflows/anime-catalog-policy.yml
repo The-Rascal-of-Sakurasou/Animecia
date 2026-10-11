@@ -337,7 +337,7 @@ jobs:
                   reason="adult_anilist_isAdult"
               elif (c["is_preschool"] if c else bool(r.get("is_preschool"))) and fmt not in ("TV","TV_SHORT"):
                   reason="preschool_anilist_tag"
-              elif origin_status == "verified_non_jp":
+              elif (origin_code is not None and str(origin_code).strip().upper() != "JP") or origin_status == "verified_non_jp":
                   reason="non_japanese_original"
                   non_japanese_excluded+=1
               # Unknown origin and sensitive-visual metadata alone are not exclusions.
