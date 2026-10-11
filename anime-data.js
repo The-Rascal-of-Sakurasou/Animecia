@@ -158,7 +158,7 @@
   function isPublic(a){
     // Client-side guard mirrors the database catalog policy.
     // Unknown origin remains eligible unless a non-Japanese origin is confirmed.
-    if(!a || a.anime_verification_status!=="verified" || a.catalog_policy_decision==="exclude") return false;
+    if(!a || a.anime_verification_status!=="verified" || a.catalog_policy_decision==="exclude" || a.is_sensitive_visual===true) return false;
     const format=String(a.format||"").toUpperCase();
     const allowedFormats=["TV","TV_SHORT","MOVIE","OVA","OAV","ONA","SPECIAL"];
     if(!allowedFormats.includes(format)) return false;
