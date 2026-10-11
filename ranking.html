@@ -158,7 +158,7 @@ function waitForSupabase(){
 }
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const titleOf=a=>AnimeciaData.title(a);
-const base="id,title_japanese,title_native,title_user_preferred,title_romaji,title_english,cover_image,start_date,format,season,season_year,average_score,anime_verification_status,original_country_code,original_country_status,catalog_policy_decision,is_adult,is_kids,is_sensitive_visual,created_at";
+const base="id,title_japanese,title_native,title_user_preferred,title_romaji,title_english,cover_image,start_date,format,season,season_year,average_score,anime_verification_status,original_country_code,original_country_status,catalog_policy_decision,is_adult,is_kids,is_preschool,is_sensitive_visual,duplicate_status,created_at";
 let engagement=new Map();
 let anime=new Map();
 let mode="rating";
@@ -203,8 +203,6 @@ async function load(){
  if(ids.length){
    const a=await sb.from("animecia_public_anime").select(base)
      .eq("anime_verification_status","verified")
-     .eq("is_adult",false)
-     
      .in("id",ids);
    if(a.error) throw a.error;
    rows=(a.data||[]).filter(AnimeciaData.isPublic);
