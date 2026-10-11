@@ -16,49 +16,44 @@ async function walk(dir) {
   return out;
 }
 
-function addHeadLinks(html, links) {
-  for (const link of links) {
-    const marker = `href="${link.href}"`;
-    if (!html.includes(marker)) {
-      html = html.replace(/<\\/head>/i, `${link.tag}\\n</head>`);
-    }
-  }
-  return html;
+function addHeadLink(html, href, tag) {
+  if (html.includes('href="' + href + '"')) return html;
+  return html.replace(/<\/head>/i, tag + "\n</head>");
 }
 
 function optimize(html, file) {
-  const relativePath = relative(root, file).replaceAll("\\\\", "/");
+  const relativePath = relative(root, file).replaceAll("\\", "/");
   const depth = relativePath.split("/").length - 1;
   const performanceScript = depth === 0
     ? "performance.js"
     : "../".repeat(depth) + "performance.js";
 
-  if (!html.includes(`src="${performanceScript}"`) &&
-      !html.includes(`src='${performanceScript}'`)) {
-    html = html.replace(/<\\/head>/i, `<script src="${performanceScript}" defer></script>\\n</head>`);
+  if (!html.includes('src="' + performanceScript + '"') &&
+      !html.includes("src='" + performanceScript + "'")) {
+    html = html.replace(/<\/head>/i,
+      '<script src="' + performanceScript + '" defer></script>\n</head>');
   }
 
-  const usesSupabaseCDN = html.includes("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2");
-  if (usesSupabaseCDN) {
-    html = addHeadLinks(html, [
-      { href: SUPABASE_ORIGIN, tag: `<link rel="preconnect" href="${SUPABASE_ORIGIN}">` },
-      { href: CDN_ORIGIN, tag: `<link rel="preconnect" href="${CDN_ORIGIN}" crossorigin>` },
-    ]);
-    html = html.replace(/<link\\s+rel="preload"\\s+as="script"\\s+href="[^"]*supabase-js@2"[^>]*>\\s*/g, "");
-    html = html.replace(/<script\\s+src="([^"]*supabase-js@2)"\\s*><\\/script>/g, '<script src="$1" defer></script>');
+  if (html.includes("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2")) {
+    html = addHeadLink(html, SUPABASE_ORIGIN,
+      '<link rel="preconnect" href="' + SUPABASE_ORIGIN + '">');
+    html = addHeadLink(html, CDN_ORIGIN,
+      '<link rel="preconnect" href="' + CDN_ORIGIN + '" crossorigin>');
+    html = html.replace(/<link\s+rel="preload"\s+as="script"\s+href="[^"]*supabase-js@2"[^>]*>\s*/g, "");
+    html = html.replace(/<script\s+src="([^"]*supabase-js@2)"\s*><\/script>/g,
+      '<script src="$1" defer></script>');
   }
 
-  // Preconnect only to the origin serving the first page image; avoid opening
-  // connections to every image host found in a long catalogue page.
-  const firstImage = html.match(/<img\\b[^>]*?src=["'](https?:\\/\\/[^"'#?]+)[^"']*["']/i);
-  const socialImage = html.match(/<meta\\s+property=["']og:image["']\\s+content=["'](https?:\\/\\/[^"'#?]+)[^"']*["']/i);
+  // Preconnect to only the first page-image origin to limit unnecessary connections.
+  const firstImage = html.match(/<img\b[^>]*?src=["'](https?:\/\/[^"'#?]+)[^"']*["']/i);
+  const socialImage = html.match(/<meta\s+property=["']og:image["']\s+content=["'](https?:\/\/[^"'#?]+)[^"']*["']/i);
   const imageUrl = firstImage?.[1] || socialImage?.[1];
   if (imageUrl) {
     try {
       const origin = new URL(imageUrl).origin;
-      if (origin !== "https://media-mania.github.io" &&
-          !html.includes(`rel="preconnect" href="${origin}"`)) {
-        html = html.replace(/<\\/head>/i, `<link rel="preconnect" href="${origin}" crossorigin>\\n</head>`);
+      if (origin !== "https://media-mania.github.io") {
+        html = addHeadLink(html, origin,
+          '<link rel="preconnect" href="' + origin + '" crossorigin>');
       }
     } catch {
       // Ignore malformed image URLs rather than breaking the build.
@@ -66,20 +61,20 @@ function optimize(html, file) {
   }
 
   let imageCount = 0;
-  html = html.replace(/<img\\b([^>]*?)>/gi, (match, attributes) => {
+  html = html.replace(/<img\b([^>]*?)>/gi, (match, attributes) => {
     imageCount++;
-    if (!/\\bdecoding\\s*=/.test(attributes)) attributes += ' decoding="async"';
-    if (!/\\bloading\\s*=/.test(attributes)) {
+    if (!/\bdecoding\s*=/.test(attributes)) attributes += ' decoding="async"';
+    if (!/\bloading\s*=/.test(attributes)) {
       attributes += imageCount === 1 ? ' loading="eager"' : ' loading="lazy"';
     }
-    if (imageCount === 1 && !/\\bfetchpriority\\s*=/.test(attributes)) {
+    if (imageCount === 1 && !/\bfetchpriority\s*=/.test(attributes)) {
       attributes += ' fetchpriority="high"';
     }
     return "<img" + attributes + ">";
   });
 
-  html = html.replace(/<iframe\\b([^>]*?)>/gi, (match, attributes) =>
-    /\\bloading\\s*=/.test(attributes) ? match : "<iframe" + attributes + ' loading="lazy">'
+  html = html.replace(/<iframe\b([^>]*?)>/gi, (match, attributes) =>
+    /\bloading\s*=/.test(attributes) ? match : "<iframe" + attributes + ' loading="lazy">'
   );
 
   return html;
@@ -96,7 +91,7 @@ async function main() {
       changed++;
     }
   }
-  console.log(`Optimized ${changed} HTML files (scanned ${files.length}).`);
+  console.log("Optimized " + changed + " HTML files (scanned " + files.length + ").");
 }
 
 main().catch(error => {
