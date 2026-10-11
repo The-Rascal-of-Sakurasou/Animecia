@@ -2495,3 +2495,184 @@ footer {
 
 /* Animecia 2026-10-08 UI/UX polish */
 html{overflow-x:hidden}body{overflow-x:hidden}:focus-visible{outline:3px solid #2563eb;outline-offset:3px;border-radius:4px}button,a,input,select,textarea{touch-action:manipulation}@media(max-width:900px){.layout{grid-template-columns:1fr!important}.grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.main-nav,.site-nav,header nav,.nav-links{overflow-x:auto!important;overscroll-behavior-x:contain!important}}@media(max-width:640px){input,select,textarea{font-size:16px!important}.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.wrap.head,.header-inner,.container.nav{padding:0 14px!important}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* =========================================================
+   Animecia visual system refresh — 2026-10-11
+   Reference: clear seasonal ranking, review discovery, and
+   compact navigation patterns. Existing behavior is unchanged.
+========================================================= */
+:root {
+    --animecia-accent: #5b5ce2;
+    --animecia-accent-soft: #f0f0ff;
+    --animecia-ink: #171923;
+    --animecia-muted: #6b7280;
+    --animecia-border: #e5e7eb;
+    --animecia-surface: #ffffff;
+}
+body {
+    color: var(--animecia-ink);
+    background: #f5f6f8;
+}
+.site-header {
+    background: rgba(17, 18, 24, .96);
+    box-shadow: 0 4px 18px rgba(17, 18, 24, .08);
+}
+.logo, .brand {
+    letter-spacing: -.045em;
+}
+.navigation a, .nav-links a {
+    transition: color .18s ease, opacity .18s ease;
+}
+.navigation a:hover, .nav-links a:hover {
+    color: #fff;
+}
+.anime-page {
+    width: min(1320px, 100%);
+    padding-top: 30px;
+}
+.breadcrumb {
+    color: #737783;
+}
+.page-intro {
+    margin-bottom: 24px;
+}
+.page-intro h1, .page-header h1 {
+    color: #171923;
+    letter-spacing: -.04em;
+    font-weight: 850;
+}
+.page-kicker {
+    color: var(--animecia-accent);
+    font-size: 11px;
+    font-weight: 850;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+}
+.section-card, .anime-search-area, .filter-area {
+    border: 1px solid var(--animecia-border);
+    border-radius: 16px;
+    background: var(--animecia-surface);
+    box-shadow: 0 5px 22px rgba(22, 25, 35, .035);
+}
+.anime-search-area, .filter-area {
+    padding: clamp(16px, 2.4vw, 24px);
+}
+.search-box input, .filters input, .filters select,
+input[type="search"], select, textarea {
+    border-color: #dfe2e8;
+    border-radius: 10px;
+}
+.search-box input:focus, .filters input:focus, .filters select:focus,
+input[type="search"]:focus, select:focus, textarea:focus {
+    border-color: var(--animecia-accent);
+    box-shadow: 0 0 0 3px rgba(91, 92, 226, .12);
+}
+.search-button, .primary-button {
+    background: var(--animecia-ink);
+    border-radius: 10px;
+    transition: transform .18s ease, opacity .18s ease, box-shadow .18s ease;
+}
+.search-button:hover, .primary-button:hover {
+    opacity: .94;
+    transform: translateY(-1px);
+}
+.reset-button {
+    border-radius: 10px;
+}
+.filter-title, .result-count {
+    color: #202330;
+    letter-spacing: -.02em;
+}
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.active-filters > * {
+    border-radius: 999px;
+}
+.result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 26px 0 16px;
+}
+.anime-grid {
+    gap: 18px;
+}
+.anime-card, .anime-item, .review-card {
+    border: 1px solid var(--animecia-border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 3px 14px rgba(22, 25, 35, .035);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.anime-card:hover, .anime-item:hover, .review-card:hover {
+    transform: translateY(-3px);
+    border-color: #d4d5fb;
+    box-shadow: 0 12px 28px rgba(22, 25, 35, .09);
+}
+.anime-card img, .anime-item img {
+    background: #eceef3;
+}
+.anime-card-content {
+    padding: 15px;
+}
+.anime-card h2, .anime-card h3, .anime-item h2, .anime-item h3 {
+    line-height: 1.45;
+    letter-spacing: -.015em;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 30px 0 12px;
+}
+.pagination button, .pagination a {
+    min-width: 40px;
+    min-height: 40px;
+    border: 1px solid #dfe2e8;
+    border-radius: 10px;
+    background: #fff;
+}
+.pagination button:hover, .pagination a:hover {
+    border-color: var(--animecia-accent);
+    color: var(--animecia-accent);
+}
+:focus-visible {
+    outline: 3px solid rgba(91, 92, 226, .4);
+    outline-offset: 3px;
+}
+@media (max-width: 700px) {
+    .anime-page {
+        padding: 22px 14px 48px;
+    }
+    .anime-search-area, .filter-area {
+        padding: 15px;
+        border-radius: 13px;
+    }
+    .search-box {
+        flex-wrap: wrap;
+    }
+    .search-box input {
+        flex-basis: 100%;
+    }
+    .search-button, .reset-button {
+        flex: 1;
+        padding-inline: 12px;
+    }
+    .anime-grid {
+        gap: 12px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .anime-card, .anime-item, .review-card,
+    .search-button, .primary-button {
+        transition: none !important;
+    }
+}
