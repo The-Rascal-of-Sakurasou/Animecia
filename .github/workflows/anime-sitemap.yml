@@ -4,12 +4,12 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - "sitemap.xml"
-      - "sitemap-pages.xml"
-      - "sitemap-anime-*.xml"
-      - "anime/**"
-      - "genre/**"
+    paths:
+      - "scripts/generate-anime-seo-pages.mjs"
+      - "scripts/generate-sitemap.mjs"
+      - ".github/workflows/anime-sitemap.yml"
+      - ".github/workflows/anime-catalog-policy.yml"
+      - "supabase/migrations/**"
   schedule:
     - cron: "20 */6 * * *"
   workflow_dispatch:
@@ -19,7 +19,7 @@ permissions:
 
 concurrency:
   group: animecia-sitemap
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   sitemap:
@@ -37,22 +37,25 @@ jobs:
         with:
           node-version: 22
 
-      - name: Generate static SEO anime pages
-        run: node scripts/generate-anime-seo-pages.mjs
-
-      - name: Generate sitemap
-        run: node scripts/generate-sitemap.mjs
-
-      - name: Commit generated SEO data
+      - name: Generate SEO pages and sitemap with retry
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add anime genre sitemap.xml sitemap-pages.xml sitemap-anime-*.xml
-          if git diff --cached --quiet; then
-            echo "No generated changes."
-            exit 0
-          fi
-          git commit -m "Update Animecia SEO pages and sitemap"
-          git fetch origin main
-          git rebase origin/main
-          git push
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            node scripts/generate-anime-seo-pages.mjs
+            node scripts/generate-sitemap.mjs
+            git add anime genre sitemap.xml sitemap-pages.xml sitemap-anime-*.xml
+            if git diff --cached --quiet; then
+              echo "No generated changes."
+              exit 0
+            fi
+            git commit -m "Update Animecia SEO pages and sitemap"
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Push race detected; retrying from latest main (attempt ${attempt}/3)."
+          done
+          echo "Could not push generated SEO data after 3 attempts."
+          exit 1
