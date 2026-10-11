@@ -3509,36 +3509,52 @@ function compareAnimeTitles(a,b){ return AnimeciaData.compare(a,b); }
         if(!user || !user.email_confirmed_at) return;
         const ids=animeData.map(a=>a.id).filter(Boolean);
         if(!ids.length) return;
-        const {data:watch}=await supabaseClient.from("user_anime_status").select("anime_id,status,progress").eq("user_id",user.id).in("anime_id",ids);
-        const watchMap=new Map((watch||[]).map(x=>[String(x.anime_id),x]));
-        await Promise.all(ids.map(async animeId=>{
+
+        // 視聴状態とお気に入りをまとめて取得し、作品ごとのRPC連打を避ける。
+        const [watchResult, favoriteResult] = await Promise.all([
+            supabaseClient.from("user_anime_status")
+                .select("anime_id,status,progress")
+                .eq("user_id",user.id)
+                .in("anime_id",ids),
+            supabaseClient.from("favorites")
+                .select("anime_id")
+                .eq("user_id",user.id)
+                .in("anime_id",ids)
+        ]);
+
+        if(watchResult.error) console.error("視聴状態取得エラー:",watchResult.error);
+        if(favoriteResult.error) console.error("お気に入り状態取得エラー:",favoriteResult.error);
+
+        const watchMap=new Map((watchResult.data||[]).map(x=>[String(x.anime_id),x]));
+        const favoriteIds=new Set((favoriteResult.data||[]).map(x=>String(x.anime_id)));
+
+        ids.forEach(animeId=>{
             const box=document.querySelector('.user-anime-actions[data-user-actions="'+animeId+'"]');
             if(!box) return;
             const fb=box.querySelector(".favorite-toggle");
             const anime=animeData.find(x=>Number(x.id)===Number(animeId));
             const sel=box.querySelector(".watch-select");
-            try{
-                const {data,error}=await supabaseClient.rpc("get_my_anime_favorite",{p_anime_id:Number(animeId)});
-                if(error) throw error;
-                const active=data===true;
-                fb.classList.toggle("active",active);
-                fb.setAttribute("aria-pressed",String(active));
-                fb.textContent=active?"お気に入り登録済み":"お気に入り";
-            }catch(error){ console.error("お気に入り状態取得エラー:",error); }
+            const active=favoriteIds.has(String(animeId));
+            fb.classList.toggle("active",active);
+            fb.setAttribute("aria-pressed",String(active));
+            fb.textContent=active?"お気に入り登録済み":"お気に入り";
+
             const w=watchMap.get(String(animeId));
-            if(w){sel.value=w.status||"";}
+            if(w) sel.value=w.status||"";
+
             fb.onclick=async()=>{
                 fb.disabled=true;
                 try{
                     const {data,error}=await supabaseClient.rpc("toggle_my_anime_favorite",{p_anime_id:Number(animeId)});
                     if(error) throw error;
-                    const active=data===true;
-                    fb.classList.toggle("active",active);
-                    fb.setAttribute("aria-pressed",String(active));
-                    fb.textContent=active?"お気に入り登録済み":"お気に入り";
+                    const nowActive=data===true;
+                    fb.classList.toggle("active",nowActive);
+                    fb.setAttribute("aria-pressed",String(nowActive));
+                    fb.textContent=nowActive?"お気に入り登録済み":"お気に入り";
                 }catch(error){ console.error("お気に入り更新エラー:",error); alert("お気に入りの更新に失敗しました。もう一度お試しください。"); }
                 finally{fb.disabled=false;}
             };
+
             const save=async()=>{
                 if(!sel.value)return;
                 const total=Number(anime?.episodes||0);
@@ -3549,7 +3565,7 @@ function compareAnimeTitles(a,b){ return AnimeciaData.compare(a,b); }
                 if(error){console.error("視聴状況保存エラー:",error);alert("視聴状況の保存に失敗しました。");}
             };
             sel.onchange=save;
-        }));
+        });
     }
 
     /* =========================================
