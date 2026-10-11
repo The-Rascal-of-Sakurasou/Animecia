@@ -152,7 +152,6 @@
     // these flags alone; preschool-only works remain excluded.
     return !!a && a.anime_verification_status==="verified" &&
       a.original_country_status!=="verified_non_jp" &&
-      a.original_country_code!=="CN" && a.original_country_code!=="KR" &&
       a.catalog_policy_decision!=="exclude" &&
       a.is_adult!==true && a.is_preschool!==true;
   }
