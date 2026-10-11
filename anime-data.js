@@ -146,14 +146,21 @@
     }));
   }
   function isPublic(a){
-    // Unknown country of origin remains visible unless it is confirmed non-Japanese.
-    // Preserve release-date, duplicate, and adult-only exclusions in catalog_policy_decision.
-    // General-broadcast children's anime and visual-sensitive titles are not excluded by
-    // these flags alone; preschool-only works remain excluded.
-    return !!a && a.anime_verification_status==="verified" &&
-      a.original_country_status!=="verified_non_jp" &&
-      a.catalog_policy_decision!=="exclude" &&
-      a.is_adult!==true && a.is_preschool!==true;
+    // Client-side guard mirrors the database catalog policy.
+    // Unknown origin remains eligible unless a non-Japanese origin is confirmed.
+    if(!a || a.anime_verification_status!=="verified" || a.catalog_policy_decision==="exclude") return false;
+    const format=String(a.format||"").toUpperCase();
+    const allowedFormats=["TV","TV_SHORT","MOVIE","OVA","OAV","ONA","SPECIAL"];
+    if(!allowedFormats.includes(format)) return false;
+    if(!a.start_date || String(a.start_date)<"1963-01-01") return false;
+    if(a.original_country_code && String(a.original_country_code).toUpperCase()!=="JP") return false;
+    if(a.original_country_status==="verified_non_jp") return false;
+    if(a.duplicate_status==="duplicate" || a.is_sensitive_visual===true) return false;
+    const broadcast=["TV","TV_SHORT"].includes(format);
+    if(a.is_adult===true && !broadcast) return false;
+    if(a.is_preschool===true && !broadcast) return false;
+    // is_kids alone is not an exclusion.
+    return true;
   }
   global.AnimeciaData={title,subtitle,year,season,seasonCode,format,status,image,score,reading,compare,genres,withEngagement,isPublic,seasonNames,formatNames,statusNames};
 })(window);
