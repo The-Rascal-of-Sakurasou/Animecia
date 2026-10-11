@@ -4,20 +4,27 @@ const title=a=>AnimeciaData.title(a);
 let rows=[],selectedGenres=new Set(),requestVersion=0,debounceTimer=null;
 
 async function loadOptions(){
- const [genresResult,yearsResult]=await Promise.all([
+ const [initialGenresResult,yearsResult]=await Promise.all([
   s.rpc("get_catalog_genre_counts"),
   s.rpc("get_catalog_years")
  ]);
- if(genresResult.error) throw genresResult.error;
+ let genresResult=initialGenresResult;
+ if(genresResult.error){
+  console.warn("Genre counts RPC unavailable; loading genre names without counts.",genresResult.error);
+  genresResult=await s.rpc("get_catalog_genres");
+  if(genresResult.error) throw genresResult.error;
+  renderGenres((genresResult.data||[]).map(g=>({...g,anime_count:null})));
+ }else{
+  renderGenres(genresResult.data||[]);
+ }
  if(yearsResult.error) throw yearsResult.error;
- renderGenres(genresResult.data||[]);
  const years=(yearsResult.data||[]).map(x=>Number(x.year)).filter(y=>Number.isInteger(y));
  document.getElementById("year").innerHTML='<option value="">すべて</option>'+years.map(y=>'<option value="'+y+'">'+y+'</option>').join("");
 }
 
 function renderGenres(genres){
  const el=document.getElementById("genre-chips");
- el.innerHTML=genres.map(g=>'<button type="button" class="chip'+(selectedGenres.has(Number(g.id))?' active':'')+'" data-id="'+Number(g.id)+'">'+esc(g.name)+'<span class="genre-count">'+Number(g.anime_count||0).toLocaleString("ja-JP")+'</span></button>').join("")||'<span class="empty">ジャンルがありません。</span>';
+ el.innerHTML=genres.map(g=>'<button type="button" class="chip'+(selectedGenres.has(Number(g.id))?' active':'')+'" data-id="'+Number(g.id)+'">'+esc(g.name)+(g.anime_count==null?'':'<span class="genre-count">'+Number(g.anime_count).toLocaleString("ja-JP")+'</span>')+'</button>').join("")||'<span class="empty">ジャンルがありません。</span>';
  el.querySelectorAll(".chip").forEach(button=>button.addEventListener("click",()=>{
   const id=Number(button.dataset.id);
   if(selectedGenres.has(id))selectedGenres.delete(id);else selectedGenres.add(id);
