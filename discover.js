@@ -49,7 +49,6 @@ function render(){
  if(q)r=r.filter(a=>(title(a)+" "+(a.title||"")).toLowerCase().includes(q));
  if(f){const target=f.toUpperCase();r=r.filter(a=>String(a.format||"").toUpperCase()===target || (target==="MOVIE"&&String(a.format||"").toUpperCase()==="FILM"));}if(y)r=r.filter(a=>String(a.season_year)===y);if(st)r=r.filter(a=>a.status===st);if(min)r=r.filter(a=>Number(a.e.average_rating||0)>=Number(min));
  if(selectedGenres.size)r=r.filter(a=>[...selectedGenres].every(g=>a.g.includes(g)));
- const compareTitle=(a,b)=>AnimeciaData.compare(a,b);
 if(sort==="new")r.sort((a,b)=>String(b.start_date||"").localeCompare(String(a.start_date||"")));
 else if(sort==="popular")r.sort((a,b)=>Number(b.e.favorite_count||0)-Number(a.e.favorite_count||0));
 else if(sort!=="title")r.sort((a,b)=>Number(b.e.average_rating||0)-Number(a.e.average_rating||0));
