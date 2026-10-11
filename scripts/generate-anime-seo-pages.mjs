@@ -30,17 +30,12 @@ function jsonLd(value) {
 }
 
 async function fetchAnimePage(offset) {
-  const url = new URL("/rest/v1/anime", supabaseUrl);
+  const url = new URL("/rest/v1/animecia_public_anime", supabaseUrl);
   url.searchParams.set(
     "select",
-    "id,title,title_japanese,title_english,title_native,english_title,description,synopsis,cover_image,banner_image,start_date,end_date,episodes,duration,status,format,season,season_year,source,average_score,popularity,favourites_count,updated_at,anime_genres(genres(id,name))"
+    "id,title,title_japanese,title_english,title_native,english_title,description,synopsis,cover_image,banner_image,start_date,end_date,episodes,duration,status,format,season,season_year,source,average_score,popularity,favourites_count,updated_at"
   );
-  // 公開SEOページは、Animeciaの検証済み・アニメ作品だけを対象にする。
-  // 未確定の作品や1963年以前のデータを静的ページ化しない。
-  url.searchParams.set("anime_verification_status", "eq.verified");
-  url.searchParams.set("format", "in.(TV,TV_SHORT,MOVIE,OVA,OAV,ONA,SPECIAL)");
-  url.searchParams.set("or", "(start_date.is.null,start_date.gte.1963-01-01)");
-
+  // The public catalog view applies the same eligibility rules as the live site.
   url.searchParams.set("order", "id.asc");
   url.searchParams.set("limit", String(pageSize));
   url.searchParams.set("offset", String(offset));
@@ -58,6 +53,45 @@ async function fetchAnimePage(offset) {
 
   return response.json();
 }
+
+async function fetchAnimeGenrePage(ids, offset) {
+  const url = new URL("/rest/v1/anime_genres", supabaseUrl);
+  url.searchParams.set("select", "anime_id,genre_id,genres(id,name)");
+  url.searchParams.set("anime_id", `in.(${ids.join(",")})`);
+  url.searchParams.set("order", "anime_id.asc,genre_id.asc");
+  url.searchParams.set("limit", "1000");
+  url.searchParams.set("offset", String(offset));
+  const response = await fetch(url, {
+    headers: {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error(`Supabase genre request failed: ${response.status} ${await response.text()}`);
+  }
+  return response.json();
+}
+
+async function attachAnimeGenres(animeRows) {
+  const byAnime = new Map(animeRows.map(anime => [Number(anime.id), []]));
+  for (let start = 0; start < animeRows.length; start += 100) {
+    const ids = animeRows.slice(start, start + 100).map(anime => Number(anime.id));
+    let offset = 0;
+    while (true) {
+      const rows = await fetchAnimeGenrePage(ids, offset);
+      for (const row of rows) {
+        const animeId = Number(row.anime_id);
+        if (!byAnime.has(animeId) || !row.genres?.id || !row.genres?.name) continue;
+        byAnime.get(animeId).push({ genres: { id: row.genres.id, name: row.genres.name } });
+      }
+      if (rows.length < 1000) break;
+      offset += rows.length;
+    }
+  }
+  for (const anime of animeRows) anime.anime_genres = byAnime.get(Number(anime.id)) || [];
+}
+
 
 function mainTitle(anime) {
   return text(
@@ -195,6 +229,7 @@ for (let offset = 0; ; offset += pageSize) {
   animeRows.push(...rows);
   if (rows.length < pageSize) break;
 }
+await attachAnimeGenres(animeRows);
 
 await rm(outDir, { recursive: true, force: true });
 await rm("genre", { recursive: true, force: true });
