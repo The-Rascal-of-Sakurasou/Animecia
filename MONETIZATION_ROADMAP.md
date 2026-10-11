@@ -54,3 +54,21 @@
 - Google 検索セントラル SEO スターターガイド: https://developers.google.com/search/docs/fundamentals/seo-starter-guide
 - Supabase 本番運用チェックリスト: https://supabase.com/docs/guides/deployment/going-into-prod
 - Supabase Row Level Security: https://supabase.com/docs/guides/database/postgres/row-level-security
+
+
+## 2026-10-11 実データベース監査メモ
+
+Supabaseのプロジェクト状態は `ACTIVE_HEALTHY`。公開カタログの `public.anime` は10,176行。これはDB行数であり、公開条件を満たす作品数とは異なる。
+
+セキュリティアドバイザーで検出:
+- `advertisements` に、すべての authenticated 利用者へ INSERT / UPDATE / DELETE を許す広いポリシーが重複して存在。管理者限定ポリシーと併存していても、PERMISSIVEポリシーはOR評価されるため、管理者限定の意図を弱める。管理者用の既存ポリシーを確認し、広いポリシーを除去して再検証する。
+- `recommended_anime` に `USING (true) WITH CHECK (true)` の authenticated 全操作ポリシーがあり、管理者限定の既存ポリシーと併存。管理者限定へ整理する必要がある。
+- `anime_comments` に匿名ユーザーの投稿を入力検証なしで許すポリシーがあり、同じテーブルの長さ・必須項目・訪問者識別子を検査するポリシーを迂回し得る。厳格な投稿条件を維持したうえで整理する。
+- `SECURITY DEFINER` 関数の実行権限に関する警告、可変 search_path の警告、漏えい済みパスワード保護が無効という警告がある。各関数の用途・呼び出し元・権限を確認してから最小権限に修正する。
+- `animecia_public_genre_audit` と `user_conversations` はRLS有効・ポリシーなしの警告。意図的な拒否か、必要な利用者アクセスが欠けているか、テーブル用途を確認する。
+
+対応原則:
+- 本番ポリシーはテーブル・フロントエンド利用箇所・管理者フローを確認してから変更する。
+- 変更後は `pg_policies` と Supabase security advisors で再検証する。
+- 認証済みというだけで管理者権限を与えない。所有者・管理者の認可条件を明示する。
+- 個人メッセージやユーザー固有データのアクセス制御を優先して検査する。
