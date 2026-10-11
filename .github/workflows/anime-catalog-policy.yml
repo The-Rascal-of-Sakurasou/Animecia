@@ -322,7 +322,10 @@ jobs:
                   re.IGNORECASE
               )
               allowed_formats={"TV","TV_SHORT","MOVIE","OVA","OAV","ONA","SPECIAL"}
-              if not first_release:
+              # A previously flagged sensitive image must remain excluded even when another rule also matches.
+              if bool(r.get("is_sensitive_visual")) or bool(c and c.get("is_sensitive_visual")):
+                  reason="sensitive_visual_exclusion"
+              elif not first_release:
                   reason="unknown_first_release_date"
               elif first_release < cutoff.isoformat():
                   reason="before_1963-01-01"
@@ -340,7 +343,7 @@ jobs:
               elif (origin_code is not None and str(origin_code).strip().upper() != "JP") or origin_status == "verified_non_jp":
                   reason="non_japanese_original"
                   non_japanese_excluded+=1
-              # Unknown origin and sensitive-visual metadata alone are not exclusions.
+              # Unknown origin alone is not an exclusion; sensitive visual metadata always is.
               # The full publication rules are applied here before changing verification status.
               if reason:
                   policy_groups[("exclude",reason,"")].append(rid)
