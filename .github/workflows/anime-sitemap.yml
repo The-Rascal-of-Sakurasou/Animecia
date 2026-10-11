@@ -54,6 +54,13 @@ jobs:
             git reset --hard origin/main
             node scripts/generate-anime-seo-pages.mjs
             node scripts/generate-sitemap.mjs
+            anime_pages=$(find anime -mindepth 2 -maxdepth 2 -name index.html | wc -l | tr -d ' ')
+            anime_urls=$(grep -h -o '<loc>' sitemap-anime-*.xml | wc -l | tr -d ' ')
+            if [ "$anime_pages" -ne "$anime_urls" ]; then
+              echo "Sitemap mismatch: ${anime_pages} pages, ${anime_urls} URLs."
+              exit 1
+            fi
+            echo "Validated ${anime_pages} anime pages against ${anime_urls} sitemap URLs."
             git add -A
             if git diff --cached --quiet; then
               echo "No generated changes."
