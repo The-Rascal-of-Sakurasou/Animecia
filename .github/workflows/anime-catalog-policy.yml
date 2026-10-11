@@ -116,7 +116,7 @@ jobs:
           page_size=1000
           while True:
               page=sb("/rest/v1/anime",params={
-                  "select":"id,source_provider,source_id,external_id,anime_verification_status,is_japanese,original_country_code,original_country_status,original_country_review_reason,start_date,format,is_adult,is_preschool",
+                  "select":"id,source_provider,source_id,external_id,anime_verification_status,is_japanese,original_country_code,original_country_status,original_country_review_reason,start_date,format,is_adult,is_preschool,is_sensitive_visual",
                   "order":"id.asc",
                   "limit":str(page_size),
                   "offset":str(offset)
@@ -306,7 +306,9 @@ jobs:
                   origin_code=str(r.get("original_country_code") or "").strip().upper() or None
                   origin_status=r.get("original_country_status")
               reason=None
-              if r.get("start_date") and str(r["start_date"])[:10] < cutoff.isoformat():
+              if (c and c.get("is_sensitive_visual")) or bool(r.get("is_sensitive_visual")):
+                  reason="sensitive_visual_exclusion"
+              elif r.get("start_date") and str(r["start_date"])[:10] < cutoff.isoformat():
                   reason="before_1963-01-01"
               elif (c["is_adult"] if c else bool(r.get("is_adult"))) and str(r.get("format") or "").upper() not in ("TV","TV_SHORT"):
                   reason="adult_anilist_isAdult"
