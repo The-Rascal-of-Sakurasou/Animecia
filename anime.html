@@ -4195,7 +4195,7 @@ function compareAnimeTitles(a,b){ return AnimeciaData.compare(a,b); }
             "year", "season", "status", "format", "genre", "studio", "sort"
         ].some(key => params.has(key)) || params.has("filter");
 
-        const initialLoad = loadAnime();
+        loadAnime();
         const optionsLoad = Promise.allSettled([
             createYearOptions(),
             createGenreOptions(),
@@ -4209,8 +4209,6 @@ function compareAnimeTitles(a,b){ return AnimeciaData.compare(a,b); }
         if (hasFilterParams) {
             await loadAnime();
         }
-
-        await initialLoad;
     }
 
     initializeAnimePage();
