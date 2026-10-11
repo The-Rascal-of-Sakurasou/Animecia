@@ -54,7 +54,7 @@ jobs:
             git reset --hard origin/main
             node scripts/generate-anime-seo-pages.mjs
             node scripts/generate-sitemap.mjs
-            git add anime genre sitemap.xml sitemap-pages.xml sitemap-anime-*.xml
+            git add -A
             if git diff --cached --quiet; then
               echo "No generated changes."
               exit 0
