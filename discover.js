@@ -27,7 +27,7 @@ async function load(){
  if(gr.error) console.warn("Genre metadata unavailable; catalog will still be displayed.",gr.error);
  (gr.data||[]).forEach(g=>genreMap.set(Number(g.id),g.name));
  const normGenre=v=>String(v??"").normalize("NFKC").trim().toLowerCase();
- rows=(ar||[]).filter(a=>String(a.format||"").toUpperCase()!=="SPECIAL").map(a=>{
+ rows=(ar||[]).map(a=>{
    const names=String(a.genre||"").split(",").map(normGenre).filter(Boolean);
    const g=[...genreMap.entries()].filter(([,name])=>names.includes(normGenre(name))).map(([id])=>id);
    return {...a,e:{
@@ -55,7 +55,7 @@ else if(sort==="popular")r.sort((a,b)=>Number(b.e.favorite_count||0)-Number(a.e.
 else if(sort!=="title")r.sort((a,b)=>Number(b.e.average_rating||0)-Number(a.e.average_rating||0));
  document.getElementById("count").innerHTML='<b>'+r.length+'</b> 作品';document.getElementById("result-count-v6").innerHTML='<b>'+r.length+'</b> 作品';
  const summary=[];if(q)summary.push("キーワード");if(selectedGenres.size)summary.push(selectedGenres.size+"ジャンル");if(f)summary.push(f);if(y)summary.push(y+"年");if(st)summary.push("放送状況");if(min)summary.push("評価"+min+"以上");document.getElementById("active-summary").textContent=summary.length?summary.join(" / "):"条件なし";
- document.getElementById("grid").innerHTML=r.slice(0,300).map(a=>'<a class="card" href="anime-detail.html?id='+a.id+'">'+(a.cover_image?'<img class="cover" src="'+esc(a.cover_image)+'" alt="'+esc(title(a))+'" loading="lazy" decoding="async" fetchpriority="high">':'<div class="cover" style="display:grid;place-items:center">画像なし</div>')+'<div class="pad"><div class="title">'+esc(title(a))+'</div><div class="sub">'+esc(a.status||"")+(a.episodes!=null?" · "+a.episodes+"話":"")+'</div><div class="meta"><span class="pill">★ '+(a.e.average_rating!=null?Number(a.e.average_rating).toFixed(1):"—")+'</span><span>♥ '+Number(a.e.favorite_count||0)+'</span></div></div></a>').join("")||'<div class="empty">条件に一致する作品がありません。</div>';
+ document.getElementById("grid").innerHTML=r.slice(0,300).map(a=>'<a class="card" href="anime-detail.html?id='+a.id+'">'+(a.cover_image?'<img class="cover" src="'+esc(a.cover_image)+'" alt="'+esc(title(a))+'" loading="lazy" decoding="async">':'<div class="cover" style="display:grid;place-items:center">画像なし</div>')+'<div class="pad"><div class="title">'+esc(title(a))+'</div><div class="sub">'+esc(a.status||"")+(a.episodes!=null?" · "+a.episodes+"話":"")+'</div><div class="meta"><span class="pill">★ '+(a.e.average_rating!=null?Number(a.e.average_rating).toFixed(1):"—")+'</span><span>♥ '+Number(a.e.favorite_count||0)+'</span></div></div></a>').join("")||'<div class="empty">条件に一致する作品がありません。</div>';
 }
 ["q","format","year","status","rating","sort"].forEach(id=>document.getElementById(id).addEventListener("input",render));
 document.getElementById("q").addEventListener("keydown",e=>{if(e.key==="Enter")e.preventDefault();});
