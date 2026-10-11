@@ -184,7 +184,7 @@ function render(rows){
    const rank=currentRank;
    previous=v;
    const display=v.toLocaleString("ja-JP");
-   return '<a class="ranking-row" href="anime-detail.html?id='+encodeURIComponent(a.id)+'"><span class="rank-number">'+rank+'</span>'+(a.cover_image?'<img class="rank-cover" src="'+esc(a.cover_image)+'" alt="'+esc(titleOf(a))+'" loading="lazy" decoding="async" fetchpriority="high">':'<div class="rank-cover"></div>')+'<div><div class="rank-title">'+esc(titleOf(a))+'</div><div class="rank-meta">'+esc(a.season_year||"")+' '+esc(a.format||"")+'</div></div><div class="rank-stats">'+display+'<small>'+labelFor()+'</small></div></a>';
+   return '<a class="ranking-row" href="anime-detail.html?id='+encodeURIComponent(a.id)+'"><span class="rank-number">'+rank+'</span>'+(a.cover_image?'<img class="rank-cover" src="'+esc(a.cover_image)+'" alt="'+esc(titleOf(a))+'" loading="'+(i===0?'eager':'lazy')+'" decoding="async"'+(i===0?' fetchpriority="high"':'')+'>':'<div class="rank-cover"></div>')+'<div><div class="rank-title">'+esc(titleOf(a))+'</div><div class="rank-meta">'+esc(a.season_year||"")+' '+esc(a.format||"")+'</div></div><div class="rank-stats">'+display+'<small>'+labelFor()+'</small></div></a>';
  }).join("");
 }
 async function load(){
