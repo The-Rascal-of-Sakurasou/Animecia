@@ -18,8 +18,8 @@ function esc(value) {
 }
 
 async function fetchAnimePage(offset) {
-  const url = new URL("/rest/v1/anime", supabaseUrl);
-  url.searchParams.set("select", "id,updated_at,anime_genres(genre_id)");
+  const url = new URL("/rest/v1/animecia_public_anime", supabaseUrl);
+  url.searchParams.set("select", "id,updated_at");
   url.searchParams.set("order", "id.asc");
   url.searchParams.set("limit", "1000");
   url.searchParams.set("offset", String(offset));
@@ -37,6 +37,44 @@ async function fetchAnimePage(offset) {
 
   return response.json();
 }
+
+async function fetchGenrePage(ids, offset) {
+  const url = new URL("/rest/v1/anime_genres", supabaseUrl);
+  url.searchParams.set("select", "anime_id,genre_id");
+  url.searchParams.set("anime_id", `in.(${ids.join(",")})`);
+  url.searchParams.set("order", "anime_id.asc,genre_id.asc");
+  url.searchParams.set("limit", "1000");
+  url.searchParams.set("offset", String(offset));
+  const response = await fetch(url, {
+    headers: {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error(`Supabase genre request failed: ${response.status} ${await response.text()}`);
+  }
+  return response.json();
+}
+
+async function fetchPublicGenreIds(animeIds) {
+  const genreIds = new Set();
+  for (let start = 0; start < animeIds.length; start += 100) {
+    const ids = animeIds.slice(start, start + 100);
+    let offset = 0;
+    while (true) {
+      const rows = await fetchGenrePage(ids, offset);
+      for (const row of rows) {
+        const id = Number(row.genre_id);
+        if (Number.isInteger(id)) genreIds.add(id);
+      }
+      if (rows.length < 1000) break;
+      offset += rows.length;
+    }
+  }
+  return [...genreIds];
+}
+
 
 function urlEntry(loc, lastmod) {
   return [
@@ -64,7 +102,7 @@ for (let offset = 0; ; offset += 1000) {
   if (rows.length < 1000) break;
 }
 
-const genreIds = [...new Set(animeRows.flatMap(row => (row.anime_genres || []).map(item => Number(item.genre_id)).filter(Number.isInteger)))];
+const genreIds = await fetchPublicGenreIds(animeRows.map(row => Number(row.id)));
 
 const pageXml = [
   '<?xml version="1.0" encoding="UTF-8"?>',
