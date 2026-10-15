@@ -2637,6 +2637,15 @@ function compareAnimeTitles(a,b){ return AnimeciaData.compare(a,b); }
              */
             if (error) {
                 console.warn("Catalog RPCs unavailable; trying public view fallback:", error);
+
+                // 公開ビューだけではジャンルID・制作会社IDを正確に適用できないため、
+                // 条件を黙って無視した誤った検索結果を返さない。
+                if (rpcParams.p_genre_id != null || rpcParams.p_studio_id != null) {
+                    throw new Error(
+                        "検索機能の一部が一時的に利用できないため、ジャンル・制作会社の条件を適用できません。時間をおいて再試行してください。"
+                    );
+                }
+
                 let query = supabaseClient.from("animecia_public_anime").select(
                     "id,title,title_japanese,title_native,title_user_preferred,title_romaji,title_english,english_title,cover_image,banner_image,format,genre,description,review,synopsis,official_url,site_url,streaming_links,start_date,end_date,episodes,duration,season,season_year,status,source,average_score,popularity,favourites_count",
                     { count: "exact" }
