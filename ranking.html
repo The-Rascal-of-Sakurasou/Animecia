@@ -174,7 +174,15 @@ function labelFor(){
 }
 function render(rows){
  const box=document.getElementById("ranking-list");
- if(!rows.length){box.innerHTML='<div class="state">このランキングに表示できる作品データがありません。</div>';return;}
+ if(!rows.length){
+   const messages={
+     rating:"評価が登録された作品はまだありません。作品詳細ページで評価すると、ここにランキングが表示されます。",
+     favorites:"お気に入り登録された作品はまだありません。作品をお気に入りに追加すると、ここにランキングが表示されます。",
+     reviews:"レビューが投稿された作品はまだありません。レビューが投稿されると、ここにランキングが表示されます。"
+   };
+   box.innerHTML='<div class="state">'+esc(messages[mode]||"このランキングに表示できる作品データがありません。")+'</div>';
+   return;
+ }
  let previous=null;
  let currentRank=0;
  box.innerHTML=rows.map((a,i)=>{
