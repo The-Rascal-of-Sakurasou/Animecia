@@ -620,7 +620,7 @@ async function load(){
     p_season:null,p_status:null,p_format:null,p_limit:1,p_offset:0
   };
 
-  const [seasonRes,genreRes,rankingRes,reviewRes,titleRows]=await Promise.all([
+  const [seasonRes,genreRes,rankingRes,reviewRes,titleRows,countRes]=await Promise.all([
     safeCatalog({...emptyParams,p_year:year,p_season:season,p_sort:"score",p_limit:12}),
     safe(sb.rpc("get_catalog_genres")),
     safeCatalog({...emptyParams,p_sort:"score",p_limit:10}),
@@ -628,10 +628,14 @@ async function load(){
       .select("id,anime_id,title,content,rating,spoiler,likes_count,created_at")
       .order("created_at",{ascending:false})
       .limit(6)),
-    safeCatalog({...emptyParams,p_sort:"title",p_limit:24})
+    safeCatalog({...emptyParams,p_sort:"title",p_limit:24}),
+    safe(sb.from("animecia_public_anime")
+      .select("id",{count:"exact",head:true})
+      .gte("start_date","1963-01-01"))
   ]);
 
-  const catalogCount=Number(titleRows[0]?.total_count||0);
+  // 件数は一覧取得RPCの返却行に依存させず、公開ビューのexact countで独立して確認する。
+  const catalogCount=Number(countRes?.count ?? titleRows[0]?.total_count ?? 0);
   const databaseCount=document.getElementById("database-count");
   if(databaseCount)databaseCount.textContent=catalogCount.toLocaleString("ja-JP")+"作品";
 
@@ -667,7 +671,7 @@ async function load(){
         '</div><div class="feature-copy"><h3>'+esc(titleOf(a))+'</h3>'+
         '<div class="feature-score">'+(s!=null?s.toFixed(1):"—")+(s!=null?'<span>評価</span>':"")+
         '</div></div></a>';
-    }).join("")||'<div class="empty">今期作品がまだ登録されていません。</div>';
+    }).join("")||'<div class="empty">今期作品の登録データがありません。作品データの更新後に表示されます。</div>';
   }
 
   const titleBox=document.getElementById("home-title-index");
