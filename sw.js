@@ -1,4 +1,4 @@
-const CACHE="animecia-static-v9";
+const CACHE="animecia-static-v10";
 const STATIC=/\.(?:css|js|woff2?|png|jpe?g|webp|gif|svg)(?:\?.*)?$/i;
 
 self.addEventListener("install",e=>e.waitUntil(self.skipWaiting()));
@@ -18,7 +18,7 @@ self.addEventListener("fetch",e=>{
   if(STATIC.test(u.pathname)){
     e.respondWith(caches.open(CACHE).then(async c=>{
       const hit=await c.match(r);
-      const update=fetch(r,{cache:"no-cache"}).then(net=>{
+      const update=fetch(r).then(net=>{
         if(net.ok)c.put(r,net.clone());
         return net;
       }).catch(()=>null);
