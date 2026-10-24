@@ -1,37 +1,37 @@
-# Animecia catalog-format audit — 2026-10-24
+# Animecia catalog and genre audit — 2026-10-24
 
-## Rules applied
+## OVA / ONA-only policy
 
-This pass follows the previously stated catalog policy:
-- Keep ordinary Japanese anime released on or after 1963-01-01 in TV, TV_SHORT, MOVIE, OVA/OAV, or ONA formats.
-- Exclude SPECIAL from the public catalog, while retaining source rows.
-- Exclude verified adult/explicit-sexual and preschool-targeted works.
-- Exclude trailers, teasers, PV/CM/MV, advertising and product-promotion videos, previews, educational/tutorial videos, OP/ED-only compilations, picture dramas, mini-drama/bonus mini-anime, and other non-standalone extras.
-- Do not exclude a title merely because its origin is unknown, and do not exclude it solely because it is flagged as visually sensitive.
-- Preserve the existing genre system and source records.
+The public catalog now excludes verified OVA/OAV/ONA entries unless the same normalized title exists as a TV, TV_SHORT, or MOVIE record. Source rows are retained and exclusions are recorded in `catalog_policy_reasons`.
 
-## Applied changes
+- Public catalog: 6,948 entries.
+- TV: 4,816.
+- MOVIE: 2,072.
+- TV_SHORT: 7.
+- OAV retained due to same-title TV/movie entry: 32.
+- ONA retained due to same-title TV/movie entry: 21.
+- Public SPECIAL entries: 0.
 
-- Updated the public catalog view and recorded exclusion reasons in `catalog_policy_reasons`; original anime rows were not deleted.
-- Removed `SPECIAL` from the client-side format options and client-side accepted formats.
-- Fixed search ranking so titles beginning with the query rank ahead of incidental substring matches. For the query `86`, the two `86－エイティシックス－` entries now rank ahead of titles containing years such as 1986/2086.
-- Corrected `ダークサモナーとデキている` from `TV_SHORT` to `TV` and set duration to 30 minutes, based on the official AT-X schedule's 30-minute TV slot.
-- Removed clear non-standalone promotional/educational extras and the previously specified preschool-targeted franchises from the public catalog.
+The relation table `anime_relations` currently has no rows, so this pass uses exact title matching rather than assuming that different titles belong to the same franchise. This can exclude a distinct-titled OVA/ONA spin-off even if the wider franchise has a TV series; source-level franchise linking is needed to avoid that edge case.
 
-## Verification snapshot
+## Genre correction
 
-- Public catalog: 8,370 records.
-- SPECIAL in public catalog and SPECIAL search filter: 0.
-- Records flagged `is_adult = true` in public catalog: 0.
-- Records flagged `is_preschool = true` in public catalog: 0.
-- Public entries matching the reviewed promotional/educational/bonus-title rules: 0.
-- Search query `86`: both prefix matches rank ahead of unrelated substring matches.
-- The catalog retains TV_SHORT entries that appear to be genuine short-form anime; TV_SHORT is not excluded as a format by itself.
+A bulk heuristic classification version, `animecia-sql-repair-v1-min3`, assigned 3–5 genres without source-backed evidence. Examples included the same `ドラマ, コメディ, 冒険` bundle on unrelated titles. To avoid presenting unsupported labels as facts:
 
-## Remaining review limitation
+- The prior labels are preserved in `animecia_public_genre_audit` with `needs_review`.
+- The unsupported `anime_genres` relations were removed for those rows.
+- `anime.genre` was cleared and the rows were marked `needs-source-reclassification-v1`.
+- Original anime records were not deleted.
+- Official AniList-based and manual classifications were left intact.
 
-The public catalog still contains 1,323 ONA entries. Of those, 888 currently have no direct source-provider field, source ID, site URL, official URL, synopsis/description, episode count, or runtime in the database. However, many still carry import provenance: 714 of these rows have verification reasons indicating automated AniList metadata import plus Japanese-title, cover-image, and genre metadata. Missing direct links/runtime alone does not prove a title is not anime, so this pass did not mass-exclude them. They remain a priority for a source-by-source review focused on whether each entry is a standalone anime rather than an advertisement, preview, or bonus clip.
+The live public view currently contains 3,833 entries with a non-empty genre field. The remaining unclassified entries need source-backed reclassification; blank genres are preferable to confidently displaying fabricated labels.
 
-The public catalog has 152 OAV entries; all have at least one source link, but 139 lack episode-count and runtime metadata. These require source-level format checks rather than automatic exclusion.
+## Detail-page and speed work
 
-This is a conservative first cleanup of clear false positives, not a claim that every ONA/OAV entry has now been individually verified.
+- Fixed a script-order issue on pages that call `AnimeciaAuth.client()` synchronously while the Supabase SDK is loaded with `defer`: the SDK is preloaded in the head and executed immediately before the page's inline client initialization, after the HTML has parsed.
+- Added a visible `ジャンル未確認` fallback when a detail page has no verified genre.
+- Updated global performance helpers to optimize dynamically inserted images, avoid high-priority fetches for lazy images, and avoid registering the service worker on auth callback/reset pages.
+- Updated the service worker cache version and prevented caching of auth callback/reset URLs or navigations carrying auth tokens.
+- Updated the HTML optimizer so it preserves the preload and does not re-add the SDK race.
+
+Browser-level Lighthouse/real-device measurements have not yet been run, so no numeric speedup is claimed.

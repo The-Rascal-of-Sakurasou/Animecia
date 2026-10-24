@@ -72,7 +72,7 @@
         content="summary_large_image"
     >
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script><script src="anime-data.js"></script>
+    <script src="anime-data.js"></script>
 
 
     <style>
@@ -1759,6 +1759,7 @@
 <link rel="stylesheet" href="header.css">
 <link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co" crossorigin><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script src="performance.js" defer></script><script src="auth-core.js"></script>
 <link rel="stylesheet" href="site-theme.css?v=20261011c">
+<link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 </head>
 
 
@@ -2750,6 +2751,7 @@
 </a>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
     /* =========================================
@@ -3700,8 +3702,10 @@
                     array.findIndex(
                         item => item.name === genre.name
                     ) === index
-            );
-
+            );        if (uniqueNames.length === 0) {
+            container.innerHTML = '<span class="genre-tag genre-tag-pending">ジャンル未確認</span>';
+            return;
+        }
 
         container.innerHTML =
             uniqueNames

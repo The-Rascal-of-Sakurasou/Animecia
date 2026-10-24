@@ -7,7 +7,7 @@
 <meta name="description" content="Animeciaのアニメランキング。評価、お気に入り、レビューなどのデータから作品のデータを確認できます。">
 <link rel="canonical" href="https://media-mania.github.io/Animecia/ranking.html">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script><script src="anime-data.js"></script>
+<script src="anime-data.js"></script>
 <style>
 .ranking-page{padding-top:28px;padding-bottom:70px}
 .ranking-hero{padding:26px 28px;border-radius:16px;background:linear-gradient(135deg,#101827,#18243a);color:#fff;margin-bottom:16px}
@@ -104,6 +104,7 @@
 <link rel="stylesheet" href="header.css">
 <link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co" crossorigin><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script src="performance.js" defer></script><script src="auth-core.js"></script>
 <link rel="stylesheet" href="site-theme.css?v=20261011c">
+<link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 </head>
 <body>
 <header class="site-header">
@@ -140,6 +141,7 @@
 <p class="ranking-note">※評価は平均評価値で順位付けします。各ランキングは対象データがない作品を除外し、同じ値の作品は同順位とし、次の順位は1つだけ進みます。</p>
 </main>
 <footer><div class="container footer-inner"><div><div class="footer-brand">Animecia</div><div class="footer-copy">アニメを探す、評価する、記録する。</div></div><div class="footer-links"><a href="anime.html">アニメを探す</a><a href="season.html">今期アニメ</a><a href="discover.html">ジャンル</a><a href="recommendations.html">おすすめ</a><a href="memo.html">メモ</a><a href="community.html">コミュニティ</a><a href="mypage.html">マイページ</a></div></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 let sb=null;
 function waitForSupabase(){
