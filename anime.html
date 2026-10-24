@@ -2620,11 +2620,28 @@ function compareAnimeTitles(a,b){ return AnimeciaData.compare(a,b); }
              * これにより「アニメ情報を読み込めませんでした」で一覧全体が
              * 消えることを防ぐ。
              */
-            let result = await supabaseClient.rpc("search_anime_catalog_v2", rpcParams);
+            /*
+             * 通常の一覧・作品名検索では公開ビューを直接利用する。
+             * search_anime_catalog_v2 は五十音順の複雑な計算で statement_timeout に
+             * 達する場合があるため、初回表示を遅らせない。
+             * ジャンルID・制作会社IDでの絞り込み時のみRPCを使用する。
+             */
+            let result;
+            const needsCatalogRpc =
+                rpcParams.p_genre_id != null ||
+                rpcParams.p_studio_id != null;
 
-            if (result.error) {
-                console.warn("search_anime_catalog_v2 failed; falling back:", result.error);
-                result = await supabaseClient.rpc("search_anime_catalog", rpcParams);
+            if (needsCatalogRpc) {
+                result = await supabaseClient.rpc("search_anime_catalog_v2", rpcParams);
+                if (result.error) {
+                    console.warn("search_anime_catalog_v2 failed; falling back:", result.error);
+                    result = await supabaseClient.rpc("search_anime_catalog", rpcParams);
+                }
+            } else {
+                result = {
+                    data: null,
+                    error: { message: "Using direct public catalog query for faster initial loading." }
+                };
             }
 
             let data = result.data;
