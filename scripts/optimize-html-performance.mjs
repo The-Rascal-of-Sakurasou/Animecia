@@ -4,6 +4,7 @@ import { join, relative } from "node:path";
 const root = process.cwd();
 const SUPABASE_ORIGIN = "https://bhgdjuwlxvbaeraaivmh.supabase.co";
 const CDN_ORIGIN = "https://cdn.jsdelivr.net";
+const SDK_URL = CDN_ORIGIN + "/npm/@supabase/supabase-js@2";
 
 async function walk(dir) {
   const out = [];
@@ -21,12 +22,44 @@ function addHeadLink(html, href, tag) {
   return html.replace(/<\/head>/i, tag + "\n</head>");
 }
 
+function hasImmediateClientInit(html) {
+  const blocks = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+  return blocks.some(match => {
+    if (/\bsrc\s*=/.test(match[1])) return false;
+    const body = match[2];
+    return /(?:const|let|var)\s+supabaseClient\s*=\s*AnimeciaAuth\.client\(\)/.test(body) ||
+      /(?:const|let|var)\s+sb\s*=\s*AnimeciaAuth\.client\(\)/.test(body) ||
+      /\bK\s*=\s*[^,;]+,\s*sb\s*=\s*AnimeciaAuth\.client\(\)/.test(body) ||
+      /(?:window\.)?supabase\.createClient\s*\(/.test(body);
+  });
+}
+
+function prepareSupabaseSdk(html) {
+  if (!html.includes(SDK_URL)) return html;
+  html = addHeadLink(html, SUPABASE_ORIGIN,
+    '<link rel="preconnect" href="' + SUPABASE_ORIGIN + '" crossorigin>');
+  html = addHeadLink(html, CDN_ORIGIN,
+    '<link rel="preconnect" href="' + CDN_ORIGIN + '" crossorigin>');
+  html = addHeadLink(html, SDK_URL,
+    '<link rel="preload" as="script" href="' + SDK_URL + '">');
+
+  if (hasImmediateClientInit(html)) {
+    html = html.replace(/<script\b(?=[^>]*\bsrc=["']https:\/\/cdn\.jsdelivr\.net\/npm\/@supabase\/supabase-js@2["'])[^>]*>\s*<\/script>/gi, "");
+    const blocks = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+    const target = blocks.find(match => !/\bsrc\s*=/.test(match[1]) && /(?:AnimeciaAuth\.client\(\)|(?:window\.)?supabase\.createClient\s*\()/.test(match[2]));
+    if (target) html = html.slice(0, target.index) +
+      '<script src="' + SDK_URL + '"></script>\n' + html.slice(target.index);
+  } else {
+    html = html.replace(/<script\s+src="([^"]*supabase-js@2)"\s*><\/script>/g,
+      '<script src="$1" defer></script>');
+  }
+  return html;
+}
+
 function optimize(html, file) {
   const relativePath = relative(root, file).replaceAll("\\", "/");
   const depth = relativePath.split("/").length - 1;
-  const performanceScript = depth === 0
-    ? "performance.js"
-    : "../".repeat(depth) + "performance.js";
+  const performanceScript = depth === 0 ? "performance.js" : "../".repeat(depth) + "performance.js";
 
   if (!html.includes('src="' + performanceScript + '"') &&
       !html.includes("src='" + performanceScript + "'")) {
@@ -34,17 +67,8 @@ function optimize(html, file) {
       '<script src="' + performanceScript + '" defer></script>\n</head>');
   }
 
-  if (html.includes("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2")) {
-    html = addHeadLink(html, SUPABASE_ORIGIN,
-      '<link rel="preconnect" href="' + SUPABASE_ORIGIN + '">');
-    html = addHeadLink(html, CDN_ORIGIN,
-      '<link rel="preconnect" href="' + CDN_ORIGIN + '" crossorigin>');
-    html = html.replace(/<link\s+rel="preload"\s+as="script"\s+href="[^"]*supabase-js@2"[^>]*>\s*/g, "");
-    html = html.replace(/<script\s+src="([^"]*supabase-js@2)"\s*><\/script>/g,
-      '<script src="$1" defer></script>');
-  }
+  html = prepareSupabaseSdk(html);
 
-  // Preconnect to only the first page-image origin to limit unnecessary connections.
   const firstImage = html.match(/<img\b[^>]*?src=["'](https?:\/\/[^"'#?]+)[^"']*["']/i);
   const socialImage = html.match(/<meta\s+property=["']og:image["']\s+content=["'](https?:\/\/[^"'#?]+)[^"']*["']/i);
   const imageUrl = firstImage?.[1] || socialImage?.[1];
@@ -52,8 +76,7 @@ function optimize(html, file) {
     try {
       const origin = new URL(imageUrl).origin;
       if (origin !== "https://media-mania.github.io") {
-        html = addHeadLink(html, origin,
-          '<link rel="preconnect" href="' + origin + '" crossorigin>');
+        html = addHeadLink(html, origin, '<link rel="preconnect" href="' + origin + '" crossorigin>');
       }
     } catch {
       // Ignore malformed image URLs rather than breaking the build.
@@ -61,13 +84,15 @@ function optimize(html, file) {
   }
 
   let imageCount = 0;
-  html = html.replace(/<img\b([^>]*?)>/gi, (match, attributes) => {
+  html = html.replace(/<img\b([^>]*?)>/gi, (match, originalAttributes) => {
     imageCount++;
+    let attributes = originalAttributes;
     if (!/\bdecoding\s*=/.test(attributes)) attributes += ' decoding="async"';
-    if (!/\bloading\s*=/.test(attributes)) {
-      attributes += imageCount === 1 ? ' loading="eager"' : ' loading="lazy"';
-    }
-    if (imageCount === 1 && !/\bfetchpriority\s*=/.test(attributes)) {
+    if (!/\bloading\s*=/.test(attributes)) attributes += imageCount === 1 ? ' loading="eager"' : ' loading="lazy"';
+    const lazy = /\bloading\s*=\s*["']lazy["']/i.test(attributes);
+    if (lazy) {
+      attributes = attributes.replace(/\sfetchpriority\s*=\s*["']high["']/i, "");
+    } else if (imageCount === 1 && !/\bfetchpriority\s*=/.test(attributes)) {
       attributes += ' fetchpriority="high"';
     }
     return "<img" + attributes + ">";
@@ -76,7 +101,6 @@ function optimize(html, file) {
   html = html.replace(/<iframe\b([^>]*?)>/gi, (match, attributes) =>
     /\bloading\s*=/.test(attributes) ? match : "<iframe" + attributes + ' loading="lazy">'
   );
-
   return html;
 }
 

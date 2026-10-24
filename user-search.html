@@ -6,7 +6,7 @@
 <title>ユーザー検索 | Animecia</title>
 <meta name="description" content="Animeciaのユーザーを検索できます。">\n<meta name="robots" content="noindex,nofollow">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
 <style>
 main{max-width:1080px;margin:0 auto;padding:36px 20px 70px}.hero{margin-bottom:22px}.hero h1{margin:0 0 8px}.hero p{color:#737373}
 .search-box{display:flex;gap:10px;margin:20px 0}.search-box input{flex:1}.results{display:grid;gap:10px}.user-card{display:flex;gap:14px;align-items:center;padding:16px;border:1px solid #e5e7eb;border-radius:14px;background:#fff}.avatar{width:58px;height:58px;border-radius:50%;object-fit:cover;background:#eef0f3;flex:none}.avatar-placeholder{display:grid;place-items:center;font-weight:800;color:#697386}.grow{flex:1;min-width:0}.name{font-weight:800}.username,.bio,.meta{color:#737373;font-size:13px}.bio{margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{margin-top:7px}.empty,.error{text-align:center;padding:36px;color:#737373}
@@ -16,6 +16,7 @@ main{max-width:1080px;margin:0 auto;padding:36px 20px 70px}.hero{margin-bottom:2
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <script src="auth-core.js" defer></script>
 <link rel="stylesheet" href="site-theme.css?v=20261012">
+<link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 </head>
 <body>
 <header><div class="wrap head"><a class="logo" href="index.html">Animecia</a><nav>
@@ -26,6 +27,7 @@ main{max-width:1080px;margin:0 auto;padding:36px 20px 70px}.hero{margin-bottom:2
 <form id="search-form" class="search-box"><input id="q" maxlength="50" autocomplete="off" placeholder="ユーザー名・表示名を入力"><button class="btn" type="submit">検索</button></form>
 <div id="results" class="results"><div class="empty">検索したいユーザー名や表示名を入力してください。</div></div>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL="https://bhgdjuwlxvbaeraaivmh.supabase.co";
 const SUPABASE_KEY="sb_publishable_-rZ4HusVezs5IlZQnUQ-Kw_SLUd8R0c";
