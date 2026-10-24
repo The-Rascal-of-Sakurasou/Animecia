@@ -30,7 +30,7 @@ This pass follows the previously stated catalog policy:
 
 ## Remaining review limitation
 
-The public catalog still contains 1,323 ONA entries. Of those, 888 currently have no source provider, source ID, site URL, official URL, synopsis/description, episode count, or runtime in the database. Missing metadata alone does not prove a title is not anime, so this pass did not mass-exclude those records. They remain a priority for a source-by-source verification pass.
+The public catalog still contains 1,323 ONA entries. Of those, 888 currently have no direct source-provider field, source ID, site URL, official URL, synopsis/description, episode count, or runtime in the database. However, many still carry import provenance: 714 of these rows have verification reasons indicating automated AniList metadata import plus Japanese-title, cover-image, and genre metadata. Missing direct links/runtime alone does not prove a title is not anime, so this pass did not mass-exclude them. They remain a priority for a source-by-source review focused on whether each entry is a standalone anime rather than an advertisement, preview, or bonus clip.
 
 The public catalog has 152 OAV entries; all have at least one source link, but 139 lack episode-count and runtime metadata. These require source-level format checks rather than automatic exclusion.
 
