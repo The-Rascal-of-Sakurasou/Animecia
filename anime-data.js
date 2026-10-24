@@ -34,8 +34,13 @@
   // title_romaji がある場合は必ずそれを基準にし、ローマ字そのものを
   // ヘボン式の音節として解析して五十音の行・段へ変換して比較する。
   function reading(a){
-    const source=String(a?.title_romaji||a?.title_english||a?.english_title||a?.title_native||a?.title||"").normalize("NFKC");
-    return source.toLowerCase().replace(/[ー\s\-‐‑‒–—―・.,!?()[\]{}'"\\/:;_+&]/g,"").replace(/[^a-z0-9]/g,"");
+    const source=String(a?.title_romaji||a?.title_english||a?.english_title||a?.title_native||a?.title_japanese||a?.title||"").normalize("NFKC");
+    const normalized=source.toLowerCase().replace(/[ー\s\-‐‑‒–—―・.,!?()[\]{}'"\\/:;_+&]/g,"");
+    const latin=normalized.replace(/[^a-z0-9]/g,"");
+    if(latin) return latin;
+    // ローマ字がない日本語タイトルは、文字を消して空文字にせず
+    // カタカナをひらがなへ寄せて日本語照合に使う。
+    return normalized.replace(/[ァ-ヶ]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0x60));
   }
   function numberToRomaji(n){
     if(!Number.isFinite(n))return "";
@@ -86,6 +91,13 @@
   syllables.sort((a,b)=>b[0].length-a[0].length);
 
   function compare(a,b){
+    const left=reading(a), right=reading(b);
+    // どちらかにローマ字読みがない場合は、日本語ロケールの照合を使う。
+    // 以前は漢字・かなだけの作品名が空文字になり、正しい順序を作れなかった。
+    if(!/^[a-z0-9]*$/.test(left)||!/^[a-z0-9]*$/.test(right)){
+      const compared=left.localeCompare(right,"ja",{numeric:true,sensitivity:"base"});
+      if(compared!==0)return compared;
+    }
     // 各ローマ字音節を五十音の位置へ変換。
     // 例: kya→きゃ→「き」行、sha→しゃ→「し」行、chi→ち、tsu→つ。
     const key=s=>{
@@ -160,7 +172,7 @@
     // Unknown origin remains eligible unless a non-Japanese origin is confirmed.
     if(!a || a.anime_verification_status!=="verified" || a.catalog_policy_decision==="exclude" || a.is_sensitive_visual===true) return false;
     const format=String(a.format||"").toUpperCase();
-    const allowedFormats=["TV","TV_SHORT","MOVIE","OVA","OAV","ONA","SPECIAL"];
+    const allowedFormats=["TV","TV_SHORT","MOVIE","OVA","OAV","ONA"];
     if(!allowedFormats.includes(format)) return false;
     if(!a.start_date || String(a.start_date)<"1963-01-01") return false;
     // Origin is excluded only when a non-Japanese origin is confirmed.
