@@ -69,7 +69,9 @@
         href="style.css"
     >
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script><script src="anime-data.js"></script>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co" crossorigin>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="anime-data.js"></script>
 <style>
 
         .anime-page {
@@ -3269,8 +3271,7 @@ function compareAnimeTitles(a,b){ return AnimeciaData.compare(a,b); }
                         )}のキービジュアル"
                         loading="lazy"
                         decoding="async"
-                        onerror="this.style.visibility='hidden';this.nextElementSibling&&(this.nextElementSibling.style.display='grid');"
-                     fetchpriority="high">
+                        onerror="this.style.visibility='hidden';this.nextElementSibling&&(this.nextElementSibling.style.display='grid');">
 
                     <div
                         class="image-placeholder"
