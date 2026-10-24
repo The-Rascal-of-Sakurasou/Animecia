@@ -40,8 +40,10 @@ function optimize(html, file) {
     html = addHeadLink(html, CDN_ORIGIN,
       '<link rel="preconnect" href="' + CDN_ORIGIN + '" crossorigin>');
     html = html.replace(/<link\s+rel="preload"\s+as="script"\s+href="[^"]*supabase-js@2"[^>]*>\s*/g, "");
-    html = html.replace(/<script\s+src="([^"]*supabase-js@2)"\s*><\/script>/g,
-      '<script src="$1" defer></script>');
+    // Pages currently initialize Supabase from inline scripts during parsing.
+    // Keep the SDK synchronous until all pages use an explicit SDK-ready gate.
+    html = html.replace(/<script\s+src="([^"]*supabase-js@2)"(?:\s+defer)?\s*><\/script>/g,
+      '<script src="$1"></script>');
   }
 
   // Preconnect to only the first page-image origin to limit unnecessary connections.
