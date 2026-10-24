@@ -29,7 +29,8 @@ function hasImmediateClientInit(html) {
     const body = match[2];
     return /(?:const|let|var)\s+supabaseClient\s*=\s*AnimeciaAuth\.client\(\)/.test(body) ||
       /(?:const|let|var)\s+sb\s*=\s*AnimeciaAuth\.client\(\)/.test(body) ||
-      /\bK\s*=\s*[^,;]+,\s*sb\s*=\s*AnimeciaAuth\.client\(\)/.test(body);
+      /\bK\s*=\s*[^,;]+,\s*sb\s*=\s*AnimeciaAuth\.client\(\)/.test(body) ||
+      /(?:window\.)?supabase\.createClient\s*\(/.test(body);
   });
 }
 
@@ -45,7 +46,7 @@ function prepareSupabaseSdk(html) {
   if (hasImmediateClientInit(html)) {
     html = html.replace(/<script\b(?=[^>]*\bsrc=["']https:\/\/cdn\.jsdelivr\.net\/npm\/@supabase\/supabase-js@2["'])[^>]*>\s*<\/script>/gi, "");
     const blocks = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
-    const target = blocks.find(match => !/\bsrc\s*=/.test(match[1]) && /AnimeciaAuth\.client\(\)/.test(match[2]));
+    const target = blocks.find(match => !/\bsrc\s*=/.test(match[1]) && /(?:AnimeciaAuth\.client\(\)|(?:window\.)?supabase\.createClient\s*\()/.test(match[2]));
     if (target) html = html.slice(0, target.index) +
       '<script src="' + SDK_URL + '"></script>\n' + html.slice(target.index);
   } else {
