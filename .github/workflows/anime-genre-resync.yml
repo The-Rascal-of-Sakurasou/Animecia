@@ -89,7 +89,7 @@ jobs:
           def norm(value):
               return re.sub(r"\\s+", " ", str(value or "").strip().lower())
 
-          # ジャンルIDは現在のDBで固定されている24ジャンル。
+          # ジャンルIDは現在のDBで固定されている26ジャンル。
           # GitHub Actions側からgenresテーブルを直接読む必要がないよう固定化し、
           # 公開APIの権限差で分類処理が停止しないようにする。
           GENRE_ID = {
@@ -99,7 +99,7 @@ jobs:
               "日常": 90859, "メカ": 90894, "音楽": 91038, "ミリタリー": 91254,
               "歴史": 98666, "サスペンス": 108591, "ショート": 114798,
               "推理": 115017, "戦争": 115020, "青春": 115023, "アイドル": 115025,
-              "ファミリー": 115032
+              "ファミリー": 115032, "超自然": 676182, "心理": 676183
           }
 
 
@@ -108,7 +108,7 @@ jobs:
           ALL_NAMES = [
               "SF","アイドル","アクション","コメディ","サスペンス","ショート","スポーツ","ドラマ",
               "ファミリー","ファンタジー","ホラー","ミリタリー","メカ","冒険","学園",
-              "恋愛","戦争","推理","日常","歴史","異世界","青春","音楽","魔法少女"
+              "恋愛","戦争","推理","日常","歴史","異世界","青春","音楽","魔法少女","心理","超自然"
           ]
 
           # AniListの一般ジャンル → Animeciaジャンル。
@@ -129,6 +129,8 @@ jobs:
               "slice of life": [("日常", 1.00)],
               "sports": [("スポーツ", 1.00)],
               "thriller": [("サスペンス", 1.00)],
+              "supernatural": [("超自然", 0.96)],
+              "psychological": [("心理", 0.96)],
           }
 
           # タグはrankが高いほど強い。ただし「spoiler」タグは除外する。
@@ -169,7 +171,7 @@ jobs:
                   "zombie": 0.88, "ghost": 0.80, "psychological horror": 0.94
               },
               "サスペンス": {
-                  "thriller": 0.98, "psychological": 0.92,
+                  "thriller": 0.98,
                   "survival": 0.90, "crime": 0.90, "conspiracy": 0.90,
                   "noir": 0.86, "espionage": 0.86, "revenge": 0.70
               },
@@ -216,7 +218,7 @@ jobs:
               "ファンタジー": {
                   "fantasy": 1.00, "fairy tale": 0.94, "mythology": 0.90,
                   "demons": 0.78, "vampire": 0.72, "dragons": 0.92, "fairies": 0.90, "youkai": 0.82,
-                  "supernatural": 0.58, "magic": 0.92, "witches": 0.90, "alchemy": 0.76,
+                  "magic": 0.92, "witches": 0.90, "alchemy": 0.76,
                   "urban fantasy": 0.88, "high fantasy": 0.98,
                   "dark fantasy": 0.98
               },
@@ -278,7 +280,7 @@ jobs:
                   "Fantasy":"ファンタジー","Horror":"ホラー","Mystery":"推理","Romance":"恋愛",
                   "Sci-Fi":"SF","Sports":"スポーツ","School":"学園",
                   "Slice of Life":"日常","Music":"音楽","Military":"ミリタリー","Historical":"歴史",
-                  "Mecha":"メカ","Supernatural":"ファンタジー","Suspense":"サスペンス"
+                  "Mecha":"メカ","Supernatural":"超自然","Psychological":"心理","Suspense":"サスペンス"
               }
               for mg in mal_genres or []:
                   target = MAL_GENRE.get(str(mg).strip())

@@ -40,7 +40,7 @@ jobs:
           # Official URL policy: never expose AniList/ANN/social/profile pages as an Animecia official site.
 
           ALLOWED=[
-            "SF","ファンタジー","ロボット","メカ","アクション","バトル","コメディ","ギャグ",
+            "SF","ファンタジー","超自然","心理","ロボット","メカ","アクション","バトル","コメディ","ギャグ",
             "恋愛","ラブコメ","日常","ほのぼの","スポーツ","競技","ホラー","サスペンス",
             "推理","歴史","戦記","戦争","ミリタリー","ドラマ","青春","音楽","アイドル",
             "学園","魔法","魔法少女","異世界","冒険","キッズ","ファミリー","ショート"
@@ -159,9 +159,9 @@ jobs:
               mp={
                 "action":"アクション","adventure":"冒険","comedy":"コメディ","drama":"ドラマ",
                 "fantasy":"ファンタジー","horror":"ホラー","mystery":"推理","romance":"恋愛",
-                "sci-fi":"SF","slice of life":"日常","sports":"スポーツ","supernatural":"ファンタジー",
+                "sci-fi":"SF","slice of life":"日常","sports":"スポーツ","supernatural":"超自然",
                 "thriller":"サスペンス","school":"学園","music":"音楽","historical":"歴史",
-                "military":"ミリタリー","mecha":"メカ","psychological":"サスペンス",
+                "military":"ミリタリー","mecha":"メカ","psychological":"心理",
                 "isekai":"異世界","mahou shoujo":"魔法少女"
               }
               out=mp.get(key)
@@ -272,7 +272,7 @@ jobs:
             existing_genre_ids={x["genre_id"] for x in existing_genres}
             genre_rows=sb("/rest/v1/genres","GET",None,{"select":"id,name","limit":"100"})
             genre_ids={x["name"]:x["id"] for x in genre_rows}
-            genre_map={"Action":"アクション","Adventure":"冒険","Comedy":"コメディ","Drama":"ドラマ","Fantasy":"ファンタジー","Horror":"ホラー","Romance":"恋愛","Sci-Fi":"SF","Slice of Life":"日常","Sports":"スポーツ","School":"学園","Music":"音楽","Historical":"歴史","Military":"ミリタリー","Mecha":"メカ","Mystery":"推理","Thriller":"サスペンス","Isekai":"異世界","Magical Girl":"魔法少女"}
+            genre_map={"Action":"アクション","Adventure":"冒険","Comedy":"コメディ","Drama":"ドラマ","Fantasy":"ファンタジー","Horror":"ホラー","Romance":"恋愛","Sci-Fi":"SF","Slice of Life":"日常","Sports":"スポーツ","School":"学園","Music":"音楽","Historical":"歴史","Military":"ミリタリー","Mecha":"メカ","Mystery":"推理","Thriller":"サスペンス","Isekai":"異世界","Magical Girl":"魔法少女","Supernatural":"超自然","Psychological":"心理"}
             for raw_genre in media.get("genres") or []:
               gid=genre_ids.get(genre_map.get(raw_genre))
               if gid and gid not in existing_genre_ids:
