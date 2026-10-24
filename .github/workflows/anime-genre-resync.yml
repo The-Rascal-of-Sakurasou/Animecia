@@ -175,6 +175,14 @@ jobs:
                   "survival": 0.90, "crime": 0.90, "conspiracy": 0.90,
                   "noir": 0.86, "espionage": 0.86, "revenge": 0.70
               },
+              "心理": {
+                  "psychological": 0.96, "mind games": 0.90, "philosophy": 0.76,
+                  "memory manipulation": 0.84, "identity": 0.72
+              },
+              "超自然": {
+                  "supernatural": 0.96, "spirits": 0.86, "ghost": 0.82,
+                  "youkai": 0.84, "paranormal": 0.92
+              },
               "推理": {
                   "mystery": 0.98, "detective": 0.98, "police": 0.78,
                   "crime": 0.70
