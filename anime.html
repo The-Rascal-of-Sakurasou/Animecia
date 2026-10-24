@@ -2666,7 +2666,7 @@ function compareAnimeTitles(a,b){ return AnimeciaData.compare(a,b); }
                 }
 
                 let query = supabaseClient.from("animecia_public_anime").select(
-                    "id,title,title_japanese,title_native,title_user_preferred,title_romaji,title_english,english_title,cover_image,banner_image,format,genre,description,review,synopsis,official_url,site_url,streaming_links,start_date,end_date,episodes,duration,season,season_year,status,source,average_score,popularity,favourites_count",
+                    "id,title,title_japanese,title_native,title_user_preferred,title_romaji,title_english,english_title,cover_image,format,genre,description,start_date,season,season_year,status,average_score,popularity,favourites_count",
                     { count: "exact" }
                 ).gte("start_date", "1963-01-01");
 
