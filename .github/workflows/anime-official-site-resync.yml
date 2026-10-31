@@ -5,7 +5,7 @@ on:
     paths:
       - '.github/workflows/anime-official-site-resync.yml'
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '0 * * * *'
   workflow_dispatch:
     inputs:
       batch_size:
@@ -116,7 +116,7 @@ jobs:
 
           # Rotate through the full AniList-linked catalogue. Without this cursor,
           # the first low-ID rows with no usable official link are retried forever.
-          cursor=(int(time.time()//900)*BATCH)%26038
+          cursor=(int(time.time()//3600)*BATCH)%26038
           params={
               "select":"id,title_japanese,title_native,title_user_preferred,title_romaji,title_english,source_provider,source_id,official_url",
               "source_provider":"eq.anilist",
