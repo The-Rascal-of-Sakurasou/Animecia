@@ -176,10 +176,10 @@
     if(a.original_country_status==="verified_non_jp") return false;
     if(a.duplicate_status==="duplicate") return false;
     const titleBlob=[a.title,a.title_japanese,a.title_native,a.title_english,a.title_romaji,a.english_title,a.title_user_preferred].filter(Boolean).join(" ");
-    const promoPattern=/(^|[\\s【(（])PV([\\s】)）]|$)|(^|[\\s【(（])CM([\\s】)）]|$)|trailer|teaser|promotional[\\s-]+video|advertisement|commercial|予告編|予告映像|ティザー映像|ティーザー映像|宣伝映像|広告動画|特報/i;
+    const promoPattern=/(^|[\s【(（])PV([\s】)）]|$)|(^|[\s【(（])CM([\s】)）]|$)|trailer|teaser|promotional[\s-]+video|advertisement|commercial|予告編|予告映像|ティザー映像|ティーザー映像|宣伝映像|広告動画|特報/i;
     const metadataType=String(a.source_metadata?.type||"");
-    if(promoPattern.test(titleBlob) || /trailer|teaser|promotional|advertisement|commercial|(^|\\s)PV(\\s|$)|(^|\\s)CM(\\s|$)/i.test(metadataType)) return false;
-    if(/picture[\\s-]+drama|ピクチャードラマ|特典映像|pilot|パイロット|成人向け|18禁|R18|アダルトアニメ|ポルノ|エロアニメ/i.test(titleBlob)) return false;
+    if(promoPattern.test(titleBlob) || /trailer|teaser|promotional|advertisement|commercial|(^|\s)PV(\s|$)|(^|\s)CM(\s|$)/i.test(metadataType)) return false;
+    if(/picture[\s-]+drama|ピクチャードラマ|特典映像|pilot|パイロット|成人向け|18禁|R18|アダルトアニメ|ポルノ|エロアニメ/i.test(titleBlob)) return false;
     // Children's anime, including preschool-targeted works, are eligible.
     return true;
   }
