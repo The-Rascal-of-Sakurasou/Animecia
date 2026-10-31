@@ -158,7 +158,7 @@
   function isPublic(a){
     // Client-side guard mirrors the current Animecia registration policy.
     // Japanese origin is preferred; unknown origin is not an automatic rejection.
-    if(!a || a.is_sensitive_visual===true) return false;
+    if(!a) return false;
     const format=String(a.format||"").toUpperCase();
     const allowedFormats=["TV","TV_SHORT","MOVIE","OVA","OAV","ONA","SPECIAL"];
     if(!allowedFormats.includes(format)) return false;
@@ -173,6 +173,7 @@
     if(a.anime_verification_status!=="verified" && !(isStandalone && !explicitlyRejected)) return false;
     if(a.catalog_policy_decision==="exclude" && !isStandalone && a.is_kids!==true && a.is_preschool!==true) return false;
     if(!a.start_date || String(a.start_date)<"1963-01-01") return false;
+    if(a.is_adult===true) return false;
     if(a.original_country_status==="verified_non_jp") return false;
     if(a.duplicate_status==="duplicate") return false;
     const titleBlob=[a.title,a.title_japanese,a.title_native,a.title_english,a.title_romaji,a.english_title,a.title_user_preferred].filter(Boolean).join(" ");
