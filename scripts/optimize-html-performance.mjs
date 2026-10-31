@@ -28,7 +28,11 @@ function optimize(html, file) {
     ? "performance.js"
     : "../".repeat(depth) + "performance.js";
 
-  if (!html.includes('src="' + performanceScript + '"') &&
+  // A redirect-only landing page has no need to register performance features.
+  // Keep this exclusion here so the automated optimizer does not re-add the script.
+  const needsPerformanceScript = relativePath !== "admin.html";
+  if (needsPerformanceScript &&
+      !html.includes('src="' + performanceScript + '"') &&
       !html.includes("src='" + performanceScript + "'")) {
     html = html.replace(/<\/head>/i,
       '<script src="' + performanceScript + '" defer></script>\n</head>');
