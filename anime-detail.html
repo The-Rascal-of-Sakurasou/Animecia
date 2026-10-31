@@ -3230,18 +3230,17 @@
        Error
     ========================================= */
 
-    function showError() {
+    function showError(message) {
+        loadingElement.style.display = "none";
+        detailElement.style.display = "none";
+        errorElement.style.display = "block";
 
-        loadingElement.style.display =
-            "none";
-
-
-        detailElement.style.display =
-            "none";
-
-
-        errorElement.style.display =
-            "block";
+        if (message) {
+            const heading = errorElement.querySelector("h1");
+            const description = errorElement.querySelector("p");
+            if (heading) heading.textContent = "作品情報を読み込めませんでした";
+            if (description) description.textContent = message;
+        }
     }
 
 
@@ -3478,24 +3477,25 @@
 
         try {
 
-            const {
-                data,
-                error
-            } =
-                await supabaseClient
+            let animeLoadTimeout;
+            const animeRequest = supabaseClient
+                .from("animecia_public_anime")
+                // 公開対象はDB側で絞り込み済み。詳細ページではIDだけで取得する。
+                .select("id,title,genre,description,review,official_url,english_title,title_romaji,title_english,title_native,title_japanese,cover_image,banner_image,start_date,end_date,episodes,duration,status,format,season,season_year,source,average_score,popularity,favourites_count,site_url,title_user_preferred,search_aliases,streaming_links,synopsis,synopsis_source,updated_at,created_at")
+                .eq("id", Number(currentAnimeId))
+                .maybeSingle();
 
-                    .from("animecia_public_anime")
+            const animeResult = await Promise.race([
+                animeRequest,
+                new Promise((_, reject) => {
+                    animeLoadTimeout = window.setTimeout(
+                        () => reject(new Error("作品情報の取得がタイムアウトしました。")),
+                        12000
+                    );
+                })
+            ]).finally(() => window.clearTimeout(animeLoadTimeout));
 
-                    // animecia_public_anime は公開対象作品をDB側ですでに絞り込んでいる。
-                    // 詳細ページではIDだけで取得し、同じ条件を重複して付けない。
-                    .select("id,title,genre,description,review,official_url,english_title,title_romaji,title_english,title_native,title_japanese,cover_image,banner_image,start_date,end_date,episodes,duration,status,format,season,season_year,source,average_score,popularity,favourites_count,site_url,title_user_preferred,search_aliases,streaming_links,synopsis,synopsis_source,updated_at,created_at")
-                    .eq(
-                        "id",
-                        Number(
-                            currentAnimeId
-                        )
-                    )
-                    .maybeSingle();
+            const { data, error } = animeResult;
 
 
             if (error) {
@@ -3569,8 +3569,7 @@
                 error
             );
 
-
-            showError();
+            showError("通信状況を確認して、再読み込みしてください。");
         }
     }
 
@@ -7546,6 +7545,16 @@
 
 </script>
 
+<script>
+    // メイン処理の実行前にスクリプトや通信が止まった場合も、読み込み表示を無期限に残さない。
+    window.setTimeout(() => {
+        const loading = document.getElementById("loading");
+        const detail = document.getElementById("detail");
+        if (loading && detail && loading.style.display !== "none" && detail.style.display === "none") {
+            loading.innerHTML = '読み込みが完了しません。通信状況を確認して、<button type="button" class="back-link" onclick="location.reload()">再読み込み</button>してください。';
+        }
+    }, 15000);
+</script>
 
 <script src="auth-required.js"></script>
 </body>
