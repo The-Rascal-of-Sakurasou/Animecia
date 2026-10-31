@@ -156,24 +156,31 @@
     }));
   }
   function isPublic(a){
-    // Client-side guard mirrors the database catalog policy.
-    // Unknown origin remains eligible unless a non-Japanese origin is confirmed.
-    if(!a || a.anime_verification_status!=="verified" || a.catalog_policy_decision==="exclude" || a.is_sensitive_visual===true) return false;
+    // Client-side guard mirrors the current Animecia registration policy.
+    // Japanese origin is preferred; unknown origin is not an automatic rejection.
+    if(!a || a.is_sensitive_visual===true) return false;
     const format=String(a.format||"").toUpperCase();
     const allowedFormats=["TV","TV_SHORT","MOVIE","OVA","OAV","ONA","SPECIAL"];
     if(!allowedFormats.includes(format)) return false;
+    const standaloneFormats=["OVA","OAV","ONA","SPECIAL"];
+    const isStandalone=standaloneFormats.includes(format);
+    const explicitlyRejected=Array.isArray(a.anime_verification_reasons) &&
+      a.anime_verification_reasons.some(reason =>
+        String(reason).includes("Excluded from Animecia catalog: promotional/pilot/brand/educational animation rather than an anime work")
+      );
+    // OVA/ONA/SPECIAL were previously blocked by the old TV/movie-only policy.
+    // Permit them unless a specific exclusion reason is recorded.
+    if(a.anime_verification_status!=="verified" && !(isStandalone && !explicitlyRejected)) return false;
+    if(a.catalog_policy_decision==="exclude" && !isStandalone && a.is_kids!==true && a.is_preschool!==true) return false;
     if(!a.start_date || String(a.start_date)<"1963-01-01") return false;
-    // Origin is excluded only when a non-Japanese origin is confirmed.
     if(a.original_country_status==="verified_non_jp") return false;
     if(a.duplicate_status==="duplicate") return false;
     const titleBlob=[a.title,a.title_japanese,a.title_native,a.title_english,a.title_romaji,a.english_title,a.title_user_preferred].filter(Boolean).join(" ");
-    const promoPattern=/(^|[\s【(（])PV([\s】)）]|$)|(^|[\s【(（])CM([\s】)）]|$)|trailer|teaser|promotional[\s-]+video|advertisement|commercial|予告編|予告映像|ティザー映像|ティーザー映像|宣伝映像|広告動画|特報/i;
+    const promoPattern=/(^|[\\s【(（])PV([\\s】)）]|$)|(^|[\\s【(（])CM([\\s】)）]|$)|trailer|teaser|promotional[\\s-]+video|advertisement|commercial|予告編|予告映像|ティザー映像|ティーザー映像|宣伝映像|広告動画|特報/i;
     const metadataType=String(a.source_metadata?.type||"");
-    if(promoPattern.test(titleBlob) || /trailer|teaser|promotional|advertisement|commercial|(^|\s)PV(\s|$)|(^|\s)CM(\s|$)/i.test(metadataType)) return false;
-    const broadcast=["TV","TV_SHORT"].includes(format);
-    if(a.is_adult===true && !broadcast) return false;
-    if(a.is_preschool===true && !broadcast) return false;
-    // is_kids alone is not an exclusion.
+    if(promoPattern.test(titleBlob) || /trailer|teaser|promotional|advertisement|commercial|(^|\\s)PV(\\s|$)|(^|\\s)CM(\\s|$)/i.test(metadataType)) return false;
+    if(/picture[\\s-]+drama|ピクチャードラマ|特典映像|pilot|パイロット|成人向け|18禁|R18|アダルトアニメ|ポルノ|エロアニメ/i.test(titleBlob)) return false;
+    // Children's anime, including preschool-targeted works, are eligible.
     return true;
   }
   global.AnimeciaData={title,subtitle,year,season,seasonCode,format,status,image,score,reading,compare,genres,withEngagement,isPublic,seasonNames,formatNames,statusNames};
