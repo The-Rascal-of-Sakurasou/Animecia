@@ -171,7 +171,6 @@
     // OVA/ONA/SPECIAL were previously blocked by the old TV/movie-only policy.
     // Permit them unless a specific exclusion reason is recorded.
     if(a.anime_verification_status!=="verified" && !(isStandalone && !explicitlyRejected)) return false;
-    if(a.catalog_policy_decision==="exclude" && !isStandalone && a.is_kids!==true && a.is_preschool!==true) return false;
     if(!a.start_date || String(a.start_date)<"1963-01-01") return false;
     if(a.is_adult===true) return false;
     if(a.original_country_status==="verified_non_jp") return false;
