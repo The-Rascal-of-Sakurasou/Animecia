@@ -48,7 +48,16 @@
         button.disabled=true;
         try{
           await ANIXIA.setAnimePublished(button.dataset.publishAnime,true);
+          let posterStatus="ポスター画像はまだ登録されていません。";
+          try{
+            const posterResult=await ANIXIA.syncTmdbPosters({limit:1,animeIds:[button.dataset.publishAnime]});
+            posterStatus=posterResult.updated?"ポスター画像も登録しました。":"作品は公開しましたが、ポスター画像は一致しませんでした。";
+          }catch(posterError){
+            console.warn("Automatic poster sync was skipped:",posterError);
+            posterStatus="作品は公開しました。ポスター同期は未完了です（TMDB_API_KEYの設定を確認してください）。";
+          }
           await loadPendingAnime();
+          alert("作品を公開しました。\\n"+posterStatus);
         }catch(e){
           console.error(e);
           button.disabled=false;
