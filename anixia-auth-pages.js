@@ -8,7 +8,7 @@
   const allowedPages = new Set([
     "index.html", "mypage.html", "anime.html", "anime-detail.html",
     "ranking.html", "quiz.html", "recommendations.html", "discover.html",
-    "season.html", "community.html", "profile.html"
+    "season.html", "community.html", "profile.html", "messages.html", "memo.html", "admin.html"
   ]);
 
   function safeRedirect(value) {
