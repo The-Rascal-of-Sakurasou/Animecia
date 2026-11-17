@@ -13,7 +13,7 @@
   const card = (work) => `
     <a class="anixia-work-card" href="anime-detail.html?id=${encodeURIComponent(work.id)}">
       <div class="anixia-poster">
-        ${work.poster_url ? `<img src="${esc(work.poster_url)}" alt="" loading="lazy" decoding="async">` : '<span>ANIXIA</span>'}
+        ${ANIXIA.posterMarkup(work.poster_url, title(work))}
       </div>
       <div class="anixia-work-copy">
         <strong>${esc(title(work))}</strong>
