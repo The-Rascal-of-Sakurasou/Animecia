@@ -320,7 +320,7 @@ All 6 migration files are present in the repository and applied to the active Su
 
 ### Wikidata小規模カタログ登録（2026-11-17・追加更新）
 
-- 現在のSupabase実データ：公開作品11件、制作会社4件、人物32人、制作会社関係2件、スタッフ関係35件、キャラクター28件、作品・キャラクター関係28件、声優クレジット28件。
+- 現在のSupabase実データ：公開作品11件、制作会社4件、人物37人、制作会社関係2件、スタッフ関係41件、キャラクター33件、作品・キャラクター関係33件、声優クレジット33件。
 - 作品9件：新世紀エヴァンゲリオン、ポケットモンスター、カウボーイビバップ、魔法少女まどか☆マギカ、Steins;Gate、Anohana、Angel Beats!、無職転生、Re:ゼロ。
 - 人物・役割：長井龍雪（Anohana監督）、岡田麿里（Anohana脚本）、庵野秀明（エヴァンゲリオン監督・脚本）、新房昭之（まどか☆マギカ監督）、虚淵玄（まどか☆マギカ脚本）、麻枝准（Angel Beats!脚本）。
 - 制作会社関係：A-1 Pictures—Anohana、Studio Bind—無職転生。
