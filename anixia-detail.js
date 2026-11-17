@@ -47,7 +47,11 @@
     const info=[["形式",fmt(a.format)],["放送年",a.release_year||"未登録"],["シーズン",a.season||"未登録"],["話数",a.episode_count||a.episodes_count||"未登録"],["放送状況",a.status||"未登録"],["制作会社",studioNames.join("・")||(a.studio?(a.studio.name_ja||a.studio.name):"未登録")]];
     if(a.official_url)info.push(["公式サイト",'<a href="'+esc(a.official_url)+'" target="_blank" rel="noopener noreferrer">公式サイトを開く</a>']);
     $("info").innerHTML=info.map(([k,v])=>'<dt>'+esc(k)+'</dt><dd>'+((typeof v==="string"&&v.startsWith("<a "))?v:esc(v))+'</dd>').join("");
-    $("characters").innerHTML=tagList(a.characters,"キャラクター");
+    const characterItems=a.characters||[];
+    $("characters").innerHTML=characterItems.length?characterItems.map(character=>{
+      const voiceActors=(character.voice_actors||[]).map(person=>esc(person.name_ja||person.name)).join("、");
+      return '<span>'+esc(character.name_ja||character.name||"名称未登録")+(character.role?' · '+esc(character.role):"")+(voiceActors?' · CV：'+voiceActors:"")+'</span>';
+    }).join(""):'<span class="anixia-empty">キャラクターはまだ登録されていません。</span>';
     $("staff").innerHTML=tagList(a.staff,"スタッフ");
     $("reviews").innerHTML=a.reviews.length?a.reviews.map(r=>'<article class="anixia-review"><b>'+esc(r.title||"レビュー")+(r.spoiler?" · ネタバレあり":"")+'</b><p>'+esc(r.body)+'</p></article>').join(""):'<div class="anixia-empty">公開レビューはまだありません。</div>';
     $("detail-loading").hidden=true;$("detail-content").hidden=false;
