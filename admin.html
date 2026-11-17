@@ -35,9 +35,9 @@
 <div style="display:flex;gap:10px;flex-wrap:wrap"><button id="preview-button" class="admin-button" type="button">取得候補をプレビュー</button><button id="sync-button" class="admin-button" type="button">同期を開始</button><button id="continue-sync-button" class="admin-button" type="button" hidden>次のページから続行</button></div><p id="sync-message" class="admin-message" aria-live="polite"></p><pre id="sync-preview" class="admin-message" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
 <hr><h3>作品詳細データの同期</h3><p>Annictの作品IDを指定します。エピソード・キャスト・スタッフを各1ページずつ取得し、次ページがある場合はカーソルを更新して続行できます。</p>
 <div class="admin-field"><label for="detail-work-id">Annict作品ID</label><input id="detail-work-id" type="text" inputmode="numeric" placeholder="例: 12345"></div>
-<div class="admin-field"><label for="detail-episode-page">エピソード開始ページ</label><input id="detail-episode-page" type="number" min="1" value="1"></div>
-<div class="admin-field"><label for="detail-cast-page">キャスト開始ページ</label><input id="detail-cast-page" type="number" min="1" value="1"></div>
-<div class="admin-field"><label for="detail-staff-page">スタッフ開始ページ</label><input id="detail-staff-page" type="number" min="1" value="1"></div>
+<div class="admin-field"><label for="detail-episode-page">エピソード開始ページ</label><input id="detail-episode-page" type="number" min="0" value="1"></div>
+<div class="admin-field"><label for="detail-cast-page">キャスト開始ページ</label><input id="detail-cast-page" type="number" min="0" value="1"></div>
+<div class="admin-field"><label for="detail-staff-page">スタッフ開始ページ</label><input id="detail-staff-page" type="number" min="0" value="1"></div>
 <div style="display:flex;gap:10px;flex-wrap:wrap"><button id="detail-sync-button" class="admin-button" type="button">詳細データを同期</button><button id="detail-continue-button" class="admin-button" type="button" hidden>続きから同期</button></div>
 <p id="detail-sync-message" class="admin-message" aria-live="polite"></p>
 </section>
