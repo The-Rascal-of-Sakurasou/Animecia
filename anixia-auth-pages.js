@@ -4,7 +4,7 @@
   const message=text=>{$("message").textContent=text;};
   const redirectTarget=()=>{
     const value=new URLSearchParams(location.search).get("redirect") || "";
-    const allowed=["mypage.html","anime.html","ranking.html","quiz.html","recommendations.html","discover.html","season.html"];
+    const allowed=["mypage.html","anime.html","ranking.html","quiz.html","recommendations.html","discover.html","season.html","admin.html"];
     return allowed.includes(value) ? value : "mypage.html";
   };
   const login=$("login-form");
