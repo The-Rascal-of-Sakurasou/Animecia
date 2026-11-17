@@ -32,7 +32,7 @@
       <a href="season.html" data-i18n="nav_season">今期アニメ</a>
       <a href="ranking.html" data-i18n="nav_ranking">ランキング</a>
       <a href="recommendations.html" data-i18n="nav_discover">おすすめ診断</a>
-      <a href="quiz.html" data-i18n="nav_quiz">クイズ</a>
+      <a href="community.html" data-i18n="nav_community">コミュニティ</a>
     </nav>
     <div class="anixia-header-actions">
       <button class="anixia-language" id="language-toggle" type="button" aria-label="Switch language">EN</button>
@@ -92,7 +92,7 @@
 
   <section class="anixia-bottom-links">
     <a href="season.html"><span data-i18n="season_title">今期アニメ</span><small data-i18n="season_sub">放送中・放送予定の作品</small></a>
-    <a href="quiz.html"><span data-i18n="quiz_title">アニメクイズ</span><small data-i18n="quiz_sub">アニメの知識に挑戦</small></a>
+    <a href="community.html"><span data-i18n="community_title">コミュニティ</span><small data-i18n="community_sub">ユーザーの投稿を見る</small></a>
     <a href="reviews.html"><span data-i18n="reviews_title">レビュー</span><small data-i18n="reviews_sub">ユーザーの感想を読む</small></a>
   </section>
 </main>
@@ -112,18 +112,18 @@
 (() => {
   const translations = {
     ja: {
-      nav_database:"作品データベース",nav_season:"今期アニメ",nav_ranking:"ランキング",nav_discover:"おすすめ診断",nav_quiz:"クイズ",login:"ログイン",
+      nav_database:"作品データベース",nav_season:"今期アニメ",nav_ranking:"ランキング",nav_discover:"おすすめ診断",nav_community:"コミュニティ",login:"ログイン",
       database_label:"ANIME DATABASE",search_heading:"アニメ作品を探す",search_label:"作品名で検索",search_button:"検索",catalog_count:"作品を収録",advanced_search:"詳細検索 →",
       feature_database:"作品データベース",feature_database_sub:"作品情報・ジャンル・制作会社",feature_ranking:"ランキング",feature_ranking_sub:"人気・評価から探す",feature_library:"マイライブラリ",feature_library_sub:"視聴状況・お気に入りを管理",feature_discover:"おすすめ診断",feature_discover_sub:"好みから作品を見つける",
       popular_label:"POPULAR",popular_title:"人気の作品",popular_sub:"多くのユーザーに視聴されている作品",view_ranking:"ランキングを見る →",recent_label:"RECENTLY ADDED",recent_title:"最近追加された作品",recent_sub:"データベースに追加・更新された作品",view_database:"作品一覧 →",
-      genres_label:"BROWSE BY GENRE",genres_title:"ジャンルから探す",genres_sub:"気になるジャンルから作品を絞り込む",view_genres:"すべてのジャンル →",season_title:"今期アニメ",season_sub:"放送中・放送予定の作品",quiz_title:"アニメクイズ",quiz_sub:"アニメの知識に挑戦",reviews_title:"レビュー",reviews_sub:"ユーザーの感想を読む"
+      genres_label:"BROWSE BY GENRE",genres_title:"ジャンルから探す",genres_sub:"気になるジャンルから作品を絞り込む",view_genres:"すべてのジャンル →",season_title:"今期アニメ",season_sub:"放送中・放送予定の作品",community_title:"コミュニティ",community_sub:"ユーザーの投稿を見る"
     },
     en: {
-      nav_database:"Anime Database",nav_season:"Seasonal Anime",nav_ranking:"ランキング",nav_discover:"Recommendations",nav_quiz:"Quiz",login:"Log in",
+      nav_database:"Anime Database",nav_season:"Seasonal Anime",nav_ranking:"ランキング",nav_discover:"Recommendations",nav_community:"Community",login:"Log in",
       database_label:"ANIME DATABASE",search_heading:"Find anime",search_label:"Search anime titles",search_button:"Search",catalog_count:"titles in catalog",advanced_search:"Advanced search →",
       feature_database:"Anime Database",feature_database_sub:"Titles, genres and studios",feature_ranking:"Rankings",feature_ranking_sub:"Browse by popularity and score",feature_library:"My Library",feature_library_sub:"Track your watchlist and favorites",feature_discover:"Recommendations",feature_discover_sub:"Find titles based on your taste",
       popular_label:"POPULAR",popular_title:"Popular anime",popular_sub:"Titles watched by the community",view_ranking:"View rankings →",recent_label:"RECENTLY ADDED",recent_title:"Recently added",recent_sub:"New and updated database entries",view_database:"Browse all titles →",
-      genres_label:"BROWSE BY GENRE",genres_title:"Browse by genre",genres_sub:"Explore titles by genre",view_genres:"All genres →",season_title:"Seasonal anime",season_sub:"Currently airing and upcoming titles",quiz_title:"Anime quiz",quiz_sub:"Test your anime knowledge",reviews_title:"Reviews",reviews_sub:"Read community reviews"
+      genres_label:"BROWSE BY GENRE",genres_title:"Browse by genre",genres_sub:"Explore titles by genre",view_genres:"All genres →",season_title:"Seasonal anime",season_sub:"Currently airing and upcoming titles",community_title:"Community",community_sub:"Browse community posts"
     }
   };
   let lang = localStorage.getItem("anixia-language") || "ja";
