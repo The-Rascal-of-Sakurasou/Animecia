@@ -165,7 +165,50 @@ Deno.serve(async (req: Request) => {
     const body = await req.json().catch(() => ({}));
     const startPage = Math.min(100000, Math.max(1, Math.floor(Number(body?.startPage) || 1)));
     const maxPages = Math.min(5, Math.max(1, Math.floor(Number(body?.maxPages) || 3)));
-    const perPage = 50;
+    const mode = body?.mode === "preview" ? "preview" : "sync";
+
+    // Preview reads exactly one provider page and checks local duplicates.
+    // It never creates a sync run and never writes catalogue records.
+    if (mode === "preview") {
+      const payload = await fetchAnnictPage(startPage, annictToken);
+      const works = Array.isArray(payload.works) ? payload.works : [];
+      const validWorks = works.filter((work: any) =>
+        work.id !== undefined && typeof work.title === "string" && work.title.trim()
+      );
+      const sourceIds = validWorks.map((work: any) => String(work.id));
+      const existingResult = sourceIds.length
+        ? await admin.from("anime").select("source_id,is_published")
+            .eq("source", "annict").in("source_id", sourceIds)
+        : { data: [], error: null };
+      if (existingResult.error) throw existingResult.error;
+      const existing = new Map((existingResult.data || []).map((row: any) =>
+        [String(row.source_id), Boolean(row.is_published)]
+      ));
+      return json({
+        mode: "preview",
+        page: startPage,
+        recordsSeen: works.length,
+        totalCount: Number.isFinite(payload.total_count) ? payload.total_count : null,
+        nextPage: payload.next_page == null ? null : Number(payload.next_page),
+        candidates: validWorks.map((work: any) => {
+          const mapped = mapWork(work);
+          return {
+            sourceId: mapped.source_id,
+            title: mapped.title,
+            titleJa: mapped.title_ja,
+            titleKana: mapped.title_kana,
+            sourceMedia: mapped.media_text || mapped.format,
+            proposedFormat: mapped.format,
+            releaseYear: mapped.release_year,
+            seasonName: mapped.season_name_text || mapped.season_name,
+            episodeCount: mapped.episode_count,
+            officialUrl: mapped.official_url,
+            alreadyImported: existing.has(mapped.source_id),
+            alreadyPublished: existing.get(mapped.source_id) === true
+          };
+        })
+      });
+    }
 
     const runInsert = await admin.from("catalog_sync_runs").insert({
       source: "annict", status: "running", pages_requested: 0,
