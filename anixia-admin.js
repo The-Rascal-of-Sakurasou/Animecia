@@ -438,6 +438,28 @@
       $("sync-message").textContent="処理に失敗しました: "+(e.message||"設定と同期ログを確認してください。");
     }finally{button.disabled=false;}
   }
+  $("poster-sync-button").addEventListener("click",async()=>{
+    const button=$("poster-sync-button");
+    button.disabled=true;
+    $("poster-sync-message").textContent="作品名と公開年を照合しています…";
+    try{
+      const result=await ANIXIA.syncTmdbPosters({
+        limit:Number($("poster-sync-limit").value)||20,
+        force:$("poster-sync-force").checked
+      });
+      $("poster-sync-message").textContent=[
+        "確認作品数: "+result.scanned,
+        "画像登録数: "+result.updated,
+        "一致なし: "+(result.unmatched||[]).length,
+        "エラー: "+(result.errors||[]).length,
+        (result.unmatched||[]).length?"一致しなかった作品: "+result.unmatched.join("、"):"",
+        (result.errors||[]).length?"エラー詳細: "+result.errors.join(" / "):""
+      ].filter(Boolean).join("\n");
+    }catch(e){
+      console.error(e);
+      $("poster-sync-message").textContent="同期できませんでした: "+(e.message||"TMDB_API_KEYと管理者権限を確認してください。");
+    }finally{button.disabled=false;}
+  });
   $("preview-button").addEventListener("click",()=>runAnnictSync("preview"));
   $("sync-button").addEventListener("click",()=>runAnnictSync("sync"));
   async function runAnnictDetailSync(){
