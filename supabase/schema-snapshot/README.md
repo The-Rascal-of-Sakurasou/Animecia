@@ -8,6 +8,7 @@ Exported read-only from Supabase project `trvnxggqzlhqdhoyiliy` on 2026-11-17.
 - `03_policies.sql`: RLS policies.
 - `04_functions_and_triggers.sql`: application functions and custom triggers, including triggers on `auth` tables.
 - `05_grants.sql`: observed table and function grants for Supabase API roles.
+- `06_comments.sql`: table and column comments.
 
 ## Limitations
 This is a **schema snapshot**, not a replacement migration chain. Do not place these files in `supabase/migrations` or apply them to production. It excludes all table rows, Auth users, user data, passwords, API keys, Vault contents, cron job definitions, platform-managed schemas, and extension-owned objects. The Wikidata cron schedule and secret must be provisioned separately using the reviewed migration flow. Verify this snapshot in a disposable local Supabase environment before treating it as a fresh-project bootstrap.
