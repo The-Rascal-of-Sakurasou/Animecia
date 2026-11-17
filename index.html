@@ -150,6 +150,8 @@
     lang = lang === "ja" ? "en" : "ja";
     localStorage.setItem("anixia-language", lang);
     apply();
+    window.ANIXIA_RELOAD_HOME = true;
+    window.dispatchEvent(new Event("anixia:languagechange"));
   });
   window.ANIXIA_LANG = () => lang;
   window.ANIXIA_I18N = translations;
