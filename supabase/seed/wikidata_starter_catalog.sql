@@ -55,7 +55,7 @@ with seed(source_id,title,title_ja,title_kana,release_year,released_on,episode_c
   values
     ('Q20590069','Steins;Gate','STEINS;GATE',null::text,2011,date '2011-04-06',26),
     ('Q483943','Anohana','あの日見た花の名前を僕達はまだ知らない。',null::text,2011,date '2011-04-14',11),
-    ('Q531552','Angel Beats!',null::text,null::text,2010,date '2010-04-02',13),
+    ('Q531552','Angel Beats!','Angel Beats!',null::text,2010,date '2010-04-02',13),
     ('Q102126892','Mushoku Tensei','無職転生 〜異世界行ったら本気だす〜','むしょくてんせい 〜いせかいいったらほんきだす〜',2021,date '2021-01-11',null::integer),
     ('Q65086934','Re:Zero','Re:ゼロから始める異世界生活',null::text,2016,date '2016-04-04',null::integer)
 )
