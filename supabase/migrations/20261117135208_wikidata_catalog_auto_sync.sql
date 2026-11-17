@@ -2,8 +2,6 @@
 create extension if not exists pg_cron with schema pg_catalog;
 create extension if not exists pg_net with schema extensions;
 create extension if not exists pgcrypto with schema extensions;
-grant usage on schema cron to postgres;
-grant all privileges on all tables in schema cron to postgres;
 
 create table if not exists public.catalog_sync_secrets (
   id smallint primary key default 1 check (id = 1),
