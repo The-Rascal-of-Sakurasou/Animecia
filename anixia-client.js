@@ -469,7 +469,7 @@
 
   async function syncTmdbPosters(options = {}) {
     const result = await getClient().functions.invoke("sync-tmdb-posters", {
-      body: { limit: options.limit || 20, force: options.force === true }
+      body: { limit: options.limit || 20, force: options.force === true, animeIds: Array.isArray(options.animeIds) ? options.animeIds.slice(0, 30) : [] }
     });
     if (result.error) throw new Error(result.data?.error || result.error.message || "ポスター同期に失敗しました。");
     if (result.data?.error) throw new Error(result.data.error);
