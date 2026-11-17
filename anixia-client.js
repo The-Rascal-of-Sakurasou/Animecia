@@ -467,17 +467,17 @@
     if (fallback) fallback.hidden = false;
   }, true);
 
-  async function syncTmdbPosters(options = {}) {
-    const result = await getClient().functions.invoke("sync-tmdb-posters", {
+  async function syncCommonsPosters(options = {}) {
+    const result = await getClient().functions.invoke("sync-commons-posters", {
       body: { limit: options.limit || 20, force: options.force === true, animeIds: Array.isArray(options.animeIds) ? options.animeIds.slice(0, 30) : [] }
     });
-    if (result.error) throw new Error(result.data?.error || result.error.message || "ポスター同期に失敗しました。");
+    if (result.error) throw new Error(result.data?.error || result.error.message || "画像同期に失敗しました。");
     if (result.data?.error) throw new Error(result.data.error);
     return result.data;
   }
 
   w.ANIXIA = Object.freeze({
-    URL, getClient, listAnime, suggestCatalog, getAnime, getGenres, getStudios, getTags, posterMarkup, syncTmdbPosters,
+    URL, getClient, listAnime, suggestCatalog, getAnime, getGenres, getStudios, getTags, posterMarkup, syncCommonsPosters,
     getCatalogCount, getPublicAnimeByIds, getUser, getUserAnimeState, toggleFavorite,
     saveWatchEntry, saveRating, getMyDashboard, createReview,
     listPendingReviews, moderateReview, updateProfile, listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog, syncAnnictWorkDetails,
