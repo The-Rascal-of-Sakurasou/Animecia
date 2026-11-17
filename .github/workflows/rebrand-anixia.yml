@@ -1,0 +1,43 @@
+name: Normalize ANIXIA branding
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/rebrand-anixia.mjs"
+      - ".github/workflows/rebrand-anixia.yml"
+      - "**/*.html"
+      - "**/*.md"
+      - "**/*.js"
+      - "**/*.css"
+      - "**/*.xml"
+
+permissions:
+  contents: write
+
+jobs:
+  rebrand:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Normalize brand in all site and SEO files
+        run: node scripts/rebrand-anixia.mjs
+      - name: Commit generated branding changes
+        run: |
+          if git diff --quiet; then
+            echo "No branding changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Apply ANIXIA branding across the entire site"
+          git push
