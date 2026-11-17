@@ -269,6 +269,13 @@
     return result.data;
   }
 
+  async function getAdminCatalogQualityReport(limit = 150) {
+    const size = Math.min(Math.max(Number(limit) || 150, 1), 200);
+    const result = await getClient().rpc("admin_get_catalog_quality_report", { p_limit: size });
+    if (result.error) throw result.error;
+    return result.data || { summary: {}, items: [] };
+  }
+
   async function listPendingAnime(limit = 50) {
     const size = Math.min(Math.max(Number(limit) || 50, 1), 100);
     const result = await getClient().from("anime")
@@ -417,7 +424,7 @@
     getCatalogCount, getPublicAnimeByIds, getUser, getUserAnimeState, toggleFavorite,
     saveWatchEntry, saveRating, getMyDashboard, createReview,
     listPendingReviews, moderateReview, updateProfile, listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog, syncAnnictWorkDetails,
-    listPendingAnime, setAnimePublished, listPendingEpisodes, setEpisodePublished,
+    listPendingAnime, getAdminCatalogQualityReport, setAnimePublished, listPendingEpisodes, setEpisodePublished,
     getAdminAnimeOptions, getAdminTaxonomy,
     getAdminAnimeTaxonomy, replaceAdminAnimeTaxonomy, createAdminTaxonomyItem,
     saveAdminAnimeRelation, removeAdminAnimeRelation, diagnoseAnime, getRankings
