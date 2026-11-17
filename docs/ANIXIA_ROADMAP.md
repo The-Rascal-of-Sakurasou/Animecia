@@ -170,3 +170,14 @@ All 6 migration files are present in the repository and applied to the active Su
 - Omits Annict image URLs and does not import user profiles, viewing records, or reviews.
 - End-to-end API import has not been run. The Annict source is still `pending` and disabled, so the importer is intentionally blocked until the terms review is completed.
 - The current importer does not yet fill genres/tags, sequel/prequel relations, episode synopses, or episode duration. Those require separate mapping/source validation.
+
+
+### Catalog curation and public detail expansion (2026-11-17)
+- Added migration `202611170007_catalog_taxonomy_admin.sql`: admin-only write policies for genres, tags, and anime taxonomy joins; reverse lookup indexes; transactional taxonomy replacement RPC.
+- Added migration `202611170008_public_anime_detail_expansion.sql`: public detail RPC now returns tags, alternate titles, published episodes, series, studios, organizations, and published related works in addition to existing metadata.
+- Added migration `202611170009_harden_taxonomy_rpc.sql`: hardened the taxonomy RPC with an empty search path and schema-qualified object references.
+- Extended `anixia-client.js` with admin catalogue, taxonomy, and relation methods.
+- Extended `admin.html` and `anixia-admin.js` with genre/tag assignment, dictionary creation, relation editing, and a missing-field quality checklist.
+- Extended `anime-detail.html` and `anixia-detail.js` to display tags, series, related works, published episodes, and production organizations.
+- Database checks confirm the taxonomy RPC exists, authenticated users have execute permission, anonymous users do not, and four admin-only write policies are present.
+- No production anime data is currently available in the tables checked, so populated-record UI and end-to-end browser testing remain pending. Do not describe the new screens as fully field-tested.
