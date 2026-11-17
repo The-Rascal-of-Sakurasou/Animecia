@@ -948,3 +948,148 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
  html{scroll-behavior:auto!important}
  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
+
+
+/* =========================================================
+   ANIXIA Design System — dark navy / card-first
+   ========================================================= */
+:root{
+  color-scheme:dark;
+  --anixia-bg:#080d18;
+  --anixia-surface:#111b2b;
+  --anixia-surface-2:#17243a;
+  --anixia-surface-3:#1d2d46;
+  --anixia-line:#293b56;
+  --anixia-text:#f2f5fa;
+  --anixia-muted:#a3b0c2;
+  --anixia-accent:#f2a51a;
+  --anixia-accent-soft:#3a2b12;
+  --ac-line:var(--anixia-line);
+  --ac-card-border:var(--anixia-line);
+  --ac-card-hover:#536a8b;
+  --ac-focus:var(--anixia-accent);
+}
+html,body{background:var(--anixia-bg)!important;color:var(--anixia-text)!important}
+body{
+  background-image:radial-gradient(ellipse at 50% -18%,rgba(52,78,120,.24),transparent 52%)!important;
+  -webkit-font-smoothing:antialiased;
+}
+.site-header,header.site-header{
+  background:rgba(8,13,24,.94)!important;
+  border-bottom:1px solid rgba(160,180,210,.14)!important;
+  color:var(--anixia-text)!important;
+}
+.site-header .brand,.brand,.footer-brand{color:#fff!important}
+.site-header .nav-links a,.footer-links a{color:#bdc8d8!important}
+.site-header .nav-links a:hover,.footer-links a:hover{color:var(--anixia-accent)!important}
+.site-header .nav-btn,.nav-btn{
+  background:var(--anixia-surface-2)!important;
+  border-color:var(--anixia-line)!important;
+  color:var(--anixia-text)!important;
+}
+.site-header .nav-btn.primary,.nav-btn.primary{
+  background:var(--anixia-accent)!important;
+  border-color:var(--anixia-accent)!important;
+  color:#171b22!important;
+}
+footer{background:#060a12!important;color:var(--anixia-muted)!important;border-top:1px solid var(--anixia-line)}
+main,.container,.page-shell{color:var(--anixia-text)}
+:where(.panel,.section-card,.ranking-list,.rank-list,.review-box,.feature-anime,
+  .season-ranking,.home-review,.quick a,.genre,.feature,.discover-card,
+  .anime-search-area,.filter-area,.picker,.compare-table-wrap,.profile-card,
+  .activity-panel,.settings-panel,.side-panel,.mypage-overview,.post,.reply,
+  .question,.review-form,.status-form,.search-results,.search-result){
+  background:var(--anixia-surface)!important;
+  border-color:var(--anixia-line)!important;
+  color:var(--anixia-text)!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.16)!important;
+}
+:where(.card,.anime-card,.feature-anime,.home-review,.quick,.overview-link,.quick-action){
+  background:var(--anixia-surface)!important;
+  border-color:var(--anixia-line)!important;
+  color:var(--anixia-text)!important;
+}
+:where(.card,.anime-card,.quick a,.genre,.feature-anime,.home-review,.discover-card,
+  .ranking-row,.rank-item,.season-row,.overview-link,.quick-action){
+  transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease;
+}
+:where(.card,.anime-card,.quick a,.genre,.feature-anime,.home-review,.discover-card):hover{
+  border-color:#60779a!important;
+  background:var(--anixia-surface-2)!important;
+}
+:where(.section-title,.page-header h1,.page-intro h1,.ranking-hero h1,
+  .hero h1,.home-hero h1,.work-title,.rank-title,.card-title,.title){
+  color:var(--anixia-text)!important;
+}
+:where(.section-desc,.muted,.meta,.sub,.rank-meta,.rank-review p,.page-header p,
+  .page-intro p,.ranking-note,.review-note,.count,.description,.help-text,
+  .feature p,.discover-card p,.home-review p,.home-cta p){
+  color:var(--anixia-muted)!important;
+}
+:where(.hero,.home-hero,.ranking-hero,.page-intro,.page-shell .hero,
+  .discover-v6 .hero,.compare-hero){
+  background:linear-gradient(135deg,#0d1728 0%,#14243b 58%,#1c2d47 100%)!important;
+  color:var(--anixia-text)!important;
+  border:1px solid rgba(143,166,198,.14);
+}
+:where(.hero p,.home-hero p,.ranking-hero p,.page-intro p){color:#bdc9d9!important}
+:where(.hero .eyebrow,.eyebrow,.page-kicker,.ranking-hero .kicker,
+  .discover-v6 .hero-kicker){color:var(--anixia-accent)!important}
+:where(input,select,textarea,.search-box input,.hero-search input,.header-search input){
+  background:#0b1423!important;
+  color:var(--anixia-text)!important;
+  border-color:var(--anixia-line)!important;
+}
+:where(input,select,textarea)::placeholder{color:#8797ad!important;opacity:1}
+:where(select option){background:#101a2a!important;color:var(--anixia-text)!important}
+:where(button,.btn,.button,input[type=submit],input[type=button],.search-button){
+  background:var(--anixia-surface-3);
+  border-color:var(--anixia-line);
+  color:var(--anixia-text);
+}
+:where(.btn.primary,.button.primary,.search-button,.hero-search button,
+  .home-cta .cta-actions a:first-child){
+  background:var(--anixia-accent)!important;
+  border-color:var(--anixia-accent)!important;
+  color:#171b22!important;
+}
+:where(.ranking-tabs,.tabs,.tab-list){background:#0b1423!important;border-color:var(--anixia-line)!important}
+:where(.ranking-tab,.tab){color:var(--anixia-muted)!important}
+:where(.ranking-tab.active,.tab.active){background:var(--anixia-accent)!important;color:#171b22!important}
+:where(.rank-item:hover,.ranking-row:hover,.season-row:hover){background:var(--anixia-surface-2)!important}
+:where(.rank-number,.rank-no){color:#9cabc0!important}
+:where(.rank-score,.rank-stats,.feature-rank,.section-link,.more){color:var(--anixia-accent)!important}
+:where(.genre-tag,.pill,.chip,.active-filter,.selected-chip){
+  background:var(--anixia-surface-2)!important;
+  border-color:var(--anixia-line)!important;
+  color:var(--anixia-text)!important;
+}
+:where(.genre-tag:hover,.pill:hover,.chip:hover){border-color:var(--anixia-accent)!important}
+:where(.compare-table th,.compare-table td,.compare-table .label){
+  background:var(--anixia-surface)!important;
+  color:var(--anixia-text)!important;
+  border-color:var(--anixia-line)!important;
+}
+:where(hr,.divider){border-color:var(--anixia-line)!important}
+:where(.home-stat-card,.hero-side,.hero-stat-card,.home-side-panel){
+  background:var(--anixia-surface-2)!important;
+  border-color:var(--anixia-line)!important;
+  color:var(--anixia-text)!important;
+}
+:where(.home-stat-card p,.hero-side span,.hero-stat-card span,.home-side-panel p){
+  color:var(--anixia-muted)!important;
+}
+:where(.skeleton,.skeleton-card,.skeleton-pill){
+  background:linear-gradient(90deg,#17243a 25%,#243650 37%,#17243a 63%)!important;
+  background-size:400% 100%!important;
+}
+:where(.empty,.loading,.state){color:var(--anixia-muted)!important}
+:where(a){text-decoration-color:rgba(242,165,26,.35)}
+:where(a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible){
+  outline:3px solid var(--anixia-accent)!important;
+  outline-offset:3px!important;
+}
+@media(max-width:760px){
+  .site-header .nav-links a{color:#c3cede!important}
+  :where(.panel,.section-card,.ranking-list,.review-box,.picker){border-radius:13px!important}
+}
