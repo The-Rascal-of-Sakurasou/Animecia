@@ -42,8 +42,8 @@
     }).join(""):'<div class="anixia-empty">関連作品はまだ登録されていません。</div>';
     const episodes=a.episodes||[];
     $("episodes").innerHTML=episodes.length?episodes.map(e=>{
-      const number=String(e.episode_number||e.episode_order||"");
-      const numberLabel=number.includes("第")||number.includes("話")?number:"第"+number+"話";
+      const number=String(e.episode_number||"");
+      const numberLabel=number?(number.includes("第")||number.includes("話")?number:"第"+number+"話"):"話数未登録（表示順 "+String(e.episode_order||"-")+")";
       const title=e.title_ja||e.title||"サブタイトル未登録";
       const date=e.aired_at?" · "+e.aired_at:"";
       return '<article class="anixia-detail-episode"><b>'+esc(numberLabel+" · "+title)+'</b><p>'+esc(date+(e.synopsis?" · "+e.synopsis:""))+'</p></article>';
