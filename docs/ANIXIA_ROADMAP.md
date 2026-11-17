@@ -272,3 +272,11 @@ All 6 migration files are present in the repository and applied to the active Su
 
 - Security hardening follow-up: the public RPC endpoints are `SECURITY INVOKER` wrappers; the privileged `SECURITY DEFINER` implementations were moved into the non-exposed `private` schema. Both private functions retain an internal admin check, empty `search_path`, and restricted execute grants. This avoids adding new public-schema SECURITY DEFINER findings to the advisor report.
 - Merge updates preserve non-empty target values and fill only missing target fields from the source (person biography/image/URLs/birthday/type; character descriptions/image/series; studio and organization website/Wikipedia URLs). Rows are locked in UUID order to reduce deadlock risk. Kana normalization handles voiced and unvoiced hiragana/katakana; the long-vowel mark is retained to reduce false matches.
+
+
+### 別名対応の横断検索（2026-11-17）
+- `search_public_anime` を拡張し、作品の別タイトル（`anime_titles`）に加え、人物・キャラクター・制作会社・組織の名称および `catalog_entity_aliases` を検索対象に追加。
+- 作品一覧の検索欄は横断検索に対応。声優・スタッフ欄とキャラクター欄も統合時に登録した別名を検索。
+- すべて `EXISTS` 条件で判定し、1作品に複数の一致があっても結果が重複しない。公開済み作品だけを返す既存条件・絞り込み・並び順・ページネーション・返却形式は維持。
+- 別名テーブルをData APIに直接公開せず、既存の公開検索RPC内でのみ参照。
+- 実データが未登録のため、実在する作品・人物での検索確認は未実施。テスト用データを一時作成してロールバックする検証を実施予定。
