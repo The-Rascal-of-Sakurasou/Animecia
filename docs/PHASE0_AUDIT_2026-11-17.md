@@ -16,31 +16,21 @@
 
 ## 2. 公開ページとSupabase接続の不整合
 
-新しい共通クライアント `anixia-client.js` は新ANIXIAプロジェクトを参照している。一方、次の21ページでは旧Animecia Supabaseプロジェクトへの直接参照が残っていることを確認した。
+新しい共通クライアント `anixia-client.js` は新ANIXIAプロジェクトを参照している。前回の文字列検索では旧プロジェクトURLが含まれるページを21件検出したが、再確認したところ、そのうち12件は `preconnect` のみで、実際の接続先ではなかった。実行コードとして旧プロジェクトを参照しているページは次の9件。
 
 - `admin-candidates.html`
 - `admin-dashboard.html`
 - `admin-login.html`
-- `auth-callback.html`
 - `community.html`
-- `compare.html`
-- `discover.html`
 - `genres.html`
-- `login.html`
 - `memo.html`
 - `messages.html`
-- `mypage.html`
 - `profile.html`
-- `quiz-play.html`
-- `quiz.html`
-- `ranking.html`
-- `recommendations.html`
-- `reset-password.html`
-- `season.html`
-- `signup.html`
 - `user-search.html`
 
-旧Animecia Supabaseプロジェクトは `INACTIVE`。したがって、これらのページをURLだけ新プロジェクトに置換してはならない。旧ページが利用するテーブル・RPC・認証処理と新スキーマを照合し、ページ単位で移行する。
+共通スクリプト `auth-core.js` と一部ページの `anime-data.js` にも旧プロジェクト参照がある。残り12ページ（`auth-callback.html`、`compare.html`、`discover.html`、`login.html`、`mypage.html`、`quiz-play.html`、`quiz.html`、`ranking.html`、`recommendations.html`、`reset-password.html`、`season.html`、`signup.html`）の旧URLはpreconnectのみで、実際のデータ通信は新共通クライアントを使っている。不要なpreconnectは後続の共通化で削除する。
+
+旧Animecia Supabaseプロジェクトは `INACTIVE`。旧プロジェクトを実際に利用する9ページは、URLだけを新プロジェクトへ置換してはならない。旧ページが利用するテーブル・RPC・認証処理と新スキーマを照合し、ページ単位で移行する。
 
 ## 3. 自動処理とデータソースの不整合
 
@@ -60,7 +50,16 @@ SEO生成スクリプト自体は旧スキーマ参照のままなので、新�
 - 公開作品検索・詳細・おすすめ等の4 RPCはSECURITY DEFINERとして警告される。確認した定義では `is_published = true` に限定し、空のsearch_pathを設定している。公開範囲と権限を継続レビューする。
 - Performance Advisorは外部キーの未インデックス10件を報告。未使用インデックス18件も報告するが、DBがほぼ未使用のため、使用状況を測定せず削除しない。
 
-## 5. 次の実装順序
+## 5. 追加確認・Phase 1の進捗
+
+- Supabase Authユーザー数0、管理者数0を確認。管理者アカウントを登録するまで管理者同期を実行できない。
+- `anime.is_published` のDB既定値は `false`。
+- `sync-annict-catalog` はv2をデプロイし、画像フィールドを取得せず、公開フラグも書き換えずに候補を非公開で保存するよう変更。
+- 管理者だけが未公開候補を閲覧・公開できるRLSポリシーと部分インデックスを追加。
+- Annict APIの利用条件・レート制限は [docs/DATA_SOURCES.md](DATA_SOURCES.md) に記録。
+- Annict APIトークンのSecrets登録状況は確認できない。トークン値は読み出さず、Supabase側で管理する。
+
+## 6. 次の実装順序
 
 1. 旧・不整合な自動ワークフローを停止する（このブランチで実施）。
 2. 新ANIXIAスキーマの初期マイグレーションをGit管理下に戻し、DBとリポジトリの差をなくす。
@@ -71,7 +70,7 @@ SEO生成スクリプト自体は旧スキーマ参照のままなので、新�
 7. 検索・作品詳細・視聴管理・ランキングを実機テストする。
 8. SEO生成処理を新スキーマに合わせて作り直し、既存SEOページを保護するテストを追加する。
 
-## 6. 受け入れ条件
+## 7. 受け入れ条件
 
 - 公開ページが停止中の旧Animecia Supabaseを参照しない。
 - DBの初期構築から全マイグレーションを新規環境で再現できる。
