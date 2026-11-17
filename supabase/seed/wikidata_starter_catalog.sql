@@ -113,3 +113,27 @@ join public.studios s on
  or (a.source_id='Q102126892' and s.source_id='Q71811168')
 where a.source='wikidata'
 on conflict do nothing;
+
+
+-- Verified Anohana staff records. No images or biography prose are imported.
+insert into public.people(name,name_ja,name_kana,name_en,person_type,source,source_id)
+values
+ ('Tatsuyuki Nagai','長井龍雪','ながい たつゆき','Tatsuyuki Nagai','director','wikidata','Q1073727'),
+ ('Mari Okada','岡田麿里','おかだ まり','Mari Okada','screenwriter','wikidata','Q3209229')
+on conflict (source,source_id) do nothing;
+
+insert into public.people_external_ids(person_id,source,external_id,source_url,last_verified_at)
+select p.id,'wikidata',p.source_id,'https://www.wikidata.org/wiki/'||p.source_id,now()
+from public.people p
+where p.source='wikidata' and p.source_id in ('Q1073727','Q3209229')
+on conflict do nothing;
+
+insert into public.anime_staff(anime_id,person_id,role)
+select a.id,p.id,v.role
+from (values
+ ('Q483943','Q1073727','director'),
+ ('Q483943','Q3209229','screenwriter')
+) v(anime_qid,person_qid,role)
+join public.anime a on a.source='wikidata' and a.source_id=v.anime_qid
+join public.people p on p.source='wikidata' and p.source_id=v.person_qid
+on conflict do nothing;
