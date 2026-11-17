@@ -158,3 +158,15 @@ All 6 migration files are present in the repository and applied to the active Su
 3. Test one approved sample work end-to-end before running any catalogue-wide import.
 4. Extend the front-end detail page to display episodes, multiple studios, series, cast, staff, and related works.
 5. Evaluate a Japanese-aware search strategy before scaling the catalogue.
+
+
+### Annict detail importer implementation
+- Added `supabase/functions/sync-annict-work-details/index.ts`.
+- Deployed as Supabase Edge Function `sync-annict-work-details`, active version 3, with JWT verification enabled.
+- Requires a valid signed-in ANIXIA administrator and checks `catalog_sources` for Annict `rights_review_status='approved'` and `is_enabled=true` before any Annict API request.
+- Accepts one Annict work ID at a time. Fetches episodes, casts, and staff sequentially with pagination capped at four pages per endpoint and retry handling for rate limits / temporary server errors.
+- Upserts episode, person, character, organization, studio, and series entities using provider identifiers; links the records to the ANIXIA work and records cross-reference IDs.
+- Imported episodes remain unpublished; the importer does not publish the anime or its related records.
+- Omits Annict image URLs and does not import user profiles, viewing records, or reviews.
+- End-to-end API import has not been run. The Annict source is still `pending` and disabled, so the importer is intentionally blocked until the terms review is completed.
+- The current importer does not yet fill genres/tags, sequel/prequel relations, episode synopses, or episode duration. Those require separate mapping/source validation.
