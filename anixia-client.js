@@ -172,6 +172,37 @@
     return true;
   }
 
+  async function getMyDashboard(userId) {
+    const db = getClient();
+    const [profile, favorites, watchEntries, ratings, achievements] = await Promise.all([
+      db.from("profiles").select("id,username,display_name,avatar_url,bio,is_public").eq("id", userId).maybeSingle(),
+      db.from("favorites").select("created_at,anime:anime(id,title,title_ja,poster_url,release_year,format)").eq("user_id", userId).order("created_at", { ascending: false }).limit(50),
+      db.from("watch_entries").select("status,episodes_watched,updated_at,anime:anime(id,title,title_ja,poster_url,release_year,format)").eq("user_id", userId).order("updated_at", { ascending: false }).limit(100),
+      db.from("ratings").select("score,updated_at,anime:anime(id,title,title_ja,poster_url,release_year,format)").eq("user_id", userId).order("updated_at", { ascending: false }).limit(50),
+      db.from("user_achievements").select("earned_at,achievement:achievements(code,title,description,points,icon_url)").eq("user_id", userId).order("earned_at", { ascending: false }).limit(100)
+    ]);
+    const error = [profile, favorites, watchEntries, ratings, achievements].find(x => x.error);
+    if (error) throw error.error;
+    return {
+      profile: profile.data || null,
+      favorites: (favorites.data || []).filter(x => x.anime).map(x => ({ ...x.anime, saved_at: x.created_at })),
+      watchEntries: (watchEntries.data || []).filter(x => x.anime).map(x => ({ ...x.anime, status: x.status, episodes_watched: x.episodes_watched, updated_at: x.updated_at })),
+      ratings: (ratings.data || []).filter(x => x.anime).map(x => ({ ...x.anime, score: x.score, updated_at: x.updated_at })),
+      achievements: (achievements.data || []).filter(x => x.achievement).map(x => ({ ...x.achievement, earned_at: x.earned_at }))
+    };
+  }
+
+  async function updateProfile(userId, values) {
+    const allowed = {
+      username: String(values.username || "").trim().slice(0, 30) || null,
+      display_name: String(values.display_name || "").trim().slice(0, 50) || null,
+      bio: String(values.bio || "").trim().slice(0, 300) || null
+    };
+    const result = await getClient().from("profiles").update(allowed).eq("id", userId).select("id,username,display_name,bio").single();
+    if (result.error) throw result.error;
+    return result.data;
+  }
+
   async function listQuizzes() {
     const result = await getClient().from("quizzes").select("id,title,description,category,difficulty,created_at").eq("is_published", true).order("difficulty", { ascending: true });
     if (result.error) throw result.error;
@@ -181,6 +212,6 @@
   w.ANIXIA = Object.freeze({
     URL, getClient, listAnime, getAnime, getGenres, getStudios,
     getCatalogCount, getUser, getUserAnimeState, toggleFavorite,
-    saveWatchEntry, saveRating, listQuizzes
+    saveWatchEntry, saveRating, getMyDashboard, updateProfile, listQuizzes
   });
 })(window);
