@@ -168,6 +168,29 @@
     return result.data;
   }
 
+  async function listPendingReviews() {
+    const result = await getClient().from("reviews")
+      .select("id,anime_id,user_id,title,body,spoiler,created_at")
+      .eq("is_published", false)
+      .order("created_at", { ascending: true })
+      .limit(100);
+    if (result.error) throw result.error;
+    const rows = result.data || [];
+    const works = await getPublicAnimeByIds(rows.map(row => row.anime_id));
+    const byId = new Map(works.map(work => [work.id, work]));
+    return rows.map(row => ({ ...row, anime: byId.get(row.anime_id) })).filter(row => row.anime);
+  }
+
+  async function moderateReview(reviewId, publish = true) {
+    const result = await getClient().from("reviews")
+      .update({ is_published: Boolean(publish) })
+      .eq("id", reviewId)
+      .select("id,is_published")
+      .single();
+    if (result.error) throw result.error;
+    return result.data;
+  }
+
   async function updateProfile(userId, values) {
     const allowed = {
       username: String(values.username || "").trim().slice(0, 30) || null,
@@ -251,8 +274,8 @@
   w.ANIXIA = Object.freeze({
     URL, getClient, listAnime, getAnime, getGenres, getStudios,
     getCatalogCount, getPublicAnimeByIds, getUser, getUserAnimeState, toggleFavorite,
-    saveWatchEntry, saveRating, getMyDashboard, createReview, updateProfile,
-    listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog,
+    saveWatchEntry, saveRating, getMyDashboard, createReview,
+    listPendingReviews, moderateReview, updateProfile, listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog,
     diagnoseAnime, getRankings
   });
 })(window);
