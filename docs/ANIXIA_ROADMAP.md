@@ -223,7 +223,7 @@ All 6 migration files are present in the repository and applied to the active Su
 ### Annict importer safeguards (2026-11-17)
 - Found that the catalog-level importer did not check the Annict source approval registry, even though the detail importer already required `rights_review_status='approved'` and `is_enabled=true`.
 - Added the same fail-closed approval gate to `sync-annict-catalog`. A missing source row or database lookup error now stops the run; an unapproved or disabled source returns HTTP 423 before any provider request or catalogue write.
-- Deployed `sync-annict-catalog` as active version 3 with JWT verification enabled. GitHub commit: `e75021625a38a3bece7abcb6a088a4de6a7bcdca`.
+- Deployed `sync-annict-catalog` as active version 4 with JWT verification enabled. The approval gate reuses a single service client for the run. GitHub commits: `e75021625a38a3bece7abcb6a088a4de6a7bcdca`, `53c4b165d2f0e45c2650573f4d961e73cfb48ec2`.
 - Found that the detail importer could stop after four pages while still reporting completion. It now detects remaining pagination and fails before writing any detail records, rather than silently importing a partial collection as complete.
 - Removed the explicit `is_published=false` value from episode upserts. New episodes still use the database default (false), while later syncs no longer unpublish episodes already approved by an administrator.
 - Deployed `sync-annict-work-details` as active version 4 with JWT verification enabled. GitHub commit: `2ebd6f9ccf9039a7a00d0986d1f14d8952c069cc`.
