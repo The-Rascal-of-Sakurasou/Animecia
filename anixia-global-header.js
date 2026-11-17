@@ -71,9 +71,65 @@
     }
   };
 
+
+  const installFooter = () => {
+    const existing = document.querySelector("footer");
+    const footer = existing || document.createElement("footer");
+    footer.className = "anixia-global-footer";
+    footer.innerHTML = `
+      <div class="anixia-footer-inner">
+        <div class="anixia-footer-main">
+          <a class="anixia-footer-logo" href="/anixia/" aria-label="ANIXIA ホーム">ANI<span>X</span>IA</a>
+          <p class="anixia-footer-description">アニメを探す、記録する、語り合う。</p>
+        </div>
+        <nav class="anixia-footer-nav" aria-label="フッターナビゲーション">
+          <a href="/anixia/">ホーム</a>
+          <a href="/anixia/anime.html">作品データベース</a>
+          <a href="/anixia/season.html">今期アニメ</a>
+          <a href="/anixia/ranking.html">ランキング</a>
+          <a href="/anixia/recommendations.html">おすすめ診断</a>
+          <a href="/anixia/community.html">コミュニティ</a>
+          <a href="/anixia/reviews.html">レビュー</a>
+          <a href="/anixia/data-sources.html">データ出典</a>
+          <a href="/anixia/terms.html">利用規約</a>
+          <a href="/anixia/privacy.html">プライバシー</a>
+        </nav>
+        <div class="anixia-footer-bottom"><span>© ANIXIA</span><span>Anime Database & Community</span></div>
+      </div>`;
+    if (!existing) document.body.appendChild(footer);
+
+    if (!document.getElementById("anixia-global-footer-style")) {
+      const style = document.createElement("style");
+      style.id = "anixia-global-footer-style";
+      style.textContent = `
+        footer.anixia-global-footer{
+          display:block!important;position:relative!important;inset:auto!important;
+          width:100%!important;margin:64px 0 0!important;padding:0!important;
+          background:linear-gradient(110deg,#080B12 0%,#0D121C 58%,#111A27 100%)!important;
+          color:#D6DCE6!important;border:0!important;border-top:1px solid rgba(85,200,255,.22)!important;
+          box-shadow:0 -12px 32px rgba(0,0,0,.08)!important;
+        }
+        .anixia-footer-inner{width:min(1320px,100%);margin:0 auto;padding:38px 22px 20px}
+        .anixia-footer-main{margin-bottom:24px}
+        .anixia-footer-logo{display:inline-flex;color:#F4F8FF!important;text-decoration:none!important;font:850 27px/1 Inter,"Segoe UI",Arial,sans-serif;letter-spacing:-1.9px}
+        .anixia-footer-logo span{color:#55C8FF!important;font-weight:950;text-shadow:0 0 12px rgba(85,200,255,.42);transform:skewX(-8deg)}
+        .anixia-footer-description{margin:10px 0 0!important;color:#8F9BAC!important;font-size:12px!important}
+        .anixia-footer-nav{display:flex;flex-wrap:wrap;gap:9px 22px;padding:20px 0;border-top:1px solid rgba(255,255,255,.09);border-bottom:1px solid rgba(255,255,255,.09)}
+        .anixia-footer-nav a{color:#B9C3D1!important;text-decoration:none!important;font-size:12px!important;font-weight:650!important;transition:color .15s ease}
+        .anixia-footer-nav a:hover{color:#55C8FF!important}
+        .anixia-footer-bottom{display:flex;justify-content:space-between;gap:12px;padding-top:16px;color:#748195;font-size:10px;letter-spacing:.04em}
+        @media(max-width:600px){.anixia-footer-inner{padding:30px 16px 18px}.anixia-footer-nav{gap:12px 16px}.anixia-footer-bottom{flex-direction:column;gap:5px}}
+        @media(prefers-reduced-motion:reduce){.anixia-footer-nav a{transition:none}}
+      `;
+      document.head.appendChild(style);
+    }
+  };
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", install, { once:true });
   } else {
     install();
   }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", installFooter, { once:true });
+  else installFooter();
 })();
