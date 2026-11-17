@@ -32,14 +32,13 @@
       const style = document.createElement("style");
       style.id = "anixia-global-header-style";
       style.textContent = `
-        .site-header,.anixia-global-header{
-          position:sticky;top:0;z-index:9999;
-          min-height:68px;
-          background:linear-gradient(105deg,#0B1424 0%,#101F35 58%,#10263D 100%)!important;
-          border-bottom:1px solid rgba(85,200,255,.2)!important;
-          box-shadow:0 8px 28px rgba(2,9,20,.18);
-          box-sizing:border-box;
+        header,.site-header,.anixia-global-header,.global-header,.main-header,.site-navbar{
+          background:linear-gradient(105deg,#080B12 0%,#0D121C 58%,#111A27 100%)!important;
+          background-color:#0B0F16!important;color:#F4F8FF!important;
+          border-bottom:1px solid rgba(85,200,255,.18)!important;
+          box-shadow:0 8px 28px rgba(0,0,0,.24)!important;box-sizing:border-box;
         }
+        .site-header,.anixia-global-header{position:sticky;top:0;z-index:9999;min-height:68px;}
         .site-header .anixia-logo,.anixia-global-header .anixia-logo{
           display:inline-flex;align-items:center;flex:none;
           color:#F4F8FF!important;text-decoration:none!important;
