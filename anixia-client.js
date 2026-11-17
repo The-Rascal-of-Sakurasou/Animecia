@@ -265,7 +265,7 @@
   async function listPendingEpisodes(limit = 100) {
     const size = Math.min(Math.max(Number(limit) || 100, 1), 200);
     const result = await getClient().from("episodes")
-      .select("id,anime_id,episode_number,episode_order,episode_kind,title,title_ja,synopsis,aired_at,source,source_id,updated_at,anime:anime_id(id,title,title_ja)")
+      .select("id,anime_id,episode_number,episode_order,episode_kind,title,title_ja,synopsis,aired_at,source,source_id,updated_at,anime:anime!episodes_anime_id_fkey(id,title,title_ja)")
       .eq("is_published", false)
       .order("updated_at", { ascending: false })
       .limit(size);
