@@ -477,6 +477,42 @@
   }
   $("wikidata-preview-button").addEventListener("click",()=>runWikidataSync("preview"));
   $("wikidata-sync-button").addEventListener("click",()=>runWikidataSync("sync"));
+  async function runWikidataEpisodeSync(mode){
+    const button=mode==="preview"?$("wikidata-episode-preview-button"):$("wikidata-episode-sync-button");
+    button.disabled=true;
+    $("wikidata-episode-sync-message").textContent=mode==="preview"?"Wikidataからエピソード候補を確認しています（保存はしません）…":"Wikidataのエピソードを非公開で登録しています…";
+    $("wikidata-episode-sync-preview").textContent="";
+    try{
+      const {data,error}=await ANIXIA.getClient().functions.invoke("sync-wikidata-episodes",{
+        body:{mode,limit:Number($("wikidata-episode-limit").value)||8}
+      });
+      if(error)throw new Error(data?.error||error.message||"同期に失敗しました。");
+      if(data?.error)throw new Error(data.error);
+      const results=data.results||[];
+      $("wikidata-episode-sync-message").textContent=[
+        mode==="preview"?"プレビュー完了":"同期完了",
+        "確認作品数: "+(data.worksChecked??0),
+        "検索リクエスト数: "+(data.queriesRequested??0),
+        "取得候補: "+(data.recordsSeen??0),
+        "新規登録: "+(data.recordsInserted??0),
+        "登録データはすべて非公開です。"
+      ].join("\n");
+      $("wikidata-episode-sync-preview").textContent=results.map(item=>[
+        item.title,
+        "Wikidata: "+(item.sourceUrl||("https://www.wikidata.org/wiki/"+item.workId)),
+        "状態: "+item.status,
+        "既存エピソード: "+(item.existingEpisodes??0),
+        "取得候補: "+(item.candidates??0),
+        "新規候補: "+(item.newCandidates??0)
+      ].join("\n")).join("\n\n");
+      if(mode==="sync")await loadPendingEpisodes();
+    }catch(e){
+      console.error(e);
+      $("wikidata-episode-sync-message").textContent="処理に失敗しました: "+(e.message||"管理者権限・同期ログを確認してください。");
+    }finally{button.disabled=false;}
+  }
+  $("wikidata-episode-preview-button").addEventListener("click",()=>runWikidataEpisodeSync("preview"));
+  $("wikidata-episode-sync-button").addEventListener("click",()=>runWikidataEpisodeSync("sync"));
   $("poster-sync-button").addEventListener("click",async()=>{
     const button=$("poster-sync-button");
     button.disabled=true;
