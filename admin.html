@@ -1,15 +1,35 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="refresh" content="0; url=admin-login.html">
-  <title>管理者ログインへ移動 | ANIXIA</title>
-  <link rel="canonical" href="admin-login.html">
-<link rel="stylesheet" href="site-theme.css?v=anixia-logo-20261117">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d18"><title>ANIXIA管理画面</title><meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="site-theme.css?v=anixia-20261117">
+<style>
+.admin-page{width:min(850px,calc(100% - 36px));margin:35px auto 70px}
+.admin-panel{padding:24px;border:1px solid #293b56;border-radius:15px;background:#111b2b;margin-bottom:14px}
+.admin-panel h1,.admin-panel h2{color:#fff;margin-top:0}
+.admin-panel p{font-size:12px;line-height:1.8;color:#aebbd0}
+.admin-field{display:grid;gap:6px;margin:13px 0}
+.admin-field label{font-size:11px;color:#aebbd0;font-weight:800}
+.admin-field input,.admin-field select{height:42px;border:1px solid #30435f;border-radius:8px;background:#0b1423;color:#fff;padding:0 10px}
+.admin-button{border:0;border-radius:8px;padding:11px 16px;background:#f2a51a;color:#171b22;font-weight:900}
+.admin-message{font-size:12px;color:#f2b84d;white-space:pre-wrap}
+.admin-code{display:block;padding:10px;border-radius:8px;background:#0b1423;color:#dbe4f0;font:11px monospace;overflow-wrap:anywhere}
+.admin-warning{border-left:3px solid #f2a51a;padding:10px 12px;background:#241d12;color:#d8c39d;font-size:11px;line-height:1.7}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="anixia-client.js"></script><script src="anixia-admin.js" defer></script>
 </head>
 <body>
-  <p>管理者ログインページへ移動しています。</p>
-  <p><a href="admin-login.html">移動しない場合はこちら</a></p>
+<header class="site-header"><div class="container nav"><a class="brand" href="index.html">ANIXIA</a><nav class="nav-links"><a href="index.html">ホーム</a><a href="anime.html">作品検索</a><a href="mypage.html">マイページ</a></nav></div></header>
+<main class="admin-page">
+<section class="admin-panel"><h1>ANIXIA管理画面</h1><p>カタログ同期と管理者専用処理を実行します。</p><div id="admin-status" class="admin-message">認証状態を確認しています…</div></section>
+<section id="admin-setup" class="admin-panel" hidden><h2>管理者権限がありません</h2><p>以下のアカウントIDをサーバー側の管理者リストへ登録する必要があります。</p><code id="user-id" class="admin-code"></code><p class="admin-warning">管理者権限はサーバー側で付与します。ブラウザから自分で変更する機能はありません。</p></section>
+<section id="admin-sync" class="admin-panel" hidden><h2>Annict作品データ同期</h2><p>1回につき最大5ページ、1ページ50作品を取得します。</p><p class="admin-warning">SupabaseのEdge Function Secretsへ <code>ANNICT_ACCESS_TOKEN</code> を登録してください。トークンをこの画面や公開コードへ入力しないでください。</p>
+<div class="admin-field"><label for="start-page">開始ページ</label><input id="start-page" type="number" min="1" value="1"></div>
+<div class="admin-field"><label for="max-pages">1回の取得ページ数</label><select id="max-pages"><option value="1">1ページ</option><option value="2">2ページ</option><option value="3" selected>3ページ</option><option value="4">4ページ</option><option value="5">5ページ</option></select></div>
+<button id="sync-button" class="admin-button" type="button">同期を開始</button><p id="sync-message" class="admin-message" aria-live="polite"></p>
+</section>
+</main>
 </body>
 </html>
