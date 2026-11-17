@@ -451,8 +451,33 @@
   }
 
 
+  function posterMarkup(url, alt = "") {
+    const safeUrl = String(url || "").trim();
+    const safeAlt = String(alt || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    if (!safeUrl) return '<span class="anixia-poster-fallback" aria-label="画像未登録">ANIXIA</span>';
+    const safeSrc = safeUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    return '<img data-anixia-poster src="' + safeSrc + '" alt="' + safeAlt + '" loading="lazy" decoding="async"><span class="anixia-poster-fallback" hidden aria-label="画像を表示できません">ANIXIA</span>';
+  }
+
+  document.addEventListener("error", event => {
+    const image = event.target;
+    if (!(image instanceof HTMLImageElement) || !image.hasAttribute("data-anixia-poster")) return;
+    image.hidden = true;
+    const fallback = image.parentElement?.querySelector(".anixia-poster-fallback");
+    if (fallback) fallback.hidden = false;
+  }, true);
+
+  async function syncTmdbPosters(options = {}) {
+    const result = await getClient().functions.invoke("sync-tmdb-posters", {
+      body: { limit: options.limit || 20, force: options.force === true }
+    });
+    if (result.error) throw new Error(result.data?.error || result.error.message || "ポスター同期に失敗しました。");
+    if (result.data?.error) throw new Error(result.data.error);
+    return result.data;
+  }
+
   w.ANIXIA = Object.freeze({
-    URL, getClient, listAnime, suggestCatalog, getAnime, getGenres, getStudios, getTags,
+    URL, getClient, listAnime, suggestCatalog, getAnime, getGenres, getStudios, getTags, posterMarkup, syncTmdbPosters,
     getCatalogCount, getPublicAnimeByIds, getUser, getUserAnimeState, toggleFavorite,
     saveWatchEntry, saveRating, getMyDashboard, createReview,
     listPendingReviews, moderateReview, updateProfile, listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog, syncAnnictWorkDetails,
