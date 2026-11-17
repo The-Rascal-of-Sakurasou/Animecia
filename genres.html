@@ -22,36 +22,4 @@ main{max-width:1240px;margin:auto;padding:34px 20px 80px}.hero{padding:38px;bord
 <main><section class="hero"><small>EXPLORE BY GENRE</small><h1>ジャンルから探す。</h1><p>気分や好みからジャンルを選んで、そのまま作品探索へ。複数ジャンルの組み合わせにも対応しています。</p></section>
 <section class="tools"><input id="q" placeholder="ジャンル名を検索"><span id="count" class="count"></span></section>
 <section id="grid" class="grid"><div class="loading">ジャンルを読み込み中…</div></section></main>
-<script>
-"use strict";
-const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const genreName=g=>g.name_ja||g.name||"名称未設定";
-let rows=[];
-function render(){
-  const q=document.getElementById("q").value.trim().toLocaleLowerCase("ja");
-  const filtered=rows.filter(g=>genreName(g).toLocaleLowerCase("ja").includes(q));
-  document.getElementById("count").textContent=filtered.length+"ジャンル";
-  if(!rows.length){
-    document.getElementById("grid").innerHTML='<div class="empty">ジャンル情報は準備中です。作品データの登録後に表示します。</div>';
-    return;
-  }
-  document.getElementById("grid").innerHTML=filtered.map(g=>
-    '<a class="genre" href="anime.html?genre='+encodeURIComponent(g.id)+'">'+
-      '<div class="genre-name">'+esc(genreName(g))+'</div>'+
-      '<div class="genre-count">このジャンルの作品を見る</div>'+
-    '</a>'
-  ).join("")||'<div class="empty">該当するジャンルがありません。</div>';
-}
-async function load(){
-  try{
-    rows=await ANIXIA.getGenres();
-    render();
-  }catch(error){
-    console.error("ANIXIA genre page failed to load:",error);
-    document.getElementById("grid").innerHTML='<div class="empty">ジャンルを読み込めませんでした。時間をおいて再読み込みしてください。</div>';
-    document.getElementById("count").textContent="";
-  }
-}
-document.getElementById("q").addEventListener("input",render);
-load();
-</script></body></html>
+<script src="anixia-genres.js" defer></script></body></html>
