@@ -467,14 +467,14 @@ where not exists (
 );
 
 insert into public.anime_characters(anime_id,character_id,role)
-select a.id,c.id,'main'
+select a.id,c.id,v.role
 from (values
- ('anixia:rezero:emilia'),
- ('anixia:rezero:rem'),
- ('anixia:rezero:ram'),
- ('anixia:rezero:puck'),
- ('anixia:rezero:felt')
-) v(character_key)
+ ('anixia:rezero:emilia','main'),
+ ('anixia:rezero:rem','main'),
+ ('anixia:rezero:ram','main'),
+ ('anixia:rezero:puck','supporting'),
+ ('anixia:rezero:felt','supporting')
+) v(character_key,role)
 join public.anime a on a.source='wikidata' and a.source_id='Q65086934'
 join public.characters c on c.source='anixia_curated' and c.source_id=v.character_key
 where not exists (
