@@ -371,3 +371,63 @@ where not exists (
  select 1 from public.anime_staff s
  where s.anime_id=a.id and s.person_id=p.id and s.role='voice_actor' and s.character_id=c.id
 );
+
+
+-- Seventh curated batch (2026-11-17): five principal characters and voice actors for Puella Magi Madoka Magica.
+-- Official TV anime character/cast pages: https://www.madoka-magica.com/tv/archives/character/ and /staff/
+-- People and characters use ANIXIA internal keys; no unverified external QIDs are assigned.
+insert into public.people(name,name_ja,name_kana,name_en,person_type,source,source_id)
+values
+ ('Aoi Yuki','悠木碧','ゆうき あおい','Aoi Yuki','voice_actor','anixia_curated','anixia:voice-actor:aoi-yuki'),
+ ('Chiwa Saito','斎藤千和','さいとう ちわ','Chiwa Saito','voice_actor','anixia_curated','anixia:voice-actor:chiwa-saito'),
+ ('Kaori Mizuhashi','水橋かおり','みずはし かおり','Kaori Mizuhashi','voice_actor','anixia_curated','anixia:voice-actor:kaori-mizuhashi'),
+ ('Eri Kitamura','喜多村英梨','きたむら えり','Eri Kitamura','voice_actor','anixia_curated','anixia:voice-actor:eri-kitamura'),
+ ('Ai Nonaka','野中藍','のなか あい','Ai Nonaka','voice_actor','anixia_curated','anixia:voice-actor:ai-nonaka')
+on conflict (source,source_id) do nothing;
+
+insert into public.characters(name,name_ja,name_kana,name_en,source,source_id)
+select v.name,v.name_ja,v.name_kana,v.name_en,'anixia_curated',v.character_key
+from (values
+ ('Madoka Kaname','鹿目まどか','かなめ まどか','Madoka Kaname','anixia:madoka:madoka'),
+ ('Homura Akemi','暁美ほむら','あけみ ほむら','Homura Akemi','anixia:madoka:homura'),
+ ('Mami Tomoe','巴マミ','ともえ まみ','Mami Tomoe','anixia:madoka:mami'),
+ ('Sayaka Miki','美樹さやか','みき さやか','Sayaka Miki','anixia:madoka:sayaka'),
+ ('Kyoko Sakura','佐倉杏子','さくら きょうこ','Kyoko Sakura','anixia:madoka:kyoko')
+) v(name,name_ja,name_kana,name_en,character_key)
+where not exists (
+ select 1 from public.characters c
+ where c.source='anixia_curated' and c.source_id=v.character_key
+);
+
+insert into public.anime_characters(anime_id,character_id,role)
+select a.id,c.id,'main'
+from (values
+ ('anixia:madoka:madoka'),
+ ('anixia:madoka:homura'),
+ ('anixia:madoka:mami'),
+ ('anixia:madoka:sayaka'),
+ ('anixia:madoka:kyoko')
+) v(character_key)
+join public.anime a on a.source='wikidata' and a.source_id='Q53353'
+join public.characters c on c.source='anixia_curated' and c.source_id=v.character_key
+where not exists (
+ select 1 from public.anime_characters ac
+ where ac.anime_id=a.id and ac.character_id=c.id
+);
+
+insert into public.anime_staff(anime_id,person_id,role,character_id)
+select a.id,p.id,'voice_actor',c.id
+from (values
+ ('anixia:madoka:madoka','anixia:voice-actor:aoi-yuki'),
+ ('anixia:madoka:homura','anixia:voice-actor:chiwa-saito'),
+ ('anixia:madoka:mami','anixia:voice-actor:kaori-mizuhashi'),
+ ('anixia:madoka:sayaka','anixia:voice-actor:eri-kitamura'),
+ ('anixia:madoka:kyoko','anixia:voice-actor:ai-nonaka')
+) v(character_key,person_key)
+join public.anime a on a.source='wikidata' and a.source_id='Q53353'
+join public.characters c on c.source='anixia_curated' and c.source_id=v.character_key
+join public.people p on p.source='anixia_curated' and p.source_id=v.person_key
+where not exists (
+ select 1 from public.anime_staff s
+ where s.anime_id=a.id and s.person_id=p.id and s.role='voice_actor' and s.character_id=c.id
+);
