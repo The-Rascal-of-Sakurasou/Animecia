@@ -276,3 +276,36 @@ end;
 $function$;
 revoke all on function public.admin_merge_catalog_entity(text,uuid,uuid) from public,anon;
 grant execute on function public.admin_merge_catalog_entity(text,uuid,uuid) to authenticated,service_role;
+
+
+-- Keep privileged implementation in the non-exposed private schema.
+alter function public.admin_get_entity_duplicate_candidates(integer) set schema private;
+alter function public.admin_merge_catalog_entity(text,uuid,uuid) set schema private;
+
+grant usage on schema private to authenticated,service_role;
+revoke all on function private.admin_get_entity_duplicate_candidates(integer) from public,anon;
+revoke all on function private.admin_merge_catalog_entity(text,uuid,uuid) from public,anon;
+grant execute on function private.admin_get_entity_duplicate_candidates(integer) to authenticated,service_role;
+grant execute on function private.admin_merge_catalog_entity(text,uuid,uuid) to authenticated,service_role;
+
+create or replace function public.admin_get_entity_duplicate_candidates(p_limit integer default 100)
+returns jsonb
+language sql
+security invoker
+set search_path = ''
+as $$
+  select private.admin_get_entity_duplicate_candidates(p_limit);
+$$;
+revoke all on function public.admin_get_entity_duplicate_candidates(integer) from public,anon;
+grant execute on function public.admin_get_entity_duplicate_candidates(integer) to authenticated,service_role;
+
+create or replace function public.admin_merge_catalog_entity(p_entity_type text,p_source_id uuid,p_target_id uuid)
+returns jsonb
+language sql
+security invoker
+set search_path = ''
+as $$
+  select private.admin_merge_catalog_entity(p_entity_type,p_source_id,p_target_id);
+$$;
+revoke all on function public.admin_merge_catalog_entity(text,uuid,uuid) from public,anon;
+grant execute on function public.admin_merge_catalog_entity(text,uuid,uuid) to authenticated,service_role;
