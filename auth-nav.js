@@ -11,7 +11,7 @@
     if (!links.length) return;
 
     function render(user) {
-      const loggedIn = !!(user && !user.is_anonymous);
+      const loggedIn = !!(user && !user.is_anonymous && (user.email_confirmed_at || user.confirmed_at));
       links.forEach(link => {
         link.textContent = loggedIn ? "マイページ" : "ログイン";
         link.href = loggedIn ? "mypage.html" : "login.html";
