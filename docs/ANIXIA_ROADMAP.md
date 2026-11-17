@@ -239,3 +239,13 @@ All 6 migration files are present in the repository and applied to the active Su
 - GitHub commits: Edge Function 905e09cfc46a5c92f2fbb79c05c658893c75b654; client b392cb12e9cfd21ba7d75459914db4d6c2fae53d; admin UI 5b82bedebf648abe7cb85a13d0859d3fa8005884; admin logic 9f4f4c36d185dc120de9a41401182edf0b179908.
 - Important limitation: resumability currently applies to the works/catalog importer, which can continue from nextPage. The per-work details importer still stops safely when any of its three collections exceeds four pages; resumable detail collection staging is not yet implemented.
 - Annict remains pending and disabled. Preview and sync were not executed against the provider; browser-level UI verification remains outstanding.
+
+
+### Resumable Annict detail sync and format mapping review (2026-11-17)
+- Reworked `sync-annict-work-details` to fetch exactly one page per collection per invocation: episodes, casts, and staffs each have independent page cursors. The API returns `nextPages` and `hasMore`; completed collections return a null cursor and can be skipped with cursor 0 while the other collections continue.
+- Existing source-ID upserts and relationship external-ID mapping are retained, so retrying a page is designed to be idempotent. Each page invocation writes a separate `catalog_sync_runs` record; this is page-level progress logging, not a single aggregate job record.
+- Added admin inputs for Annict work ID and independent episode/cast/staff page numbers, plus a continue button. Completed cursors are set to 0 to prevent refetching the final page.
+- Episode records now start with `episode_kind='unknown'` instead of assuming every Annict episode is a regular episode. Admin review must classify before publication.
+- Official Annict Works API documentation lists `media` values as `tv`, `ova`, `movie`, `web`, and `other`, with matching display labels. The importer preserves `web` as `web` and `other` as `other`; it does not infer `web`=ONA or invent a SPECIAL classification. The API's documented Works media field does not provide an explicit `ona` or `special` value.
+- Deployed `sync-annict-work-details` active version 7 with JWT verification enabled. GitHub commits: detail importer `eb90c13839e4fa4a6986f8e8c000f4e42f2a1a8c`, cursor completion handling `1a7f6c3f0f760f70758cbb20b7a64d9e345f5894`, unknown episode classification `b9ea30311335bb07cbd89346716fac2a513e0f65`; client `e2dbf2c9f58d61b3d5ff2e44c8e08c0105386732`; admin UI `ff71019701f85a31e5a89a9e92e28bce75651db0`; admin logic `5b6e9ac37d86c2380a99f27b28660b78bb2e1ba1`.
+- No Annict requests were made during this implementation because the source remains pending and disabled. No imported data or browser-level end-to-end verification is claimed.
