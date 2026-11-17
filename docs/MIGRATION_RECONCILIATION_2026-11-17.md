@@ -70,4 +70,5 @@ The snapshot excludes production data, Auth users, passwords, secrets, Vault con
 - Production schema/data: unchanged.
 - Production migration history: unchanged.
 - GitHub: added the schema snapshot and this reconciliation report.
-- Replay validation: not yet performed; no disposable database was created because that may incur additional cost.
+- Static SQL inventory check: completed; details in [SCHEMA_SNAPSHOT_STATIC_AUDIT_2026-11-17.md](SCHEMA_SNAPSHOT_STATIC_AUDIT_2026-11-17.md).
+- PostgreSQL replay validation: not yet performed; no disposable database was created because that may incur additional cost.
