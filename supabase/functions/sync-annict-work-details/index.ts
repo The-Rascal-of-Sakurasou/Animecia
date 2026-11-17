@@ -81,7 +81,10 @@ async function fetchWorkCollection(path: string, key: string, workId: string, to
     page = payload.next_page == null ? 0 : Number(payload.next_page);
     if (page && pages < 4) await wait(1100);
   }
-  return { items: all, pages };
+  if (page && (!Number.isFinite(page) || page < 1)) {
+    throw new Error("Annict returned an invalid pagination cursor for " + path + ".");
+  }
+  return { items: all, pages, hasMore: page > 0 };
 }
 
 async function getIdMap(admin: any, table: string, ids: string[]) {
@@ -201,6 +204,9 @@ Deno.serve(async (req: Request) => {
       const casts = castResult.items;
       const staffs = staffResult.items;
       recordsSeen = episodes.length + casts.length + staffs.length;
+      if (episodeResult.hasMore || castResult.hasMore || staffResult.hasMore) {
+        throw new Error("A detail collection exceeds the safe four-page import limit. No records were written; retry with a dedicated paged import workflow.");
+      }
 
       const episodeRows = episodes.flatMap((ep: any, index: number) => {
         if (ep.id == null) return [];
@@ -217,7 +223,6 @@ Deno.serve(async (req: Request) => {
           episode_kind: "regular",
           title: episodeTitle,
           title_ja: episodeTitle,
-          is_published: false,
           source_synced_at: new Date().toISOString()
         }];
       });
