@@ -276,6 +276,26 @@
     return result.data || { summary: {}, items: [] };
   }
 
+  async function getAdminEntityDuplicateCandidates(limit = 100) {
+    const size = Math.min(Math.max(Number(limit) || 100, 1), 100);
+    const result = await getClient().rpc("admin_get_entity_duplicate_candidates", { p_limit: size });
+    if (result.error) throw result.error;
+    return result.data || { candidate_count: 0, items: [] };
+  }
+
+  async function mergeAdminCatalogEntity(entityType, sourceId, targetId) {
+    if (!["people","characters","studios","organizations"].includes(entityType) || !sourceId || !targetId || sourceId === targetId) {
+      throw new Error("統合対象を正しく指定してください。");
+    }
+    const result = await getClient().rpc("admin_merge_catalog_entity", {
+      p_entity_type: entityType,
+      p_source_id: sourceId,
+      p_target_id: targetId
+    });
+    if (result.error) throw result.error;
+    return result.data;
+  }
+
   async function listPendingAnime(limit = 50) {
     const size = Math.min(Math.max(Number(limit) || 50, 1), 100);
     const result = await getClient().from("anime")
@@ -424,7 +444,7 @@
     getCatalogCount, getPublicAnimeByIds, getUser, getUserAnimeState, toggleFavorite,
     saveWatchEntry, saveRating, getMyDashboard, createReview,
     listPendingReviews, moderateReview, updateProfile, listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog, syncAnnictWorkDetails,
-    listPendingAnime, getAdminCatalogQualityReport, setAnimePublished, listPendingEpisodes, setEpisodePublished,
+    listPendingAnime, getAdminCatalogQualityReport, getAdminEntityDuplicateCandidates, mergeAdminCatalogEntity, setAnimePublished, listPendingEpisodes, setEpisodePublished,
     getAdminAnimeOptions, getAdminTaxonomy,
     getAdminAnimeTaxonomy, replaceAdminAnimeTaxonomy, createAdminTaxonomyItem,
     saveAdminAnimeRelation, removeAdminAnimeRelation, diagnoseAnime, getRankings
