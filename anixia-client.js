@@ -260,11 +260,36 @@
       match_score: (matched.get(row.id) || 0) * 100 + (row.watchers_count || 0) + (row.reviews_count || 0) * 0.5
     })).sort((a, b) => b.match_score - a.match_score);
   }
+  
+  async function getRankings(metric = "popular", limit = 30) {
+    const db = getClient();
+    const size = Math.min(Math.max(Number(limit) || 30, 1), 100);
+    if (metric === "rating") {
+      const summary = await db.rpc("get_anime_rating_summary");
+      if (summary.error) throw summary.error;
+      const rows = summary.data || [];
+      if (!rows.length) return [];
+      const ids = rows.map(row => row.anime_id);
+      const works = await db.from("anime")
+        .select("id,title,title_ja,title_kana,format,release_year,season,poster_url,watchers_count,reviews_count")
+        .eq("is_published", true).in("id", ids);
+      if (works.error) throw works.error;
+      const stats = new Map(rows.map(row => [row.anime_id, row]));
+      return (works.data || []).map(work => ({
+        ...work,
+        average_score: Number(stats.get(work.id)?.average_score || 0),
+        rating_count: Number(stats.get(work.id)?.rating_count || 0)
+      })).sort((a, b) => b.average_score - a.average_score || b.rating_count - a.rating_count).slice(0, size);
+    }
+    const sort = metric === "reviews" ? "reviews" : metric === "newest" ? "newest" : "popular";
+    const result = await listAnime({ sort, limit: size });
+    return result.data;
+  }
 
   w.ANIXIA = Object.freeze({
     URL, getClient, listAnime, getAnime, getGenres, getStudios,
     getCatalogCount, getUser, getUserAnimeState, toggleFavorite,
     saveWatchEntry, saveRating, getMyDashboard, updateProfile,
-    listQuizzes, getQuiz, submitQuiz, diagnoseAnime
+    listQuizzes, getQuiz, submitQuiz, diagnoseAnime, getRankings
   });
 })(window);
