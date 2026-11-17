@@ -310,3 +310,9 @@ All 6 migration files are present in the repository and applied to the active Su
 - 作品・制作会社の出典リンクは各Wikidata項目に保存。画像・ポスター・あらすじ本文は未取得。
 - seed SQLを9作品・2制作会社対応に更新し、再実行可能なupsert形式を維持。
 - 人物・声優・スタッフ・キャラクターは、同名異人や役割誤認を避けるため未登録。次工程でWikidata IDと作品上の役割を個別確認して追加する。
+
+
+### 人物・スタッフの初期関連付け（2026-11-17）
+- Anohanaの監督として長井龍雪（Tatsuyuki Nagai、Q1073727）、脚本として岡田麿里（Mari Okada、Q3209229）を登録。
+- `people` / `people_external_ids` / `anime_staff` に人物IDと役割を保存。人物画像・略歴本文は取得していない。
+- 人物名サジェストと作品スタッフ関係のSQL検証を実施。声優・キャラクターの追加は、Wikidataの識別子と作品内役割を個別照合してから進める。
