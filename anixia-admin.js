@@ -352,6 +352,7 @@
       $("admin-status").textContent=admin?"管理者としてログインしています。":"ログイン済みですが、管理者権限がありません。";
       if(admin){
         $("admin-sync").hidden=false;
+        $("admin-poster-sync").hidden=false;
         $("admin-review-moderation").hidden=false;
         $("admin-catalog-review").hidden=false;
         $("admin-metadata-editor").hidden=false;
