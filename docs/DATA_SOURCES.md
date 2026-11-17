@@ -85,6 +85,11 @@ Wikidataはクエリサービスの負荷を避けるため、将来の自動同
 |---|---|---|
 | 長井龍雪 | Q1073727 | Anohana：監督 |
 | 岡田麿里 | Q3209229 | Anohana：脚本 |
+| 今井麻美 | Q1042804 | Steins;Gate：牧瀬紅莉栖役 |
+| 内山夕実 | Q322979 | 無職転生：ルーデウス役 |
+| 小林裕介 | Q17158282 | Re:ゼロ：ナツキ・スバル役 |
+| 山寺宏一 | Q333194 | カウボーイビバップ：スパイク役 |
+| 松本梨香 | Q943714 | ポケットモンスター：サトシ役 |
 | 緒方恵美 | Q254368 | 新世紀エヴァンゲリオン：碇シンジ役 |
 | 林原めぐみ | Q266670 | 新世紀エヴァンゲリオン：綾波レイ役 |
 
@@ -97,7 +102,7 @@ Wikidataはクエリサービスの負荷を避けるため、将来の自動同
 
 ## 6. 未完了事項
 
-- Wikidataの初期登録は作品9件、制作会社2件、人物8件、スタッフ関係9件、キャラクター2件、声優クレジット2件（Anohana、エヴァンゲリオン、まどか☆マギカ、Angel Beats!）。キャラクター2件（碇シンジ・綾波レイ）、声優2名（緒方恵美・林原めぐみ）を登録。その他作品のキャラクター・声優・ジャンルの大量登録は未実施。
+- Wikidataの初期登録は作品9件、制作会社2件、人物8件、スタッフ関係9件、人物13件、スタッフ関係14件、キャラクター7件、声優クレジット7件。キャラクターはWikidata由来2件とANIXIA内部キーによるキュレーション5件。全作品の全キャラクター・全キャストを網羅したものではない。
 - 現在のWikidata初期登録は手動で確認した少数データ。継続同期用Edge Functionはまだ実装していない。
 - Annict APIトークンのSupabase Secrets登録状況は、秘密情報を読み出せないため未確認。
 - Supabase Authのユーザー数0、管理者数0を確認。管理者アカウントを登録するまでAnnict同期を実行できない。
@@ -146,7 +151,7 @@ Wikidataはクエリサービスの負荷を避けるため、将来の自動同
 - Steins;Gate：<https://kadokawa-animation.jp/lineup/steinsgate>
 - 無職転生：<https://www.tvmaze.com/shows/52279/mushoku-tensei-jobless-reincarnation/cast>
 - Re:ゼロ：<https://www.wikidata.org/wiki/Q65086934>
-- カウボーイビバップ：<https://server.elscione.com/Officially%20Translated%20Light%20Novels/Mushoku%20Tensei/> は対象外。山寺宏一／スパイクの役割は <https://www.amazon.co.jp/> ではなく、BFI資料 <https://bfidatadigipres.github.io/pdf/2022-04-14-cowboy-bebop.pdf> を参照。
+- カウボーイビバップ：BFI資料 <https://bfidatadigipres.github.io/pdf/2022-04-14-cowboy-bebop.pdf> の声優クレジットを参照。
 - ポケットモンスター：<https://www.pocketmonsters.net/staff/view/3456>
 
 上記は選定した主役級キャラクターの初期登録であり、全キャラクター・全キャストを網羅したものではない。Wikidata ID未確認のキャラクターにはQIDを付与せず、ANIXIA内部キーを使用。
