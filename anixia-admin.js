@@ -153,41 +153,57 @@
   }
 
   async function renderCatalogQuality(rows){
-    const pending=rows.filter(a=>!a.is_published);
-    if(!pending.length){
-      $("catalog-quality-check").innerHTML='<p class="admin-message">未公開候補はありません。</p>';
-      return;
-    }
-    const ids=pending.map(a=>a.id);
-    const db=ANIXIA.getClient();
-    const genreResult=await db.from("anime_genres").select("anime_id").in("anime_id",ids);
-    if(genreResult.error)throw genreResult.error;
-    const hasGenre=new Set((genreResult.data||[]).map(x=>x.anime_id));
-    const issues=pending.map(a=>{
-      const missing=[];
-      if(!(a.title_ja||a.title_kana||a.title))missing.push("作品名");
-      if(!a.format)missing.push("形式");
-      if(!a.release_year)missing.push("放送年");
-      if(!(a.synopsis||"").trim())missing.push("あらすじ");
-      if(!(a.official_url||a.official_site_url))missing.push("公式サイトURL");
-      if(!hasGenre.has(a.id))missing.push("ジャンル");
-      return {anime:a,missing};
-    }).filter(x=>x.missing.length);
-    $("catalog-quality-check").innerHTML=issues.length?issues.slice(0,80).map(x=>{
-      const title=x.anime.title_ja||x.anime.title_kana||x.anime.title||"タイトル未設定";
-      return '<article style="padding:11px;border:1px solid #30435f;border-radius:9px;margin:8px 0;background:#0b1423">'+
-        '<strong style="color:#fff;font-size:12px">'+esc(title)+'</strong>'+
-        '<p style="color:#d8c39d;font-size:11px;margin:6px 0">不足項目：'+esc(x.missing.join("・"))+'</p>'+
-        '<button type="button" class="admin-button" data-edit-quality="'+esc(x.anime.id)+'">この作品を編集</button>'+
-        '</article>';
-    }).join(""):'<p class="admin-message">基本項目の不足は検出されませんでした。</p>';
-    $("catalog-quality-check").querySelectorAll("[data-edit-quality]").forEach(button=>{
-      button.addEventListener("click",async()=>{
-        $("metadata-anime").value=button.dataset.editQuality;
-        await loadSelectedAnimeMetadata();
-        $("metadata-anime").scrollIntoView({behavior:"smooth",block:"center"});
+    const el=$("catalog-quality-check");
+    el.innerHTML='<p class="admin-message">作品・エピソードの品質を検査しています…</p>';
+    try{
+      const report=await ANIXIA.getAdminCatalogQualityReport(150);
+      const summary=report.summary||{};
+      const items=Array.isArray(report.items)?report.items:[];
+      const stats=[
+        ["検査作品数",summary.anime_checked??0],
+        ["問題件数",summary.issue_count??0],
+        ["重大",summary.critical_count??0],
+        ["警告",summary.warning_count??0],
+        ["参考",summary.info_count??0]
+      ];
+      const statHtml='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:8px;margin:12px 0">'+stats.map(([label,value])=>
+        '<div style="padding:10px;border:1px solid #30435f;border-radius:8px;background:#0b1423"><div style="font-size:10px;color:#aebbd0">'+esc(label)+'</div><strong style="font-size:19px;color:#fff">'+esc(String(value))+'</strong></div>'
+      ).join("")+'</div>';
+      const severityLabel={critical:"重大",warning:"警告",info:"参考"};
+      const issueHtml=items.map(item=>{
+        const severity=item.severity||"info";
+        const title=item.display_title||"タイトル未設定";
+        const entity=item.entity_type==="episode"?"エピソード":"作品";
+        return '<article style="padding:12px;border:1px solid #30435f;border-radius:9px;margin:8px 0;background:#0b1423">'+
+          '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'+
+          '<strong style="color:#fff;font-size:12px">'+esc(title)+'</strong>'+
+          '<span style="font-size:10px;color:'+(severity==="critical"?"#ff8585":severity==="warning"?"#f2c36b":"#aebbd0")+'">'+esc(severityLabel[severity]||"参考")+'</span>'+
+          '<span style="font-size:10px;color:#aebbd0">'+esc(entity)+' · '+(item.is_published?"公開中":"未公開")+'</span></div>'+
+          '<p style="color:#d8c39d;font-size:11px;margin:7px 0 3px">'+esc(item.field_name||"確認項目")+'：'+esc(item.message||"内容を確認してください。")+'</p>'+
+          (item.anime_id?'<button type="button" class="admin-button" data-edit-quality="'+esc(item.anime_id)+'">作品情報を確認</button>':"")+
+          '</article>';
+      }).join("");
+      const capped=(summary.issue_count||0)>items.length?
+        '<p class="admin-message">表示は先頭'+items.length+'件です。全体の問題件数は'+summary.issue_count+'件です。</p>':"";
+      el.innerHTML=statHtml+(items.length?issueHtml:'<p class="admin-message">現在、検出された問題はありません。</p>')+capped+
+        '<p class="admin-message">検査日時：'+esc(summary.generated_at||report.generated_at||"不明")+'。この検査は候補の提示のみを行い、自動修正・自動公開はしません。</p>';
+      el.querySelectorAll("[data-edit-quality]").forEach(button=>{
+        button.addEventListener("click",async()=>{
+          const id=button.dataset.editQuality;
+          const option=[...$("metadata-anime").options].find(o=>o.value===id);
+          if(!option){
+            $("taxonomy-message").textContent="この作品は現在の編集候補一覧にありません。候補一覧を再読み込みしてください。";
+            return;
+          }
+          $("metadata-anime").value=id;
+          await loadSelectedAnimeMetadata();
+          $("metadata-anime").scrollIntoView({behavior:"smooth",block:"center"});
+        });
       });
-    });
+    }catch(e){
+      console.error(e);
+      el.innerHTML='<p class="admin-message">品質検査を実行できませんでした。管理者権限とデータベース接続を確認してください。</p>';
+    }
   }
 
   async function loadSelectedAnimeMetadata(){
@@ -315,6 +331,7 @@
     }finally{$("add-relation").disabled=false;}
   });
   $("refresh-episodes").addEventListener("click",loadPendingEpisodes);
+  $("refresh-catalog-quality").addEventListener("click",()=>renderCatalogQuality(adminAnimeRows));
   $("refresh-catalog-candidates").addEventListener("click",loadPendingAnime);
   async function runAnnictSync(mode){
     const button=mode==="preview"?$("preview-button"):$("sync-button");
