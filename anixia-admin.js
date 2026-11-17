@@ -169,8 +169,8 @@
           return '<article style="padding:13px;border:1px solid #30435f;border-radius:10px;margin:10px 0;background:#0b1423">'+
             '<div style="font-size:10px;color:#9fb1ca">'+esc(labels[item.entity_type]||item.entity_type)+' · 一致名称 '+esc(String(item.matched_name_count||0))+'件</div>'+
             '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:9px 0">'+
-              '<div><strong style="color:#fff;font-size:12px">'+esc(item.left_name)+'</strong><div style="font-size:10px;color:#8fa1ba">左のレコード</div></div>'+
-              '<div><strong style="color:#fff;font-size:12px">'+esc(item.right_name)+'</strong><div style="font-size:10px;color:#8fa1ba">右のレコード</div></div>'+
+              '<div><strong style="color:#fff;font-size:12px">'+esc(item.left_name)+'</strong><div style="font-size:10px;color:#8fa1ba">左のレコード · 関連作品 '+esc(String(item.left_related_works??0))+'件</div><div style="font-size:10px;color:#aebbd0">外部ID: '+esc((item.left_external_ids||[]).map(x=>x.source+":"+x.external_id).join(", ")||"なし")+'</div></div>'+
+              '<div><strong style="color:#fff;font-size:12px">'+esc(item.right_name)+'</strong><div style="font-size:10px;color:#8fa1ba">右のレコード · 関連作品 '+esc(String(item.right_related_works??0))+'件</div><div style="font-size:10px;color:#aebbd0">外部ID: '+esc((item.right_external_ids||[]).map(x=>x.source+":"+x.external_id).join(", ")||"なし")+'</div></div>'+
             '</div>'+
             '<p style="font-size:11px;color:#d8c39d;margin:6px 0">一致した名称: '+esc(matched)+'</p>'+
             '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
