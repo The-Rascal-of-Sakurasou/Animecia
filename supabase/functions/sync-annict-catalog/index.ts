@@ -166,7 +166,6 @@ Deno.serve(async (req: Request) => {
     const startPage = Math.min(100000, Math.max(1, Math.floor(Number(body?.startPage) || 1)));
     const maxPages = Math.min(5, Math.max(1, Math.floor(Number(body?.maxPages) || 3)));
     const perPage = 50;
-    const admin = createClient(url, service, { auth: { persistSession: false, autoRefreshToken: false } });
 
     const runInsert = await admin.from("catalog_sync_runs").insert({
       source: "annict", status: "running", pages_requested: 0,
