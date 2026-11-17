@@ -260,6 +260,15 @@
     return result.data;
   }
 
+  async function syncAnnictWorkDetails(workId, pages = {}) {
+    const result = await getClient().functions.invoke("sync-annict-work-details", {
+      body: { workId: String(workId || "").trim(), pages }
+    });
+    if (result.error) throw new Error(result.data?.error || result.error.message || "作品詳細の同期に失敗しました。");
+    if (result.data?.error) throw new Error(result.data.error);
+    return result.data;
+  }
+
   async function listPendingAnime(limit = 50) {
     const size = Math.min(Math.max(Number(limit) || 50, 1), 100);
     const result = await getClient().from("anime")
@@ -407,7 +416,7 @@
     URL, getClient, listAnime, getAnime, getGenres, getStudios, getTags,
     getCatalogCount, getPublicAnimeByIds, getUser, getUserAnimeState, toggleFavorite,
     saveWatchEntry, saveRating, getMyDashboard, createReview,
-    listPendingReviews, moderateReview, updateProfile, listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog,
+    listPendingReviews, moderateReview, updateProfile, listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog, syncAnnictWorkDetails,
     listPendingAnime, setAnimePublished, listPendingEpisodes, setEpisodePublished,
     getAdminAnimeOptions, getAdminTaxonomy,
     getAdminAnimeTaxonomy, replaceAdminAnimeTaxonomy, createAdminTaxonomyItem,
