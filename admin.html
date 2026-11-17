@@ -18,7 +18,7 @@
 .admin-warning{border-left:3px solid #f2a51a;padding:10px 12px;background:#241d12;color:#d8c39d;font-size:11px;line-height:1.7}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="anixia-client.js"></script><script src="anixia-admin.js?v=wikidata-episode-sync-20261117" defer></script>
+<script src="anixia-client.js?v=commons-poster-sync-20261117"></script><script src="anixia-admin.js?v=commons-poster-sync-20261117" defer></script>
 <link rel="preconnect" href="https://trvnxggqzlhqdhoyiliy.supabase.co" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
@@ -66,14 +66,14 @@
 <p id="detail-sync-message" class="admin-message" aria-live="polite"></p>
 <section id="admin-poster-sync" class="admin-panel" hidden>
 <div style="border-top:1px solid #30435f;margin-top:0;padding-top:0">
-<h3 style="color:#fff;font-size:15px">作品ポスター画像の同期（TMDB）</h3>
-<p>公開済み作品のタイトル・公開年を照合し、一致度が高い日本作品のポスターだけを登録します。通常はポスター未登録作品が対象です。</p>
-<p class="admin-warning">事前にSupabase Edge Function Secretsへ <code>TMDB_API_KEY</code> を登録してください。APIキーはGitHubやこの画面に入力しないでください。TMDB APIは非商用利用の条件と出典表示が必要です。</p>
+<h3 style="color:#fff;font-size:15px">作品画像の同期（Wikimedia Commons）</h3>
+<p>公開済み作品の名称をWikimedia Commonsで照合し、CC0・パブリックドメイン・CC BY・CC BY-SAのライセンス情報を確認できた画像だけを登録します。</p>
+<p class="admin-warning">公式ポスターが見つかるとは限りません。画像名・作品名が十分に一致し、画像の縦横比とライセンスを確認できた場合だけ登録します。条件に合わない場合はANIXIAの共通プレースホルダーを表示します。</p>
 <div class="admin-field"><label for="poster-sync-limit">1回の同期上限</label><select id="poster-sync-limit"><option value="10">10作品</option><option value="20" selected>20作品</option><option value="30">30作品</option></select></div>
 <div class="admin-field"><label><input id="poster-sync-force" type="checkbox" style="width:auto;height:auto"> 登録済み画像も再照合する（慎重に使用）</label></div>
-<button id="poster-sync-button" class="admin-button" type="button">ポスター画像を同期</button>
+<button id="poster-sync-button" class="admin-button" type="button">利用条件を確認して画像を同期</button>
 <p id="poster-sync-message" class="admin-message" aria-live="polite"></p>
-<p><a href="https://developer.themoviedb.org/docs/getting-started" target="_blank" rel="noopener noreferrer">TMDB APIの公式ガイド</a> · <a href="https://developer.themoviedb.org/docs/faq" target="_blank" rel="noopener noreferrer">利用条件・出典表示</a></p>
+<p><a href="https://commons.wikimedia.org/wiki/Commons:Licensing" target="_blank" rel="noopener noreferrer">Wikimedia Commonsのライセンス</a> · <a href="https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia" target="_blank" rel="noopener noreferrer">画像の再利用ガイド</a></p>
 </div>
 </section>
 <section id="admin-review-moderation" class="admin-panel" hidden>
