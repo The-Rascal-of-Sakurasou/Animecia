@@ -1093,3 +1093,125 @@ main,.container,.page-shell{color:var(--anixia-text)}
   .site-header .nav-links a{color:#c3cede!important}
   :where(.panel,.section-card,.ranking-list,.review-box,.picker){border-radius:13px!important}
 }
+
+
+/* ==========================================================
+   ANIXIA v2 — restrained Japanese database interface
+   Shared visual layer. Existing page IDs and feature scripts
+   remain intact; this layer standardizes presentation only.
+========================================================== */
+:root{
+ --ax-ink:#20242b;--ax-muted:#707782;--ax-subtle:#9299a3;--ax-line:#e3e6ea;
+ --ax-bg:#f5f6f8;--ax-surface:#fff;--ax-blue:#315fa8;--ax-blue-dark:#244a88;
+ --ax-blue-soft:#edf3fb;--ax-radius:10px;--ax-shadow:0 2px 8px rgba(25,35,50,.045);
+ --ax-shell:1240px;
+}
+html{background:var(--ax-bg);scroll-behavior:smooth}
+body.anixia-v2,body{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;color:var(--ax-ink);background:var(--ax-bg);line-height:1.65}
+.anixia-shell{width:min(var(--ax-shell),calc(100% - 40px));margin-inline:auto}
+.site-header{position:sticky!important;top:0;z-index:1000;height:auto!important;background:rgba(255,255,255,.97)!important;color:var(--ax-ink)!important;border-bottom:1px solid var(--ax-line)!important;box-shadow:0 1px 4px rgba(25,35,50,.035)!important;backdrop-filter:blur(12px)}
+.anixia-v2 .header-inner{width:min(var(--ax-shell),calc(100% - 40px))!important;min-height:66px!important;margin:auto!important;padding:0!important;display:flex;align-items:center;gap:30px}
+.anixia-logo{display:inline-flex;align-items:center;color:#1d2735;text-decoration:none;font-size:24px;font-weight:900;letter-spacing:-.065em;white-space:nowrap}
+.anixia-logo span{color:var(--ax-blue)}
+.anixia-main-nav{display:flex;align-items:center;gap:5px;flex:1;min-width:0}
+.anixia-main-nav a{padding:9px 11px;color:#515965;text-decoration:none;font-size:13px;font-weight:650;white-space:nowrap;border-radius:6px;transition:background .15s,color .15s}
+.anixia-main-nav a:hover{background:#f0f2f5;color:#1e2b3d}
+.anixia-header-actions{display:flex;align-items:center;gap:9px}
+.anixia-language{min-height:34px;padding:0 10px;border:1px solid var(--ax-line);border-radius:6px;background:#fff;color:#505965;font-size:12px;font-weight:700}
+.anixia-account{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 14px;border:1px solid #d5dce6;border-radius:6px;background:#fff;color:#34445a;text-decoration:none;font-size:12px;font-weight:700}
+.anixia-account:hover,.anixia-language:hover{background:#f7f9fb;border-color:#bfc9d7}
+.anixia-search-panel{margin:28px 0 18px;padding:26px 30px 20px;background:#fff;border:1px solid var(--ax-line);border-radius:var(--ax-radius);box-shadow:var(--ax-shadow)}
+.anixia-search-heading{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
+.anixia-eyebrow{color:#7b8490;font-size:10px;font-weight:800;letter-spacing:.12em}
+.anixia-search-heading h1{margin:0;color:#222a35;font-size:23px;font-weight:800;letter-spacing:-.035em}
+.anixia-search-form{display:flex;align-items:center;gap:10px;min-height:52px;padding:5px 6px 5px 15px;border:1px solid #d9dee5;border-radius:7px;background:#fff}
+.anixia-search-icon{font-size:24px;color:#7b8490;line-height:1}
+.anixia-search-form input{flex:1;min-width:0;min-height:40px!important;padding:0 6px!important;border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;color:var(--ax-ink)!important;font-size:14px!important}
+.anixia-search-form button{min-width:88px;min-height:40px;border:0;border-radius:5px;background:var(--ax-blue);color:#fff;font-size:13px;font-weight:750}
+.anixia-search-form button:hover{background:var(--ax-blue-dark)}
+.anixia-search-meta{display:flex;justify-content:space-between;gap:12px;margin-top:11px;color:var(--ax-muted);font-size:11px}
+.anixia-search-meta strong{color:#34445a;font-size:13px}
+.anixia-search-meta a,.anixia-section-heading>a{color:var(--ax-blue);text-decoration:none;font-weight:700}
+.anixia-feature-links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 34px}
+.anixia-feature-link{display:flex;align-items:center;gap:12px;min-width:0;padding:15px 14px;background:#fff;border:1px solid var(--ax-line);border-radius:8px;color:var(--ax-ink);text-decoration:none;transition:border-color .15s,background .15s}
+.anixia-feature-link:hover{border-color:#b9c8dd;background:#fbfcfe}
+.feature-index{color:#8b95a2;font-size:11px;font-variant-numeric:tabular-nums}
+.anixia-feature-link strong,.anixia-feature-link small{display:block}
+.anixia-feature-link strong{font-size:13px;font-weight:750}
+.anixia-feature-link small{margin-top:3px;color:var(--ax-muted);font-size:10px;line-height:1.45}
+.feature-arrow{margin-left:auto;color:#8b95a2;font-size:16px}
+.anixia-section{margin:34px 0}
+.anixia-section-heading{display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:13px;padding-bottom:11px;border-bottom:1px solid #dfe3e8}
+.anixia-section-heading h2{margin:3px 0 1px;color:#252b34;font-size:20px;font-weight:800;letter-spacing:-.03em}
+.anixia-section-heading p{margin:0;color:var(--ax-muted);font-size:11px}
+.anixia-section-heading>a{font-size:11px;white-space:nowrap}
+.anixia-work-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px}
+.anixia-work-card{display:block;min-width:0;overflow:hidden;border:1px solid #e0e4e9;border-radius:8px;background:#fff;color:var(--ax-ink);text-decoration:none;transition:border-color .15s,box-shadow .15s,transform .15s}
+.anixia-work-card:hover{transform:translateY(-2px);border-color:#c3ccd8;box-shadow:0 8px 18px rgba(28,39,54,.09)}
+.anixia-poster{aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#edf0f3;color:#9aa2ad;font-size:11px;font-weight:800;letter-spacing:.08em}
+.anixia-poster img{width:100%;height:100%;object-fit:cover}
+.anixia-work-copy{padding:10px 11px 11px}
+.anixia-work-copy strong{display:-webkit-box;min-height:2.8em;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:12px;font-weight:750;line-height:1.45}
+.anixia-work-copy small{display:block;margin-top:6px;color:#7b8490;font-size:10px}
+.anixia-state{grid-column:1/-1;margin:0;padding:22px 15px;border:1px dashed #d7dce3;border-radius:8px;background:#fff;color:#7a838e;text-align:center;font-size:12px}
+.anixia-genre-links{display:flex;flex-wrap:wrap;gap:8px}
+.anixia-genre-links a{padding:7px 13px;border:1px solid #dfe3e8;border-radius:5px;background:#fff;color:#4b5664;text-decoration:none;font-size:11px}
+.anixia-genre-links a:hover{border-color:#b8c8dd;background:#f7f9fc;color:var(--ax-blue)}
+.anixia-bottom-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:38px 0 48px}
+.anixia-bottom-links a{padding:16px;border:1px solid var(--ax-line);border-radius:7px;background:#fff;text-decoration:none}
+.anixia-bottom-links span,.anixia-bottom-links small{display:block}
+.anixia-bottom-links span{font-size:13px;font-weight:750}
+.anixia-bottom-links small{margin-top:4px;color:var(--ax-muted);font-size:10px}
+.anixia-footer{margin-top:55px;border-top:1px solid var(--ax-line);background:#fff}
+.anixia-footer-inner{display:flex;align-items:center;gap:28px;min-height:88px}
+.anixia-footer .anixia-logo{font-size:19px}
+.anixia-footer-links{display:flex;gap:17px}
+.anixia-footer-links a{color:#68717d;text-decoration:none;font-size:11px}
+.anixia-footer-inner>small{margin-left:auto;color:#9299a3;font-size:10px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Shared legacy page components: one consistent light database UI */
+body:not(.anixia-v2){background:var(--ax-bg)!important;color:var(--ax-ink)!important}
+body:not(.anixia-v2) .site-header{background:#fff!important;color:var(--ax-ink)!important;border-bottom:1px solid var(--ax-line)!important;box-shadow:0 1px 4px rgba(25,35,50,.04)!important}
+body:not(.anixia-v2) .logo,body:not(.anixia-v2) .brand{color:#1d2735!important}
+body:not(.anixia-v2) .navigation a,body:not(.anixia-v2) .main-nav a,body:not(.anixia-v2) header nav a,body:not(.anixia-v2) .nav-links a{color:#505966!important}
+body:not(.anixia-v2) .navigation a:hover,body:not(.anixia-v2) .main-nav a:hover,body:not(.anixia-v2) header nav a:hover,body:not(.anixia-v2) .nav-links a:hover{color:var(--ax-blue)!important;background:#f1f4f8!important}
+body:not(.anixia-v2) .hero,body:not(.anixia-v2) .page-header{background:#fff!important;color:var(--ax-ink)!important;border:1px solid var(--ax-line)!important;box-shadow:var(--ax-shadow)!important}
+body:not(.anixia-v2) .hero h1,body:not(.anixia-v2) .page-header h1{color:#252b34!important}
+body:not(.anixia-v2) .hero p,body:not(.anixia-v2) .page-header p{color:var(--ax-muted)!important}
+body:not(.anixia-v2) .panel,body:not(.anixia-v2) .card,body:not(.anixia-v2) .section-card,body:not(.anixia-v2) .filter-area,body:not(.anixia-v2) .anime-search-area{background:#fff!important;border:1px solid var(--ax-line)!important;box-shadow:var(--ax-shadow)!important;border-radius:8px!important}
+body:not(.anixia-v2) input,body:not(.anixia-v2) select,body:not(.anixia-v2) textarea{border:1px solid #d9dee5!important;border-radius:6px!important;box-shadow:none!important}
+body:not(.anixia-v2) .primary,body:not(.anixia-v2) .primary-button,body:not(.anixia-v2) .search-button,body:not(.anixia-v2) .search-submit{background:var(--ax-blue)!important;border-color:var(--ax-blue)!important;color:#fff!important}
+body:not(.anixia-v2) footer{background:#fff!important;color:#68717d!important;border-top:1px solid var(--ax-line)!important}
+body:not(.anixia-v2) footer a{color:#566171!important}
+@media(max-width:900px){
+ .anixia-v2 .header-inner{gap:15px}
+ .anixia-main-nav{gap:0}
+ .anixia-main-nav a{padding:8px 7px;font-size:11px}
+ .anixia-feature-links{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .anixia-work-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:650px){
+ .anixia-shell{width:calc(100% - 26px)}
+ .anixia-v2 .header-inner{min-height:58px!important;gap:10px}
+ .anixia-logo{font-size:21px}
+ .anixia-main-nav{display:none}
+ .anixia-header-actions{margin-left:auto}
+ .anixia-search-panel{margin:15px 0 12px;padding:19px 15px 15px}
+ .anixia-search-heading{display:block}
+ .anixia-search-heading h1{margin-top:4px;font-size:21px}
+ .anixia-search-form{gap:6px;padding-left:10px}
+ .anixia-search-form button{min-width:66px}
+ .anixia-feature-links{gap:8px;margin-bottom:28px}
+ .anixia-feature-link{padding:12px 9px;gap:8px}
+ .anixia-feature-link small{font-size:9px}
+ .anixia-section{margin:28px 0}
+ .anixia-section-heading h2{font-size:18px}
+ .anixia-work-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .anixia-work-copy{padding:9px}
+ .anixia-bottom-links{grid-template-columns:1fr;gap:8px;margin:28px 0 36px}
+ .anixia-footer-inner{min-height:100px;flex-wrap:wrap;gap:10px;padding-block:17px}
+ .anixia-footer-links{order:3;width:100%;gap:14px}
+ .anixia-footer-inner>small{margin-left:auto}
+}
+@media(prefers-reduced-motion:reduce){.anixia-v2 *{scroll-behavior:auto!important;transition:none!important}}
