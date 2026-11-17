@@ -442,7 +442,7 @@ Deno.serve(async (req: Request) => {
       ];
       const { data: existingStaffExt, error: staffExtError } = await admin.from("anime_staff_external_ids")
         .select("anime_staff_id,external_id").eq("source", "annict")
-        .in("external_id", allStaff.map((item: any) => String(item.id)).filter(Boolean));
+        .in("external_id", allStaff.map((item: any) => item._type + ":" + String(item.id)).filter(Boolean));
       if (staffExtError) throw staffExtError;
       const staffRelationMap = new Map((existingStaffExt || []).map((row: any) => [String(row.external_id), row.anime_staff_id]));
 
