@@ -41,3 +41,7 @@ Episodes imported from Annict remain unpublished by default. They do not appear 
 ## Current verification limits
 
 The schema, grants, and RLS policies have been checked. At the time of implementation, the catalogue tables checked contained no populated anime records. Therefore, end-to-end verification with actual works, browser interaction, and visual review still need to be performed once approved source data is available.
+
+## Episode moderation
+
+Open the episode review queue in `admin.html`. Each imported episode is listed with its parent work, episode number, title, source, air date, and synopsis when available. Review the relationship and information before selecting `確認して公開`. Publication is per episode; the parent anime's publication status is not changed.
