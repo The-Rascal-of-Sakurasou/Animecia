@@ -130,14 +130,16 @@
       db.from("favorites").select("anime_id,created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(50),
       db.from("watch_entries").select("anime_id,status,episodes_watched,updated_at").eq("user_id", userId).order("updated_at", { ascending: false }).limit(100),
       db.from("ratings").select("anime_id,score,updated_at").eq("user_id", userId).order("updated_at", { ascending: false }).limit(50),
-      db.from("user_achievements").select("earned_at,achievement:achievements(code,title,description,points,icon_url)").eq("user_id", userId).order("earned_at", { ascending: false }).limit(100)
+      db.from("user_achievements").select("earned_at,achievement:achievements(code,title,description,points,icon_url)").eq("user_id", userId).order("earned_at", { ascending: false }).limit(100),
+      db.from("reviews").select("id,anime_id,title,body,spoiler,is_published,created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(50)
     ]);
-    const error = [profile, favorites, watchEntries, ratings, achievements].find(x => x.error);
+    const error = [profile, favorites, watchEntries, ratings, achievements, reviews].find(x => x.error);
     if (error) throw error.error;
     const ids = [
       ...(favorites.data || []).map(x => x.anime_id),
       ...(watchEntries.data || []).map(x => x.anime_id),
-      ...(ratings.data || []).map(x => x.anime_id)
+      ...(ratings.data || []).map(x => x.anime_id),
+      ...(reviews.data || []).map(x => x.anime_id)
     ];
     const uniqueIds = [...new Set(ids)];
     const chunks = [];
@@ -149,8 +151,21 @@
       favorites: (favorites.data || []).map(x => ({ ...byId.get(x.anime_id), saved_at: x.created_at })).filter(x => x.id),
       watchEntries: (watchEntries.data || []).map(x => ({ ...byId.get(x.anime_id), status: x.status, episodes_watched: x.episodes_watched, updated_at: x.updated_at })).filter(x => x.id),
       ratings: (ratings.data || []).map(x => ({ ...byId.get(x.anime_id), score: x.score, updated_at: x.updated_at })).filter(x => x.id),
+      reviews: (reviews.data || []).map(x => ({ ...x, anime: byId.get(x.anime_id) })).filter(x => x.anime),
       achievements: (achievements.data || []).filter(x => x.achievement).map(x => ({ ...x.achievement, earned_at: x.earned_at }))
     };
+  }
+
+  async function createReview(animeId, userId, values) {
+    const title = String(values.title || "").trim().slice(0, 120);
+    const body = String(values.body || "").trim().slice(0, 5000);
+    if (!title || !body) throw new Error("レビューのタイトルと本文を入力してください。");
+    const result = await getClient().from("reviews").insert({
+      anime_id: animeId, user_id: userId, title, body,
+      spoiler: Boolean(values.spoiler), is_published: false
+    }).select("id").single();
+    if (result.error) throw result.error;
+    return result.data;
   }
 
   async function updateProfile(userId, values) {
@@ -236,7 +251,7 @@
   w.ANIXIA = Object.freeze({
     URL, getClient, listAnime, getAnime, getGenres, getStudios,
     getCatalogCount, getPublicAnimeByIds, getUser, getUserAnimeState, toggleFavorite,
-    saveWatchEntry, saveRating, getMyDashboard, updateProfile,
+    saveWatchEntry, saveRating, getMyDashboard, createReview, updateProfile,
     listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog,
     diagnoseAnime, getRankings
   });
