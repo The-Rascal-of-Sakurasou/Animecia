@@ -1699,3 +1699,8 @@ footer a:hover,.footer-links a:hover,.anixia-footer-links a:hover{color:#71d9ff!
   .anixia-search-panel,.hero,.page-header,.home-v4 .hero{border-radius:16px!important}
   .anixia-section-heading{align-items:flex-start!important}
 }
+
+.anixia-list-poster{width:100%;aspect-ratio:3/4;flex:none}
+.anixia-rank-poster{width:76px;aspect-ratio:3/4;flex:none;border-radius:7px}
+.anixia-rank-poster .anixia-poster-fallback{font-size:10px;letter-spacing:.1em}
+.anixia-list-poster img,.anixia-rank-poster img{width:100%;height:100%;object-fit:cover}
