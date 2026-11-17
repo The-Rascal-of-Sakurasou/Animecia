@@ -202,9 +202,9 @@
     buttons.forEach(button=>button.disabled=true);
     try{
       const result=await ANIXIA.mergeAdminCatalogEntity(item.entity_type,sourceId,targetId);
+      await loadEntityDuplicateCandidates();
       $("entity-duplicate-candidates").insertAdjacentHTML("afterbegin",
         '<p class="admin-message">統合しました。関連付け移動 '+esc(String(result.moved_relationships||0))+'件、重複関連の整理 '+esc(String(result.deduplicated_relationships||0))+'件。</p>');
-      await loadEntityDuplicateCandidates();
       await renderCatalogQuality(adminAnimeRows);
     }catch(e){
       console.error(e);
