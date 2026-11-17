@@ -136,4 +136,10 @@ from (values
 ) v(anime_qid,person_qid,role)
 join public.anime a on a.source='wikidata' and a.source_id=v.anime_qid
 join public.people p on p.source='wikidata' and p.source_id=v.person_qid
-on conflict do nothing;
+where not exists (
+  select 1 from public.anime_staff existing
+  where existing.anime_id=a.id
+    and existing.person_id=p.id
+    and existing.role=v.role
+    and existing.character_id is null
+);
