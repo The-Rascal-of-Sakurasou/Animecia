@@ -152,6 +152,68 @@
     }
   }
 
+  async function loadEntityDuplicateCandidates(){
+    const el=$("entity-duplicate-candidates");
+    el.innerHTML='<p class="admin-message">人物・キャラクター・制作会社・組織の名称を照合しています…</p>';
+    try{
+      const report=await ANIXIA.getAdminEntityDuplicateCandidates(100);
+      const items=Array.isArray(report.items)?report.items:[];
+      const labels={people:"人物",characters:"キャラクター",studios:"制作会社",organizations:"組織"};
+      if(!items.length){
+        el.innerHTML='<p class="admin-message">現在、重複候補はありません。検査対象は人物・キャラクター・制作会社・組織です。</p>';
+        return;
+      }
+      el.innerHTML='<p class="admin-message">候補 '+esc(String(report.candidate_count??items.length))+' 件（最大100件表示）。名称一致だけでは統合しません。</p>'+
+        items.map((item,index)=>{
+          const matched=Array.isArray(item.matched_names)?item.matched_names.join(" / "):"";
+          return '<article style="padding:13px;border:1px solid #30435f;border-radius:10px;margin:10px 0;background:#0b1423">'+
+            '<div style="font-size:10px;color:#9fb1ca">'+esc(labels[item.entity_type]||item.entity_type)+' · 一致名称 '+esc(String(item.matched_name_count||0))+'件</div>'+
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:9px 0">'+
+              '<div><strong style="color:#fff;font-size:12px">'+esc(item.left_name)+'</strong><div style="font-size:10px;color:#8fa1ba">左のレコード</div></div>'+
+              '<div><strong style="color:#fff;font-size:12px">'+esc(item.right_name)+'</strong><div style="font-size:10px;color:#8fa1ba">右のレコード</div></div>'+
+            '</div>'+
+            '<p style="font-size:11px;color:#d8c39d;margin:6px 0">一致した名称: '+esc(matched)+'</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+              '<button type="button" class="admin-button" data-keep-left="'+index+'">左を残して統合</button>'+
+              '<button type="button" class="admin-button" data-keep-right="'+index+'">右を残して統合</button>'+
+            '</div></article>';
+        }).join("");
+      el.querySelectorAll("[data-keep-left]").forEach(button=>{
+        button.addEventListener("click",()=>mergeCandidate(items[Number(button.dataset.keepLeft)],"left"));
+      });
+      el.querySelectorAll("[data-keep-right]").forEach(button=>{
+        button.addEventListener("click",()=>mergeCandidate(items[Number(button.dataset.keepRight)],"right"));
+      });
+    }catch(e){
+      console.error(e);
+      el.innerHTML='<p class="admin-message">重複候補を取得できませんでした。管理者権限とデータベース接続を確認してください。</p>';
+    }
+  }
+
+  async function mergeCandidate(item,keepSide){
+    const keepLeft=keepSide==="left";
+    const targetId=keepLeft?item.left_id:item.right_id;
+    const sourceId=keepLeft?item.right_id:item.left_id;
+    const targetName=keepLeft?item.left_name:item.right_name;
+    const sourceName=keepLeft?item.right_name:item.left_name;
+    const kind={people:"人物",characters:"キャラクター",studios:"制作会社",organizations:"組織"}[item.entity_type]||item.entity_type;
+    if(!confirm(kind+"「"+sourceName+"」を「"+targetName+"」へ統合します。\n\n元レコードは削除され、作品との関連情報と外部IDを残すレコードへ移します。この操作は取り消せません。\n\n本当に同一の存在だと確認できていますか？")) return;
+    const buttons=[...$("entity-duplicate-candidates").querySelectorAll("button")];
+    buttons.forEach(button=>button.disabled=true);
+    try{
+      const result=await ANIXIA.mergeAdminCatalogEntity(item.entity_type,sourceId,targetId);
+      $("entity-duplicate-candidates").insertAdjacentHTML("afterbegin",
+        '<p class="admin-message">統合しました。関連付け移動 '+esc(String(result.moved_relationships||0))+'件、重複関連の整理 '+esc(String(result.deduplicated_relationships||0))+'件。</p>');
+      await loadEntityDuplicateCandidates();
+      await renderCatalogQuality(adminAnimeRows);
+    }catch(e){
+      console.error(e);
+      $("entity-duplicate-candidates").insertAdjacentHTML("afterbegin",
+        '<p class="admin-message">統合できませんでした: '+esc(e.message||"外部IDなどの競合を確認してください。")+'</p>');
+      buttons.forEach(button=>button.disabled=false);
+    }
+  }
+
   async function renderCatalogQuality(rows){
     const el=$("catalog-quality-check");
     el.innerHTML='<p class="admin-message">作品・エピソードの品質を検査しています…</p>';
@@ -295,6 +357,7 @@
         $("admin-metadata-editor").hidden=false;
         $("admin-episode-review").hidden=false;
         loadAdminMetadata();
+        loadEntityDuplicateCandidates();
         loadPendingEpisodes();
         loadPendingReviews();
         loadPendingAnime();
@@ -335,6 +398,7 @@
   });
   $("refresh-episodes").addEventListener("click",loadPendingEpisodes);
   $("refresh-catalog-quality").addEventListener("click",()=>renderCatalogQuality(adminAnimeRows));
+  $("refresh-entity-duplicates").addEventListener("click",loadEntityDuplicateCandidates);
   $("refresh-catalog-candidates").addEventListener("click",loadPendingAnime);
   async function runAnnictSync(mode){
     const button=mode==="preview"?$("preview-button"):$("sync-button");
