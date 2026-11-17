@@ -53,7 +53,7 @@ Official API documentation:
 | `GET /v1/organizations` | id, name, name_kana, name_en, url, wikipedia_url | `organizations`, `organization_external_ids` |
 | `GET /v1/series` | id, name, name_ro, name_en | `series`, `series_external_ids` |
 
-The mapping is a design reference, not a statement that all fields are currently synchronized. The deployed `sync-annict-catalog` function currently imports work-level fields only. Episode, cast, staff, character, organization, and series importers still need implementation and validation.
+The mapping is a design reference, not a statement that all fields have been fully validated. The deployed `sync-annict-catalog` function imports work-level catalogue fields. A separate `sync-annict-work-details` Edge Function is also deployed and implements per-work detail synchronization for episodes, cast/staff, characters, organizations, and series. The detail importer requires an authenticated ANIXIA administrator and an explicitly approved/enabled catalogue source before fetching provider data. No production catalogue import or populated-record end-to-end validation has yet been completed; keep the Annict source disabled until its terms and operational checks are satisfied.
 
 ## Publication and rights workflow
 
