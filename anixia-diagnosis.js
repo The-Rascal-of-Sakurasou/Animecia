@@ -20,7 +20,7 @@
     $("diagnosis-summary").textContent="診断中…";
     try{
       const results=await ANIXIA.diagnoseAnime(options);
-      $("diagnosis-results").innerHTML=results.length?results.map(a=>`<a class="diag-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}">${a.poster_url?`<img src="${esc(a.poster_url)}" alt="" loading="lazy">`:'<div style="aspect-ratio:3/4;background:#263b59;display:grid;place-items:center;color:#9eacc0">ANIXIA</div>'}<div class="diag-card-copy"><b>${esc(name(a))}</b><small>ジャンル一致 ${a.match_count}件 · ${esc(a.release_year||"年未登録")}</small></div></a>`).join(""):'<p class="diag-state">条件に合う公開作品がありません。条件を広げるか、作品データの登録後にお試しください。</p>';
+      $("diagnosis-results").innerHTML=results.length?results.map(a=>`<a class="diag-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}"><div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url,name(a))}</div><div class="diag-card-copy"><b>${esc(name(a))}</b><small>ジャンル一致 ${a.match_count}件 · ${esc(a.release_year||"年未登録")}</small></div></a>`).join(""):'<p class="diag-state">条件に合う公開作品がありません。条件を広げるか、作品データの登録後にお試しください。</p>';
       $("diagnosis-summary").textContent=results.length?`条件に合う作品を${results.length}件表示しています。一致ジャンル数と登録済みの人気指標をもとに並べています。`:"診断結果はありません。";
     }catch(error){console.error(error);$("diagnosis-results").innerHTML='<p class="diag-state">診断に失敗しました。時間をおいて再度お試しください。</p>';$("diagnosis-summary").textContent="データベースに接続できませんでした。";}
   });
