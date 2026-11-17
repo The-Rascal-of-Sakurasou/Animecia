@@ -55,8 +55,15 @@ SELECT DISTINCT ?episode ?episodeLabel ?jaLabel ?originalTitle ?publicationDate 
   OPTIONAL { ?episode wdt:P577 ?publicationDate . }
   OPTIONAL {
     ?episode p:P361 ?partStatement .
-    ?partStatement pq:P1545 ?ordinal .
+    ?partStatement pq:P1545 ?partOrdinal .
   }
+  OPTIONAL {
+    ?episode p:P179 ?seriesStatement .
+    ?seriesStatement ps:P179 ?show ;
+                     pq:P1545 ?seriesOrdinal .
+  }
+  OPTIONAL { ?episode wdt:P1545 ?directOrdinal . }
+  BIND(COALESCE(?partOrdinal, ?seriesOrdinal, ?directOrdinal) AS ?ordinal)
   SERVICE wikibase:label { bd:serviceParam wikibase:language "ja,en". }
 }
 ORDER BY ?ordinal ?publicationDate ?episode
