@@ -45,6 +45,35 @@
   <button id="refresh-catalog-candidates" class="admin-button" type="button">候補を再読み込み</button>
   <div id="pending-anime"><p class="admin-message">未公開候補を読み込んでいます…</p></div>
 </section>
+
+<section id="admin-metadata-editor" class="admin-panel" hidden>
+  <h2>作品メタデータ編集</h2>
+  <p>作品のジャンル・タグと、前編・続編・スピンオフなどの関連作品を管理します。ここでの変更は管理者権限で保存されます。</p>
+  <div class="admin-field"><label for="metadata-anime">編集する作品</label><select id="metadata-anime"><option value="">作品を選択してください</option></select></div>
+  <div class="admin-warning">ジャンルは作品の大分類、タグは具体的な属性・テーマとして使い分けてください。根拠が不十分な情報は追加しないでください。</div>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px">
+    <div class="admin-field"><label for="metadata-genres">ジャンル（複数選択可）</label><select id="metadata-genres" multiple size="9" style="height:auto;min-height:190px;padding:8px"></select></div>
+    <div class="admin-field"><label for="metadata-tags">タグ（複数選択可）</label><select id="metadata-tags" multiple size="9" style="height:auto;min-height:190px;padding:8px"></select></div>
+  </div>
+  <button id="save-taxonomy" class="admin-button" type="button">ジャンル・タグを保存</button>
+  <p id="taxonomy-message" class="admin-message" aria-live="polite"></p>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px">
+    <div class="admin-field"><label for="new-genre">新しいジャンルを追加</label><input id="new-genre" maxlength="80" placeholder="例：SF"><button id="create-genre" class="admin-button" type="button">ジャンルを追加</button></div>
+    <div class="admin-field"><label for="new-tag">新しいタグを追加</label><input id="new-tag" maxlength="80" placeholder="例：タイムループ"><button id="create-tag" class="admin-button" type="button">タグを追加</button></div>
+  </div>
+  <h3 style="color:#fff;font-size:15px;margin-top:25px">関連作品を登録</h3>
+  <div class="admin-field"><label for="related-anime">関連する作品</label><select id="related-anime"><option value="">作品を選択してください</option></select></div>
+  <div class="admin-field"><label for="relation-type">関係</label><select id="relation-type">
+    <option value="sequel">続編</option><option value="prequel">前編</option><option value="side_story">外伝</option><option value="spin_off">スピンオフ</option><option value="alternative_version">別バージョン・リメイク</option><option value="summary">総集編</option><option value="parent_story">本編・親作品</option><option value="adaptation">メディア化・原作関係</option><option value="other">その他</option>
+  </select></div>
+  <button id="add-relation" class="admin-button" type="button">関連作品を登録</button>
+  <p id="relation-message" class="admin-message" aria-live="polite"></p>
+  <div id="anime-relations-list"><p class="admin-message">作品を選択してください。</p></div>
+  <h3 style="color:#fff;font-size:15px;margin-top:25px">データ品質チェック</h3>
+  <p>未公開候補を中心に、基本情報の不足を確認します。自動判定は確認漏れを減らす補助であり、公開可否を自動決定するものではありません。</p>
+  <div id="catalog-quality-check"><p class="admin-message">候補を読み込んでいます…</p></div>
+</section>
+
 </main>
 </body>
 </html>
