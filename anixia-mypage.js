@@ -19,6 +19,7 @@
     if(activeTab==="watch")items=dashboard.watchEntries.map(a=>card(a,status(a.status)+" · "+(a.episodes_watched||0)+"話"));
     if(activeTab==="favorites")items=dashboard.favorites.map(a=>card(a,"お気に入り"));
     if(activeTab==="ratings")items=dashboard.ratings.map(a=>card(a,"評価 "+a.score+"点"));
+    if(activeTab==="reviews")items=dashboard.reviews.map(r=>card(r.anime,r.title+" · "+(r.is_published?"公開中":"公開審査待ち")));
     if(activeTab==="achievements")items=dashboard.achievements.map(a=>`<article class="anixia-library-card"><div style="aspect-ratio:3/4;background:#17243a;display:grid;place-items:center;color:#f2b84d;font-size:28px">★</div><div><b>${esc(a.title)}</b><small>${esc(a.description||"実績を獲得しました。")}</small></div></article>`);
     el.innerHTML=items.length?items.join(""):'<div class="anixia-library-empty" style="grid-column:1/-1">まだ登録されていません。作品ページから視聴記録やお気に入りを追加できます。</div>';
     document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===activeTab));
