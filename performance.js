@@ -14,4 +14,14 @@
     const sw=new URL('sw.js',script?.src||document.baseURI);
     navigator.serviceWorker.register(sw,{scope:new URL('./',sw).pathname}).catch(()=>{});
   },{once:true});
+
+  // Shared ANIXIA wordmark is loaded on both root pages and generated SEO pages.
+  const performanceScript=Array.from(document.scripts).find(s=>s.src.includes('performance.js'));
+  if(performanceScript&&!document.querySelector('script[data-anixia-global-header]')){
+    const loader=document.createElement('script');
+    loader.src=new URL('anixia-global-header.js',performanceScript.src).href;
+    loader.defer=true;
+    loader.dataset.anixiaGlobalHeader='true';
+    document.head.appendChild(loader);
+  }
 }catch(e){}})();
