@@ -394,4 +394,4 @@ All 6 migration files are present in the repository and applied to the active Su
 - 「舞妓さんちのまかないさん」は全36話と確認し、自動取得された12話を訂正。
 - 保留候補のうち1件は収録方針外、もう1件は作品同一性・公開年の矛盾を再確認するまで非公開。
 - 公開作品26件、非公開候補2件をSupabase SQLで再確認。
-- データ変更はマイグレーション `20261117143000_review_and_publish_verified_wikidata_candidates.sql` に記録。
+- データ変更はマイグレーション `20261117142131_review_and_publish_verified_wikidata_candidates.sql` に記録。
