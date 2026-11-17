@@ -224,7 +224,7 @@ Deno.serve(async (req: Request) => {
           source_id: String(ep.id),
           episode_number: numberText || String(order),
           episode_order: order,
-          episode_kind: "regular",
+          episode_kind: "unknown",
           title: episodeTitle,
           title_ja: episodeTitle,
           source_synced_at: new Date().toISOString()
