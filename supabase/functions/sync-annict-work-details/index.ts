@@ -190,11 +190,12 @@ Deno.serve(async (req: Request) => {
     let recordsSeen = 0;
     let written = 0;
     try {
-      const [episodeResult, castResult, staffResult] = await Promise.all([
-        fetchWorkCollection("/v1/episodes", "episodes", workId, token),
-        fetchWorkCollection("/v1/casts", "casts", workId, token),
-        fetchWorkCollection("/v1/staffs", "staffs", workId, token)
-      ]);
+      // Keep endpoint requests sequential so the combined importer respects provider rate limits.
+      const episodeResult = await fetchWorkCollection("/v1/episodes", "episodes", workId, token);
+      await wait(1100);
+      const castResult = await fetchWorkCollection("/v1/casts", "casts", workId, token);
+      await wait(1100);
+      const staffResult = await fetchWorkCollection("/v1/staffs", "staffs", workId, token);
       pagesRequested = episodeResult.pages + castResult.pages + staffResult.pages;
       const episodes = episodeResult.items;
       const casts = castResult.items;
@@ -227,6 +228,32 @@ Deno.serve(async (req: Request) => {
         if (error) throw error;
       }
       written += episodeRows.length;
+
+      // Save the provider's work title and kana as searchable aliases without overwriting curated titles.
+      const { data: existingTitles, error: titleReadError } = await admin.from("anime_titles")
+        .select("title,language_code,title_type").eq("anime_id", anime.id);
+      if (titleReadError) throw titleReadError;
+      const knownTitles = new Set((existingTitles || []).map((row: any) =>
+        String(row.title).trim().toLocaleLowerCase("ja") + "|" + row.language_code + "|" + row.title_type
+      ));
+      const workTitleRows = [
+        { title: anime.title, language_code: /[\\u3000-\\u30ff\\u3400-\\u9fff]/.test(anime.title) ? "ja" : "en", title_type: "main", is_primary: true },
+      ];
+      const { data: workSource, error: workSourceError } = await admin.from("anime")
+        .select("title_kana").eq("id", anime.id).single();
+      if (workSourceError) throw workSourceError;
+      if (workSource?.title_kana) workTitleRows.push({
+        title: workSource.title_kana, language_code: "ja", title_type: "kana", is_primary: false
+      });
+      const missingTitles = workTitleRows.filter((row: any) => !knownTitles.has(
+        row.title.trim().toLocaleLowerCase("ja") + "|" + row.language_code + "|" + row.title_type
+      )).map((row: any) => ({ anime_id: anime.id, ...row }));
+      if (missingTitles.length) {
+        const { error } = await admin.from("anime_titles").insert(missingTitles);
+        if (error) throw error;
+      }
+      written += missingTitles.length;
+
       const { data: savedEpisodes, error: savedEpisodesError } = await admin.from("episodes")
         .select("id,source_id").eq("anime_id", anime.id).eq("source", "annict");
       if (savedEpisodesError) throw savedEpisodesError;
@@ -427,7 +454,8 @@ Deno.serve(async (req: Request) => {
             // A matching relation may have been created by a concurrent import.
             const { data: found, error: findError } = await admin.from("anime_staff")
               .select("id").eq("anime_id", anime.id).eq("person_id", personId)
-              .eq("role", role).limit(1).maybeSingle();
+              .eq("role", role)
+              .eq("character_id", characterId).limit(1).maybeSingle();
             if (findError || !found) throw error;
             relationId = found.id;
           } else {
