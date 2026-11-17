@@ -19,7 +19,7 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="anixia-client.js"></script><script src="anixia-admin.js" defer></script>
-<link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co">
+<link rel="preconnect" href="https://trvnxggqzlhqdhoyiliy.supabase.co" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 </head>
 <body>
@@ -27,7 +27,7 @@
 <main class="admin-page">
 <section class="admin-panel"><h1>ANIXIA管理画面</h1><p>カタログ同期と管理者専用処理を実行します。</p><div id="admin-status" class="admin-message">認証状態を確認しています…</div></section>
 <section id="admin-setup" class="admin-panel" hidden><h2>管理者権限がありません</h2><p>以下のアカウントIDをサーバー側の管理者リストへ登録する必要があります。</p><code id="user-id" class="admin-code"></code><p class="admin-warning">管理者権限はサーバー側で付与します。ブラウザから自分で変更する機能はありません。</p></section>
-<section id="admin-sync" class="admin-panel" hidden><h2>Annict作品データ同期</h2><p>1回につき最大5ページ、1ページ50作品を取得します。</p><p class="admin-warning">SupabaseのEdge Function Secretsへ <code>ANNICT_ACCESS_TOKEN</code> を登録してください。トークンをこの画面や公開コードへ入力しないでください。</p>
+<section id="admin-sync" class="admin-panel" hidden><h2>Annict作品データ同期</h2><p>1回につき最大5ページ、1ページ50作品を取得します。取得した候補は非公開で保存し、管理者が内容を確認してから公開します。</p><p class="admin-warning">Annict APIが提供する作品画像は権利者の許諾を意味しないため取得しません。日本作品・対象形式・成人向けでないこと・情報の正確性を確認してから公開してください。</p><p class="admin-warning">SupabaseのEdge Function Secretsへ <code>ANNICT_ACCESS_TOKEN</code> を登録してください。トークンをこの画面や公開コードへ入力しないでください。</p>
 <div class="admin-field"><label for="start-page">開始ページ</label><input id="start-page" type="number" min="1" value="1"></div>
 <div class="admin-field"><label for="max-pages">1回の取得ページ数</label><select id="max-pages"><option value="1">1ページ</option><option value="2">2ページ</option><option value="3" selected>3ページ</option><option value="4">4ページ</option><option value="5">5ページ</option></select></div>
 <button id="sync-button" class="admin-button" type="button">同期を開始</button><p id="sync-message" class="admin-message" aria-live="polite"></p>
@@ -36,6 +36,12 @@
   <h2>レビュー審査</h2>
   <p>投稿されたレビューを確認し、公開できるものを承認します。</p>
   <div id="pending-reviews"><p class="admin-message">審査待ちレビューを読み込んでいます…</p></div>
+</section>
+<section id="admin-catalog-review" class="admin-panel" hidden>
+  <h2>作品候補の審査</h2>
+  <p>未公開の作品候補を確認します。公式サイト等の根拠を確認できない作品は公開せず、保留してください。</p>
+  <button id="refresh-catalog-candidates" class="admin-button" type="button">候補を再読み込み</button>
+  <div id="pending-anime"><p class="admin-message">未公開候補を読み込んでいます…</p></div>
 </section>
 </main>
 </body>
