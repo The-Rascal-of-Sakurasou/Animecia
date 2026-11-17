@@ -1221,3 +1221,32 @@ body.anixia-v2{background:var(--ax-bg)!important;color:var(--ax-ink)!important}
 .anixia-v2 main.anixia-shell{width:min(var(--ax-shell),calc(100% - 40px))!important;max-width:var(--ax-shell)!important;padding-left:0!important;padding-right:0!important}
 .anixia-v2 .site-header{height:auto!important}
 @media(max-width:650px){.anixia-v2 main.anixia-shell{width:calc(100% - 26px)!important}}
+
+/* Shared page polish: light, restrained Japanese portal styling */
+body:not(.anixia-v2){background:var(--ax-bg)!important;color:var(--ax-ink)!important}
+body:not(.anixia-v2) main{color:var(--ax-ink)}
+body:not(.anixia-v2) .ranking-hero,
+body:not(.anixia-v2) .anixia-page-hero,
+body:not(.anixia-v2) .anixia-mypage-hero,
+body:not(.anixia-v2) .auth-panel,
+body:not(.anixia-v2) .hero,
+body:not(.anixia-v2) .page-header{background:#fff!important;color:var(--ax-ink)!important;border:1px solid var(--ax-line)!important;border-radius:9px!important;box-shadow:var(--ax-shadow)!important}
+body:not(.anixia-v2) .ranking-hero h1,
+body:not(.anixia-v2) .anixia-page-hero h1,
+body:not(.anixia-v2) .anixia-mypage-hero h1,
+body:not(.anixia-v2) .auth-panel h1,
+body:not(.anixia-v2) .hero h1,
+body:not(.anixia-v2) .page-header h1{color:#252b34!important}
+body:not(.anixia-v2) .ranking-hero p,
+body:not(.anixia-v2) .anixia-page-hero p,
+body:not(.anixia-v2) .anixia-mypage-hero p,
+body:not(.anixia-v2) .auth-panel>p,
+body:not(.anixia-v2) .hero p,
+body:not(.anixia-v2) .page-header p{color:var(--ax-muted)!important}
+body:not(.anixia-v2) .ranking-hero .kicker,
+body:not(.anixia-v2) .anixia-page-hero small,
+body:not(.anixia-v2) .anixia-mypage-hero small{color:var(--ax-blue)!important}
+body:not(.anixia-v2) .auth-panel .field label{color:#505966!important}
+body:not(.anixia-v2) .auth-panel input{background:#fff!important;color:var(--ax-ink)!important}
+body:not(.anixia-v2) .auth-panel button{background:var(--ax-blue)!important;color:#fff!important;border-radius:6px!important}
+body:not(.anixia-v2) .panel,body:not(.anixia-v2) .auth-panel,body:not(.anixia-v2) .section-card{border-radius:8px!important}
