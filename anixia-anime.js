@@ -11,7 +11,7 @@
   function renderCard(a) {
     const meta = [a.release_year || "年未登録", formatName(a.format), a.season || ""].filter(Boolean).join(" · ");
     return `<a class="anixia-result-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}">
-      <div class="anixia-result-poster">${a.poster_url ? `<img src="${esc(a.poster_url)}" alt="" loading="lazy" decoding="async">` : "ANIXIA"}</div>
+      <div class="anixia-result-poster">${ANIXIA.posterMarkup(a.poster_url, displayTitle(a))}</div>
       <div class="anixia-result-copy"><b>${esc(displayTitle(a))}</b><small>${esc(meta)}</small></div>
     </a>`;
   }
