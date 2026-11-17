@@ -10,8 +10,8 @@
 - フロントエンド：GitHub Pages、HTML/CSS/JavaScript
 - 新Supabase：`anixia`、東京リージョン、状態 `ACTIVE_HEALTHY`
 - 新Supabase：public/private 合計26テーブル。確認時点で各テーブルの行数は0。
-- 新Supabase：適用済みマイグレーション履歴は10件。
-- リポジトリ：SQLファイル42件。そのうちANIXIA用の2026-11-17マイグレーションは5件。DBに適用済みの初期5マイグレーションはリポジトリ内で確認できず、再現可能なスキーマ履歴に差がある。
+- 新Supabase：初回監査時点の適用済みマイグレーション履歴は10件。今回の管理者候補審査マイグレーションを適用し、現在は14件。
+- 初回監査時のリポジトリSQLファイルは42件。今回のマイグレーション追加後は43件。ANIXIA用の2026-11-17マイグレーションは6件になったが、DBに適用済みの初期5マイグレーションは依然としてリポジトリ内で確認できず、再現可能なスキーマ履歴に差がある。
 - リポジトリには作品別の静的SEOページ、共通CSS、認証・検索・視聴管理・ランキング等の既存実装がある。全面作り直しではなく、既存資産を監査して段階移行する。
 
 ## 2. 公開ページとSupabase接続の不整合
@@ -25,7 +25,7 @@
 - `profile.html`
 - `user-search.html`
 
-共通スクリプト `auth-core.js` と一部ページの `anime-data.js` にも旧プロジェクト参照がある。残り12ページ（`auth-callback.html`、`compare.html`、`discover.html`、`login.html`、`mypage.html`、`quiz-play.html`、`quiz.html`、`ranking.html`、`recommendations.html`、`reset-password.html`、`season.html`、`signup.html`）の旧URLはpreconnectのみで、実際のデータ通信は新共通クライアントを使っている。不要なpreconnectは後続の共通化で削除する。
+共通スクリプト `auth-core.js` と一部ページの `anime-data.js` にも旧プロジェクト参照がある。残り12ページ（`auth-callback.html`、`compare.html`、`discover.html`、`login.html`、`mypage.html`、`quiz-play.html`、`quiz.html`、`ranking.html`、`recommendations.html`、`reset-password.html`、`season.html`、`signup.html`）の旧URLはpreconnectのみで、実際のデータ通信は新共通クライアントを使っている。さらに `index.html`、`anime.html`、`anime-detail.html` にも旧URLのpreconnectが残る。不要なpreconnectは後続の共通化で削除する。
 
 旧Animecia Supabaseプロジェクトは `INACTIVE`。旧プロジェクトを実際に利用する6ページは、URLだけを新プロジェクトへ置換してはならない。旧ページが利用するテーブル・RPC・認証処理と新スキーマを照合し、ページ単位で移行する。
 
@@ -43,7 +43,7 @@ SEO生成スクリプト自体は旧スキーマ参照のままなので、新�
 ## 4. Supabase監査
 
 - 26テーブルすべてでRLSが有効。
-- Security AdvisorはRLSポリシーがないテーブル4件をINFOとして報告。対象には、公開RPC経由で公開済み作品だけを返す設計の `public.anime`、同期ログ、privateスキーマの管理者・クイズ正解テーブルが含まれる。ポリシーがないことだけで直ちに脆弱性とは判断しない。
+- 初回監査時はRLSポリシーなしのテーブルが4件だったが、今回 `public.anime` に管理者専用のSELECT/UPDATEポリシーを追加した。現在、Security Advisorは3件（`private.admin_users`、`private.quiz_answer_keys`、`public.catalog_sync_runs`）をINFOとして報告。これらは管理者・クイズ正解・同期ログの内部用途で、RLSポリシーを設けずにアクセスを閉じる設計。
 - 公開作品検索・詳細・おすすめ等の4 RPCはSECURITY DEFINERとして警告される。確認した定義では `is_published = true` に限定し、空のsearch_pathを設定している。公開範囲と権限を継続レビューする。
 - Performance Advisorは外部キーの未インデックス10件を報告。未使用インデックス18件も報告するが、DBがほぼ未使用のため、使用状況を測定せず削除しない。
 
@@ -52,7 +52,7 @@ SEO生成スクリプト自体は旧スキーマ参照のままなので、新�
 - Supabase Authユーザー数0、管理者数0を確認。管理者アカウントを登録するまで管理者同期を実行できない。
 - `anime.is_published` のDB既定値は `false`。
 - `sync-annict-catalog` はv2をデプロイし、画像フィールドを取得せず、公開フラグも書き換えずに候補を非公開で保存するよう変更。
-- `admin.html` に作品候補審査画面を追加し、管理者だけが候補を閲覧・公開できるようにした。旧管理者ページ3件は新画面へリダイレクト。
+- `admin.html` に基本的な作品候補審査画面を追加し、管理者だけが候補を閲覧・公開できるようにした。旧管理者ページ3件は暫定リダイレクト。旧ダッシュボードのジャンル監査・作品編集・おすすめ枠・広告管理等は未移行で、後続開発で再実装が必要。
 - 管理者だけが未公開候補を閲覧・公開できるRLSポリシーと部分インデックスを追加。
 - Annict APIの利用条件・レート制限は [docs/DATA_SOURCES.md](DATA_SOURCES.md) に記録。
 - Annict APIトークンのSecrets登録状況は確認できない。トークン値は読み出さず、Supabase側で管理する。
