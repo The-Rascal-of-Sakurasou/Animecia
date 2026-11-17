@@ -35,7 +35,7 @@ for file in \
   07_default_privileges.sql
 do
   echo "::group::Apply $file to the disposable local database"
-  supabase db query --file "$ROOT/supabase/schema-snapshot/$file"
+  supabase db query --local --file "$ROOT/supabase/schema-snapshot/$file"
   echo "::endgroup::"
 done
 
@@ -119,7 +119,7 @@ $$;
 SQL
 
 echo "::group::Verify reconstructed schema"
-supabase db query --file "$WORKDIR/assert-snapshot.sql"
+supabase db query --local --file "$WORKDIR/assert-snapshot.sql"
 echo "::endgroup::"
 
 echo "Schema snapshot replay and catalog assertions passed."
