@@ -587,3 +587,65 @@ where a.source='wikidata' and a.source_id='Q20590069'
     where s.anime_id=a.id and s.person_id=p.id
       and s.role='screenwriter' and s.character_id is null
   );
+
+
+-- Fourth catalog expansion batch (2026-11-17): two verified 2006 TV anime.
+-- Code Geass dates and 25-episode count are taken from the Sunrise official work page.
+-- Haruhi's 2006 version is kept distinct from the 2009 rebroadcast/additional episodes.
+insert into public.studios(name,name_ja,name_kana,name_en,website_url,source,source_id)
+values
+ ('Sunrise','サンライズ','さんらいず','Sunrise','https://www.sunrise-inc.co.jp/','wikidata','Q111450707'),
+ ('Kyoto Animation','京都アニメーション','きょうとアニメーション','Kyoto Animation','https://www.kyotoanimation.co.jp/','wikidata','Q877325')
+on conflict (source,source_id) do update set
+ name=excluded.name,name_ja=excluded.name_ja,name_kana=excluded.name_kana,
+ name_en=excluded.name_en,website_url=excluded.website_url;
+
+insert into public.studio_external_ids(studio_id,source,external_id,source_url,last_verified_at)
+select s.id,'wikidata',s.source_id,'https://www.wikidata.org/wiki/'||s.source_id,now()
+from public.studios s
+where s.source='wikidata' and s.source_id in ('Q111450707','Q877325')
+on conflict do nothing;
+
+insert into public.anime
+ (source,source_id,title,title_ja,title_kana,format,release_year,released_on,episode_count,episodes_count,
+  official_url,official_site_url,country_code,is_published,source_synced_at)
+values
+ ('wikidata','Q4384067','Code Geass: Lelouch of the Rebellion','コードギアス 反逆のルルーシュ','コードギアス はんぎゃくのルルーシュ',
+  'tv',2006,date '2006-10-05',25,25,'https://www.sunrise-inc.co.jp/work/detail.php?cid=256',
+  'https://www.sunrise-inc.co.jp/work/detail.php?cid=256','JP',true,now()),
+ ('wikidata','Q10913555','The Melancholy of Haruhi Suzumiya','涼宮ハルヒの憂鬱','すずみやハルヒのゆううつ',
+  'tv',2006,date '2006-04-03',14,14,'https://www.kyotoanimation.co.jp/works/haruhi/',
+  'https://www.kyotoanimation.co.jp/works/haruhi/','JP',true,now())
+on conflict (source,source_id) do update set
+ title=excluded.title,title_ja=excluded.title_ja,title_kana=excluded.title_kana,
+ format=excluded.format,release_year=excluded.release_year,released_on=excluded.released_on,
+ episode_count=excluded.episode_count,episodes_count=excluded.episodes_count,
+ official_url=excluded.official_url,official_site_url=excluded.official_site_url,
+ country_code=excluded.country_code,is_published=true,source_synced_at=now(),updated_at=now();
+
+update public.anime a set studio_id=s.id,updated_at=now()
+from public.studios s
+where (a.source='wikidata' and a.source_id='Q4384067' and s.source='wikidata' and s.source_id='Q111450707')
+   or (a.source='wikidata' and a.source_id='Q10913555' and s.source='wikidata' and s.source_id='Q877325');
+
+insert into public.anime_external_ids(anime_id,source,external_id,source_url,is_primary,last_verified_at)
+select id,'wikidata',source_id,'https://www.wikidata.org/wiki/'||source_id,true,now()
+from public.anime where source='wikidata' and source_id in ('Q4384067','Q10913555')
+on conflict (anime_id,source) do update set
+ external_id=excluded.external_id,source_url=excluded.source_url,is_primary=true,last_verified_at=now();
+
+insert into public.anime_titles(anime_id,title,language_code,title_type,is_primary)
+select a.id,v.title,v.language_code,v.title_type,false
+from public.anime a
+join (values
+ ('Q4384067','Code Geass','en','synonym'),
+ ('Q4384067','コードギアス 反逆のルルーシュ','ja','synonym'),
+ ('Q10913555','The Melancholy of Haruhi Suzumiya','en','synonym'),
+ ('Q10913555','Suzumiya Haruhi no Yuuutsu','ja','romaji'),
+ ('Q10913555','涼宮ハルヒの憂鬱','ja','synonym')
+) as v(source_id,title,language_code,title_type) on true
+where a.source='wikidata' and a.source_id=v.source_id
+and not exists (
+ select 1 from public.anime_titles t
+ where t.anime_id=a.id and t.title=v.title and t.language_code=v.language_code
+);
