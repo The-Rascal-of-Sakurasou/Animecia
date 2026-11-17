@@ -24,9 +24,26 @@
     $("title").textContent=name;
     $("subtitle").textContent=[a.title,a.title_kana].filter((v,i,arr)=>v&&v!==name&&arr.indexOf(v)===i).join(" / ");
     $("meta").innerHTML=[fmt(a.format),a.release_year,a.season,a.episode_count?String(a.episode_count)+"話":""].filter(Boolean).map(x=>'<span>'+esc(x)+'</span>').join("");
-    $("genres").innerHTML=tagList(a.genres,"ジャンル");
+    $("genres").innerHTML=tagList(a.genres||[],"ジャンル");
+    $("tags").innerHTML=tagList(a.tags||[],"タグ");
+    $("series").innerHTML=tagList(a.series||[],"シリーズ");
+    $("organizations").innerHTML=tagList(a.organizations||[],"制作団体");
+    const relationLabels={sequel:"続編",prequel:"前編",side_story:"外伝",spin_off:"スピンオフ",alternative_version:"別バージョン・リメイク",summary:"総集編",parent_story:"本編・親作品",adaptation:"メディア化・原作関係",other:"その他"};
+    const related=a.related_works||[];
+    $("related-works").innerHTML=related.length?related.map(r=>{
+      const direction=r.direction==="incoming"?"関連元":"関連先";
+      return '<a href="anime-detail.html?id='+encodeURIComponent(r.id)+'"><span>'+esc(r.title_ja||r.title||"作品名未登録")+'</span><small>'+esc(direction+" · "+(relationLabels[r.relation_type]||r.relation_type))+'</small></a>';
+    }).join(""):'<div class="anixia-empty">関連作品はまだ登録されていません。</div>';
+    const episodes=a.episodes||[];
+    $("episodes").innerHTML=episodes.length?episodes.map(e=>{
+      const number=e.episode_number||e.episode_order||"";
+      const title=e.title_ja||e.title||"サブタイトル未登録";
+      const date=e.aired_at?" · "+e.aired_at:"";
+      return '<article class="anixia-detail-episode"><b>'+esc("第"+number+"話 · "+title)+'</b><p>'+esc(date+(e.synopsis?" · "+e.synopsis:""))+'</p></article>';
+    }).join(""):'<div class="anixia-empty">公開済みのエピソード情報はありません。</div>';
     $("synopsis").textContent=a.synopsis||"あらすじ情報はまだ登録されていません。";
-    const info=[["形式",fmt(a.format)],["放送年",a.release_year||"未登録"],["シーズン",a.season||"未登録"],["話数",a.episode_count||"未登録"],["放送状況",a.status||"未登録"],["制作会社",a.studio?(a.studio.name_ja||a.studio.name):"未登録"]];
+    const studioNames=(a.studios||[]).map(s=>s.name_ja||s.name).filter(Boolean);
+    const info=[["形式",fmt(a.format)],["放送年",a.release_year||"未登録"],["シーズン",a.season||"未登録"],["話数",a.episode_count||a.episodes_count||"未登録"],["放送状況",a.status||"未登録"],["制作会社",studioNames.join("・")||(a.studio?(a.studio.name_ja||a.studio.name):"未登録")]];
     if(a.official_url)info.push(["公式サイト",'<a href="'+esc(a.official_url)+'" target="_blank" rel="noopener noreferrer">公式サイトを開く</a>']);
     $("info").innerHTML=info.map(([k,v])=>'<dt>'+esc(k)+'</dt><dd>'+((typeof v==="string"&&v.startsWith("<a "))?v:esc(v))+'</dd>').join("");
     $("characters").innerHTML=tagList(a.characters,"キャラクター");
