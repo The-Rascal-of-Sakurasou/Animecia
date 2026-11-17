@@ -181,3 +181,11 @@ All 6 migration files are present in the repository and applied to the active Su
 - Extended `anime-detail.html` and `anixia-detail.js` to display tags, series, related works, published episodes, and production organizations.
 - Database checks confirm the taxonomy RPC exists, authenticated users have execute permission, anonymous users do not, and four admin-only write policies are present.
 - No production anime data is currently available in the tables checked, so populated-record UI and end-to-end browser testing remain pending. Do not describe the new screens as fully field-tested.
+
+
+### Episode review and anonymous privilege hardening (2026-11-17)
+- Added an admin episode moderation queue to `admin.html` and `anixia-admin.js`. Imported episodes remain private until individually reviewed and published.
+- Added `listPendingEpisodes` and `setEpisodePublished` to the browser client.
+- Corrected the embedded anime relationship in the pending-episode query to use the actual `episodes_anime_id_fkey` constraint.
+- Security review found inherited anonymous write grants on catalogue tables. Migration `202611170010_revoke_anon_catalog_writes.sql` removes INSERT/UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER privileges for `anon` on genres, tags, anime taxonomy joins, anime relations, alternate titles, episodes, studios, series, and production organizations. RLS policies remain in place.
+- Post-migration checks confirmed anonymous INSERT/UPDATE/DELETE privileges are false for all 12 checked catalogue tables.
