@@ -205,7 +205,7 @@ All 6 migration files are present in the repository and applied to the active Su
 
 ### Public catalogue RLS correction (2026-11-17)
 - Corrected the public SELECT policies for `people`, `organizations`, and `studios`. The prior predicates compared a relationship row's foreign key to its own row ID, rather than to the entity row being evaluated.
-- Applied migration `20261117214300_fix_catalog_public_read_policies.sql` and verified the deployed policy expressions now compare `person_id = people.id`, `organization_id = organizations.id`, and `studio_id = studios.id` (including the primary studio link).
+- Applied migration `20261117124406_fix_catalog_public_read_policies.sql` and verified the deployed policy expressions now compare `person_id = people.id`, `organization_id = organizations.id`, and `studio_id = studios.id` (including the primary studio link).
 - Re-ran the Supabase Security Advisor. It continues to report five intentionally public SECURITY DEFINER read RPCs and one authenticated admin taxonomy RPC; each has an empty search path and explicit published-data or administrator checks. These warnings require ongoing review, but are not by themselves proof of an access-control bypass.
 - The private admin tables, private quiz answer-key table, and service-only catalogue sync log have RLS enabled without policies; this is intentional closed access and should not be changed without a separate access-model review.
 - The legacy `annict-sync` Edge Function remains active with JWT verification disabled and a separate import-key check. The current browser client calls `sync-annict-catalog`; the legacy function was not disabled because repository-wide references and any external callers have not yet been exhaustively ruled out.
