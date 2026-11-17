@@ -356,6 +356,49 @@
   }
   $("preview-button").addEventListener("click",()=>runAnnictSync("preview"));
   $("sync-button").addEventListener("click",()=>runAnnictSync("sync"));
+  async function runAnnictDetailSync(){
+    const button=$("detail-sync-button");
+    const workId=$("detail-work-id").value.trim();
+    if(!/^\d{1,12}$/.test(workId)){
+      $("detail-sync-message").textContent="Annict作品IDは1〜12桁の数字で入力してください。";
+      return;
+    }
+    const pages={
+      episodes:Number($("detail-episode-page").value)||1,
+      casts:Number($("detail-cast-page").value)||1,
+      staffs:Number($("detail-staff-page").value)||1
+    };
+    button.disabled=true;
+    $("detail-continue-button").disabled=true;
+    $("detail-sync-message").textContent="詳細データを取得・保存しています…";
+    try{
+      const result=await ANIXIA.syncAnnictWorkDetails(workId,pages);
+      const next=result.nextPages||{};
+      if(next.episodes)$("detail-episode-page").value=next.episodes;
+      if(next.casts)$("detail-cast-page").value=next.casts;
+      if(next.staffs)$("detail-staff-page").value=next.staffs;
+      $("detail-continue-button").hidden=!result.hasMore;
+      $("detail-sync-message").textContent=[
+        "処理状態: "+result.status,
+        "作品: "+(result.workTitle||workId),
+        "取得ページ数: "+result.pagesRequested,
+        "取得レコード数: "+result.recordsSeen,
+        "登録・更新数: "+result.recordsInsertedOrUpdated,
+        "エピソード: "+(result.counts?.episodes??0),
+        "キャスト: "+(result.counts?.castEntries??0),
+        "スタッフ: "+(result.counts?.staffEntries??0),
+        "次ページ: エピソード "+(next.episodes??"完了")+" / キャスト "+(next.casts??"完了")+" / スタッフ "+(next.staffs??"完了")
+      ].join("\n");
+    }catch(e){
+      console.error(e);
+      $("detail-sync-message").textContent="同期に失敗しました: "+(e.message||"管理ログを確認してください。");
+    }finally{
+      button.disabled=false;
+      $("detail-continue-button").disabled=false;
+    }
+  }
+  $("detail-sync-button").addEventListener("click",runAnnictDetailSync);
+  $("detail-continue-button").addEventListener("click",runAnnictDetailSync);
   $("continue-sync-button").addEventListener("click",()=>runAnnictSync("sync"));
   init();
 })();
