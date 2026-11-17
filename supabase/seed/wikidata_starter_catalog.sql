@@ -288,3 +288,86 @@ where not exists (
  select 1 from public.anime_staff s
  where s.anime_id=a.id and s.person_id=p.id and s.role='voice_actor' and s.character_id=c.id
 );
+
+
+-- Sixth curated batch (2026-11-17): official main casts for Anohana and Angel Beats!.
+-- People and characters use ANIXIA internal keys; no external QIDs are asserted.
+insert into public.people(name,name_ja,name_kana,name_en,person_type,source,source_id)
+values
+ ('Miyu Irino','入野自由','いりの みゆ','Miyu Irino','voice_actor','anixia_curated','anixia:voice-actor:miyu-irino'),
+ ('Ai Kayano','茅野愛衣','かやの あい','Ai Kayano','voice_actor','anixia_curated','anixia:voice-actor:ai-kayano'),
+ ('Haruka Tomatsu','戸松遥','とまつ はるか','Haruka Tomatsu','voice_actor','anixia_curated','anixia:voice-actor:haruka-tomatsu'),
+ ('Takahiro Sakurai','櫻井孝宏','さくらい たかひろ','Takahiro Sakurai','voice_actor','anixia_curated','anixia:voice-actor:takahiro-sakurai'),
+ ('Saori Hayami','早見沙織','はやみ さおり','Saori Hayami','voice_actor','anixia_curated','anixia:voice-actor:saori-hayami'),
+ ('Takayuki Kondo','近藤孝行','こんどう たかゆき','Takayuki Kondo','voice_actor','anixia_curated','anixia:voice-actor:takayuki-kondo'),
+ ('Hiroshi Kamiya','神谷浩史','かみや ひろし','Hiroshi Kamiya','voice_actor','anixia_curated','anixia:voice-actor:hiroshi-kamiya'),
+ ('Hiromi Sakurai','櫻井浩美','さくらい はるみ','Hiromi Sakurai','voice_actor','anixia_curated','anixia:voice-actor:hiromi-sakurai'),
+ ('Kana Hanazawa','花澤香菜','はなざわ かな','Kana Hanazawa','voice_actor','anixia_curated','anixia:voice-actor:kana-hanazawa'),
+ ('Eri Kitamura','喜多村英梨','きたむら えり','Eri Kitamura','voice_actor','anixia_curated','anixia:voice-actor:eri-kitamura'),
+ ('Ryohei Kimura','木村良平','きむら りょうへい','Ryohei Kimura','voice_actor','anixia_curated','anixia:voice-actor:ryohei-kimura')
+on conflict (source,source_id) do nothing;
+
+insert into public.characters(name,name_ja,name_kana,name_en,source,source_id)
+select v.name,v.name_ja,v.name_kana,v.name_en,'anixia_curated',v.character_key
+from (values
+ ('Jinta Yadomi','宿海仁太','やどみ じんた','Jinta Yadomi','anixia:anohana:jinta'),
+ ('Meiko Honma','本間芽衣子','ほんま めいこ','Meiko Honma','anixia:anohana:menma'),
+ ('Naruko Anjo','安城鳴子','あんじょう なるこ','Naruko Anjo','anixia:anohana:anaru'),
+ ('Atsumu Matsuyuki','松雪集','まつゆき あつむ','Atsumu Matsuyuki','anixia:anohana:yukiatsu'),
+ ('Chiriko Tsurumi','鶴見知利子','つるみ ちりこ','Chiriko Tsurumi','anixia:anohana:tsuruko'),
+ ('Tetsudo Hisakawa','久川鉄道','ひさかわ てつどう','Tetsudo Hisakawa','anixia:anohana:poppo'),
+ ('Yuzuru Otonashi','音無結弦','おとなし ゆづる','Yuzuru Otonashi','anixia:angel-beats:otonashi'),
+ ('Yuri Nakamura','仲村ゆり','なかむら ゆり','Yuri Nakamura','anixia:angel-beats:yuri'),
+ ('Kanade Tachibana','立華かなで','たちばな かなで','Kanade Tachibana','anixia:angel-beats:kanade'),
+ ('Yui','ユイ','ゆい','Yui','anixia:angel-beats:yui'),
+ ('Hideki Hinata','日向秀樹','ひなた ひでき','Hideki Hinata','anixia:angel-beats:hinata')
+) v(name,name_ja,name_kana,name_en,character_key)
+where not exists (
+ select 1 from public.characters c
+ where c.source='anixia_curated' and c.source_id=v.character_key
+);
+
+insert into public.anime_characters(anime_id,character_id,role)
+select a.id,c.id,'main'
+from (values
+ ('Q483943','anixia:anohana:jinta'),
+ ('Q483943','anixia:anohana:menma'),
+ ('Q483943','anixia:anohana:anaru'),
+ ('Q483943','anixia:anohana:yukiatsu'),
+ ('Q483943','anixia:anohana:tsuruko'),
+ ('Q483943','anixia:anohana:poppo'),
+ ('Q531552','anixia:angel-beats:otonashi'),
+ ('Q531552','anixia:angel-beats:yuri'),
+ ('Q531552','anixia:angel-beats:kanade'),
+ ('Q531552','anixia:angel-beats:yui'),
+ ('Q531552','anixia:angel-beats:hinata')
+) v(anime_qid,character_key)
+join public.anime a on a.source='wikidata' and a.source_id=v.anime_qid
+join public.characters c on c.source='anixia_curated' and c.source_id=v.character_key
+where not exists (
+ select 1 from public.anime_characters ac
+ where ac.anime_id=a.id and ac.character_id=c.id
+);
+
+insert into public.anime_staff(anime_id,person_id,role,character_id)
+select a.id,p.id,'voice_actor',c.id
+from (values
+ ('Q483943','anixia:anohana:jinta','anixia:voice-actor:miyu-irino'),
+ ('Q483943','anixia:anohana:menma','anixia:voice-actor:ai-kayano'),
+ ('Q483943','anixia:anohana:anaru','anixia:voice-actor:haruka-tomatsu'),
+ ('Q483943','anixia:anohana:yukiatsu','anixia:voice-actor:takahiro-sakurai'),
+ ('Q483943','anixia:anohana:tsuruko','anixia:voice-actor:saori-hayami'),
+ ('Q483943','anixia:anohana:poppo','anixia:voice-actor:takayuki-kondo'),
+ ('Q531552','anixia:angel-beats:otonashi','anixia:voice-actor:hiroshi-kamiya'),
+ ('Q531552','anixia:angel-beats:yuri','anixia:voice-actor:hiromi-sakurai'),
+ ('Q531552','anixia:angel-beats:kanade','anixia:voice-actor:kana-hanazawa'),
+ ('Q531552','anixia:angel-beats:yui','anixia:voice-actor:eri-kitamura'),
+ ('Q531552','anixia:angel-beats:hinata','anixia:voice-actor:ryohei-kimura')
+) v(anime_qid,character_key,person_key)
+join public.anime a on a.source='wikidata' and a.source_id=v.anime_qid
+join public.characters c on c.source='anixia_curated' and c.source_id=v.character_key
+join public.people p on p.source='anixia_curated' and p.source_id=v.person_key
+where not exists (
+ select 1 from public.anime_staff s
+ where s.anime_id=a.id and s.person_id=p.id and s.role='voice_actor' and s.character_id=c.id
+);
