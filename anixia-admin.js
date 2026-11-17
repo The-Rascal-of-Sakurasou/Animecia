@@ -69,12 +69,13 @@
       el.innerHTML=rows.length?rows.map(ep=>{
         const work=Array.isArray(ep.anime)?ep.anime[0]:ep.anime;
         const workTitle=work?(work.title_ja||work.title||"作品名未登録"):"作品未登録";
-        const number=ep.episode_number||ep.episode_order||"番号未登録";
+        const number=String(ep.episode_number||ep.episode_order||"番号未登録");
+        const numberLabel=number.includes("第")||number.includes("話")?number:"第"+number+"話";
         const title=ep.title_ja||ep.title||"サブタイトル未登録";
         const meta=[ep.aired_at,ep.episode_kind,ep.source].filter(Boolean).join(" · ");
         return '<article style="padding:14px;border:1px solid #30435f;border-radius:10px;margin:10px 0;background:#0b1423">'+
           '<strong style="color:#fff;font-size:13px">'+esc(workTitle)+'</strong>'+
-          '<p style="color:#f2b84d;font-size:11px;margin:6px 0">第'+esc(number)+'話 · '+esc(title)+'</p>'+
+          '<p style="color:#f2b84d;font-size:11px;margin:6px 0">'+esc(numberLabel)+' · '+esc(title)+'</p>'+
           '<p style="color:#aebbd0;font-size:10px">'+esc(meta||"補足情報なし")+'</p>'+
           (ep.synopsis?'<p style="color:#b8c5d7;font-size:11px;line-height:1.7">'+esc(ep.synopsis)+'</p>':'<p class="admin-message">あらすじ未登録</p>')+
           '<button type="button" class="admin-button" data-publish-episode="'+esc(ep.id)+'">確認して公開</button>'+
