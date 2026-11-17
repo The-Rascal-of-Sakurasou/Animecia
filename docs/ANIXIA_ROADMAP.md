@@ -291,3 +291,12 @@ All 6 migration files are present in the repository and applied to the active Su
 - `private.suggest_public_catalog` を SECURITY DEFINER・空の search_path で実装し、公開RPC `public.suggest_public_catalog` は SECURITY INVOKER の薄いラッパーとした。別名テーブルを直接公開しない。
 - 一時データによるSQLテストで各種別、別名、種別フィルター、非公開作品の除外を確認。テストデータはロールバック済み。
 - 実データが未登録のため、実作品での候補精度とブラウザー操作の確認は未実施。
+
+
+### Wikidata初期作品データ（2026-11-17）
+- Wikidataの構造化データがCC0であることを公式データアクセス方針で確認し、初期ソースとして登録。出典表示をANIXIAの公開ページとドキュメントに追加する。
+- `catalog_sources.wikidata` を `approved` / enabled に登録。画像・ポスター・バナー・あらすじ本文は取り込まず、作品名・別名・放送開始日・話数・公式URL・Wikidata IDに限定。
+- 新世紀エヴァンゲリオン（Q662）、ポケットモンスター（Q239937）、カウボーイビバップ（Q101244908）、魔法少女まどか☆マギカ（Q53353）の4作品を公開登録。Wikidata外部IDと作品別名も保存。
+- 実データで `search_public_anime` と `suggest_public_catalog` を検証。`Evangelion`、`まどマギ`、`Pocket Monsters` で各作品が検索・候補表示されることを確認。
+- ポケモンの話数はWikidataの更新時点を確認できないため未設定。Wikidataの情報をANIXIAが完全な一次情報として保証するものではなく、話数等の変動情報は追加確認が必要。
+- 現在の公開作品は4件。人物・キャラクター・制作会社・エピソード等の本格データ投入は次工程。
