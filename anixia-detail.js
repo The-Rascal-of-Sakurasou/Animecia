@@ -36,10 +36,11 @@
     }).join(""):'<div class="anixia-empty">関連作品はまだ登録されていません。</div>';
     const episodes=a.episodes||[];
     $("episodes").innerHTML=episodes.length?episodes.map(e=>{
-      const number=e.episode_number||e.episode_order||"";
+      const number=String(e.episode_number||e.episode_order||"");
+      const numberLabel=number.includes("第")||number.includes("話")?number:"第"+number+"話";
       const title=e.title_ja||e.title||"サブタイトル未登録";
       const date=e.aired_at?" · "+e.aired_at:"";
-      return '<article class="anixia-detail-episode"><b>'+esc("第"+number+"話 · "+title)+'</b><p>'+esc(date+(e.synopsis?" · "+e.synopsis:""))+'</p></article>';
+      return '<article class="anixia-detail-episode"><b>'+esc(numberLabel+" · "+title)+'</b><p>'+esc(date+(e.synopsis?" · "+e.synopsis:""))+'</p></article>';
     }).join(""):'<div class="anixia-empty">公開済みのエピソード情報はありません。</div>';
     $("synopsis").textContent=a.synopsis||"あらすじ情報はまだ登録されていません。";
     const studioNames=(a.studios||[]).map(s=>s.name_ja||s.name).filter(Boolean);
