@@ -327,3 +327,12 @@ All 6 migration files are present in the repository and applied to the active Su
 - Wikidata識別子・タイトル・役割を使った検索／サジェストのSQL確認を実施。データは少数の手動登録であり、全作品の網羅性はない。
 - 初期データのseedはNULLを含むスタッフ関係の重複を避けるNOT EXISTS方式にし、再実行時の冪等性を維持。
 - GitHub Pagesの最新ビルド（SHA `a0d55ade3fd3cf8881607bfcd66ecf48e83d0779`）は成功。ブラウザーでの表示確認は別途必要。
+
+
+### キャラクター・声優の初期登録（2026-11-17）
+
+- 新世紀エヴァンゲリオンに碇シンジ（Q1143582）と綾波レイ（Q1140524）を登録。
+- 声優として緒方恵美（Q254368）と林原めぐみ（Q266670）を登録。
+- anime_characters で作品とキャラクターを、anime_staff.character_id でキャラクターと声優を紐付け。
+- 画像・あらすじ等は取り込まず、Wikidataの構造化識別子・名称・配役関係に限定。
+- DB上の登録数とseed再実行の冪等性を確認する。画面上の表示・ブラウザー実機確認は未完了。
