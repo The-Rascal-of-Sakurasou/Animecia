@@ -15,3 +15,10 @@ Exported read-only from Supabase project `trvnxggqzlhqdhoyiliy` on 2026-11-17.
 This is a **schema snapshot**, not a replacement migration chain. Do not place these files in `supabase/migrations` or apply them to production. It excludes all table rows, Auth users, user data, passwords, API keys, Vault contents, cron job definitions, platform-managed schemas, and extension-owned objects. The Wikidata cron schedule and secret must be provisioned separately using the reviewed migration flow. The snapshot does not include role definitions, global default privileges, platform configuration, or all extension/platform metadata. Verify it in a disposable local Supabase environment before treating it as a fresh-project bootstrap.
 
 Live catalog counts: 47 tables, 172 constraints, 55 standalone indexes, 69 RLS policies, 20 application functions, 11 custom triggers. `05_grants.sql` contains the captured current-object table/function grants; `07_default_privileges.sql` captures schema-scoped defaults for future objects.
+
+
+## Automated replay validation
+
+Run the isolated replay check with GitHub Actions: **Actions → Validate ANIXIA schema snapshot → Run workflow**. The workflow creates a temporary, unlinked local Supabase stack on a GitHub-hosted runner, replays files 01–07 in order, and checks catalog counts. It does not use the hosted production project or production credentials.
+
+The workflow is also triggered when the snapshot or validation script changes. A passing run verifies replay against that version of the local Supabase stack; it does not prove equivalence to every hosted-project setting or restore excluded data, Auth users, Vault secrets, or cron jobs.
