@@ -185,7 +185,10 @@
       }).join("");
       const capped=(summary.issue_count||0)>items.length?
         '<p class="admin-message">表示は先頭'+items.length+'件です。全体の問題件数は'+summary.issue_count+'件です。</p>':"";
-      el.innerHTML=statHtml+(items.length?issueHtml:'<p class="admin-message">現在、検出された問題はありません。</p>')+capped+
+      const emptyMessage=(summary.anime_checked||0)===0?
+        '<p class="admin-message">作品データがまだ登録されていないため、実データの品質検査は未実施です。</p>':
+        '<p class="admin-message">現在、検出された問題はありません。</p>';
+      el.innerHTML=statHtml+(items.length?issueHtml:emptyMessage)+capped+
         '<p class="admin-message">検査日時：'+esc(summary.generated_at||report.generated_at||"不明")+'。この検査は候補の提示のみを行い、自動修正・自動公開はしません。</p>';
       el.querySelectorAll("[data-edit-quality]").forEach(button=>{
         button.addEventListener("click",async()=>{
