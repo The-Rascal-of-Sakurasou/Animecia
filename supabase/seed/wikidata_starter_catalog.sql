@@ -431,3 +431,71 @@ where not exists (
  select 1 from public.anime_staff s
  where s.anime_id=a.id and s.person_id=p.id and s.role='voice_actor' and s.character_id=c.id
 );
+
+
+-- Eighth curated batch (2026-11-17): Re:Zero first-season principal cast.
+-- Wikidata anime entity Q65086934 lists the voice-actor/character-role statements.
+-- Japanese display names are cross-checked against the official first-season staff/cast page.
+insert into public.people(name,name_ja,name_kana,name_en,person_type,source,source_id)
+values
+ ('Rie Takahashi','高橋李依','たかはし りえ','Rie Takahashi','voice_actor','wikidata','Q11671682'),
+ ('Inori Minase','水瀬いのり','みなせ いのり','Inori Minase','voice_actor','wikidata','Q11548933'),
+ ('Rie Murakawa','村川梨衣','むらかわ りえ','Rie Murakawa','voice_actor','wikidata','Q2811985'),
+ ('Yumi Uchiyama','内山夕実','うちやま ゆみ','Yumi Uchiyama','voice_actor','wikidata','Q322979'),
+ ('Chinatsu Akasaki','赤﨑千夏','あかさき ちなつ','Chinatsu Akasaki','voice_actor','wikidata','Q5100189')
+on conflict (source,source_id) do nothing;
+
+insert into public.people_external_ids(person_id,source,external_id,source_url,last_verified_at)
+select p.id,'wikidata',p.source_id,'https://www.wikidata.org/wiki/'||p.source_id,now()
+from public.people p
+where p.source='wikidata'
+  and p.source_id in ('Q11671682','Q11548933','Q2811985','Q322979','Q5100189')
+on conflict do nothing;
+
+insert into public.characters(name,name_ja,name_kana,name_en,source,source_id)
+select v.name,v.name_ja,v.name_kana,v.name_en,'anixia_curated',v.character_key
+from (values
+ ('Emilia','エミリア','えみりあ','Emilia','anixia:rezero:emilia'),
+ ('Rem','レム','れむ','Rem','anixia:rezero:rem'),
+ ('Ram','ラム','らむ','Ram','anixia:rezero:ram'),
+ ('Puck','パック','ぱっく','Puck','anixia:rezero:puck'),
+ ('Felt','フェルト','ふぇると','Felt','anixia:rezero:felt')
+) v(name,name_ja,name_kana,name_en,character_key)
+where not exists (
+ select 1 from public.characters c
+ where c.source='anixia_curated' and c.source_id=v.character_key
+);
+
+insert into public.anime_characters(anime_id,character_id,role)
+select a.id,c.id,'main'
+from (values
+ ('anixia:rezero:emilia'),
+ ('anixia:rezero:rem'),
+ ('anixia:rezero:ram'),
+ ('anixia:rezero:puck'),
+ ('anixia:rezero:felt')
+) v(character_key)
+join public.anime a on a.source='wikidata' and a.source_id='Q65086934'
+join public.characters c on c.source='anixia_curated' and c.source_id=v.character_key
+where not exists (
+ select 1 from public.anime_characters ac
+ where ac.anime_id=a.id and ac.character_id=c.id
+);
+
+insert into public.anime_staff(anime_id,person_id,role,character_id)
+select a.id,p.id,'voice_actor',c.id
+from (values
+ ('anixia:rezero:subaru','Q17158282'),
+ ('anixia:rezero:emilia','Q11671682'),
+ ('anixia:rezero:rem','Q11548933'),
+ ('anixia:rezero:ram','Q2811985'),
+ ('anixia:rezero:puck','Q322979'),
+ ('anixia:rezero:felt','Q5100189')
+) v(character_key,person_qid)
+join public.anime a on a.source='wikidata' and a.source_id='Q65086934'
+join public.characters c on c.source='anixia_curated' and c.source_id=v.character_key
+join public.people p on p.source='wikidata' and p.source_id=v.person_qid
+where not exists (
+ select 1 from public.anime_staff s
+ where s.anime_id=a.id and s.person_id=p.id and s.role='voice_actor' and s.character_id=c.id
+);
