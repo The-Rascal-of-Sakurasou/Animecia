@@ -139,7 +139,10 @@
       ...(watchEntries.data || []).map(x => x.anime_id),
       ...(ratings.data || []).map(x => x.anime_id)
     ];
-    const works = await getPublicAnimeByIds(ids);
+    const uniqueIds = [...new Set(ids)];
+    const chunks = [];
+    for (let i = 0; i < uniqueIds.length; i += 100) chunks.push(uniqueIds.slice(i, i + 100));
+    const works = (await Promise.all(chunks.map(getPublicAnimeByIds))).flat();
     const byId = new Map(works.map(work => [work.id, work]));
     return {
       profile: profile.data || null,
@@ -205,7 +208,8 @@
     const result = await getClient().functions.invoke("sync-annict-catalog", {
       body: { startPage, maxPages }
     });
-    if (result.error) throw result.error;
+    if (result.error) throw new Error(result.data?.error || result.error.message || "Annict同期に失敗しました。");
+    if (result.data?.error) throw new Error(result.data.error);
     return result.data;
   }
 
