@@ -131,3 +131,30 @@ Jikan、TMDB、オープンデータ、公式サイト、権利者提供情報�
 - APIキー、サービスロールキー、アクセストークン等の秘密情報をGitHubやブラウザに置かない。
 - 実機確認・テスト・デプロイが完了していない機能を完成扱いにしない。
 - 月額0円を目標とし、無料枠の制限と将来の課金条件を確認する。
+
+
+## 7. 2026-11-17 implementation progress
+
+### Completed and applied to the active Supabase project
+- `202611170001_catalog_expansion.sql`: alternate titles, episodes, studio links, work relations, external IDs, and source registry.
+- `202611170002_metadata_relationships.sql`: richer people/character/studio fields, series, organizations, and organization staff.
+- `202611170003_catalog_rls_visibility.sql`: catalogue dictionaries and relationship rows restricted to published works; administrator read access retained.
+- `202611170004_restrict_internal_catalog_privileges.sql`: anonymous table privileges revoked from internal source-ID and source-rights tables.
+- `202611170005_provider_identity_columns.sql`: stable provider identity fields for imported entities.
+- `202611170006_upsert_conflict_indexes.sql`: non-partial unique indexes for PostgREST upsert conflict targets.
+
+All 6 migration files are present in the repository and applied to the active Supabase project. The project migration history records these changes.
+
+### Validation observed
+- New catalogue tables have RLS enabled.
+- Anonymous access to internal external-ID and source-rights tables is revoked.
+- Public catalogue dictionaries are restricted to entities linked to published works.
+- The current anime, episode, people, character, studio, series, and organization tables still contain 0 records; no bulk import has been run.
+- Annict remains `rights_review_status='pending'` and `is_enabled=false`. Production imports remain disabled pending the 2026-11-25 API-terms effective date and final operating review.
+
+### Next implementation tasks
+1. Complete the Annict field-by-field importers for episodes, casts, staff, characters, organizations, studios, and series.
+2. Add import validation, duplicate reports, and admin review before publication.
+3. Test one approved sample work end-to-end before running any catalogue-wide import.
+4. Extend the front-end detail page to display episodes, multiple studios, series, cast, staff, and related works.
+5. Evaluate a Japanese-aware search strategy before scaling the catalogue.
