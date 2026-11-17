@@ -262,6 +262,27 @@
     return result.data || [];
   }
 
+  async function listPendingEpisodes(limit = 100) {
+    const size = Math.min(Math.max(Number(limit) || 100, 1), 200);
+    const result = await getClient().from("episodes")
+      .select("id,anime_id,episode_number,episode_order,episode_kind,title,title_ja,synopsis,aired_at,source,source_id,updated_at,anime:anime_id(id,title,title_ja)")
+      .eq("is_published", false)
+      .order("updated_at", { ascending: false })
+      .limit(size);
+    if (result.error) throw result.error;
+    return result.data || [];
+  }
+
+  async function setEpisodePublished(episodeId, publish = true) {
+    const result = await getClient().from("episodes")
+      .update({ is_published: Boolean(publish) })
+      .eq("id", episodeId)
+      .select("id,is_published")
+      .single();
+    if (result.error) throw result.error;
+    return result.data;
+  }
+
   async function setAnimePublished(animeId, publish = true) {
     const result = await getClient().from("anime")
       .update({ is_published: Boolean(publish) })
@@ -378,7 +399,8 @@
     getCatalogCount, getPublicAnimeByIds, getUser, getUserAnimeState, toggleFavorite,
     saveWatchEntry, saveRating, getMyDashboard, createReview,
     listPendingReviews, moderateReview, updateProfile, listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog,
-    listPendingAnime, setAnimePublished, getAdminAnimeOptions, getAdminTaxonomy,
+    listPendingAnime, setAnimePublished, listPendingEpisodes, setEpisodePublished,
+    getAdminAnimeOptions, getAdminTaxonomy,
     getAdminAnimeTaxonomy, replaceAdminAnimeTaxonomy, createAdminTaxonomyItem,
     saveAdminAnimeRelation, removeAdminAnimeRelation, diagnoseAnime, getRankings
   });
