@@ -125,7 +125,7 @@
 
   async function getMyDashboard(userId) {
     const db = getClient();
-    const [profile, favorites, watchEntries, ratings, achievements] = await Promise.all([
+    const [profile, favorites, watchEntries, ratings, achievements, reviews] = await Promise.all([
       db.from("profiles").select("id,username,display_name,avatar_url,bio,is_public").eq("id", userId).maybeSingle(),
       db.from("favorites").select("anime_id,created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(50),
       db.from("watch_entries").select("anime_id,status,episodes_watched,updated_at").eq("user_id", userId).order("updated_at", { ascending: false }).limit(100),
