@@ -15,7 +15,7 @@
 - Supabase Cron: daily at 02:30 UTC (11:30 Japan time), batch size 50.
 - Offset is stored in catalog_sync_state and advanced after successful syncs.
 - Each run is recorded in catalog_sync_runs.
-- The first two test batches completed: 20 candidates imported; 17 Wikidata-sourced rows are currently unpublished, and 9 remain published. (The 17 unpublished total includes imported candidates.)
+- The first two test batches scanned 20 source rows and imported 17 new records. The database now contains 26 Wikidata-sourced rows: 17 unpublished candidates and 9 published records.
 
 ## First-time secret provisioning
 The original cron token must never be committed to Git or placed in browser code. Generate it inside Postgres, store it in Supabase Vault, and store only its SHA-256 hash in catalog_sync_secrets:
