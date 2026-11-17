@@ -143,3 +143,37 @@ where not exists (
     and existing.role=v.role
     and existing.character_id is null
 );
+
+
+-- Third verified staff batch (2026-11-17): directors and screenwriters.
+-- Roles are copied only where the corresponding Wikidata work item explicitly lists them.
+insert into public.people(name,name_ja,name_kana,name_en,person_type,source,source_id)
+values
+ ('Hideaki Anno','庵野秀明','あんの ひであき','Hideaki Anno','director','wikidata','Q23261'),
+ ('Akiyuki Shinbo','新房昭之','しんぼう あきゆき','Akiyuki Shinbo','director','wikidata','Q50036'),
+ ('Gen Urobuchi','虚淵玄','うろぶち げん','Gen Urobuchi','screenwriter','wikidata','Q50038'),
+ ('Jun Maeda','麻枝准','まえだ じゅん','Jun Maeda','screenwriter','wikidata','Q683407')
+on conflict (source,source_id) do nothing;
+
+insert into public.people_external_ids(person_id,source,external_id,source_url,last_verified_at)
+select p.id,'wikidata',p.source_id,'https://www.wikidata.org/wiki/'||p.source_id,now()
+from public.people p
+where p.source='wikidata' and p.source_id in ('Q23261','Q50036','Q50038','Q683407')
+on conflict do nothing;
+
+insert into public.anime_staff(anime_id,person_id,role)
+select a.id,p.id,v.role
+from (values
+ ('Q662','Q23261','director'),
+ ('Q662','Q23261','screenwriter'),
+ ('Q53353','Q50036','director'),
+ ('Q53353','Q50038','screenwriter'),
+ ('Q531552','Q683407','screenwriter')
+) v(anime_qid,person_qid,role)
+join public.anime a on a.source='wikidata' and a.source_id=v.anime_qid
+join public.people p on p.source='wikidata' and p.source_id=v.person_qid
+where not exists (
+ select 1 from public.anime_staff existing
+ where existing.anime_id=a.id and existing.person_id=p.id
+   and existing.role=v.role and existing.character_id is null
+);
