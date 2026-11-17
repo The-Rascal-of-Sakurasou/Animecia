@@ -32,7 +32,8 @@
         const official=a.official_url||a.official_site_url;
         const links=[
           official?'<a href="'+esc(official)+'" target="_blank" rel="noopener noreferrer">公式サイト</a>':"",
-          a.wikipedia_url?'<a href="'+esc(a.wikipedia_url)+'" target="_blank" rel="noopener noreferrer">参考情報</a>':""
+          a.wikipedia_url?'<a href="'+esc(a.wikipedia_url)+'" target="_blank" rel="noopener noreferrer">参考情報</a>':"",
+          a.source==="wikidata"&&a.source_id?'<a href="https://www.wikidata.org/wiki/'+encodeURIComponent(a.source_id)+'" target="_blank" rel="noopener noreferrer">Wikidata</a>':""
         ].filter(Boolean).join(" / ");
         return `
           <article style="padding:14px;border:1px solid #30435f;border-radius:10px;margin:10px 0;background:#0b1423">
