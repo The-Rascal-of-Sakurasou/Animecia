@@ -96,10 +96,11 @@ ol {
     top: 0;
     z-index: 1000;
 
-    background: rgba(17, 17, 17, .96);
-    color: #fff;
+    background: linear-gradient(105deg, #080B12 0%, #0D121C 58%, #111A27 100%);
+    background-color: #0B0F16;
+    color: #F4F8FF;
 
-    border-bottom: 1px solid rgba(255,255,255,.08);
+    border-bottom: 1px solid rgba(85,200,255,.18);
 
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
