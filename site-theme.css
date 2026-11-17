@@ -1215,3 +1215,9 @@ body:not(.anixia-v2) footer a{color:#566171!important}
  .anixia-footer-inner>small{margin-left:auto}
 }
 @media(prefers-reduced-motion:reduce){.anixia-v2 *{scroll-behavior:auto!important;transition:none!important}}
+
+/* v2 layout normalization after legacy global rules */
+body.anixia-v2{background:var(--ax-bg)!important;color:var(--ax-ink)!important}
+.anixia-v2 main.anixia-shell{width:min(var(--ax-shell),calc(100% - 40px))!important;max-width:var(--ax-shell)!important;padding-left:0!important;padding-right:0!important}
+.anixia-v2 .site-header{height:auto!important}
+@media(max-width:650px){.anixia-v2 main.anixia-shell{width:calc(100% - 26px)!important}}
