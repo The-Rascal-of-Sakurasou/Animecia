@@ -221,3 +221,70 @@ where not exists (
  select 1 from public.anime_staff s
  where s.anime_id=a.id and s.person_id=p.id and s.role='voice_actor' and s.character_id=c.id
 );
+
+
+-- Fifth curated batch (2026-11-17): selected lead characters and Japanese voice cast.
+-- Actor identities use Wikidata QIDs. Character keys are ANIXIA-internal IDs,
+-- not external Wikidata identifiers; role mappings are documented with source links.
+insert into public.people(name,name_ja,name_kana,name_en,person_type,source,source_id)
+values
+ ('Asami Imai','今井麻美','いまい あさみ','Asami Imai','voice_actor','wikidata','Q1042804'),
+ ('Yumi Uchiyama','内山夕実','うちやま ゆみ','Yumi Uchiyama','voice_actor','wikidata','Q322979'),
+ ('Yusuke Kobayashi','小林裕介','こばやし ゆうすけ','Yusuke Kobayashi','voice_actor','wikidata','Q17158282'),
+ ('Koichi Yamadera','山寺宏一','やまでら こういち','Koichi Yamadera','voice_actor','wikidata','Q333194'),
+ ('Rica Matsumoto','松本梨香','まつもと りか','Rica Matsumoto','voice_actor','wikidata','Q943714')
+on conflict (source,source_id) do nothing;
+
+insert into public.people_external_ids(person_id,source,external_id,source_url,last_verified_at)
+select p.id,'wikidata',p.source_id,'https://www.wikidata.org/wiki/'||p.source_id,now()
+from public.people p
+where p.source='wikidata'
+  and p.source_id in ('Q1042804','Q322979','Q17158282','Q333194','Q943714')
+on conflict do nothing;
+
+insert into public.characters(name,name_ja,name_kana,name_en,source,source_id)
+select v.name,v.name_ja,v.name_kana,v.name_en,'anixia_curated',v.internal_key
+from (values
+ ('Kurisu Makise','牧瀬紅莉栖','まきせ くりす','Kurisu Makise','anixia:steins-gate:kurisu'),
+ ('Rudeus Greyrat','ルーデウス・グレイラット','るーでうす ぐれいらっと','Rudeus Greyrat','anixia:mushoku-tensei:rudeus'),
+ ('Subaru Natsuki','ナツキ・スバル','なつき すばる','Subaru Natsuki','anixia:rezero:subaru'),
+ ('Spike Spiegel','スパイク・スピーゲル','すぱいく すぴーげる','Spike Spiegel','anixia:cowboy-bebop:spike'),
+ ('Satoshi','サトシ','さとし','Ash Ketchum','anixia:pokemon:satoshi')
+) v(name,name_ja,name_kana,name_en,internal_key)
+where not exists (
+ select 1 from public.characters c
+ where c.source='anixia_curated' and c.source_id=v.internal_key
+);
+
+insert into public.anime_characters(anime_id,character_id,role)
+select a.id,c.id,'main'
+from (values
+ ('Q20590069','anixia:steins-gate:kurisu'),
+ ('Q102126892','anixia:mushoku-tensei:rudeus'),
+ ('Q65086934','anixia:rezero:subaru'),
+ ('Q101244908','anixia:cowboy-bebop:spike'),
+ ('Q239937','anixia:pokemon:satoshi')
+) v(anime_qid,character_key)
+join public.anime a on a.source='wikidata' and a.source_id=v.anime_qid
+join public.characters c on c.source='anixia_curated' and c.source_id=v.character_key
+where not exists (
+ select 1 from public.anime_characters ac
+ where ac.anime_id=a.id and ac.character_id=c.id
+);
+
+insert into public.anime_staff(anime_id,person_id,role,character_id)
+select a.id,p.id,'voice_actor',c.id
+from (values
+ ('Q20590069','anixia:steins-gate:kurisu','Q1042804'),
+ ('Q102126892','anixia:mushoku-tensei:rudeus','Q322979'),
+ ('Q65086934','anixia:rezero:subaru','Q17158282'),
+ ('Q101244908','anixia:cowboy-bebop:spike','Q333194'),
+ ('Q239937','anixia:pokemon:satoshi','Q943714')
+) v(anime_qid,character_key,person_qid)
+join public.anime a on a.source='wikidata' and a.source_id=v.anime_qid
+join public.characters c on c.source='anixia_curated' and c.source_id=v.character_key
+join public.people p on p.source='wikidata' and p.source_id=v.person_qid
+where not exists (
+ select 1 from public.anime_staff s
+ where s.anime_id=a.id and s.person_id=p.id and s.role='voice_actor' and s.character_id=c.id
+);
