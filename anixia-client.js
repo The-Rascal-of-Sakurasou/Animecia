@@ -251,9 +251,9 @@
     return result.data === true;
   }
 
-  async function syncAnnictCatalog(startPage = 1, maxPages = 3) {
+  async function syncAnnictCatalog(startPage = 1, maxPages = 3, mode = "sync") {
     const result = await getClient().functions.invoke("sync-annict-catalog", {
-      body: { startPage, maxPages }
+      body: { startPage, maxPages, mode }
     });
     if (result.error) throw new Error(result.data?.error || result.error.message || "Annict同期に失敗しました。");
     if (result.data?.error) throw new Error(result.data.error);
