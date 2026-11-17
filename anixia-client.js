@@ -46,6 +46,18 @@
     return { data, count: Number(data[0]?.total_count || 0) };
   }
 
+  async function suggestCatalog(query, type = "all", limit = 10) {
+    const term = safeTerm(query);
+    if (term.length < 2) return [];
+    const result = await getClient().rpc("suggest_public_catalog", {
+      p_query: term,
+      p_type: type,
+      p_limit: Math.min(Math.max(Number(limit) || 10, 1), 10)
+    });
+    if (result.error) throw result.error;
+    return result.data || [];
+  }
+
   async function getAnime(id) {
     const result = await getClient().rpc("get_public_anime_detail", { p_anime_id: id });
     if (result.error) throw result.error;
@@ -440,7 +452,7 @@
 
 
   w.ANIXIA = Object.freeze({
-    URL, getClient, listAnime, getAnime, getGenres, getStudios, getTags,
+    URL, getClient, listAnime, suggestCatalog, getAnime, getGenres, getStudios, getTags,
     getCatalogCount, getPublicAnimeByIds, getUser, getUserAnimeState, toggleFavorite,
     saveWatchEntry, saveRating, getMyDashboard, createReview,
     listPendingReviews, moderateReview, updateProfile, listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog, syncAnnictWorkDetails,
