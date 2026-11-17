@@ -345,3 +345,16 @@ All 6 migration files are present in the repository and applied to the active Su
 - マイグレーション `20261117134547_include_voice_actors_in_public_anime_detail.sql` を追加。
 - DBから取得した新世紀エヴァンゲリオンの2キャラクター・2声優の組み合わせでRPC返却値を検証。
 - Pagesビルドとブラウザー実機表示の最終確認は待ち。
+
+
+### 追加キャラクター・声優（2026-11-17）
+
+- Steins;Gate：牧瀬紅莉栖—今井麻美。
+- 無職転生：ルーデウス・グレイラット—内山夕実。
+- Re:ゼロ：ナツキ・スバル—小林裕介。
+- カウボーイビバップ：スパイク・スピーゲル—山寺宏一。
+- ポケットモンスター：サトシ—松本梨香。
+- 声優5名はWikidataの人物IDで照合し、characters / anime_characters / anime_staff に作品・配役を登録。
+- キャラクターのWikidata QIDは未確認のため、ANIXIA内部キー（anixia_curated）を採用し、外部QIDを捏造しない。
+- 作品詳細RPCのvoice_actors配列により、キャラクター欄でCVを表示する構成。
+- 公式・準公式キャスト情報を参照し、全キャラクター網羅ではなく主役級の初期登録とする。
