@@ -1,5 +1,53 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080d18"><title>認証確認｜ANIXIA</title><style>main{width:min(520px,calc(100% - 28px));margin:70px auto;padding:28px;border:1px solid #293b56;border-radius:16px;background:#111b2b;color:#fff;text-align:center}p{color:#a3b0c2;font-size:13px}</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="anixia-client.js"></script><script defer>window.addEventListener("DOMContentLoaded",async()=>{const m=document.getElementById("message");try{const {data,error}=await ANIXIA.getClient().auth.getSession();if(error)throw error;if(data.session){m.textContent="認証できました。マイページへ移動します…";setTimeout(()=>location.replace("mypage.html"),700);}else{m.textContent="認証情報を確認できませんでした。ログイン画面から再度お試しください。";}}catch(e){console.error(e);m.textContent="認証確認に失敗しました。";}});</script><script src="performance.js" defer></script>
-<link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co">
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d18">
+<meta name="robots" content="noindex,nofollow">
+<title>メール認証｜ANIXIA</title>
+<style>
+:root{color-scheme:dark}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#080d18;color:#f4f7fb;font-family:system-ui,sans-serif}
+main{width:min(520px,calc(100% - 36px));box-sizing:border-box;padding:30px;border:1px solid #293b56;border-radius:16px;background:#111b2b;text-align:center}
+p{color:#a3b0c2;font-size:13px;line-height:1.8}
+a{color:#f2b84d}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="anixia-client.js"></script>
+<script defer>
+window.addEventListener("DOMContentLoaded", async () => {
+  const message = document.getElementById("message");
+  const allowed = new Set(["index.html","mypage.html","anime.html","anime-detail.html","ranking.html","quiz.html","recommendations.html","discover.html","season.html","community.html","profile.html"]);
+  const params = new URLSearchParams(location.search);
+  let destination = new URL("mypage.html", location.href);
+  try {
+    const requested = params.get("redirect");
+    if (requested) {
+      const candidate = new URL(requested, location.href);
+      const page = candidate.pathname.split("/").filter(Boolean).pop() || "index.html";
+      if (candidate.origin === location.origin && allowed.has(page)) destination = candidate;
+    }
+    const { data, error } = await ANIXIA.getClient().auth.getSession();
+    if (error) throw error;
+    if (!data.session) throw new Error("認証セッションが見つかりません。");
+    message.textContent = "メール認証が完了しました。移動しています…";
+    location.replace(destination.href);
+  } catch (error) {
+    console.error("ANIXIA email confirmation failed", error);
+    message.textContent = "メール認証を確認できませんでした。リンクの有効期限が切れている場合は、ログイン画面から再度お試しください。";
+  }
+});
+</script>
+<script src="performance.js" defer></script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="stylesheet" href="site-theme.css?v=anixia-logo-20261117">
-</head><body><main><h1>ANIXIA</h1><p id="message">認証を確認しています…</p><a href="login.html">ログイン画面へ</a></main></body></html>
+<link rel="stylesheet" href="site-theme.css?v=anixia-auth-20261117">
+</head>
+<body>
+<main>
+<h1>ANIXIA</h1>
+<p id="message" role="status" aria-live="polite">メール認証を確認しています…</p>
+<a href="login.html">ログイン画面へ</a>
+</main>
+</body>
+</html>
