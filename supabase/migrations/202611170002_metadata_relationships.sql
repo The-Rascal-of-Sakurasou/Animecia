@@ -40,19 +40,11 @@ create table if not exists public.series (
 );
 create index if not exists series_name_lower_idx on public.series (lower(name));
 
-do $
-begin
-  if not exists (
-    select 1 from pg_constraint
-    where conname = 'characters_series_id_fkey'
-      and conrelid = 'public.characters'::regclass
-  ) then
-    alter table public.characters
-      add constraint characters_series_id_fkey
-      foreign key (series_id) references public.series(id) on delete set null;
-  end if;
-end
-$;
+alter table public.characters
+  drop constraint if exists characters_series_id_fkey;
+alter table public.characters
+  add constraint characters_series_id_fkey
+  foreign key (series_id) references public.series(id) on delete set null;
 
 create table if not exists public.anime_series (
   anime_id uuid not null references public.anime(id) on delete cascade,
