@@ -33,6 +33,8 @@ ANIXIAは、アニメデータベースを核に、作品発見・視聴管理�
 - [x] Annict同期Edge Functionを管理者専用にし、逐次取得・429再試行・取得フィールドの限定を実装
 - [x] Annict作品画像を同期対象から除外し、公開フラグをDB既定値falseのまま保持
 - [x] 未公開候補の管理者審査用RLSポリシーを追加
+- [x] 管理画面に未公開候補一覧・手動公開確認を追加
+- [x] 旧管理者ページ3件を新管理画面・ログイン画面へ統合
 - [ ] Annict APIの認証トークンを安全に登録
 - [ ] Annictの作品・エピソード・人物・団体等の取得範囲を確認
 - [ ] 外部IDの一意性、重複排除、タイトル正規化を実装
@@ -97,12 +99,12 @@ ANIXIAは、アニメデータベースを核に、作品発見・視聴管理�
 
 ## Phase 0 現状監査（2026-11-17）
 
-訂正：旧Supabaseの実行コード参照は21ページではなく9ページ。残り12ページはpreconnectのみ。詳細は監査レポートを参照。
+訂正：旧Supabaseの実行コード参照は21ページではなく6ページ（管理者向け3ページは移行済み）。残り12ページはpreconnectのみ。詳細は監査レポートを参照。
 
 詳細は [docs/PHASE0_AUDIT_2026-11-17.md](docs/PHASE0_AUDIT_2026-11-17.md) を参照。
 
 1. 新ANIXIA Supabaseは稼働中だが、26テーブルのデータは確認時点ですべて空。
-2. 旧Animecia Supabaseは停止中。実行コードが旧プロジェクトを参照する9ページ（admin-candidates・admin-dashboard・admin-login・community・genres・memo・messages・profile・user-search）をページごとに新スキーマへ移行する。別の12ページは旧URLのpreconnectのみ。
+2. 旧Animecia Supabaseは停止中。実行コードが旧プロジェクトを参照する6ページ（community・genres・memo・messages・profile・user-search）をページごとに新スキーマへ移行する。管理者向け3ページは新管理画面へリダイレクト済み。別の12ページは旧URLのpreconnectのみ。
 3. AniList依存ワークフロー13件と、旧プロジェクト／旧スキーマ依存ワークフロー3件を開発ブランチから削除済み。Git履歴には残す。Annict等の利用条件が確定するまで再導入しない。
 4. SEO生成処理は旧ビュー `animecia_public_anime` と旧カラムを参照し、既存SEOページを削除・再生成する可能性がある。新スキーマ対応と保護テストが終わるまで実行しない。
 5. Supabaseには10件の適用済みマイグレーションがあるが、初期5件のSQLがリポジトリで確認できない。新規環境で再現可能なマイグレーション履歴を整備する。
