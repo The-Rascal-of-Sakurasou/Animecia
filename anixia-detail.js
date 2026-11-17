@@ -35,6 +35,40 @@
     $("detail-loading").hidden=true;$("detail-content").hidden=false;
   }
 
+  function renderReviewForm(){
+    const container=$("review-form-container");
+    if(!user){
+      container.innerHTML='<p class="anixia-empty">レビューを投稿するには<a href="login.html">ログイン</a>してください。</p>';
+      return;
+    }
+    container.innerHTML=`
+      <form id="review-form" class="anixia-detail-actions">
+        <label>タイトル<input id="review-title" type="text" maxlength="120" required></label>
+        <label>レビュー本文<textarea id="review-body" rows="5" maxlength="5000" required style="width:100%;border:1px solid #354a67;border-radius:8px;padding:10px;background:#0b1423;color:#f2f5fa"></textarea></label>
+        <label style="display:flex;align-items:center;gap:8px"><input id="review-spoiler" type="checkbox" style="width:auto;min-height:0">ネタバレを含む</label>
+        <button type="submit">レビューを投稿</button>
+        <p id="review-message" class="anixia-detail-message" aria-live="polite"></p>
+      </form>`;
+    $("review-form").addEventListener("submit",async event=>{
+      event.preventDefault();
+      const button=$("review-form").querySelector("button");
+      button.disabled=true;
+      $("review-message").textContent="投稿しています…";
+      try{
+        await ANIXIA.createReview(work.id,user.id,{
+          title:$("review-title").value,
+          body:$("review-body").value,
+          spoiler:$("review-spoiler").checked
+        });
+        $("review-form").reset();
+        $("review-message").textContent="レビューを受け付けました。公開前の確認が完了すると掲載されます。";
+      }catch(error){
+        console.error(error);
+        $("review-message").textContent="投稿できませんでした。入力内容を確認してください。";
+      }finally{button.disabled=false;}
+    });
+  }
+
   function renderActions(){
     if(!user){
       $("actions").innerHTML='<p class="anixia-empty">ログインすると、お気に入り・視聴状況・個人評価を保存できます。</p><a class="nav-btn primary" href="login.html">ログイン</a>';
@@ -81,6 +115,7 @@
       if(user){try{userState=await ANIXIA.getUserAnimeState(work.id,user.id);}catch(e){console.error(e);userState={favorite:false,watch:null,rating:null};}}
       else userState={favorite:false,watch:null,rating:null};
       renderActions();
+      renderReviewForm();
     }catch(e){console.error(e);setError("作品情報の読み込みに失敗しました。時間をおいて再度お試しください。");}
   }
   init();
