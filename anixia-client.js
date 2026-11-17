@@ -272,6 +272,87 @@
     return result.data;
   }
 
+  async function getAdminAnimeOptions(limit = 500) {
+    const size = Math.min(Math.max(Number(limit) || 500, 1), 1000);
+    const result = await getClient().from("anime")
+      .select("id,title,title_ja,title_kana,format,release_year,season,season_name,season_name_text,is_published,synopsis,official_url,official_site_url,updated_at")
+      .order("title", { ascending: true })
+      .limit(size);
+    if (result.error) throw result.error;
+    return result.data || [];
+  }
+
+  async function getAdminTaxonomy() {
+    const db = getClient();
+    const [genres, tags] = await Promise.all([
+      db.from("genres").select("id,name,name_ja,description").order("name_ja", { ascending: true }),
+      db.from("tags").select("id,name,name_ja,description").order("name_ja", { ascending: true })
+    ]);
+    if (genres.error || tags.error) throw genres.error || tags.error;
+    return { genres: genres.data || [], tags: tags.data || [] };
+  }
+
+  async function getAdminAnimeTaxonomy(animeId) {
+    const db = getClient();
+    const [genres, tags, relations] = await Promise.all([
+      db.from("anime_genres").select("genre_id").eq("anime_id", animeId),
+      db.from("anime_tags").select("tag_id").eq("anime_id", animeId),
+      db.from("anime_relations").select("related_anime_id,relation_type,display_order,notes").eq("anime_id", animeId).order("display_order", { ascending: true })
+    ]);
+    if (genres.error || tags.error || relations.error) throw genres.error || tags.error || relations.error;
+    return {
+      genreIds: (genres.data || []).map(row => row.genre_id),
+      tagIds: (tags.data || []).map(row => row.tag_id),
+      relations: relations.data || []
+    };
+  }
+
+  async function replaceAdminAnimeTaxonomy(animeId, genreIds, tagIds) {
+    const result = await getClient().rpc("admin_replace_anime_taxonomy", {
+      p_anime_id: animeId,
+      p_genre_ids: [...new Set(genreIds || [])],
+      p_tag_ids: [...new Set(tagIds || [])]
+    });
+    if (result.error) throw result.error;
+    return result.data;
+  }
+
+  async function createAdminTaxonomyItem(kind, name) {
+    const table = kind === "genre" ? "genres" : kind === "tag" ? "tags" : null;
+    if (!table) throw new Error("Unknown taxonomy type.");
+    const clean = String(name || "").trim().slice(0, 80);
+    if (!clean) throw new Error("名称を入力してください。");
+    const result = await getClient().from(table)
+      .insert({ name: clean, name_ja: clean })
+      .select("id,name,name_ja")
+      .single();
+    if (result.error) throw result.error;
+    return result.data;
+  }
+
+  async function saveAdminAnimeRelation(animeId, relatedAnimeId, relationType) {
+    if (!animeId || !relatedAnimeId || animeId === relatedAnimeId) {
+      throw new Error("異なる2作品を選択してください。");
+    }
+    const result = await getClient().from("anime_relations").upsert({
+      anime_id: animeId,
+      related_anime_id: relatedAnimeId,
+      relation_type: relationType,
+      display_order: 1
+    }, { onConflict: "anime_id,related_anime_id,relation_type" });
+    if (result.error) throw result.error;
+    return true;
+  }
+
+  async function removeAdminAnimeRelation(animeId, relatedAnimeId, relationType) {
+    const result = await getClient().from("anime_relations").delete()
+      .eq("anime_id", animeId)
+      .eq("related_anime_id", relatedAnimeId)
+      .eq("relation_type", relationType);
+    if (result.error) throw result.error;
+    return true;
+  }
+
   async function diagnoseAnime(options = {}) {
     const result = await getClient().rpc("recommend_public_anime", {
       p_genre_ids: Array.isArray(options.genreIds) ? options.genreIds.slice(0, 3) : [],
@@ -297,6 +378,8 @@
     getCatalogCount, getPublicAnimeByIds, getUser, getUserAnimeState, toggleFavorite,
     saveWatchEntry, saveRating, getMyDashboard, createReview,
     listPendingReviews, moderateReview, updateProfile, listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog,
-    listPendingAnime, setAnimePublished, diagnoseAnime, getRankings
+    listPendingAnime, setAnimePublished, getAdminAnimeOptions, getAdminTaxonomy,
+    getAdminAnimeTaxonomy, replaceAdminAnimeTaxonomy, createAdminTaxonomyItem,
+    saveAdminAnimeRelation, removeAdminAnimeRelation, diagnoseAnime, getRankings
   });
 })(window);
