@@ -27,52 +27,59 @@
     const db = getClient();
     const limit = Math.min(Math.max(Number(options.limit) || 24, 1), 60);
     const offset = Math.max(Number(options.offset) || 0, 0);
-    let base = db.from("anime")
-      .select("id,title,title_ja,title_kana,synopsis,format,release_year,season,episode_count,poster_url,watchers_count,reviews_count,studio_id", { count: "exact" })
-      .eq("is_published", true);
+    const term = safeTerm(options.query);
+    let genreIds = null;
 
-    if (options.year) base = base.eq("release_year", Number(options.year));
-    if (options.season) base = base.eq("season", options.season);
-    if (options.format) base = base.eq("format", options.format);
-    if (options.studioId) base = base.eq("studio_id", options.studioId);
     if (options.genreId) {
       const relation = await db.from("anime_genres").select("anime_id").eq("genre_id", options.genreId);
       if (relation.error) throw relation.error;
-      const ids = (relation.data || []).map(row => row.anime_id);
-      if (!ids.length) return { data: [], count: 0 };
-      base = base.in("id", ids);
+      genreIds = (relation.data || []).map(row => row.anime_id);
+      if (!genreIds.length) return { data: [], count: 0 };
     }
 
-    const term = safeTerm(options.query);
+    function makeQuery(withCount = false) {
+      let q = db.from("anime").select(
+        "id,title,title_ja,title_kana,synopsis,format,release_year,season,episode_count,poster_url,watchers_count,reviews_count,studio_id",
+        withCount ? { count: "exact" } : {}
+      ).eq("is_published", true);
+      if (options.year) q = q.eq("release_year", Number(options.year));
+      if (options.season) q = q.eq("season", options.season);
+      if (options.format) q = q.eq("format", options.format);
+      if (options.studioId) q = q.eq("studio_id", options.studioId);
+      if (genreIds) q = q.in("id", genreIds);
+      return q;
+    }
+
+    const sort = options.sort || "newest";
+    const applySort = q => {
+      if (sort === "popular") return q.order("watchers_count", { ascending: false, nullsFirst: false });
+      if (sort === "reviews") return q.order("reviews_count", { ascending: false, nullsFirst: false });
+      if (sort === "title") return q.order("title_ja", { ascending: true, nullsFirst: false });
+      return q.order("release_year", { ascending: false, nullsFirst: false });
+    };
+
     if (term) {
       const pattern = "%" + term + "%";
-      const [a, b, c] = await Promise.all([
-        base.ilike("title", pattern).range(offset, offset + limit - 1),
-        db.from("anime").select("id,title,title_ja,title_kana,synopsis,format,release_year,season,episode_count,poster_url,watchers_count,reviews_count,studio_id")
-          .eq("is_published", true).ilike("title_ja", pattern).range(offset, offset + limit - 1),
-        db.from("anime").select("id,title,title_ja,title_kana,synopsis,format,release_year,season,episode_count,poster_url,watchers_count,reviews_count,studio_id")
-          .eq("is_published", true).ilike("title_kana", pattern).range(offset, offset + limit - 1)
-      ]);
-      const error = a.error || b.error || c.error;
-      if (error) throw error;
+      const fields = ["title", "title_ja", "title_kana"];
+      const results = await Promise.all(fields.map(field =>
+        applySort(makeQuery()).ilike(field, pattern).range(offset, offset + limit - 1)
+      ));
+      const error = results.find(result => result.error);
+      if (error) throw error.error;
       const map = new Map();
-      [...(a.data || []), ...(b.data || []), ...(c.data || [])].forEach(row => map.set(row.id, row));
+      results.forEach(result => (result.data || []).forEach(row => map.set(row.id, row)));
       const rows = [...map.values()];
-      const sort = options.sort || "newest";
       rows.sort((x, y) => sort === "popular"
         ? (y.watchers_count || 0) - (x.watchers_count || 0)
         : sort === "reviews"
           ? (y.reviews_count || 0) - (x.reviews_count || 0)
-          : (y.release_year || 0) - (x.release_year || 0));
+          : sort === "title"
+            ? String(x.title_ja || x.title || "").localeCompare(String(y.title_ja || y.title || ""), "ja")
+            : (y.release_year || 0) - (x.release_year || 0));
       return { data: rows.slice(0, limit), count: rows.length };
     }
 
-    const sort = options.sort || "newest";
-    if (sort === "popular") base = base.order("watchers_count", { ascending: false, nullsFirst: false });
-    else if (sort === "reviews") base = base.order("reviews_count", { ascending: false, nullsFirst: false });
-    else if (sort === "title") base = base.order("title_ja", { ascending: true, nullsFirst: false });
-    else base = base.order("release_year", { ascending: false, nullsFirst: false });
-    const result = await base.range(offset, offset + limit - 1);
+    const result = await applySort(makeQuery(true)).range(offset, offset + limit - 1);
     if (result.error) throw result.error;
     return { data: result.data || [], count: result.count || 0 };
   }
