@@ -131,3 +131,18 @@ Open the episode review queue in `admin.html`. Each imported episode is listed w
 - 画像・ポスター・バナー・あらすじ本文はWikidataから取り込んでいません。
 - Wikidataの構造化データはCC0です。利用条件とデータ出典の詳細は `docs/DATA_SOURCES.md` を確認してください。
 - 公開済みの初期4件は検索とサジェストの動作確認に使用できます。追加の一括取り込みでは、別途管理者レビューを行ってください。
+
+
+## Wikidata追加登録（2026-11-17）
+追加された公開作品：
+- Steins;Gate（Q20590069、2011年、26話）
+- Anohana（Q483943、2011年、11話）
+- Angel Beats!（Q531552、2010年、13話）
+- Mushoku Tensei（Q102126892、2021年、話数は未設定）
+- Re:Zero（Q65086934、2016年、話数は未設定）
+
+制作会社関連：
+- Anohana — A-1 Pictures（Q277763）
+- Mushoku Tensei — Studio Bind（Q71811168）
+
+Re:ZeroとMushoku Tenseiの話数は、Wikidataに記載された数値の対象時点・範囲が不明確なため登録していません。人物・声優・スタッフは識別子と役割の照合が済むまで登録しないでください。
