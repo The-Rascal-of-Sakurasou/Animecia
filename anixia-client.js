@@ -195,6 +195,20 @@
     return result.data?.result || null;
   }
 
+  async function isAdmin() {
+    const result = await getClient().rpc("is_anixia_admin");
+    if (result.error) throw result.error;
+    return result.data === true;
+  }
+
+  async function syncAnnictCatalog(startPage = 1, maxPages = 3) {
+    const result = await getClient().functions.invoke("sync-annict-catalog", {
+      body: { startPage, maxPages }
+    });
+    if (result.error) throw result.error;
+    return result.data;
+  }
+
   async function diagnoseAnime(options = {}) {
     const result = await getClient().rpc("recommend_public_anime", {
       p_genre_ids: Array.isArray(options.genreIds) ? options.genreIds.slice(0, 3) : [],
@@ -219,6 +233,7 @@
     URL, getClient, listAnime, getAnime, getGenres, getStudios,
     getCatalogCount, getPublicAnimeByIds, getUser, getUserAnimeState, toggleFavorite,
     saveWatchEntry, saveRating, getMyDashboard, updateProfile,
-    listQuizzes, getQuiz, submitQuiz, diagnoseAnime, getRankings
+    listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog,
+    diagnoseAnime, getRankings
   });
 })(window);
