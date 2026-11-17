@@ -448,6 +448,34 @@
       $("sync-message").textContent="処理に失敗しました: "+(e.message||"設定と同期ログを確認してください。");
     }finally{button.disabled=false;}
   }
+  async function runWikidataSync(mode){
+    const button=mode==="preview"?$("wikidata-preview-button"):$("wikidata-sync-button");
+    button.disabled=true;
+    $("wikidata-sync-message").textContent=mode==="preview"?"Wikidataから次回候補を取得しています（保存はしません）…":"Wikidataから候補を取得して非公開登録しています…";
+    $("wikidata-sync-preview").textContent="";
+    try{
+      const {data,error}=await ANIXIA.getClient().functions.invoke("sync-wikidata-catalog",{body:{mode,limit:Number($("wikidata-limit").value)||50}});
+      if(error)throw new Error(data?.error||error.message||"同期に失敗しました。");
+      if(data?.error)throw new Error(data.error);
+      if(mode==="preview"){
+        $("wikidata-sync-message").textContent="プレビュー: "+data.recordsSeen+"件を確認。現在の取得位置: "+data.offset+"。保存は行っていません。";
+        $("wikidata-sync-preview").textContent=(data.candidates||[]).map(item=>[
+          (item.alreadyImported?"[登録済み] ":"[新規候補] ")+item.title,
+          "Wikidata: "+item.wikidataUrl,
+          "形式: "+item.format+" / 公開年: "+(item.releaseYear||"不明")+" / 話数: "+(item.episodeCount??"不明"),
+          "公開済み: "+(item.alreadyPublished?"はい":"いいえ")
+        ].join("\n")).join("\n\n");
+        return;
+      }
+      $("wikidata-sync-message").textContent=["同期完了","取得位置: "+data.offset+" → "+data.nextOffset,"取得候補: "+data.recordsSeen,"形式検査通過: "+data.validCandidates,"新規登録: "+data.recordsInsertedOrUpdated,data.sweepRestarted?"全体走査の先頭へ戻りました。":"次回は続きから取得します。"].join("\n");
+      await loadPendingAnime();
+    }catch(e){
+      console.error(e);
+      $("wikidata-sync-message").textContent="処理に失敗しました: "+(e.message||"管理者権限・同期ログを確認してください。");
+    }finally{button.disabled=false;}
+  }
+  $("wikidata-preview-button").addEventListener("click",()=>runWikidataSync("preview"));
+  $("wikidata-sync-button").addEventListener("click",()=>runWikidataSync("sync"));
   $("poster-sync-button").addEventListener("click",async()=>{
     const button=$("poster-sync-button");
     button.disabled=true;
