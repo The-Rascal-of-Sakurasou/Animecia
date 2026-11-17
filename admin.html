@@ -37,7 +37,7 @@
 
 <section class="admin-panel" id="wikidata-sync-panel">
   <h2>Wikidata自動作品収録</h2>
-  <p>Wikidataから日本由来のアニメ作品候補を定期取得します。新規レコードは非公開で登録し、既存作品の編集内容・公開状態は上書きしません。</p>
+  <p>Wikidataから日本由来のアニメ作品候補を定期取得します。自動処理は毎日11:30（日本時間）に最大50件を順次確認します。新規レコードは非公開で登録し、既存作品の編集内容・公開状態は上書きしません。必要な場合は下のボタンから手動実行できます。</p>
   <p class="admin-warning">作品名・形式・公開年・話数などの構造化情報のみを取得します。画像・バナー・あらすじ本文は取得しません。自動登録後も「作品候補の審査」で対象作品かどうかを確認してから公開してください。</p>
   <div class="admin-field"><label for="wikidata-limit">1回の取得上限</label><select id="wikidata-limit"><option value="25">25件</option><option value="50" selected>50件</option><option value="100">100件</option></select></div>
   <div style="display:flex;gap:10px;flex-wrap:wrap"><button id="wikidata-preview-button" class="admin-button" type="button">次回取得候補を確認</button><button id="wikidata-sync-button" class="admin-button" type="button">今すぐ同期</button></div>
