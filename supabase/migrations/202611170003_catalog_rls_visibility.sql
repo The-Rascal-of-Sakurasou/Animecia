@@ -59,7 +59,7 @@ using (
   )
   or exists (
     select 1 from public.anime a
-    where a.studio_id = id and a.is_published = true
+    where a.studio_id = id and private.is_published_anime(a.id)
   )
 );
 
