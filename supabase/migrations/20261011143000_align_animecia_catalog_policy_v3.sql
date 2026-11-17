@@ -1,4 +1,4 @@
--- Animecia catalog policy v3
+-- ANIXIA catalog policy v3
 -- Align the public catalog with the agreed inclusion rules:
 -- - Japanese-origin works; unknown origin remains visible unless confirmed non-Japanese.
 -- - First release on/after 1963-01-01.

@@ -1,6 +1,6 @@
 import { mkdir, rm, writeFile } from "node:fs/promises";
 
-const base = "https://media-mania.github.io/Animecia";
+const base = "https://the-rascal-of-sakurasou.github.io/anixia/";
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SECRET_KEY;
 
@@ -100,14 +100,14 @@ function mainTitle(anime) {
     anime.title_native ||
     anime.title_english ||
     anime.english_title ||
-    `Animecia作品 #${anime.id}`
+    `ANIXIA作品 #${anime.id}`
   );
 }
 
 function description(anime) {
   const value = text(anime.description || anime.synopsis);
   if (value) return value.slice(0, 155);
-  return `${mainTitle(anime)}のあらすじ、評価、ジャンル、放送情報、キャラクター、スタッフ、配信情報などをAnimeciaで確認できます。`.slice(0, 155);
+  return `${mainTitle(anime)}のあらすじ、評価、ジャンル、放送情報、キャラクター、スタッフ、配信情報などをANIXIAで確認できます。`.slice(0, 155);
 }
 
 function genres(anime) {
@@ -161,13 +161,13 @@ function page(anime) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${esc(title)} | 評価・あらすじ・作品情報 | Animecia</title>
+<title>${esc(title)} | 評価・あらすじ・作品情報 | ANIXIA</title>
 <meta name="description" content="${esc(desc)}">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="${esc(canonical)}">
 <meta property="og:type" content="article">
-<meta property="og:site_name" content="Animecia">
-<meta property="og:title" content="${esc(title)} | Animecia">
+<meta property="og:site_name" content="ANIXIA">
+<meta property="og:title" content="${esc(title)} | ANIXIA">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${esc(canonical)}">
 ${image ? `<meta property="og:image" content="${esc(image)}">` : ""}
@@ -189,13 +189,13 @@ small{color:#666}
 <body>
 <main>
 <div class="card">
-<p><small>Animecia / アニメ作品情報</small></p>
+<p><small>ANIXIA / アニメ作品情報</small></p>
 <h1>${esc(title)}</h1>
 ${image ? `<img class="cover" src="${esc(image)}" alt="${esc(title)}の画像" loading="eager">` : ""}
 ${genreHtml}
 ${synopsis ? `<h2>あらすじ・作品紹介</h2><p>${esc(synopsis)}</p>` : ""}
 ${meta.length ? `<div class="meta">${meta.map(([k,v]) => `<div><strong>${esc(k)}</strong><br>${esc(v)}</div>`).join("")}</div>` : ""}
-<p><a class="button" href="${esc(detail)}">Animeciaで詳細を見る</a></p>
+<p><a class="button" href="${esc(detail)}">ANIXIAで詳細を見る</a></p>
 <p><small>評価・レビュー・キャラクター・スタッフ・配信情報などの詳細は作品ページで確認できます。</small></p>
 </div>
 </main>
@@ -215,13 +215,13 @@ const genrePage = (genre, works) => {
       "<p>" + esc(text(work.synopsis || work.description).slice(0, 120) || "作品情報を確認できます。") + "</p>" +
       "<small>評価 " + (work.average_score ? esc(Number(work.average_score).toFixed(1)) : "—") + " / 人気度 " + (work.popularity ? esc(work.popularity) : "—") + "</small></div></article>";
   }).join("");
-  const schema = { "@context": "https://schema.org", "@type": "CollectionPage", name: title + "アニメ一覧 | Animecia", url: canonical, description: title + "に関連するアニメ作品をAnimeciaで一覧できます。", inLanguage: "ja" };
+  const schema = { "@context": "https://schema.org", "@type": "CollectionPage", name: title + "アニメ一覧 | ANIXIA", url: canonical, description: title + "に関連するアニメ作品をANIXIAで一覧できます。", inLanguage: "ja" };
   return "<!doctype html><html lang=\"ja\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">" +
-    "<title>" + esc(title) + "アニメ一覧 | Animecia</title><meta name=\"description\" content=\"" + esc(title + "に関連するアニメ作品をAnimeciaで一覧できます。") + "\"><meta name=\"robots\" content=\"index,follow\"><link rel=\"canonical\" href=\"" + esc(canonical) + "\">" +
-    "<meta property=\"og:title\" content=\"" + esc(title) + "アニメ一覧 | Animecia\"><meta property=\"og:url\" content=\"" + esc(canonical) + "\"><script type=\"application/ld+json\">" + jsonLd(schema) + "</script>" +
+    "<title>" + esc(title) + "アニメ一覧 | ANIXIA</title><meta name=\"description\" content=\"" + esc(title + "に関連するアニメ作品をANIXIAで一覧できます。") + "\"><meta name=\"robots\" content=\"index,follow\"><link rel=\"canonical\" href=\"" + esc(canonical) + "\">" +
+    "<meta property=\"og:title\" content=\"" + esc(title) + "アニメ一覧 | ANIXIA\"><meta property=\"og:url\" content=\"" + esc(canonical) + "\"><script type=\"application/ld+json\">" + jsonLd(schema) + "</script>" +
     "<link rel=\"stylesheet\" href=\"../../site-theme.css?v=20261012\">" +
-    "<style>body{margin:0;background:#f6f6f6;color:#222;font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Yu Gothic\",Meiryo,sans-serif;line-height:1.7}main{max-width:1000px;margin:0 auto;padding:28px 18px}.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.06)}.grid{display:grid;gap:14px}.work{display:grid;grid-template-columns:90px 1fr;gap:16px;padding:14px 0;border-bottom:1px solid #eee}.work img{width:90px;height:125px;object-fit:cover;border-radius:8px}.work h2{font-size:1.05rem;margin:0 0 6px}.work a{color:#111}.work p{margin:5px 0;font-size:.92rem;color:#555}</style></head><body><main><div class=\"card\"><p><small>Animecia / ジャンル</small></p>" +
-    "<h1>" + esc(title) + "のアニメ一覧</h1><p>" + esc(title) + "に関連する作品を、Animeciaの作品データをもとに一覧表示しています。</p><section class=\"grid\">" + (workHtml || "<p>現在、このジャンルの作品は登録されていません。</p>") + "</section></div></main></body></html>";
+    "<style>body{margin:0;background:#f6f6f6;color:#222;font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Yu Gothic\",Meiryo,sans-serif;line-height:1.7}main{max-width:1000px;margin:0 auto;padding:28px 18px}.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.06)}.grid{display:grid;gap:14px}.work{display:grid;grid-template-columns:90px 1fr;gap:16px;padding:14px 0;border-bottom:1px solid #eee}.work img{width:90px;height:125px;object-fit:cover;border-radius:8px}.work h2{font-size:1.05rem;margin:0 0 6px}.work a{color:#111}.work p{margin:5px 0;font-size:.92rem;color:#555}</style></head><body><main><div class=\"card\"><p><small>ANIXIA / ジャンル</small></p>" +
+    "<h1>" + esc(title) + "のアニメ一覧</h1><p>" + esc(title) + "に関連する作品を、ANIXIAの作品データをもとに一覧表示しています。</p><section class=\"grid\">" + (workHtml || "<p>現在、このジャンルの作品は登録されていません。</p>") + "</section></div></main></body></html>";
 };
 const animeRows = [];
 for (let offset = 0; ; offset += pageSize) {

@@ -1,4 +1,4 @@
--- Keep Animecia's catalog status consistent with the canonical inclusion rules.
+-- Keep ANIXIA's catalog status consistent with the canonical inclusion rules.
 -- Unknown origin remains eligible unless explicitly confirmed non-Japanese.
 -- Sensitive visuals, duplicate entries, pre-1963/unknown dates, unsupported formats,
 -- non-Japanese originals, adult/preschool non-TV works, and promotional media stay excluded.

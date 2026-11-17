@@ -1,11 +1,11 @@
-/* Animecia: 認証必須ページ・操作の共通ガード */
+/* ANIXIA: 認証必須ページ・操作の共通ガード */
 (function(){
   "use strict";
   function boot(){
-    if(!window.AnimeciaAuth)return setTimeout(boot,50);
-    AnimeciaAuth.init().then(apply).catch(function(){apply(null);});
+    if(!window.ANIXIAAuth)return setTimeout(boot,50);
+    ANIXIAAuth.init().then(apply).catch(function(){apply(null);});
   }
-  function login(){AnimeciaAuth.redirectToLogin();}
+  function login(){ANIXIAAuth.redirectToLogin();}
   function disable(el){
     if(!el)return;
     if("disabled" in el)el.disabled=true;
@@ -41,7 +41,7 @@
     if(key==="detail")notice(document.querySelector(".action-area"),"お気に入り・評価・視聴状況・レビュー・フォローなどの機能にはログインが必要です。");
   }
   document.addEventListener("click",function(e){
-    if(AnimeciaAuth&&AnimeciaAuth.isLoggedIn())return;
+    if(ANIXIAAuth&&ANIXIAAuth.isLoggedIn())return;
     var t=e.target.closest&&e.target.closest('[data-act="like"],[data-act="repost"],[data-act="bookmark"],[data-act="reply"],[data-act="send-reply"],[data-act="delete"],[data-add],[data-remove]');
     if(t){e.preventDefault();e.stopImmediatePropagation();login();}
   },true);

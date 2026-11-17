@@ -1,4 +1,4 @@
-/* Animecia canonical anime data contract — 2026-10-08 */
+/* ANIXIA canonical anime data contract — 2026-10-08 */
 (function(global){
   "use strict";
   const seasonNames={WINTER:"冬",SPRING:"春",SUMMER:"夏",FALL:"秋"};
@@ -139,12 +139,12 @@
             .select("anime_id,average_rating,rating_count,favorite_count,review_count")
             .in("anime_id",batch);
           if(error){
-            console.warn("AnimeciaData.withEngagement: engagement summary unavailable; catalog data will still be shown.",error);
+            console.warn("ANIXIAData.withEngagement: engagement summary unavailable; catalog data will still be shown.",error);
             return [];
           }
           return data||[];
         }catch(error){
-          console.warn("AnimeciaData.withEngagement: engagement summary request failed; catalog data will still be shown.",error);
+          console.warn("ANIXIAData.withEngagement: engagement summary request failed; catalog data will still be shown.",error);
           return [];
         }
       }));
@@ -156,7 +156,7 @@
     }));
   }
   function isPublic(a){
-    // Client-side guard mirrors the current Animecia registration policy.
+    // Client-side guard mirrors the current ANIXIA registration policy.
     // Japanese origin is preferred; unknown origin is not an automatic rejection.
     if(!a) return false;
     const format=String(a.format||"").toUpperCase();
@@ -166,7 +166,7 @@
     const isStandalone=standaloneFormats.includes(format);
     const explicitlyRejected=Array.isArray(a.anime_verification_reasons) &&
       a.anime_verification_reasons.some(reason =>
-        String(reason).includes("Excluded from Animecia catalog: promotional/pilot/brand/educational animation rather than an anime work")
+        String(reason).includes("Excluded from ANIXIA catalog: promotional/pilot/brand/educational animation rather than an anime work")
       );
     // OVA/ONA/SPECIAL were previously blocked by the old TV/movie-only policy.
     // Permit them unless a specific exclusion reason is recorded.
@@ -183,5 +183,5 @@
     // Children's anime, including preschool-targeted works, are eligible.
     return true;
   }
-  global.AnimeciaData={title,subtitle,year,season,seasonCode,format,status,image,score,reading,compare,genres,withEngagement,isPublic,seasonNames,formatNames,statusNames};
+  global.ANIXIAData={title,subtitle,year,season,seasonCode,format,status,image,score,reading,compare,genres,withEngagement,isPublic,seasonNames,formatNames,statusNames};
 })(window);

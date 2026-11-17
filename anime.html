@@ -10,12 +10,12 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>アニメ一覧 | Animecia</title>
+    <title>アニメ一覧 | ANIXIA</title>
 
     <meta
         id="meta-description"
         name="description"
-        content="Animeciaのアニメ一覧。作品名、ジャンル、放送年、シーズン、放送状況、評価、人気度などからアニメを検索できます。"
+        content="ANIXIAのアニメ一覧。作品名、ジャンル、放送年、シーズン、放送状況、評価、人気度などからアニメを検索できます。"
     >
 
     <meta
@@ -26,17 +26,17 @@
     <link
         id="canonical"
         rel="canonical"
-        href="https://media-mania.github.io/Animecia/anime.html"
+        href="https://the-rascal-of-sakurasou.github.io/anixia/anime.html"
     >
 
     <meta
         property="og:title"
-        content="アニメ一覧 | Animecia"
+        content="アニメ一覧 | ANIXIA"
     >
 
     <meta
         property="og:description"
-        content="Animeciaのアニメ一覧。次に見るアニメを探せます。"
+        content="ANIXIAのアニメ一覧。次に見るアニメを探せます。"
     >
 
     <meta
@@ -46,12 +46,12 @@
 
     <meta
         property="og:url"
-        content="https://media-mania.github.io/Animecia/anime.html"
+        content="https://the-rascal-of-sakurasou.github.io/anixia/anime.html"
     >
 
     <meta
         property="og:site_name"
-        content="Animecia"
+        content="ANIXIA"
     >
 
     <meta
@@ -1022,7 +1022,7 @@
 
 <style>.user-anime-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.user-anime-actions button,.watch-select{padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-weight:700}.user-anime-actions button.active{background:#222;color:#fff;border-color:#222}</style>
 <style id="animecia-page-v4">
-/* Animecia page-level v4 polish */
+/* ANIXIA page-level v4 polish */
 .page-shell{max-width:1240px;margin:auto}
 .page-intro{margin:0 0 18px;padding:24px 26px;border-radius:18px;background:linear-gradient(135deg,#11161d,#252b34);color:#fff;box-shadow:0 16px 40px rgba(16,20,26,.10)}
 .page-intro h1{margin:0 0 7px;color:#fff;font-size:clamp(24px,3vw,34px);font-weight:950;letter-spacing:-.045em}
@@ -1111,7 +1111,7 @@
 
 <header class="site-header">
 <div class="container nav">
-<a class="brand" href="index.html" aria-label="Animecia ホーム">Animecia</a>
+<a class="brand" href="index.html" aria-label="ANIXIA ホーム">ANIXIA</a>
 <nav class="nav-links animecia-main-nav" aria-label="メインメニュー">
 <a href="index.html">ホーム</a>
 <a href="anime.html">アニメを探す</a>
@@ -1145,7 +1145,7 @@
             <div>
                 <span class="page-kicker">ANIME DATABASE</span>
                 <h1>アニメを探す</h1>
-                <p>作品名・ジャンル・放送年・形式・スタジオ・評価などから、Animeciaの作品データベースを検索できます。</p>
+                <p>作品名・ジャンル・放送年・形式・スタジオ・評価などから、ANIXIAの作品データベースを検索できます。</p>
             </div>
             <div class="page-intro-actions">
                 <a href="season.html">今期アニメ</a>
@@ -1472,7 +1472,7 @@
             <div>
 
                 <strong>
-                    Animecia
+                    ANIXIA
                 </strong>
 
                 <p>
@@ -1509,7 +1509,7 @@
 
 
         <p class="copyright">
-            © Animecia
+            © ANIXIA
         </p>
 
     </div>
@@ -1523,7 +1523,7 @@
        Supabase
     ========================================= */
 
-    const supabaseClient = AnimeciaAuth.client();
+    const supabaseClient = ANIXIAAuth.client();
 
     /* =========================================
        Auth navigation
@@ -1820,7 +1820,7 @@
     }
 
 
-    function getMainTitle(anime){ return AnimeciaData.title(anime); }
+    function getMainTitle(anime){ return ANIXIAData.title(anime); }
 
     function getSubTitle(
         anime
@@ -2579,8 +2579,8 @@
         });
     }
 
-    function normalizeTitleReading(anime){ return AnimeciaData.reading(anime); }
-function compareAnimeTitles(a,b){ return AnimeciaData.compare(a,b); }
+    function normalizeTitleReading(anime){ return ANIXIAData.reading(anime); }
+function compareAnimeTitles(a,b){ return ANIXIAData.compare(a,b); }
 
     /* =========================================
        Load anime
@@ -4247,13 +4247,13 @@ function compareAnimeTitles(a,b){ return AnimeciaData.compare(a,b); }
 {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": "アニメ一覧 | Animecia",
-    "description": "Animeciaのアニメ一覧。作品名、ジャンル、放送年、シーズン、放送状況、評価、人気度などからアニメを検索できます。",
-    "url": "https://media-mania.github.io/Animecia/anime.html",
+    "name": "アニメ一覧 | ANIXIA",
+    "description": "ANIXIAのアニメ一覧。作品名、ジャンル、放送年、シーズン、放送状況、評価、人気度などからアニメを検索できます。",
+    "url": "https://the-rascal-of-sakurasou.github.io/anixia/anime.html",
     "isPartOf": {
         "@type": "WebSite",
-        "name": "Animecia",
-        "url": "https://media-mania.github.io/Animecia/"
+        "name": "ANIXIA",
+        "url": "https://the-rascal-of-sakurasou.github.io/anixia/"
     }
 }
 </script>

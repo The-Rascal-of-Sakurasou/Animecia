@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>自分に合ったアニメを探す | Animecia</title>
-<meta name="description" content="好みのジャンル、形式、話数、評価などからAnimeciaがあなたに合うアニメを探します。ログイン後は評価や視聴履歴も反映します。"><link rel="canonical" href="https://media-mania.github.io/Animecia/recommendations.html">
+<title>自分に合ったアニメを探す | ANIXIA</title>
+<meta name="description" content="好みのジャンル、形式、話数、評価などからANIXIAがあなたに合うアニメを探します。ログイン後は評価や視聴履歴も反映します。"><link rel="canonical" href="https://the-rascal-of-sakurasou.github.io/anixia/recommendations.html">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="anime-data.js"></script>
 <style>
 main{max-width:1240px;margin:auto;padding:34px 20px 80px}.hero{padding:40px;border-radius:22px;background:linear-gradient(135deg,#111216,#292b31);color:#fff;margin-bottom:16px}.kicker{font-size:11px;color:#fb7185;font-weight:900;letter-spacing:.17em}.hero h1{font-size:clamp(34px,5vw,54px);margin:12px 0 10px;letter-spacing:-.055em}.hero p{margin:0;color:#d1d5db;line-height:1.8;max-width:780px}.layout{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}.panel{background:#fff;border:1px solid #e3e5e9;border-radius:18px;padding:21px;box-shadow:0 8px 28px rgba(17,18,20,.045)}.panel h2{font-size:18px;margin:0 0 5px}.hint{font-size:12px;color:#777;margin:0 0 16px;line-height:1.6}.question{padding:15px 0;border-top:1px solid #eceef1}.question:first-of-type{border-top:0}.question label{display:block;font-size:12px;font-weight:900;margin-bottom:9px}.chips{display:flex;flex-wrap:wrap;gap:7px}.chip{border:1px solid #dfe2e7;background:#fff;border-radius:999px;padding:8px 10px;font-size:11px;font-weight:800;cursor:pointer}.chip{display:inline-flex;align-items:center;gap:5px}.chip-check{display:inline-grid;place-items:center;width:15px;height:15px;border:1px solid #cfd3da;border-radius:50%;font-size:10px;font-weight:900;color:transparent;background:#fff}.chip.active{background:#111216;color:#fff;border-color:#111216;box-shadow:0 0 0 2px #111216;transform:translateY(-1px)}.chip.active .chip-check{color:#111216;border-color:#fff;background:#fff}.chip:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}.select{width:100%;height:42px;border:1px solid #d9dce2;border-radius:9px;padding:0 10px}.actions{display:flex;gap:8px;margin-top:16px}.primary,.secondary{flex:1;border:0;border-radius:10px;padding:11px;font-weight:900;cursor:pointer}.primary{background:#111216;color:#fff}.secondary{background:#f0f1f3;color:#222}.result-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:14px}.result-head h2{margin:0}.score-note{font-size:11px;color:#777}.list{display:grid;gap:10px}.item{display:flex;gap:13px;align-items:center;padding:12px;border:1px solid #e5e7eb;border-radius:14px;text-decoration:none;color:inherit;transition:.18s}.item:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(17,18,20,.08)}.rank{width:32px;text-align:center;font-weight:900;font-size:20px}.thumb{width:68px;height:88px;object-fit:cover;border-radius:8px;background:#eceef1;flex:none}.grow{min-width:0;flex:1}.title{font-weight:900;line-height:1.45}.reason{font-size:11px;color:#737780;margin-top:4px}.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}.pill{background:#f2f3f5;border-radius:999px;padding:4px 7px;font-size:10px;font-weight:800}.match{font-size:11px;font-weight:900;color:#e11d48;white-space:nowrap}.empty,.loading{text-align:center;padding:40px;color:#777}
@@ -103,7 +103,7 @@ main{max-width:1240px;margin:auto;padding:34px 20px 80px}.hero{padding:40px;bord
 </head>
 <body><header class="site-header">
 <div class="container nav">
-<a class="brand" href="index.html" aria-label="Animecia ホーム">Animecia</a>
+<a class="brand" href="index.html" aria-label="ANIXIA ホーム">ANIXIA</a>
 <nav class="nav-links animecia-main-nav" aria-label="メインメニュー">
 <a href="index.html">ホーム</a>
 <a href="anime.html">アニメを探す</a>
@@ -122,7 +122,7 @@ main{max-width:1240px;margin:auto;padding:34px 20px 80px}.hero{padding:40px;bord
 </div>
 </header>
 <main class="recommendations-v6">
-<section class="hero"><div class="kicker">FIND YOUR ANIME</div><h1>あなたに合うアニメを探す。</h1><p>好きなジャンルや観たい長さを選ぶだけ。Animeciaの作品データから条件に合う作品を絞り込みます。ログインしている場合は、評価・お気に入り・視聴状況も活用します。</p></section>
+<section class="hero"><div class="kicker">FIND YOUR ANIME</div><h1>あなたに合うアニメを探す。</h1><p>好きなジャンルや観たい長さを選ぶだけ。ANIXIAの作品データから条件に合う作品を絞り込みます。ログインしている場合は、評価・お気に入り・視聴状況も活用します。</p></section>
 <div class="layout">
 <section class="panel">
 <h2>好みを設定</h2><p class="hint">全部選ばなくても大丈夫です。選んだ条件が多いほど結果を絞り込みます。</p>
@@ -142,7 +142,7 @@ main{max-width:1240px;margin:auto;padding:34px 20px 80px}.hero{padding:40px;bord
 <script>
 let s=null;
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const title=a=>AnimeciaData.title(a);
+const title=a=>ANIXIAData.title(a);
 let rows=[],genres=[],selected=new Set(),userSignals=new Map(),recommendationsReady=false;
 const normGenre=name=>String(name??"").normalize("NFKC").trim().toLocaleLowerCase("ja");
 let genreIdByName=new Map();
@@ -164,16 +164,16 @@ async function fetchCatalogRows({genreIds=[],format=null,minRating=null,status=n
  return all;
 }
 async function init(){
- await AnimeciaAuth.init();
- s=AnimeciaAuth.client();
+ await ANIXIAAuth.init();
+ s=ANIXIAAuth.client();
  const [genreResult,genreCountResult,auth]=await Promise.all([
   s.rpc("get_catalog_genres"),
   s.rpc("get_catalog_genre_counts"),
   s.auth.getUser()
  ]);
  const genreSource=!genreResult.error&&(genreResult.data||[]).length?genreResult.data:(genreCountResult.data||[]);
- if(genreResult.error)console.warn("Animecia recommendations: using genre-count fallback.",genreResult.error);
- if(genreCountResult.error)console.warn("Animecia recommendations: genre counts unavailable.",genreCountResult.error);
+ if(genreResult.error)console.warn("ANIXIA recommendations: using genre-count fallback.",genreResult.error);
+ if(genreCountResult.error)console.warn("ANIXIA recommendations: genre counts unavailable.",genreCountResult.error);
  genres=genreSource.map(g=>({id:Number(g.id),name:String(g.name||"").trim()})).filter(g=>g.name&&Number.isInteger(g.id));
  genreIdByName=new Map(genres.map(g=>[normGenre(g.name),g.id]));
  renderGenres();
@@ -184,9 +184,9 @@ async function init(){
    s.from("user_anime_status").select("anime_id,status").eq("user_id",uid),
    s.from("favorites").select("anime_id").eq("user_id",uid)
   ]);
-  if(rt.error)console.warn("Animecia recommendations: user_ratings unavailable.",rt.error);
-  if(st.error)console.warn("Animecia recommendations: user_anime_status unavailable.",st.error);
-  if(fv.error)console.warn("Animecia recommendations: favorites unavailable.",fv.error);
+  if(rt.error)console.warn("ANIXIA recommendations: user_ratings unavailable.",rt.error);
+  if(st.error)console.warn("ANIXIA recommendations: user_anime_status unavailable.",st.error);
+  if(fv.error)console.warn("ANIXIA recommendations: favorites unavailable.",fv.error);
   (rt.data||[]).forEach(x=>userSignals.set(Number(x.anime_id),{rating:Number(x.rating)}));
   (st.data||[]).forEach(x=>userSignals.set(Number(x.anime_id),{...(userSignals.get(Number(x.anime_id))||{}),status:x.status}));
   (fv.data||[]).forEach(x=>userSignals.set(Number(x.anime_id),{...(userSignals.get(Number(x.anime_id))||{}),favorite:true}));
@@ -247,7 +247,7 @@ async function run(){
   document.getElementById("result-sub").textContent=(selected.size?"選択ジャンル "+selected.size+"件 / ":"")+"条件に合う作品 "+total.toLocaleString("ja-JP")+"件からおすすめ順に表示。"+(hasConditions?" 指定した条件も反映しています。":" 条件未指定のため、評価・人気などから選定しています。")+(userSignals.size?" あなたの視聴・評価履歴も反映中。":"");
   document.getElementById("results").innerHTML=result.map((a,i)=>'<a class="item" href="anime-detail.html?id='+a.id+'"><div class="rank">'+(i+1)+'</div>'+(a.cover_image?'<img class="thumb" src="'+esc(a.cover_image)+'" alt="'+esc(title(a))+'" loading="'+(i===0?'eager':'lazy')+'" decoding="async"'+(i===0?' fetchpriority="high"':'')+'>':'<div class="thumb"></div>')+'<div class="grow"><div class="title">'+esc(title(a))+'</div><div class="reason">'+esc(a.m.reason)+'</div><div class="meta"><span class="pill">★ '+(a.e.average_rating!=null?Number(a.e.average_rating).toFixed(1):"—")+'</span><span class="pill">'+esc(a.format||"")+'</span><span class="pill">'+(a.episodes?esc(a.episodes)+"話":"話数不明")+'</span></div></div><div class="match">MATCH '+Math.round(Math.min(99,a.m.score))+'%</div></a>').join("")||'<div class="empty">条件に合う作品が見つかりませんでした。条件を少し緩めてみてください。</div>';
  }catch(error){
-  console.error("Animecia recommendation search failed",error);
+  console.error("ANIXIA recommendation search failed",error);
   document.getElementById("results").innerHTML='<div class="empty">おすすめ作品を取得できませんでした。条件を変えるか、時間をおいて再度お試しください。</div>';
   document.getElementById("result-sub").textContent="作品データの取得に失敗しました。";
  }finally{
@@ -258,7 +258,7 @@ async function run(){
 document.getElementById("find").onclick=()=>{if(!recommendationsReady){document.getElementById("result-sub").textContent="作品データを読み込み中です。少し待ってからお試しください。";return;}run();};
 document.getElementById("clear").onclick=()=>{selected.clear();updateGenreSelected();document.querySelectorAll(".chip.active").forEach(x=>{x.classList.remove("active");x.setAttribute("aria-pressed","false")});["format","length","rating","status"].forEach(id=>document.getElementById(id).value=id==="rating"?"0":"");document.getElementById("results").innerHTML='<div class="empty">あなたの好みから作品を探します。</div>';document.getElementById("result-sub").textContent="条件を設定して「この条件で探す」を押してください。"};
 init().catch(err=>{
- console.error("Animecia recommendations init failed",err);
+ console.error("ANIXIA recommendations init failed",err);
  recommendationsReady=false;
  document.getElementById("result-sub").textContent="作品データを取得できませんでした。";
  document.getElementById("results").innerHTML="<div class=\"empty\">作品データの読み込みに失敗しました。時間をおいて再読み込みしてください。</div>";

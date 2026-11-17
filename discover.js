@@ -1,6 +1,6 @@
 let s;
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const title=a=>AnimeciaData.title(a);
+const title=a=>ANIXIAData.title(a);
 let rows=[],selectedGenres=new Set(),requestVersion=0,debounceTimer=null;
 
 async function loadOptions(){
@@ -80,7 +80,7 @@ async function loadResults(){
   return;
  }
  const catalogRows=data||[];
- const enriched=await AnimeciaData.withEngagement(s,catalogRows);
+ const enriched=await ANIXIAData.withEngagement(s,catalogRows);
  if(version!==requestVersion)return;
  rows=enriched||[];
  const total=Number(catalogRows[0]?.total_count||0);
@@ -97,8 +97,8 @@ function scheduleSearch(){
 }
 
 async function load(){
- await AnimeciaAuth.init();
- s=AnimeciaAuth.client();
+ await ANIXIAAuth.init();
+ s=ANIXIAAuth.client();
  const initialGenre=Number(new URLSearchParams(location.search).get("genre"));
  if(Number.isInteger(initialGenre)&&initialGenre>0)selectedGenres.add(initialGenre);
  await loadOptions();
@@ -119,7 +119,7 @@ document.getElementById("reset").onclick=()=>{
  loadResults();
 };
 load().catch(err=>{
- console.error("Animecia discover initialization failed:",err);
+ console.error("ANIXIA discover initialization failed:",err);
  document.getElementById("count").textContent="";
  document.getElementById("grid").innerHTML='<div class="error">作品データの読み込みに失敗しました。時間をおいて再読み込みしてください。</div>';
 });

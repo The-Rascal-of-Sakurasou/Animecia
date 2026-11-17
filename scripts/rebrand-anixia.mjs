@@ -8,9 +8,9 @@ const textExtensions = new Set([
 ]);
 const ignored = new Set([".git", ".github", "node_modules", ".next", "dist", "coverage", path.join("supabase", "migrations")]);
 const replacements = [
-  [/https:\/\/media-mania\.github\.io\/Animecia\/?/g, "https://the-rascal-of-sakurasou.github.io/anixia/"],
-  [/https:\/\/github\.com\/media-mania\/Animecia\/?/g, "https://github.com/The-Rascal-of-Sakurasou/anixia"],
-  [/Animecia/g, "ANIXIA"]
+  [/https:\/\/media-mania\.github\.io\/ANIXIA\/?/g, "https://the-rascal-of-sakurasou.github.io/anixia/"],
+  [/https:\/\/github\.com\/media-mania\/ANIXIA\/?/g, "https://github.com/The-Rascal-of-Sakurasou/anixia"],
+  [/ANIXIA/g, "ANIXIA"]
 ];
 
 let changed = 0;

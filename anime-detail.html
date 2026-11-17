@@ -10,11 +10,11 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>アニメ詳細 | Animecia</title>
+    <title>アニメ詳細 | ANIXIA</title>
 <meta
         id="meta-description"
         name="description"
-        content="Animeciaのアニメ作品詳細ページ。あらすじ、ジャンル、放送情報、制作会社、キャラクター、スタッフ、関連作品、レビューなどを確認できます。"
+        content="ANIXIAのアニメ作品詳細ページ。あらすじ、ジャンル、放送情報、制作会社、キャラクター、スタッフ、関連作品、レビューなどを確認できます。"
     >
 
     <meta
@@ -25,7 +25,7 @@
     <link
         id="canonical"
         rel="canonical"
-        href="https://media-mania.github.io/Animecia/anime-detail.html"
+        href="https://the-rascal-of-sakurasou.github.io/anixia/anime-detail.html"
     >
 
     <meta
@@ -35,25 +35,25 @@
 
     <meta
         property="og:site_name"
-        content="Animecia"
+        content="ANIXIA"
     >
 
     <meta
         id="og-title"
         property="og:title"
-        content="アニメ詳細 | Animecia"
+        content="アニメ詳細 | ANIXIA"
     >
 
     <meta
         id="og-description"
         property="og:description"
-        content="Animeciaのアニメ作品詳細ページ。"
+        content="ANIXIAのアニメ作品詳細ページ。"
     >
 
     <meta
         id="og-url"
         property="og:url"
-        content="https://media-mania.github.io/Animecia/anime-detail.html"
+        content="https://the-rascal-of-sakurasou.github.io/anixia/anime-detail.html"
     >
 
     <meta
@@ -1396,7 +1396,7 @@
 </style>
 
 <style id="animecia-detail-v6">
-/* Animecia v6 — detail page redesign */
+/* ANIXIA v6 — detail page redesign */
 .anime-detail-page{display:block}
 .anime-detail-page .anime-hero{
   border:1px solid rgba(255,255,255,.08)!important;
@@ -1767,7 +1767,7 @@
 
 <header class="site-header">
 <div class="container nav">
-<a class="brand" href="index.html" aria-label="Animecia ホーム">Animecia</a>
+<a class="brand" href="index.html" aria-label="ANIXIA ホーム">ANIXIA</a>
 <nav class="nav-links animecia-main-nav" aria-label="メインメニュー">
 <a href="index.html">ホーム</a>
 <a href="anime.html">アニメを探す</a>
@@ -2085,7 +2085,7 @@
                 >
 
                     <h2>
-                        Animeciaレビュー
+                        ANIXIAレビュー
                     </h2>
 
                     <div
@@ -2627,7 +2627,7 @@
                     style="display:none;"
                 >
                     <h2>公式配信サービス</h2>
-                    <p class="affiliate-disclosure">このリンク経由で申込み等が行われた場合、Animeciaに報酬が入ることがあります。</p>
+                    <p class="affiliate-disclosure">このリンク経由で申込み等が行われた場合、ANIXIAに報酬が入ることがあります。</p>
                     <div id="affiliate-list" class="item-list"></div>
                 </section>
 
@@ -2704,7 +2704,7 @@
     <div class="footer-inner">
 
         <h2>
-            Animecia
+            ANIXIA
         </h2>
 
         <p>
@@ -2734,7 +2734,7 @@
 
 
         <p>
-            © 2026 Animecia
+            © 2026 ANIXIA
         </p>
 
     </div>
@@ -2764,7 +2764,7 @@
 
 
     const supabaseClient =
-        AnimeciaAuth.client();
+        ANIXIAAuth.client();
 
 
     /* =========================================
@@ -2874,7 +2874,7 @@
     }
 
 
-    function getMainTitle(anime){ return AnimeciaData.title(anime); }
+    function getMainTitle(anime){ return ANIXIAData.title(anime); }
 
     function getSubTitle(anime) {
 
@@ -3285,7 +3285,7 @@
 
 
         document.title =
-            `${title} | Animecia`;
+            `${title} | ANIXIA`;
 
 
         document
@@ -3314,7 +3314,7 @@
             )
             .setAttribute(
                 "content",
-                `${title} | Animecia`
+                `${title} | ANIXIA`
             );
 
 
@@ -5807,7 +5807,7 @@
                 favoriteCount.textContent = formatNumber(summary.favorite_count);
             }
         } catch (error) {
-            console.error("Animecia集計取得エラー:", error);
+            console.error("ANIXIA集計取得エラー:", error);
         }
     }
 
@@ -6103,7 +6103,7 @@
                     const displayName =
                         profile?.display_name ||
                         profile?.username ||
-                        "Animeciaユーザー";
+                        "ANIXIAユーザー";
 
 
                     const avatarURL =
@@ -7282,10 +7282,10 @@
                 await navigator.share({
 
                     title:
-                        `${title} | Animecia`,
+                        `${title} | ANIXIA`,
 
                     text:
-                        `${title}の作品情報をAnimeciaでチェック`,
+                        `${title}の作品情報をANIXIAでチェック`,
 
                     url:
                         url

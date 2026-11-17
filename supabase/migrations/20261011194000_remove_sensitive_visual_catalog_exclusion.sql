@@ -1,4 +1,4 @@
--- Sensitive-visual metadata is not an Animecia catalog exclusion rule.
+-- Sensitive-visual metadata is not an ANIXIA catalog exclusion rule.
 -- Preserve all other publication rules and keep confirmed non-Japanese origins excluded.
 CREATE OR REPLACE FUNCTION public.recalculate_anime_catalog_policy()
 RETURNS trigger

@@ -1,12 +1,12 @@
-/* Animecia: 全ページ共通の認証ナビゲーション */
+/* ANIXIA: 全ページ共通の認証ナビゲーション */
 (function(){
   "use strict";
   function ready(){
     /* ログイン／ログアウト導線はトップページだけに表示する */
     var page=(location.pathname.split("/").pop()||"index.html").toLowerCase();
     if(page!=="index.html" && page!=="") return;
-    if(!window.AnimeciaAuth)return setTimeout(ready,50);
-    AnimeciaAuth.init().then(render).catch(function(){render(null);});
+    if(!window.ANIXIAAuth)return setTimeout(ready,50);
+    ANIXIAAuth.init().then(render).catch(function(){render(null);});
     window.addEventListener("animecia-auth",function(e){render(e.detail&&e.detail.user);});
   }
   function render(user){
@@ -43,12 +43,12 @@
         item.setAttribute("aria-busy","true");
         item.textContent="ログアウト中…";
         try{
-          await AnimeciaAuth.signOut();
+          await ANIXIAAuth.signOut();
           location.replace("index.html");
         }catch(err){
           console.error(err);
           item.removeAttribute("aria-busy");
-          render(AnimeciaAuth.state.user);
+          render(ANIXIAAuth.state.user);
         }
       }:null;
       item.style.display="";

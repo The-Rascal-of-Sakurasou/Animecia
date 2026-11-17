@@ -1,4 +1,4 @@
--- Align catalog eligibility with the user's explicit Animecia policy.
+-- Align catalog eligibility with the user's explicit ANIXIA policy.
 -- A sensitive-visual flag alone is not an exclusion criterion; adult non-broadcast
 -- works remain excluded by is_adult, while TV/TV_SHORT exceptions remain eligible.
 CREATE OR REPLACE FUNCTION public.recalculate_anime_catalog_policy()

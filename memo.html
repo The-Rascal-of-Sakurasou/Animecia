@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>メモ | Animecia</title>
-<meta name="description" content="Animeciaで気になるアニメをメモできます。">
-<link rel="canonical" href="https://media-mania.github.io/Animecia/memo.html">
+<title>メモ | ANIXIA</title>
+<meta name="description" content="ANIXIAで気になるアニメをメモできます。">
+<link rel="canonical" href="https://the-rascal-of-sakurasou.github.io/anixia/memo.html">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -81,7 +81,7 @@
 <body>
 <header class="site-header">
 <div class="container nav">
-<a class="brand" href="index.html" aria-label="Animecia ホーム">Animecia</a>
+<a class="brand" href="index.html" aria-label="ANIXIA ホーム">ANIXIA</a>
 <nav class="nav-links animecia-main-nav" aria-label="メインメニュー">
 <a href="index.html">ホーム</a>
 <a href="anime.html">アニメを探す</a>
@@ -104,9 +104,9 @@
 <section class="memo-panel"><div class="memo-head"><div><h2>保存した作品</h2><div id="memo-count" class="memo-count"></div></div><button id="clear" class="memo-clear" type="button">すべて外す</button></div><div id="memo-grid" class="memo-grid"></div></section>
 <section class="memo-panel"><h2>作品をメモに追加</h2><div class="search-row"><input id="memo-search" type="search" placeholder="作品名を検索…" autocomplete="off"><button id="search-button" class="memo-clear" type="button">検索</button></div><div id="search-results" class="search-results"></div></section>
 </main>
-<footer class="site-footer"><div class="container footer-inner"><div><strong>Animecia</strong><p>アニメを探す、評価する、記録する。</p></div><nav class="footer-nav"><a href="index.html">ホーム</a><a href="anime.html">アニメ一覧</a><a href="terms.html">利用規約</a><a href="compare.html">作品比較</a><a href="privacy.html">プライバシー</a></nav></div><p class="copyright">© 2026 Animecia</p></footer>
+<footer class="site-footer"><div class="container footer-inner"><div><strong>ANIXIA</strong><p>アニメを探す、評価する、記録する。</p></div><nav class="footer-nav"><a href="index.html">ホーム</a><a href="anime.html">アニメ一覧</a><a href="terms.html">利用規約</a><a href="compare.html">作品比較</a><a href="privacy.html">プライバシー</a></nav></div><p class="copyright">© 2026 ANIXIA</p></footer>
 <script>
-const supabaseClient=AnimeciaAuth.client();
+const supabaseClient=ANIXIAAuth.client();
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const titleOf=a=>a?.title_japanese||a?.title_native||a?.title_user_preferred||a?.title_romaji||a?.title_english||a?.english_title||a?.title||"タイトル未設定";
 const key="animecia_memo"; let ids=[]; let version=0;

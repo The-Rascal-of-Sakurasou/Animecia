@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ログイン | Animecia</title>\n<meta name="description" content="Animeciaのアカウントにログインします。">\n<meta name="robots" content="noindex,nofollow">
+<title>ログイン | ANIXIA</title>\n<meta name="description" content="ANIXIAのアカウントにログインします。">\n<meta name="robots" content="noindex,nofollow">
 
 <link rel="stylesheet" href="header.css">
 <link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co" crossorigin>
@@ -34,13 +34,13 @@ main{max-width:520px;margin:60px auto;padding:20px}
 <body>
 <header class="site-header">
   <div class="container nav">
-    <a class="brand" href="index.html" aria-label="Animecia ホーム">Animecia</a>
+    <a class="brand" href="index.html" aria-label="ANIXIA ホーム">ANIXIA</a>
   </div>
 </header>
 <main>
 <section class="panel">
 <h1>ログイン</h1>
-<p>Animeciaのアカウントにログインします。</p>
+<p>ANIXIAのアカウントにログインします。</p>
 <form id="form" novalidate>
 <div class="field">
 <label for="email">メールアドレス</label>
@@ -107,10 +107,10 @@ main{max-width:520px;margin:60px auto;padding:20px}
 
   async function start(){
     try{
-      const user=await AnimeciaAuth.init();
+      const user=await ANIXIAAuth.init();
       if(user && !loginInProgress) location.replace(safeRedirect);
     }catch(error){
-      console.error("Animecia login init failed",error);
+      console.error("ANIXIA login init failed",error);
       message("認証機能の初期化に失敗しました。ページを再読み込みしてください。",true);
     }
   }
@@ -128,20 +128,20 @@ main{max-width:520px;margin:60px auto;padding:20px}
     message("ログインしています…");
 
     try{
-      const result=await AnimeciaAuth.signIn(email,password);
+      const result=await ANIXIAAuth.signIn(email,password);
       const user=result&&result.data&&result.data.user;
       if(!user){
         message("ログイン情報を取得できませんでした。もう一度お試しください。",true);
         return;
       }
       if(!(user.email_confirmed_at||user.confirmed_at)){
-        await AnimeciaAuth.signOut();
+        await ANIXIAAuth.signOut();
         message("メールアドレスの確認が完了していません。確認メールを確認してください。",true);
         return;
       }
       location.replace(safeRedirect);
     }catch(error){
-      console.error("Animecia sign in failed",error);
+      console.error("ANIXIA sign in failed",error);
       message(errorMessage(error),true);
     }finally{
       $("submit").disabled=false;
@@ -156,7 +156,7 @@ main{max-width:520px;margin:60px auto;padding:20px}
       return;
     }
     try{
-      const c=AnimeciaAuth.client();
+      const c=ANIXIAAuth.client();
       const {error}=await c.auth.resend({
         type:"signup",
         email,
@@ -165,7 +165,7 @@ main{max-width:520px;margin:60px auto;padding:20px}
       if(error)throw error;
       message("確認メールを再送信しました。迷惑メールフォルダも確認してください。");
     }catch(error){
-      console.error("Animecia resend failed",error);
+      console.error("ANIXIA resend failed",error);
       message(errorMessage(error),true);
     }
   });

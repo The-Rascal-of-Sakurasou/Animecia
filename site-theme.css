@@ -1,4 +1,4 @@
-/* Animecia — Japan-first editorial UI
+/* ANIXIA — Japan-first editorial UI
    Original visual system informed by Japanese seasonal-anime portals and structured anime databases.
 */
 :root{--ac-navy:#101827;--ac-navy-2:#18243a;--ac-orange:#e87900;--ac-orange-2:#f59e0b;--ac-red:#d83a24;--ac-ink:#17191d;--ac-sub:#69717d;--ac-muted:#9299a3;--ac-line:#e4e7eb;--ac-bg:#f5f6f8;--ac-card:#fff;--ac-soft:#fff6eb;--ac-radius:12px;--ac-shadow:0 5px 20px rgba(16,24,39,.06);--ac-shadow-lg:0 14px 38px rgba(16,24,39,.10)}
@@ -46,7 +46,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
 
 /* =========================================================
-   Animecia v6 — unified anime cards / dense Japanese portal UI
+   ANIXIA v6 — unified anime cards / dense Japanese portal UI
    ========================================================= */
 :root{
   --ac-card-radius:12px;
@@ -404,7 +404,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
 
 /* =========================================================
-   Animecia v8 — Japan-focused anime portal redesign
+   ANIXIA v8 — Japan-focused anime portal redesign
    Reference direction: MAKI / MyAnimeList
    ========================================================= */
 :root{
@@ -534,7 +534,7 @@ main{min-height:calc(100vh - 120px)}
 .home-hero-copy>p,.hero>p:not(.hero-kicker),.page-intro>div>p:not(.page-kicker),.section-desc{max-width:680px}
 .home-hero-copy>p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
-/* Animecia responsive hardening — PC / tablet / smartphone */
+/* ANIXIA responsive hardening — PC / tablet / smartphone */
 html,body{max-width:100%;overflow-x:hidden}
 img,video,iframe,svg{max-width:100%}
 table{max-width:100%;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -553,13 +553,13 @@ button,input,select,textarea{max-width:100%}
 @media (max-width:380px){.site-header .nav-actions .nav-btn{font-size:10px;padding:0 6px}.home-hero h1,.hero h1{font-size:27px}.anime-grid{gap:7px!important}.anime-card-body{padding:8px}.anime-card-title{font-size:11px}}
 
 
-/* Animecia 2026-10-08 UI/UX polish */
+/* ANIXIA 2026-10-08 UI/UX polish */
 html{overflow-x:hidden}body{overflow-x:hidden}:focus-visible{outline:3px solid #2563eb;outline-offset:3px;border-radius:4px}button,a,input,select,textarea{touch-action:manipulation}@media(max-width:900px){.layout{grid-template-columns:1fr!important}.grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.main-nav,.site-nav,header nav,.nav-links{overflow-x:auto!important;overscroll-behavior-x:contain!important}}@media(max-width:640px){input,select,textarea{font-size:16px!important}.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.wrap.head,.header-inner,.container.nav{padding:0 14px!important}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
-/* Animecia performance: defer rendering of offscreen collection cards */
+/* ANIXIA performance: defer rendering of offscreen collection cards */
 @media (min-width:701px){.anime-grid>.anime-card,.cards>.card,.recommendation-grid>.recommendation-card,#season-grid>.card,#new-grid>.card,#grid.grid>.card,#ranking-list>.list-item{content-visibility:auto;}}
 
-/* Animecia visual refinement */
+/* ANIXIA visual refinement */
 :root{--ac-navy:#111c2e;--ac-orange:#f08a18;--ac-ink:#202633;--ac-line:#e2e7ef;--ac-shadow:0 8px 28px rgba(20,35,58,.07);--ac-shadow-hover:0 16px 38px rgba(20,35,58,.13)}
 html{scroll-behavior:smooth;background:#f3f6fa}body{background:linear-gradient(180deg,#fff 0,#f5f7fb 260px,#f2f5f9 100%)!important;color:var(--ac-ink)!important;font-family:Inter,-apple-system,BlinkMacSystemFont,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif!important;line-height:1.7!important}a{transition:color .16s ease,background .16s ease,border-color .16s ease,box-shadow .16s ease}button,input,select,textarea{font:inherit}:focus-visible{outline:3px solid #f4a340!important;outline-offset:3px}
 header,.site-header{background:rgba(17,28,46,.97)!important;box-shadow:0 5px 24px rgba(12,23,40,.15)!important;border-bottom:1px solid rgba(255,255,255,.1)!important}header nav a,.main-nav a,.site-nav a,.nav-links a{border-radius:9px!important}
@@ -570,7 +570,7 @@ table{border-collapse:separate!important;border-spacing:0!important;border:1px s
 @media(max-width:700px){main{width:calc(100% - 22px)!important;padding-top:23px!important;padding-bottom:50px!important}.hero,.page-intro,.home-hero{border-radius:15px!important}.panel,.section-panel,.content-panel{border-radius:13px!important;padding:16px!important}th,td{padding:9px!important}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
 
-/* Animecia quality pass — keyboard access, motion preferences, and compact screens */
+/* ANIXIA quality pass — keyboard access, motion preferences, and compact screens */
 :where(a,button,input,select,textarea,[tabindex]):focus-visible{
   outline:3px solid #e87900!important;
   outline-offset:3px!important;
@@ -678,7 +678,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 }
 
 
-/* Animecia cross-page refinement — 2026-10-11 */
+/* ANIXIA cross-page refinement — 2026-10-11 */
 :root{
   --ac-accent:#5b5ce2;
   --ac-accent-soft:#f0f0ff;

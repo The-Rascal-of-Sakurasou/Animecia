@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>マイページ | Animecia</title>
-<meta name="description" content="Animeciaのマイページ。お気に入り、視聴状況、評価、レビュー、通知、活動履歴を管理できます。">
-<link rel="canonical" href="https://media-mania.github.io/Animecia/mypage.html">
+<title>マイページ | ANIXIA</title>
+<meta name="description" content="ANIXIAのマイページ。お気に入り、視聴状況、評価、レビュー、通知、活動履歴を管理できます。">
+<link rel="canonical" href="https://the-rascal-of-sakurasou.github.io/anixia/mypage.html">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="anime-data.js"></script><script src="auth-core.js"></script>
 <style>
-/* X-inspired Animecia profile */
+/* X-inspired ANIXIA profile */
 .notification-filter{display:flex;gap:6px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e5e7eb}.notification-filter button{border:1px solid #dfe3e8;background:#fff;border-radius:999px;padding:7px 12px;white-space:nowrap;cursor:pointer}.notification-filter button.active{background:#101827;color:#fff;border-color:#101827}.notification-item.unread{background:#f5f9ff}.notification-item{padding:15px 14px;border-bottom:1px solid #edf0f2}.notification-icon{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#eef2f7;font-weight:800}.composer{background:#fff}.composer:focus-within{background:#fff}.composer textarea::placeholder{color:#8b929b}.composer .btn{border-radius:999px!important;padding:9px 18px!important}
 body{background:#f5f6f8}
 .site-header{position:sticky;top:0;z-index:50}
@@ -224,7 +224,7 @@ main{max-width:1100px;margin:0 auto;padding:28px 16px 70px}
 <body>
 <header class="site-header">
 <div class="container nav">
-<a class="brand" href="index.html" aria-label="Animecia ホーム">Animecia</a>
+<a class="brand" href="index.html" aria-label="ANIXIA ホーム">ANIXIA</a>
 <nav class="nav-links animecia-main-nav" aria-label="メインメニュー">
 <a href="index.html">ホーム</a>
 <a href="anime.html">アニメを探す</a>
@@ -242,7 +242,7 @@ main{max-width:1100px;margin:0 auto;padding:28px 16px 70px}
 
 </div>
 </header>
-<div class="home-function-scroll mypage-function-scroll" aria-label="Animeciaの機能"><div class="home-function-scroll-inner"><a href="index.html"><b>ホーム</b><span>トップ</span></a><a href="anime.html"><b>アニメを探す</b><span>作品検索</span></a><a href="season.html"><b>今期アニメ</b><span>放送作品</span></a><a href="ranking.html"><b>ランキング</b><span>評価・人気</span></a><a href="discover.html"><b>ジャンル</b><span>作品を発見</span></a><a href="recommendations.html"><b>おすすめ</b><span>次に観る作品</span></a><a href="memo.html"><b>メモ</b><span>作品をメモ</span></a><a href="community.html"><b>コミュニティ</b><span>みんなの投稿</span></a></div></div>
+<div class="home-function-scroll mypage-function-scroll" aria-label="ANIXIAの機能"><div class="home-function-scroll-inner"><a href="index.html"><b>ホーム</b><span>トップ</span></a><a href="anime.html"><b>アニメを探す</b><span>作品検索</span></a><a href="season.html"><b>今期アニメ</b><span>放送作品</span></a><a href="ranking.html"><b>ランキング</b><span>評価・人気</span></a><a href="discover.html"><b>ジャンル</b><span>作品を発見</span></a><a href="recommendations.html"><b>おすすめ</b><span>次に観る作品</span></a><a href="memo.html"><b>メモ</b><span>作品をメモ</span></a><a href="community.html"><b>コミュニティ</b><span>みんなの投稿</span></a></div></div>
 <main>
 <div id="auth-warning" class="panel" style="display:none"><div class="empty"><h2>ログインが必要です</h2><p>マイページの機能を利用するにはログインしてください。</p><p><a class="btn" href="login.html?redirect=mypage.html">ログインする</a> <a class="btn secondary" href="signup.html">新規登録</a></p></div></div>
 <div id="content" style="display:none">
@@ -256,7 +256,7 @@ main{max-width:1100px;margin:0 auto;padding:28px 16px 70px}
 <a class="btn secondary" href="#profile-editor">プロフィールを編集</a>
 <a class="btn secondary" href="messages.html">メッセージ</a>
 </div>
-<h1 id="profile-display-name" class="profile-name">Animeciaユーザー</h1>
+<h1 id="profile-display-name" class="profile-name">ANIXIAユーザー</h1>
 <div id="profile-handle" class="profile-handle">@ユーザー名未設定</div>
 <div id="profile-bio" class="profile-bio"></div>
 <div class="profile-stats">
@@ -272,7 +272,7 @@ main{max-width:1100px;margin:0 auto;padding:28px 16px 70px}
 </section>
 
 <section class="panel mypage-overview">
-<div class="section-heading"><div><span class="eyebrow">MY ANIME</span><h2>アニメ活動サマリー</h2></div><span class="section-note">あなたのAnimecia利用状況</span></div>
+<div class="section-heading"><div><span class="eyebrow">MY ANIME</span><h2>アニメ活動サマリー</h2></div><span class="section-note">あなたのANIXIA利用状況</span></div>
 <div id="stats" class="stats mypage-stat-grid"></div>
 <div class="mypage-overview-links">
 <button type="button" class="overview-link" data-quick-tab="favorites"><strong>お気に入り</strong><span>登録作品を確認 ›</span></button>
@@ -371,7 +371,7 @@ main{max-width:1100px;margin:0 auto;padding:28px 16px 70px}
 <a class="side-link" href="#profile-editor">プロフィール編集 <span>›</span></a>
 </section>
 <section class="panel side-panel mypage-side-note">
-<div class="side-title">Animeciaを使いこなす</div>
+<div class="side-title">ANIXIAを使いこなす</div>
 <p>お気に入りや視聴状況を記録すると、作品管理がしやすくなります。</p>
 <a class="side-cta" href="anime.html">作品を探す</a>
 </section>
@@ -386,7 +386,7 @@ const SUPABASE_KEY="sb_publishable_-rZ4HusVezs5IlZQnUQ-Kw_SLUd8R0c";
 let supabaseClient=null,currentUser=null,currentTab="posts";
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function titleOf(a){return AnimeciaData.title(a);}
+function titleOf(a){return ANIXIAData.title(a);}
 function imageMarkup(url,alt){return url?'<img class="thumb" src="'+esc(url)+'" alt="'+esc(alt)+'" loading="lazy" onerror="this.style.visibility=\'hidden\'" decoding="async">':'<div class="thumb" style="display:grid;place-items:center;font-size:11px;color:#888">画像なし</div>';}
 
 async function getUser(){
@@ -408,7 +408,7 @@ function setAvatar(targetId,fallbackId,url,name){
  const img=document.getElementById(targetId),fallback=document.getElementById(fallbackId);
  if(!img||!fallback)return;
  if(url){img.src=url;img.alt=name||"";img.style.display="block";fallback.style.display="none";}
- else{img.style.display="none";fallback.textContent=(name||"Animeciaユーザー").slice(0,1).toUpperCase();fallback.style.display="grid";}
+ else{img.style.display="none";fallback.textContent=(name||"ANIXIAユーザー").slice(0,1).toUpperCase();fallback.style.display="grid";}
 }
 function clampCrop(v,min,max,def){const n=Number(v);return Number.isFinite(n)?Math.min(max,Math.max(min,n)):def;}
 function applyCoverStyle(el,x,y,zoom){if(!el)return;el.style.backgroundPosition=clampCrop(x,0,100,50)+"% "+clampCrop(y,0,100,50)+"%";el.style.backgroundSize=clampCrop(zoom,100,180,100)+"% auto";}
@@ -446,7 +446,7 @@ async function loadProfile(){
    p=created||{};
  }
  const username=String(p.username||"").replace(/^@/,"");
- const displayName=p.display_name||username||"Animeciaユーザー";
+ const displayName=p.display_name||username||"ANIXIAユーザー";
  document.getElementById("username").value=username;
  document.getElementById("display_name").value=p.display_name||"";
  document.getElementById("avatar_url").value=p.avatar_url||"";
@@ -486,7 +486,7 @@ async function uploadAvatar(){
  if(!url){msg.textContent="画像URLを取得できませんでした。";button.disabled=false;return;}
  const cacheBusted=url+"?v="+Date.now();
  document.getElementById("avatar_url").value=cacheBusted;
- setAvatar("avatar-preview","avatar-preview-fallback",cacheBusted,document.getElementById("display_name").value.trim()||"Animeciaユーザー");setAvatar("profile-avatar-large","profile-avatar-fallback",cacheBusted,document.getElementById("display_name").value.trim()||"Animeciaユーザー");
+ setAvatar("avatar-preview","avatar-preview-fallback",cacheBusted,document.getElementById("display_name").value.trim()||"ANIXIAユーザー");setAvatar("profile-avatar-large","profile-avatar-fallback",cacheBusted,document.getElementById("display_name").value.trim()||"ANIXIAユーザー");
  const {data:saveRow,error:saveError}=await supabaseClient.from("profiles").update({avatar_url:cacheBusted,avatar_position_x:Number(document.getElementById("avatar-x")?.value||50),avatar_position_y:Number(document.getElementById("avatar-y")?.value||50),avatar_zoom:Number(document.getElementById("avatar-zoom")?.value||100),updated_at:new Date().toISOString()}).eq("id",currentUser.id).select("id").maybeSingle();
  if(saveError||!saveRow){console.error(saveError||"profile row not updated");msg.textContent="画像はアップロードされましたが、プロフィールへの保存を確認できませんでした。";button.disabled=false;return;}
  if(saveError){console.error(saveError);msg.textContent="画像は保存されましたがプロフィール更新に失敗しました。";button.disabled=false;return;}
@@ -659,7 +659,7 @@ async function loadUserFollowList(mode){
    const uid=isFollowers?row.follower_id:row.following_id;
    const p=map.get(uid);
    if(!p)return "";
-   const name=p.display_name||p.username||"Animeciaユーザー";
+   const name=p.display_name||p.username||"ANIXIAユーザー";
    const avatar=p.avatar_url?'<img class="avatar" src="'+esc(mediaUrl(p.avatar_url,p.updated_at))+'" alt="'+esc(name)+'" loading="lazy" onerror="this.style.visibility=\'hidden\'" decoding="async">':'<div class="avatar" style="display:grid;place-items:center;font-weight:800;color:#888">'+esc(name.slice(0,1))+'</div>';
    return '<a class="list-item" href="profile.html?id='+encodeURIComponent(uid)+'">'+avatar+'<div class="grow"><div class="title">'+esc(name)+'</div><div class="sub">'+(p.username?'@'+esc(p.username):"ユーザー名未設定")+'</div>'+(p.bio?'<div class="sub">'+esc(p.bio).slice(0,120)+'</div>':"")+'</div><div class="pill">プロフィール</div></a>';
  }).join("")||'<div class="empty">ユーザーはいません。</div>';
@@ -716,7 +716,7 @@ async function pinPost(postId){
  if(error)throw error;
 }
 async function renderSocialPost(x,pm,counts,mode){
- const p=pm.get(x.author_id)||{};const name=p.display_name||p.username||"Animeciaユーザー";
+ const p=pm.get(x.author_id)||{};const name=p.display_name||p.username||"ANIXIAユーザー";
  const avatar=p.avatar_url?'<img class="avatar" src="'+esc(mediaUrl(p.avatar_url,p.updated_at))+'" alt="" decoding="async" loading="lazy">':'<div class="avatar" style="display:grid;place-items:center;font-weight:800;color:#888">'+esc(name.slice(0,1))+'</div>';
  const c=counts[x.id]||{likes:0,reposts:0,bookmarks:0,replies:0};
  const state=await getPostActionState(x.id);
@@ -833,7 +833,7 @@ async function loadUserSearch(){
    if(error)throw error;
    const rows=data||[];
    result.innerHTML=rows.length?rows.map(p=>{
-    const name=p.display_name||String(p.username||"").replace(/^@/,"")||"Animeciaユーザー";
+    const name=p.display_name||String(p.username||"").replace(/^@/,"")||"ANIXIAユーザー";
     const avatar=p.avatar_url?'<img class="avatar" src="'+esc(mediaUrl(p.avatar_url,p.updated_at))+'" alt="" loading="lazy" onerror="this.style.visibility=\'hidden\'" decoding="async">':'<div class="avatar" style="display:grid;place-items:center;font-weight:800;color:#888">'+esc(name.slice(0,1))+'</div>';
     return '<a class="list-item" href="profile.html?id='+encodeURIComponent(p.id)+'">'+avatar+'<div class="grow"><div class="title">'+esc(name)+'</div><div class="sub">'+(p.username?'@'+esc(String(p.username).replace(/^@/,"")):"ユーザー名未設定")+'</div>'+(p.bio?'<div class="sub">'+esc(String(p.bio).slice(0,120))+'</div>':"")+'</div><div class="pill">プロフィール</div></a>';
    }).join(""):'<div class="empty">該当するユーザーが見つかりません。</div>';
@@ -903,8 +903,8 @@ async function start(){
  const warning=document.getElementById("auth-warning");
  const content=document.getElementById("content");
  try{
-  const user=await AnimeciaAuth.init();
-  supabaseClient=AnimeciaAuth.client();
+  const user=await ANIXIAAuth.init();
+  supabaseClient=ANIXIAAuth.client();
   if(!user){
    if(warning)warning.style.display="block";
    if(warning)warning.innerHTML='<div class="error">ログインが必要です。<a href="login.html?redirect=mypage.html">ログインページへ</a></div>';

@@ -1,6 +1,6 @@
-# Animecia
+# ANIXIA
 
-**Animecia（アニメシア）** は、
+**ANIXIA（アニメシア）** は、
 
 > **「次に見るアニメを見つける」**
 
@@ -12,12 +12,12 @@
 
 | 項目 | 内容 |
 |---|---|
-| サイト名 | Animecia |
+| サイト名 | ANIXIA |
 | コンセプト | 次に見るアニメを見つける |
-| 公開サイト | https://media-mania.github.io/Animecia/ |
-| GitHub | https://github.com/media-mania/Animecia |
+| 公開サイト | https://the-rascal-of-sakurasou.github.io/anixia/ |
+| GitHub | https://github.com/The-Rascal-of-Sakurasou/anixia |
 
-Animeciaでは、単純なアニメ作品データベースだけではなく、
+ANIXIAでは、単純なアニメ作品データベースだけではなく、
 
 - 作品情報
 - 検索
@@ -67,7 +67,7 @@ Animeciaでは、単純なアニメ作品データベースだけではなく、
 
 ## アニメ検索・絞り込み
 
-現在のAnimeciaでは、作品を以下の条件から探せる構成になっています。
+現在のANIXIAでは、作品を以下の条件から探せる構成になっています。
 
 - タイトル検索
 - 放送年
@@ -144,7 +144,7 @@ Animeciaでは、単純なアニメ作品データベースだけではなく、
 
 # おすすめアニメ
 
-管理者が選択した作品を、Animeciaのおすすめ作品として掲載できます。
+管理者が選択した作品を、ANIXIAのおすすめ作品として掲載できます。
 
 おすすめ設定では、
 
@@ -164,7 +164,7 @@ Animeciaでは、単純なアニメ作品データベースだけではなく、
 
 # 広告
 
-Animeciaではサイト運営のために広告を掲載できるようにしています。
+ANIXIAではサイト運営のために広告を掲載できるようにしています。
 
 広告管理では以下を扱います。
 
@@ -221,7 +221,7 @@ Animeciaではサイト運営のために広告を掲載できるようにして
 
 # 大量アニメデータの自動登録
 
-Animeciaでは、今後大量のアニメ作品を手動で登録するのではなく、外部アニメデータAPIから自動的に取得・登録する仕組みを構築します。
+ANIXIAでは、今後大量のアニメ作品を手動で登録するのではなく、外部アニメデータAPIから自動的に取得・登録する仕組みを構築します。
 
 基本構成は以下を予定しています。
 
@@ -242,4 +242,4 @@ characters / anime_characters
 staff / anime_staff
 anime_relations
       ↓
-Animecia
+ANIXIA

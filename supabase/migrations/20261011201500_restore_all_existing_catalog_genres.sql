@@ -1,5 +1,5 @@
 -- Keep the genre picker and genre counts aligned with all genres currently
--- registered in Animecia. The prior hard-coded list omitted バトル, ロボット, and 競技.
+-- registered in ANIXIA. The prior hard-coded list omitted バトル, ロボット, and 競技.
 
 CREATE OR REPLACE FUNCTION public.get_catalog_genres()
 RETURNS TABLE(id bigint, name text)

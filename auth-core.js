@@ -1,4 +1,4 @@
-/* Animecia shared authentication core. Browser-only, publishable key only. */
+/* ANIXIA shared authentication core. Browser-only, publishable key only. */
 (function(w){
   "use strict";
   var URL="https://bhgdjuwlxvbaeraaivmh.supabase.co";
@@ -52,7 +52,7 @@
       try{
         await readSession();
       }catch(sessionError){
-        console.warn("Animecia session read failed; trying getUser()",sessionError);
+        console.warn("ANIXIA session read failed; trying getUser()",sessionError);
         var r=await c.auth.getUser();
         state.user=isVerified(r.data&&r.data.user)?r.data.user:null;
       }
@@ -92,7 +92,7 @@
     location.href="login.html?redirect="+encodeURIComponent(target+q+h);
   }
 
-  w.AnimeciaAuth={
+  w.ANIXIAAuth={
     URL:URL,KEY:KEY,state:state,client:client,init:init,
     getUser:function(){return init();},
     getSession:readSession,

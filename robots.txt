@@ -2,7 +2,7 @@ User-agent: *
 
 Allow: /
 
-Disallow: /Animecia/admin.html
-Disallow: /Animecia/admin-dashboard.html
+Disallow: /ANIXIA/admin.html
+Disallow: /ANIXIA/admin-dashboard.html
 
-Sitemap: https://media-mania.github.io/Animecia/sitemap.xml
+Sitemap: https://the-rascal-of-sakurasou.github.io/anixia/sitemap.xml

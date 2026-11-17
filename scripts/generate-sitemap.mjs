@@ -1,6 +1,6 @@
 import { writeFile, readdir, unlink } from "node:fs/promises";
 
-const base = "https://media-mania.github.io/Animecia";
+const base = "https://the-rascal-of-sakurasou.github.io/anixia/";
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SECRET_KEY;
 

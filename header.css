@@ -1,4 +1,4 @@
-/* Animecia 共通ヘッダー */
+/* ANIXIA 共通ヘッダー */
 .site-header{position:sticky;top:0;z-index:9999;background:rgba(16,17,20,.94);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.08);color:#fff}
 .site-header .container.nav{width:min(1240px,calc(100% - 32px));min-height:68px;margin:auto;display:flex;align-items:center;gap:28px}
 .site-header .brand{flex:0 0 auto;font-size:22px;font-weight:900;letter-spacing:-.04em;text-decoration:none;color:#fff;white-space:nowrap}

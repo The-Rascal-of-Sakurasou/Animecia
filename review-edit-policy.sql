@@ -1,4 +1,4 @@
--- Animecia: allow users to edit only their own reviews
+-- ANIXIA: allow users to edit only their own reviews
 BEGIN;
 
 DROP POLICY IF EXISTS "users update own reviews" ON public.reviews;
