@@ -72,15 +72,15 @@
   </section>
   <form id="filter-form" class="anixia-filter-panel">
     <div class="anixia-filter-grid">
-      <div class="anixia-field wide"><label for="query">作品名・読み仮名</label><input id="query" type="search" placeholder="作品タイトルを入力…" autocomplete="off"></div>
+      <div class="anixia-field wide"><label for="query">作品・人物・キャラクター・制作会社・組織</label><input id="query" type="search" placeholder="作品名、英語名、旧称、人物名など…" autocomplete="off"></div>
       <div class="anixia-field"><label for="genre">ジャンル</label><select id="genre"><option value="">すべて</option></select></div>
       <div class="anixia-field"><label for="year">放送年</label><select id="year"><option value="">すべて</option></select></div>
       <div class="anixia-field"><label for="season">クール</label><select id="season"><option value="">すべて</option><option value="winter">冬</option><option value="spring">春</option><option value="summer">夏</option><option value="autumn">秋</option></select></div>
       <div class="anixia-field"><label for="format">形式</label><select id="format"><option value="">すべて</option><option value="tv">TV</option><option value="movie">劇場版</option><option value="ova">OVA</option><option value="ona">ONA</option><option value="special">特別編</option><option value="web">Web</option><option value="other">その他</option></select></div>
       <div class="anixia-field"><label for="studio">制作会社</label><select id="studio"><option value="">すべて</option></select></div>
       <div class="anixia-field"><label for="tag">タグ（複数選択可）</label><select id="tag" multiple size="4" aria-describedby="tag-help"></select><small id="tag-help" class="field-help">複数選択すると、いずれかのタグを持つ作品を表示します。</small></div>
-      <div class="anixia-field"><label for="person">声優・スタッフ</label><input id="person" type="search" placeholder="名前で検索…" autocomplete="off"></div>
-      <div class="anixia-field"><label for="character">キャラクター</label><input id="character" type="search" placeholder="キャラクター名で検索…" autocomplete="off"></div>
+      <div class="anixia-field"><label for="person">声優・スタッフ（別名を含む）</label><input id="person" type="search" placeholder="名前・英語名・旧称などで検索…" autocomplete="off"></div>
+      <div class="anixia-field"><label for="character">キャラクター（別名を含む）</label><input id="character" type="search" placeholder="名前・英語名・ニックネームなどで検索…" autocomplete="off"></div>
       <div class="anixia-field"><label for="sort">並び順</label><select id="sort"><option value="newest">新着・新しい順</option><option value="popular">視聴者数順</option><option value="reviews">レビュー数順</option><option value="rating">評価順（5件以上）</option><option value="title">タイトル順</option></select></div>
     </div>
     <div class="anixia-filter-actions"><p id="result-summary" aria-live="polite">検索条件を設定してください。</p><div><button type="button" id="reset" class="secondary">条件をクリア</button> <button type="submit">検索する</button></div></div>
