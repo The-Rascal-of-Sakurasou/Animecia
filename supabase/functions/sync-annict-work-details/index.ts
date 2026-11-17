@@ -64,6 +64,7 @@ async function annictGet(path: string, params: URLSearchParams, token: string) {
 }
 
 async function fetchWorkCollection(path: string, key: string, workId: string, token: string, requestedPage: number) {
+  if (requestedPage === 0) return { items: [], pages: 0, nextPage: null };
   if (!Number.isInteger(requestedPage) || requestedPage < 1 || requestedPage > 100000) {
     throw new Error("Invalid page cursor for " + path + ".");
   }
@@ -166,6 +167,7 @@ Deno.serve(async (req: Request) => {
     const workId = String(body?.workId || "").trim();
     if (!/^\d{1,12}$/.test(workId)) return json({ error: "workIdにはAnnictの数値作品IDを指定してください。" }, 400);
     const readPage = (value: unknown) => {
+      if (value === 0 || value === "0") return 0;
       const parsed = Number(value ?? 1);
       return Number.isInteger(parsed) && parsed >= 1 && parsed <= 100000 ? parsed : 1;
     };
@@ -204,7 +206,7 @@ Deno.serve(async (req: Request) => {
       const castResult = await fetchWorkCollection("/v1/casts", "casts", workId, token, requestedPages.casts);
       await wait(1100);
       const staffResult = await fetchWorkCollection("/v1/staffs", "staffs", workId, token, requestedPages.staffs);
-      pagesRequested = 3;
+      pagesRequested = episodeResult.pages + castResult.pages + staffResult.pages;
       const episodes = episodeResult.items;
       const casts = castResult.items;
       const staffs = staffResult.items;
