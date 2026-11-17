@@ -96,11 +96,11 @@ Deno.serve(async(req:Request)=>{
    const stateUpdate=await db.from("catalog_sync_state").update({next_offset:next,last_success_at:now,updated_at:now}).eq("source","wikidata");
    if(stateUpdate.error)throw stateUpdate.error;
    const inserted=saved.data?.length||0;
-   const finish=await db.from("catalog_sync_runs").update({finished_at:now,status:"completed",pages_requested:1,records_seen:bindings.length,records_inserted_or_updated:inserted}).eq("id",run.data.id);
+   const finish=await db.from("catalog_sync_runs").update({finished_at:now,status:"succeeded",pages_requested:1,records_seen:bindings.length,records_inserted_or_updated:inserted}).eq("id",run.data.id);
    if(finish.error)throw finish.error;
    return json({status:"completed",offset,nextOffset:next,recordsSeen:bindings.length,validCandidates:rows.length,recordsInsertedOrUpdated:inserted,sweepRestarted:next===0});
   }catch(error){
-   await db.from("catalog_sync_runs").update({finished_at:new Date().toISOString(),status:"failed",pages_requested:1,records_seen:bindings.length,error_message:String(error).slice(0,1000)}).eq("id",run.data.id);
+   await db.from("catalog_sync_runs").update({finished_at:new Date().toISOString(),status:"failed",pages_requested:1,records_seen:bindings.length,error_message:JSON.stringify(error).slice(0,1000)}).eq("id",run.data.id);
    throw error;
   }
  }catch(error){console.error("ANIXIA Wikidata sync failed:",error);return json({error:"Wikidata作品同期に失敗しました。Edge Functionログを確認してください。"},500);}
