@@ -24,6 +24,13 @@
 .anixia-detail-tags{display:flex;flex-wrap:wrap;gap:7px}
 .anixia-detail-info{display:grid;grid-template-columns:120px 1fr;gap:10px;font-size:12px}
 .anixia-detail-info dt{color:#9eacc0}.anixia-detail-info dd{margin:0;color:#e7edf6}
+.anixia-detail-related,.anixia-detail-episodes{display:grid;gap:8px}
+.anixia-detail-related a{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid #354a67;border-radius:9px;color:#e7edf6;text-decoration:none;font-size:12px}
+.anixia-detail-related a:hover{border-color:#f2a51a}
+.anixia-detail-related small{color:#aab8cb}
+.anixia-detail-episode{padding:10px 12px;border:1px solid #354a67;border-radius:9px;background:#0b1423}
+.anixia-detail-episode b{font-size:12px;color:#fff}
+.anixia-detail-episode p{font-size:11px;color:#aab8cb;line-height:1.7;margin:5px 0 0}
 .anixia-detail-actions{display:grid;gap:12px}
 .anixia-detail-actions button,.anixia-detail-actions select,.anixia-detail-actions input{width:100%;min-height:42px;border:1px solid #354a67;border-radius:8px;padding:9px 11px;background:#0b1423;color:#f2f5fa}
 .anixia-detail-actions button{background:#f2a51a;border-color:#f2a51a;color:#171b22;font-weight:900;cursor:pointer}
@@ -69,6 +76,21 @@
 <div>
 <section class="anixia-detail-panel">
 <h2>作品情報</h2><dl id="info" class="anixia-detail-info"></dl>
+</section>
+<section class="anixia-detail-panel" style="margin-top:16px">
+<h2>タグ・テーマ</h2><div id="tags" class="anixia-detail-tags"></div>
+</section>
+<section class="anixia-detail-panel" style="margin-top:16px">
+<h2>シリーズ</h2><div id="series" class="anixia-detail-tags"></div>
+</section>
+<section class="anixia-detail-panel" style="margin-top:16px">
+<h2>関連作品</h2><div id="related-works" class="anixia-detail-related"></div>
+</section>
+<section class="anixia-detail-panel" style="margin-top:16px">
+<h2>エピソード</h2><div id="episodes" class="anixia-detail-episodes"></div>
+</section>
+<section class="anixia-detail-panel" style="margin-top:16px">
+<h2>制作団体</h2><div id="organizations" class="anixia-detail-tags"></div>
 </section>
 <section class="anixia-detail-panel" style="margin-top:16px">
 <h2>キャラクター</h2><div id="characters" class="anixia-detail-tags"></div>
