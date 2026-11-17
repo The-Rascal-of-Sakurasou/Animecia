@@ -61,6 +61,44 @@
     }
   }
 
+  async function loadPendingEpisodes(){
+    const el=$("pending-episodes");
+    el.innerHTML='<p class="admin-message">審査待ちエピソードを読み込んでいます…</p>';
+    try{
+      const rows=await ANIXIA.listPendingEpisodes(100);
+      el.innerHTML=rows.length?rows.map(ep=>{
+        const work=Array.isArray(ep.anime)?ep.anime[0]:ep.anime;
+        const workTitle=work?(work.title_ja||work.title||"作品名未登録"):"作品未登録";
+        const number=ep.episode_number||ep.episode_order||"番号未登録";
+        const title=ep.title_ja||ep.title||"サブタイトル未登録";
+        const meta=[ep.aired_at,ep.episode_kind,ep.source].filter(Boolean).join(" · ");
+        return '<article style="padding:14px;border:1px solid #30435f;border-radius:10px;margin:10px 0;background:#0b1423">'+
+          '<strong style="color:#fff;font-size:13px">'+esc(workTitle)+'</strong>'+
+          '<p style="color:#f2b84d;font-size:11px;margin:6px 0">第'+esc(number)+'話 · '+esc(title)+'</p>'+
+          '<p style="color:#aebbd0;font-size:10px">'+esc(meta||"補足情報なし")+'</p>'+
+          (ep.synopsis?'<p style="color:#b8c5d7;font-size:11px;line-height:1.7">'+esc(ep.synopsis)+'</p>':'<p class="admin-message">あらすじ未登録</p>')+
+          '<button type="button" class="admin-button" data-publish-episode="'+esc(ep.id)+'">確認して公開</button>'+
+          '</article>';
+      }).join(""):'<p class="admin-message">審査待ちエピソードはありません。</p>';
+      el.querySelectorAll("[data-publish-episode]").forEach(button=>{
+        button.addEventListener("click",async()=>{
+          if(!window.confirm("作品との対応・話数・タイトル・公開可能な情報であることを確認しましたか？"))return;
+          button.disabled=true;
+          try{
+            await ANIXIA.setEpisodePublished(button.dataset.publishEpisode,true);
+            await loadPendingEpisodes();
+          }catch(e){
+            console.error(e);button.disabled=false;
+            alert("エピソードを公開できませんでした。");
+          }
+        });
+      });
+    }catch(e){
+      console.error(e);
+      el.innerHTML='<p class="admin-message">エピソード候補を読み込めませんでした。管理者権限と接続状態を確認してください。</p>';
+    }
+  }
+
   let adminAnimeRows=[];
   let adminTaxonomy={genres:[],tags:[]};
 
@@ -235,7 +273,9 @@
         $("admin-review-moderation").hidden=false;
         $("admin-catalog-review").hidden=false;
         $("admin-metadata-editor").hidden=false;
+        $("admin-episode-review").hidden=false;
         loadAdminMetadata();
+        loadPendingEpisodes();
         loadPendingReviews();
         loadPendingAnime();
       }else $("admin-setup").hidden=false;
@@ -273,6 +313,7 @@
       $("relation-message").textContent="登録できませんでした。同じ作品を選択していないか確認してください。";
     }finally{$("add-relation").disabled=false;}
   });
+  $("refresh-episodes").addEventListener("click",loadPendingEpisodes);
   $("refresh-catalog-candidates").addEventListener("click",loadPendingAnime);
   $("sync-button").addEventListener("click",async()=>{
     $("sync-button").disabled=true;$("sync-message").textContent="Annictから作品データを取得しています…";
