@@ -1402,3 +1402,300 @@ footer a,.site-footer a{color:#586474!important}
 .anixia-result-poster img[data-anixia-poster]{width:100%;height:100%;object-fit:cover}
 .anixia-result-poster .anixia-poster-fallback{position:absolute;inset:0}
 .anixia-detail-poster-frame .anixia-poster-fallback{min-height:0}
+
+
+/* =========================================================
+   ANIXIA DESIGN SYSTEM 2026 — unified futuristic premium UI
+   Applied globally; presentation-only overrides.
+   ========================================================= */
+:root{
+  color-scheme:dark;
+  --ac-bg:#070b14!important;
+  --ac-card:#101827!important;
+  --ac-ink:#edf4ff!important;
+  --ac-sub:#9aa9bd!important;
+  --ac-muted:#718198!important;
+  --ac-line:rgba(148,177,214,.16)!important;
+  --ac-navy:#080f1d!important;
+  --ac-navy-2:#101e34!important;
+  --ac-orange:#42c9ff!important;
+  --ac-orange-2:#8be2ff!important;
+  --ac-red:#ff668b!important;
+  --ac-soft:rgba(66,201,255,.09)!important;
+  --ac-radius:16px!important;
+  --ac-shadow:0 12px 34px rgba(0,0,0,.24)!important;
+  --ac-shadow-lg:0 24px 70px rgba(0,0,0,.38)!important;
+  --anixia-glow:0 0 32px rgba(47,174,255,.12);
+}
+html{background:#070b14!important;scroll-behavior:smooth}
+body,body.anixia-v2{
+  color:#eaf2ff!important;
+  background:
+    radial-gradient(ellipse at 12% -10%,rgba(28,91,150,.22),transparent 38%),
+    radial-gradient(ellipse at 100% 12%,rgba(47,174,255,.08),transparent 30%),
+    #070b14!important;
+  font-family:Inter,"Noto Sans JP",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+  line-height:1.7!important;
+}
+::selection{background:rgba(66,201,255,.32)!important;color:#fff!important}
+a{color:#9bdfff}
+a:hover{color:#fff}
+main{color:#eaf2ff!important}
+main h1,main h2,main h3,h1,h2,h3{color:#f2f7ff!important;letter-spacing:-.035em}
+p{color:inherit}
+small,.hint,.muted,.description{color:#9aa9bd}
+hr{border-color:rgba(148,177,214,.14)!important}
+
+/* Global header and navigation */
+header,.site-header{
+  position:sticky!important;top:0!important;z-index:1000!important;
+  min-height:70px!important;height:auto!important;
+  background:rgba(6,11,21,.82)!important;
+  color:#edf6ff!important;
+  border:0!important;border-bottom:1px solid rgba(126,184,230,.15)!important;
+  box-shadow:0 12px 34px rgba(0,0,0,.24)!important;
+  backdrop-filter:blur(22px) saturate(145%)!important;
+}
+.header-inner,.container.nav,.wrap.head,.site-header .container.nav{
+  min-height:70px!important;
+  width:min(1440px,100%)!important;
+  padding:0 clamp(14px,3vw,42px)!important;
+  gap:clamp(12px,2vw,28px)!important;
+}
+.logo,.brand,.anixia-logo,.site-header .brand{
+  color:#f3f8ff!important;text-decoration:none!important;
+  font-weight:950!important;letter-spacing:-.055em!important;
+  text-shadow:0 0 24px rgba(66,201,255,.14);
+}
+.logo,.brand{font-size:23px!important}
+.anixia-logo{font-size:25px!important}
+.logo:after{color:#71869f!important}
+.logo span,.brand span,.anixia-logo span{color:#55d4ff!important}
+.main-nav,.site-nav,header nav,.nav-links,.anixia-main-nav{
+  gap:5px!important;align-items:center!important;
+}
+.main-nav a,.site-nav a,header nav a,.nav-links a,.anixia-main-nav a{
+  color:#aabbd0!important;text-decoration:none!important;
+  font-size:12px!important;font-weight:750!important;
+  padding:9px 12px!important;border-radius:10px!important;
+  transition:background .18s ease,color .18s ease,transform .18s ease;
+}
+.main-nav a:hover,.site-nav a:hover,header nav a:hover,.nav-links a:hover,.anixia-main-nav a:hover{
+  color:#f6fbff!important;background:rgba(73,190,255,.10)!important;
+}
+.userbar .btn,.header-actions button,.header-actions a,.nav-btn,.nav-actions a,
+.anixia-account,.anixia-language{
+  min-height:38px!important;padding:0 14px!important;
+  border:1px solid rgba(130,183,225,.22)!important;border-radius:10px!important;
+  background:rgba(20,39,62,.72)!important;color:#e8f5ff!important;
+  text-decoration:none!important;font-size:12px!important;font-weight:800!important;
+}
+.nav-btn.primary,.header-actions .primary,.userbar .btn.primary,.nav-actions .primary,
+.anixia-account:hover{
+  background:linear-gradient(120deg,#1c9edb,#55d5ff)!important;
+  color:#04111e!important;border-color:transparent!important;
+  box-shadow:0 6px 22px rgba(44,180,245,.22)!important;
+}
+.header-search input,.header-search input:focus{
+  background:rgba(13,27,45,.86)!important;color:#f0f8ff!important;
+  border:1px solid rgba(115,185,235,.25)!important;
+}
+
+/* Layout rhythm and section hierarchy */
+main,.anixia-shell{width:min(1440px,100%)!important;max-width:none!important}
+.anixia-shell{padding-left:clamp(14px,3vw,42px)!important;padding-right:clamp(14px,3vw,42px)!important}
+.anixia-page,.discover-page,.diag-page,.compare-page,.admin-page{
+  width:min(1320px,calc(100% - 36px))!important;
+  padding-top:clamp(24px,4vw,48px)!important;
+}
+.section,.anixia-section,.discover-section{margin:clamp(30px,4vw,54px) 0!important}
+.section-head,.section-header,.result-header,.anixia-section-heading,.discover-head{
+  border-bottom:1px solid rgba(145,181,219,.16)!important;
+  padding-bottom:15px!important;margin-bottom:18px!important;
+}
+.section-title,.anixia-section-heading h2,.discover-head h2{
+  color:#f2f7ff!important;font-size:clamp(20px,2vw,26px)!important;
+  font-weight:900!important;letter-spacing:-.04em!important;
+}
+.section-desc,.section-description,.hint,.anixia-section-heading p{
+  color:#8fa2ba!important;
+}
+.more,.section-link,.anixia-section-heading>a,.discover-head>a{
+  color:#6bd6ff!important;font-weight:800!important;
+}
+
+/* Hero panels */
+.hero,.page-header,.home-v4 .hero,.anixia-page-hero,.discover-hero,.diag-hero,.compare-hero,
+.anixia-search-panel{
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  border:1px solid rgba(109,190,244,.22)!important;border-radius:22px!important;
+  background:
+    radial-gradient(ellipse at 82% 10%,rgba(52,188,255,.22),transparent 34%),
+    radial-gradient(ellipse at 5% 110%,rgba(40,103,192,.20),transparent 40%),
+    linear-gradient(130deg,#0b1729 0%,#101f35 55%,#0b1729 100%)!important;
+  color:#f3f8ff!important;box-shadow:var(--ac-shadow-lg),inset 0 1px 0 rgba(255,255,255,.045)!important;
+}
+.hero:after,.page-header:after,.home-v4 .hero:after{
+  content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 35%,rgba(95,199,255,.055) 52%,transparent 68%);
+}
+.hero h1,.page-header h1,.home-v4 .hero h1,.anixia-page-hero h1,.discover-hero h1,.diag-hero h1{
+  color:#f4f9ff!important;font-weight:950!important;letter-spacing:-.055em!important;
+}
+.hero p,.page-header p,.home-v4 .hero p,.anixia-page-hero p,.discover-hero p,.diag-hero p{
+  color:#a9bad0!important;
+}
+.eyebrow,.home-v4 .eyebrow,.anixia-page-hero small,.discover-hero small,.diag-hero small,
+.anixia-eyebrow{
+  color:#65d7ff!important;letter-spacing:.18em!important;font-weight:900!important;
+}
+
+/* Search panels */
+.anixia-search-panel,.search-box,.filter-area,.filters-panel,.anime-search-area .search-box,
+.anixia-filter-panel,.diag-panel,.compare-panel,.auth-panel,.panel,.messenger,.composer{
+  background:linear-gradient(145deg,rgba(17,29,47,.96),rgba(11,20,34,.96))!important;
+  border:1px solid rgba(127,175,218,.18)!important;border-radius:16px!important;
+  color:#eaf3ff!important;box-shadow:var(--ac-shadow)!important;
+}
+.anixia-search-form,.hero-search{box-shadow:0 12px 30px rgba(0,0,0,.24)!important}
+input,select,textarea,.field input,.field select,.field textarea,
+.anixia-field input,.anixia-field select,.diag-fields select{
+  color:#edf7ff!important;background:#091525!important;
+  border:1px solid rgba(126,175,218,.24)!important;border-radius:10px!important;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.16)!important;
+}
+input::placeholder,textarea::placeholder{color:#71869f!important}
+input:focus,select:focus,textarea:focus,.field input:focus,.field select:focus,.field textarea:focus{
+  outline:0!important;border-color:#4bcaff!important;
+  box-shadow:0 0 0 3px rgba(66,201,255,.13)!important;
+}
+button,.btn,.action-button,.search-submit,.search-button,.diag-submit{
+  transition:transform .18s ease,filter .18s ease,box-shadow .18s ease!important;
+}
+button:hover,.btn:hover,.action-button:hover,.search-submit:hover,.search-button:hover,.diag-submit:hover{
+  filter:brightness(1.08)!important;
+}
+button:active,.btn:active{transform:translateY(1px)!important}
+button.primary,.btn.primary,.action-button.primary,.search-submit,.search-button,.diag-submit,
+.anixia-filter-actions button:not(.secondary),.anixia-search-form button{
+  color:#04111e!important;
+  background:linear-gradient(115deg,#32b7ed,#73ddff)!important;
+  border:0!important;border-radius:10px!important;
+  box-shadow:0 7px 22px rgba(48,182,239,.19)!important;font-weight:900!important;
+}
+.anixia-filter-actions .secondary{background:#17283e!important;color:#c9e5f8!important;border:1px solid rgba(125,183,226,.2)!important}
+
+/* Cards, lists and content surfaces */
+.panel,.card,.profile-card,.list-item,.review-item,.feature-card,.genre-card,.quick-card,
+.anixia-result-card,.discover-genre,.discover-card,.diag-card,.rank-item,.anixia-mypage-panel,
+.anixia-feature-link,.anixia-bottom-links>a,.feature-link,.post,.quote,.user-result{
+  background:linear-gradient(150deg,rgba(17,29,47,.98),rgba(11,20,34,.98))!important;
+  color:#eaf3ff!important;border:1px solid rgba(129,174,216,.17)!important;
+  border-radius:14px!important;box-shadow:0 10px 28px rgba(0,0,0,.19)!important;
+}
+.card,.list-item,.quick-card,.recommendation-card,.anixia-result-card,.discover-card,.diag-card,
+.anixia-feature-link,.discover-genre{
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease!important;
+}
+.card:hover,.list-item:hover,.quick-card:hover,.recommendation-card:hover,.anixia-result-card:hover,
+.discover-card:hover,.diag-card:hover,.anixia-feature-link:hover,.discover-genre:hover{
+  transform:translateY(-3px)!important;border-color:rgba(77,203,255,.48)!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.32),var(--anixia-glow)!important;
+}
+.panel-head{background:rgba(23,41,63,.75)!important;border-bottom:1px solid var(--ac-line)!important}
+.card-title,.title,.anixia-result-copy b,.discover-card b,.diag-card-copy b{
+  color:#f1f7ff!important;font-weight:850!important;
+}
+.card-body,.pad,.anixia-result-copy,.discover-card div,.diag-card-copy{color:#d8e6f5!important}
+.card small,.card .meta,.card .sub,.anixia-result-copy small,.discover-card small,.diag-card-copy small{
+  color:#91a5bd!important;
+}
+.quick a:before{background:linear-gradient(90deg,#38bdf8,#818cf8)!important}
+.quick a{background:linear-gradient(150deg,#14243a,#0c1728)!important;border-color:rgba(129,174,216,.18)!important}
+.quick small,.discover-genre small,.feature b{color:#6bd6ff!important}
+.badge,.pill,.chip,.tag{border-color:rgba(121,190,234,.2)!important}
+.score,.rank-score,.anixia-result-copy .score{
+  background:rgba(50,190,245,.14)!important;color:#83e0ff!important;
+  border:1px solid rgba(74,199,250,.24)!important;
+}
+.anixia-result-poster,.poster,.cover,.thumb{background:#14243a!important}
+.anixia-result-poster img,.poster img,.cover img{object-fit:cover}
+
+/* Anime details and catalog grids */
+.anixia-results-grid,.discover-grid,.diag-results,.anime-grid,.cards,.grid,.recommendation-grid{
+  gap:clamp(10px,1.25vw,17px)!important;
+}
+.anime-card,.anime-item,.detail-card,.detail-section,.anime-detail-section,
+.anixia-detail-panel,.anixia-detail-card,.detail-panel{
+  background:linear-gradient(145deg,#111e31,#0b1525)!important;
+  color:#eaf3ff!important;border:1px solid rgba(129,174,216,.18)!important;
+  border-radius:16px!important;box-shadow:var(--ac-shadow)!important;
+}
+.anixia-detail-poster-frame{border:1px solid rgba(111,188,239,.22)!important;border-radius:16px!important;overflow:hidden}
+.anixia-detail-poster-frame img{object-fit:cover}
+.anixia-state,.discover-state,.diag-state,.empty,.loading{
+  color:#91a6bf!important;background:rgba(14,26,43,.7)!important;
+  border:1px dashed rgba(129,174,216,.22)!important;border-radius:13px!important;
+}
+.anixia-pagination button{background:#14253b!important;color:#d9efff!important;border:1px solid rgba(129,174,216,.22)!important}
+.anixia-pagination span{color:#91a6bf!important}
+
+/* Ranking and stats */
+.rank-item{border-color:rgba(129,174,216,.14)!important}
+.rank-item:hover{background:rgba(49,125,178,.10)!important}
+.rank-no{color:#8296af!important}
+.rank-item:nth-child(1) .rank-no{color:#66d7ff!important}
+.stat,.stat-card,.metric,.metric-card{
+  background:linear-gradient(145deg,#14263d,#0b1728)!important;
+  border:1px solid rgba(129,174,216,.18)!important;border-radius:14px!important;
+}
+
+/* Community, profiles, messaging */
+.post{border-bottom:1px solid rgba(129,174,216,.15)!important}
+.post-meta,.small,.post-actions button{color:#91a5bd!important}
+.post-actions button:hover{background:rgba(75,191,244,.1)!important;color:#eaf8ff!important}
+.post-actions button.active{color:#ff86a4!important}
+.post-actions button.reposted{color:#63d8a0!important}
+.reply-box,.quote,.composer textarea,.reply-box textarea{
+  background:#0b1728!important;color:#eaf3ff!important;border-color:rgba(129,174,216,.22)!important;
+}
+.replies{border-left-color:rgba(129,174,216,.28)!important}
+.tab,.photo-btn,.photo-clear{
+  background:#14253b!important;color:#c7d9eb!important;border:1px solid rgba(129,174,216,.2)!important;
+}
+.tab.active{background:#2aaee4!important;color:#04111e!important;border-color:#2aaee4!important}
+.avatar{background:#1c304a!important}
+.post-media,.post-media-grid img{background:#14243a!important}
+.error{color:#ff91a6!important}
+
+/* Authentication and account */
+.auth-panel{max-width:540px!important;padding:clamp(22px,4vw,38px)!important}
+.auth-panel h1,.anixia-mypage-panel h2{color:#f2f7ff!important}
+.auth-panel>p,.field label,.anixia-profile-field label{color:#a7bad0!important}
+.links a{color:#69d8ff!important}
+.message,.anixia-mypage-message{color:#6bd6ff!important}
+.anixia-mypage-tabs button{background:#14253b!important;color:#bfd4e8!important;border:1px solid rgba(129,174,216,.18)!important}
+.anixia-mypage-tabs button.active{background:#2aaee4!important;color:#04111e!important}
+
+/* Footer */
+footer,.anixia-footer,.site-footer{
+  background:linear-gradient(180deg,#0b1423,#060a12)!important;
+  color:#9fb0c4!important;border-top:1px solid rgba(129,174,216,.16)!important;
+}
+footer a,.footer-links a,.anixia-footer-links a{color:#9fb9d1!important}
+footer a:hover,.footer-links a:hover,.anixia-footer-links a:hover{color:#71d9ff!important}
+.anixia-footer small{color:#687e97!important}
+
+/* Scrollbars, focus and motion accessibility */
+*{scrollbar-color:#2b5575 #091321}
+:focus-visible{outline:2px solid #5bd1ff!important;outline-offset:3px!important}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
+@media(max-width:760px){
+  header,.site-header{min-height:62px!important}
+  .header-inner,.container.nav,.wrap.head,.site-header .container.nav{min-height:62px!important}
+  .anixia-page,.discover-page,.diag-page,.compare-page{width:calc(100% - 24px)!important}
+  .anixia-search-panel,.hero,.page-header,.home-v4 .hero{border-radius:16px!important}
+  .anixia-section-heading{align-items:flex-start!important}
+}
