@@ -32,6 +32,11 @@
 <div class="admin-field"><label for="max-pages">1回の取得ページ数</label><select id="max-pages"><option value="1">1ページ</option><option value="2">2ページ</option><option value="3" selected>3ページ</option><option value="4">4ページ</option><option value="5">5ページ</option></select></div>
 <button id="sync-button" class="admin-button" type="button">同期を開始</button><p id="sync-message" class="admin-message" aria-live="polite"></p>
 </section>
+<section id="admin-review-moderation" class="admin-panel" hidden>
+  <h2>レビュー審査</h2>
+  <p>投稿されたレビューを確認し、公開できるものを承認します。</p>
+  <div id="pending-reviews"><p class="admin-message">審査待ちレビューを読み込んでいます…</p></div>
+</section>
 </main>
 </body>
 </html>
