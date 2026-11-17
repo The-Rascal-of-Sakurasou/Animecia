@@ -177,3 +177,47 @@ where not exists (
  where existing.anime_id=a.id and existing.person_id=p.id
    and existing.role=v.role and existing.character_id is null
 );
+
+-- Fourth verified batch (2026-11-17): Evangelion main characters and Japanese voice actors.
+-- Character-to-voice-actor credits are stored as anime_staff rows with character_id.
+insert into public.people(name,name_ja,name_kana,name_en,person_type,source,source_id)
+values
+ ('Megumi Ogata','緒方恵美','おがた めぐみ','Megumi Ogata','voice_actor','wikidata','Q254368'),
+ ('Megumi Hayashibara','林原めぐみ','はやしばら めぐみ','Megumi Hayashibara','voice_actor','wikidata','Q266670')
+on conflict (source,source_id) do nothing;
+
+insert into public.people_external_ids(person_id,source,external_id,source_url,last_verified_at)
+select p.id,'wikidata',p.source_id,'https://www.wikidata.org/wiki/'||p.source_id,now()
+from public.people p
+where p.source='wikidata' and p.source_id in ('Q254368','Q266670')
+on conflict do nothing;
+
+insert into public.characters(name,name_ja,name_kana,name_en,source,source_id)
+values
+ ('Shinji Ikari','碇シンジ','いかり しんじ','Shinji Ikari','wikidata','Q1143582'),
+ ('Rei Ayanami','綾波レイ','あやなみ れい','Rei Ayanami','wikidata','Q1140524')
+on conflict (source,source_id) do nothing;
+
+insert into public.character_external_ids(character_id,source,external_id,source_url,last_verified_at)
+select c.id,'wikidata',c.source_id,'https://www.wikidata.org/wiki/'||c.source_id,now()
+from public.characters c
+where c.source='wikidata' and c.source_id in ('Q1143582','Q1140524')
+on conflict do nothing;
+
+insert into public.anime_characters(anime_id,character_id,role)
+select a.id,c.id,'main'
+from public.anime a
+join public.characters c on c.source='wikidata' and c.source_id in ('Q1143582','Q1140524')
+where a.source='wikidata' and a.source_id='Q662'
+on conflict (anime_id,character_id) do nothing;
+
+insert into public.anime_staff(anime_id,person_id,role,character_id)
+select a.id,p.id,'voice_actor',c.id
+from (values ('Q1143582','Q254368'),('Q1140524','Q266670')) v(character_qid,person_qid)
+join public.anime a on a.source='wikidata' and a.source_id='Q662'
+join public.characters c on c.source='wikidata' and c.source_id=v.character_qid
+join public.people p on p.source='wikidata' and p.source_id=v.person_qid
+where not exists (
+ select 1 from public.anime_staff s
+ where s.anime_id=a.id and s.person_id=p.id and s.role='voice_actor' and s.character_id=c.id
+);
