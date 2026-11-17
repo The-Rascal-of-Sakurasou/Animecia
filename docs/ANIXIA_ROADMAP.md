@@ -73,7 +73,7 @@ ANIXIAは、日本向けアニメ総合プラットフォームを目指す。
 - 作品の公開読取は複数の SECURITY DEFINER RPC を通す設計。公開RPCは `is_published = true` を条件にしているが、anon/authenticatedから実行できるため、公開対象・返却項目・大量取得耐性を公開前に再監査する。
 - クイズ採点関数は直接のanon/authenticated実行権限がなく、JWT検証付きEdge Function経由で呼び出す構成。
 - SECURITY DEFINERに関するSupabase Advisor警告がある。すべてを機械的に削除せず、公開APIとして必要な関数と管理用関数を分けて、権限・入力検証・返却範囲を確認する。
-- 旧式の `annict-sync` Edge Functionも有効状態で、verify_jwt=false。関数内に独自インポートキー検証がある。利用箇所と必要性を確認するまで停止・削除しない。
+- 旧式の `annict-sync` Edge Functionは、現行フロントエンドからの呼び出しがなく、直近7日間のEdgeログでも呼び出しを確認できなかったため、停止・削除ではなく段階的な保護を実施。2026-11-17にverify_jwt=trueへ変更し、既存の独自インポートキー検証も維持した（デプロイversion 3）。外部の手動・自動呼び出し元が存在しないことまでは確認できていないため、完全廃止は保留。
 
 ### 現在のAnnict同期
 - `sync-annict-catalog` はJWT検証を有効化し、ログインユーザー確認とANIXIA管理者判定を行う。
@@ -210,3 +210,11 @@ All 6 migration files are present in the repository and applied to the active Su
 - The private admin tables, private quiz answer-key table, and service-only catalogue sync log have RLS enabled without policies; this is intentional closed access and should not be changed without a separate access-model review.
 - The legacy `annict-sync` Edge Function remains active with JWT verification disabled and a separate import-key check. The current browser client calls `sync-annict-catalog`; the legacy function was not disabled because repository-wide references and any external callers have not yet been exhaustively ruled out.
 - End-to-end verification against populated people, organization, and studio records remains pending because the catalogue is empty.
+
+
+### Legacy Annict endpoint hardening (2026-11-17)
+- Repository search found no current frontend reference to `annict-sync`; the browser client calls only `sync-annict-catalog`.
+- Supabase Edge logs were checked in seven consecutive 24-hour windows (2026-11-10 10:00 UTC through 2026-11-17 10:00 UTC); no matching legacy function invocation was returned.
+- The deployed legacy function's body already checks the `x-anixia-import-key` against the server secret before using privileged credentials, but JWT verification was disabled at the platform layer.
+- Deployed version 3 with `verify_jwt=true`, preserving the existing source code and import-key check. Verification confirmed the function is ACTIVE and JWT verification is enabled.
+- This is a conservative hardening step, not proof that no external caller exists. Keep the endpoint monitored and remove it only after confirming there are no external scheduled/manual integrations.
