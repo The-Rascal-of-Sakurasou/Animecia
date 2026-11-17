@@ -63,28 +63,23 @@ async function annictGet(path: string, params: URLSearchParams, token: string) {
   throw new Error("Annict API rate limit or temporary server error persisted.");
 }
 
-async function fetchWorkCollection(path: string, key: string, workId: string, token: string) {
-  const all: any[] = [];
-  let page = 1;
-  let pages = 0;
-  while (page && pages < 4) {
-    const params = new URLSearchParams({
-      filter_work_id: workId,
-      page: String(page),
-      per_page: "50",
-      sort_id: "asc"
-    });
-    const payload = await annictGet(path, params, token);
-    const items = Array.isArray(payload[key]) ? payload[key] : [];
-    all.push(...items);
-    pages++;
-    page = payload.next_page == null ? 0 : Number(payload.next_page);
-    if (page && pages < 4) await wait(1100);
+async function fetchWorkCollection(path: string, key: string, workId: string, token: string, requestedPage: number) {
+  if (!Number.isInteger(requestedPage) || requestedPage < 1 || requestedPage > 100000) {
+    throw new Error("Invalid page cursor for " + path + ".");
   }
-  if (page && (!Number.isFinite(page) || page < 1)) {
+  const params = new URLSearchParams({
+    filter_work_id: workId,
+    page: String(requestedPage),
+    per_page: "50",
+    sort_id: "asc"
+  });
+  const payload = await annictGet(path, params, token);
+  const items = Array.isArray(payload[key]) ? payload[key] : [];
+  const nextPage = payload.next_page == null ? null : Number(payload.next_page);
+  if (nextPage !== null && (!Number.isInteger(nextPage) || nextPage < 1 || nextPage > 100000)) {
     throw new Error("Annict returned an invalid pagination cursor for " + path + ".");
   }
-  return { items: all, pages, hasMore: page > 0 };
+  return { items, pages: 1, nextPage };
 }
 
 async function getIdMap(admin: any, table: string, ids: string[]) {
@@ -170,6 +165,15 @@ Deno.serve(async (req: Request) => {
     const body = await req.json().catch(() => ({}));
     const workId = String(body?.workId || "").trim();
     if (!/^\d{1,12}$/.test(workId)) return json({ error: "workIdにはAnnictの数値作品IDを指定してください。" }, 400);
+    const readPage = (value: unknown) => {
+      const parsed = Number(value ?? 1);
+      return Number.isInteger(parsed) && parsed >= 1 && parsed <= 100000 ? parsed : 1;
+    };
+    const requestedPages = {
+      episodes: readPage(body?.pages?.episodes),
+      casts: readPage(body?.pages?.casts),
+      staffs: readPage(body?.pages?.staffs)
+    };
 
     const { data: anime, error: animeError } = await admin.from("anime")
       .select("id,title,is_published")
@@ -194,23 +198,21 @@ Deno.serve(async (req: Request) => {
     let written = 0;
     try {
       // Keep endpoint requests sequential so the combined importer respects provider rate limits.
-      const episodeResult = await fetchWorkCollection("/v1/episodes", "episodes", workId, token);
+      // Fetch one page per collection per invocation. Each cursor advances independently.
+      const episodeResult = await fetchWorkCollection("/v1/episodes", "episodes", workId, token, requestedPages.episodes);
       await wait(1100);
-      const castResult = await fetchWorkCollection("/v1/casts", "casts", workId, token);
+      const castResult = await fetchWorkCollection("/v1/casts", "casts", workId, token, requestedPages.casts);
       await wait(1100);
-      const staffResult = await fetchWorkCollection("/v1/staffs", "staffs", workId, token);
-      pagesRequested = episodeResult.pages + castResult.pages + staffResult.pages;
+      const staffResult = await fetchWorkCollection("/v1/staffs", "staffs", workId, token, requestedPages.staffs);
+      pagesRequested = 3;
       const episodes = episodeResult.items;
       const casts = castResult.items;
       const staffs = staffResult.items;
       recordsSeen = episodes.length + casts.length + staffs.length;
-      if (episodeResult.hasMore || castResult.hasMore || staffResult.hasMore) {
-        throw new Error("A detail collection exceeds the safe four-page import limit. No records were written; retry with a dedicated paged import workflow.");
-      }
 
       const episodeRows = episodes.flatMap((ep: any, index: number) => {
         if (ep.id == null) return [];
-        const order = Number(ep.sort_number || ep.number || index + 1);
+        const order = Number(ep.sort_number || ep.number || ((requestedPages.episodes - 1) * 50 + index + 1));
         if (!Number.isInteger(order) || order < 1) return [];
         const episodeTitle = textOrNull(ep.title, 500);
         const numberText = textOrNull(ep.number_text || ep.number, 50);
@@ -516,6 +518,13 @@ Deno.serve(async (req: Request) => {
         workId,
         workTitle: anime.title,
         pagesRequested,
+        requestedPages,
+        nextPages: {
+          episodes: episodeResult.nextPage,
+          casts: castResult.nextPage,
+          staffs: staffResult.nextPage
+        },
+        hasMore: Boolean(episodeResult.nextPage || castResult.nextPage || staffResult.nextPage),
         recordsSeen,
         recordsInsertedOrUpdated: written,
         counts: {
