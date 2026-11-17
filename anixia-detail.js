@@ -4,12 +4,14 @@
   const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const fmt=v=>({tv:"TV",movie:"劇場版",ova:"OVA",ona:"ONA",special:"特別編",web:"Web",other:"その他"}[v]||v||"未登録");
   const statusName=v=>({plan_to_watch:"視聴予定",watching:"視聴中",completed:"視聴済み",on_hold:"中断・保留",dropped:"視聴をやめた"}[v]||v);
+  const roleLabel=v=>({voice_actor:"声優",director:"監督",screenwriter:"脚本",series_composition:"シリーズ構成",character_design:"キャラクターデザイン",producer:"プロデューサー",original_creator:"原作"}[v]||v);
+  const characterRoleLabel=v=>({main:"メインキャラクター",supporting:"サブキャラクター",background:"その他"}[v]||v);
   const id=new URLSearchParams(location.search).get("id");
   let work=null,user=null,userState=null;
 
   function tagList(items, label) {
     if(!items.length)return '<span class="anixia-empty">'+label+'はまだ登録されていません。</span>';
-    return items.map(x=>'<span>'+esc(x.name_ja||x.name||"名称未登録")+(x.role?' · '+esc(x.role):"")+'</span>').join("");
+    return items.map(x=>'<span>'+esc(x.name_ja||x.name||"名称未登録")+(x.role?' · '+esc(roleLabel(x.role)):"")+'</span>').join("");
   }
   function setError(message){$("detail-loading").hidden=true;$("detail-error").hidden=false;$("detail-error").textContent=message;}
   function renderWork(a){
@@ -54,7 +56,7 @@
     const characterItems=a.characters||[];
     $("characters").innerHTML=characterItems.length?characterItems.map(character=>{
       const voiceActors=(character.voice_actors||[]).map(person=>esc(person.name_ja||person.name)).join("、");
-      return '<span>'+esc(character.name_ja||character.name||"名称未登録")+(character.role?' · '+esc(character.role):"")+(voiceActors?' · CV：'+voiceActors:"")+'</span>';
+      return '<span>'+esc(character.name_ja||character.name||"名称未登録")+(character.role?' · '+esc(characterRoleLabel(character.role)):"")+(voiceActors?' · CV：'+voiceActors:"")+'</span>';
     }).join(""):'<span class="anixia-empty">キャラクターはまだ登録されていません。</span>';
     $("staff").innerHTML=tagList(a.staff,"スタッフ");
     $("reviews").innerHTML=a.reviews.length?a.reviews.map(r=>'<article class="anixia-review"><b>'+esc(r.title||"レビュー")+(r.spoiler?" · ネタバレあり":"")+'</b><p>'+esc(r.body)+'</p></article>').join(""):'<div class="anixia-empty">公開レビューはまだありません。</div>';
