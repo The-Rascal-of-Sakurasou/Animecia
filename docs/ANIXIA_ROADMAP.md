@@ -229,3 +229,13 @@ All 6 migration files are present in the repository and applied to the active Su
 - Deployed `sync-annict-work-details` as active version 4 with JWT verification enabled. GitHub commit: `2ebd6f9ccf9039a7a00d0986d1f14d8952c069cc`.
 - Neither importer was executed against Annict during this review. Annict remains pending/disabled; no provider data was imported.
 - Remaining limitations: the detail importer is intentionally capped at four pages per collection and currently stops safely when a collection exceeds that cap; a resumable paged detail-import workflow is still needed. Work-format mapping and richer genre/relation metadata also require source-field validation.
+
+
+### Catalog preview and resumable page sync (2026-11-17)
+- Added mode=preview to sync-annict-catalog. It reads one Annict page, checks which source IDs already exist in ANIXIA, and returns a limited candidate summary including provider media label, proposed format, release year/season, episode count, official URL and current publication state.
+- Preview mode does not create a sync-run row and does not write to any catalog table. It remains behind the same admin authentication, JWT, and source approval/enabled gate as actual sync.
+- Added admin UI controls for read-only preview, normal sync, and continuing from the returned next page. The existing page cursor is retained in the start-page field, and the continuation button appears only when another page exists.
+- Updated the client wrapper to pass the explicit preview/sync mode.
+- GitHub commits: Edge Function 905e09cfc46a5c92f2fbb79c05c658893c75b654; client b392cb12e9cfd21ba7d75459914db4d6c2fae53d; admin UI 5b82bedebf648abe7cb85a13d0859d3fa8005884; admin logic 9f4f4c36d185dc120de9a41401182edf0b179908.
+- Important limitation: resumability currently applies to the works/catalog importer, which can continue from nextPage. The per-work details importer still stops safely when any of its three collections exceeds four pages; resumable detail collection staging is not yet implemented.
+- Annict remains pending and disabled. Preview and sync were not executed against the provider; browser-level UI verification remains outstanding.
