@@ -1,6 +1,22 @@
 -- Restrict shared catalogue dictionaries and relation rows to published works.
 -- Admins retain access to unpublished candidates through explicit policies.
 
+-- Make this migration safely repeatable after an earlier direct SQL application.
+drop policy if exists "People linked to published anime are readable" on public.people;
+drop policy if exists "ANIXIA admins read all people" on public.people;
+drop policy if exists "Characters linked to published anime are readable" on public.characters;
+drop policy if exists "ANIXIA admins read all characters" on public.characters;
+drop policy if exists "Genres linked to published anime are readable" on public.genres;
+drop policy if exists "ANIXIA admins read all genres" on public.genres;
+drop policy if exists "Tags linked to published anime are readable" on public.tags;
+drop policy if exists "ANIXIA admins read all tags" on public.tags;
+drop policy if exists "Studios linked to published anime are readable" on public.studios;
+drop policy if exists "ANIXIA admins read all studios" on public.studios;
+drop policy if exists "ANIXIA admins read all anime staff" on public.anime_staff;
+drop policy if exists "ANIXIA admins read all anime characters" on public.anime_characters;
+drop policy if exists "ANIXIA admins read all anime genres" on public.anime_genres;
+drop policy if exists "ANIXIA admins read all anime tags" on public.anime_tags;
+
 drop policy if exists "People are readable" on public.people;
 create policy "People linked to published anime are readable" on public.people
 for select to anon, authenticated
