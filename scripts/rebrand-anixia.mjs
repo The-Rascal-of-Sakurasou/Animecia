@@ -6,7 +6,7 @@ const textExtensions = new Set([
   ".html", ".htm", ".js", ".mjs", ".css", ".md", ".xml", ".txt",
   ".yml", ".yaml", ".json", ".sql", ".toml", ".webmanifest"
 ]);
-const ignored = new Set([".git", "node_modules", ".next", "dist", "coverage"]);
+const ignored = new Set([".git", ".github", "node_modules", ".next", "dist", "coverage", path.join("supabase", "migrations")]);
 const replacements = [
   [/https:\/\/media-mania\.github\.io\/Animecia\/?/g, "https://the-rascal-of-sakurasou.github.io/anixia/"],
   [/https:\/\/github\.com\/media-mania\/Animecia\/?/g, "https://github.com/The-Rascal-of-Sakurasou/anixia"],
