@@ -49,13 +49,13 @@
         button.disabled=true;
         try{
           await ANIXIA.setAnimePublished(button.dataset.publishAnime,true);
-          let posterStatus="ポスター画像はまだ登録されていません。";
+          let posterStatus="利用条件を確認できる画像は見つかりませんでした。";
           try{
-            const posterResult=await ANIXIA.syncTmdbPosters({limit:1,animeIds:[button.dataset.publishAnime]});
-            posterStatus=posterResult.updated?"ポスター画像も登録しました。":"作品は公開しましたが、ポスター画像は一致しませんでした。";
+            const posterResult=await ANIXIA.syncCommonsPosters({limit:1,animeIds:[button.dataset.publishAnime]});
+            posterStatus=posterResult.updated?"利用条件を確認できる画像を登録しました。":"画像候補が見つからないため、代替表示にしています。";
           }catch(posterError){
-            console.warn("Automatic poster sync was skipped:",posterError);
-            posterStatus="作品は公開しました。ポスター同期は未完了です（TMDB_API_KEYの設定を確認してください）。";
+            console.warn("Commons poster sync was skipped:",posterError);
+            posterStatus="作品は公開しました。画像の自動照合は未完了です。";
           }
           await loadPendingAnime();
           alert("作品を公開しました。\\n"+posterStatus);
@@ -516,23 +516,23 @@
   $("poster-sync-button").addEventListener("click",async()=>{
     const button=$("poster-sync-button");
     button.disabled=true;
-    $("poster-sync-message").textContent="作品名と公開年を照合しています…";
+    $("poster-sync-message").textContent="Wikimedia Commonsで作品名と画像ライセンスを確認しています…";
     try{
-      const result=await ANIXIA.syncTmdbPosters({
+      const result=await ANIXIA.syncCommonsPosters({
         limit:Number($("poster-sync-limit").value)||20,
         force:$("poster-sync-force").checked
       });
       $("poster-sync-message").textContent=[
         "確認作品数: "+result.scanned,
         "画像登録数: "+result.updated,
-        "一致なし: "+(result.unmatched||[]).length,
+        "ライセンス確認済み画像なし: "+(result.unmatched||[]).length,
         "エラー: "+(result.errors||[]).length,
-        (result.unmatched||[]).length?"一致しなかった作品: "+result.unmatched.join("、"):"",
+        (result.unmatched||[]).length?"画像なし: "+result.unmatched.join("、"):"",
         (result.errors||[]).length?"エラー詳細: "+result.errors.join(" / "):""
       ].filter(Boolean).join("\n");
     }catch(e){
       console.error(e);
-      $("poster-sync-message").textContent="同期できませんでした: "+(e.message||"TMDB_API_KEYと管理者権限を確認してください。");
+      $("poster-sync-message").textContent="同期できませんでした: "+(e.message||"管理者権限・接続状態を確認してください。");
     }finally{button.disabled=false;}
   });
   $("preview-button").addEventListener("click",()=>runAnnictSync("preview"));
