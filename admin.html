@@ -32,7 +32,7 @@
 <section id="admin-sync" class="admin-panel" hidden><h2>Annict作品データ同期</h2><p>1回につき最大5ページ、1ページ50作品を取得します。取得した候補は非公開で保存し、管理者が内容を確認してから公開します。</p><p class="admin-warning">Annict APIが提供する作品画像は権利者の許諾を意味しないため取得しません。日本作品・対象形式・成人向けでないこと・情報の正確性を確認してから公開してください。</p><p class="admin-warning">SupabaseのEdge Function Secretsへ <code>ANNICT_ACCESS_TOKEN</code> を登録してください。トークンをこの画面や公開コードへ入力しないでください。</p><p><a href="https://github.com/The-Rascal-of-Sakurasou/anixia/blob/main/docs/ADMIN_SETUP.md" target="_blank" rel="noopener noreferrer">Annictトークンと初回同期の設定手順</a></p>
 <div class="admin-field"><label for="start-page">開始ページ</label><input id="start-page" type="number" min="1" value="1"></div>
 <div class="admin-field"><label for="max-pages">1回の取得ページ数</label><select id="max-pages"><option value="1">1ページ</option><option value="2">2ページ</option><option value="3" selected>3ページ</option><option value="4">4ページ</option><option value="5">5ページ</option></select></div>
-<button id="sync-button" class="admin-button" type="button">同期を開始</button><p id="sync-message" class="admin-message" aria-live="polite"></p>
+<div style="display:flex;gap:10px;flex-wrap:wrap"><button id="preview-button" class="admin-button" type="button">取得候補をプレビュー</button><button id="sync-button" class="admin-button" type="button">同期を開始</button><button id="continue-sync-button" class="admin-button" type="button" hidden>次のページから続行</button></div><p id="sync-message" class="admin-message" aria-live="polite"></p><pre id="sync-preview" class="admin-message" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
 </section>
 <section id="admin-review-moderation" class="admin-panel" hidden>
   <h2>レビュー審査</h2>
