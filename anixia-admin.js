@@ -316,12 +316,29 @@
   });
   $("refresh-episodes").addEventListener("click",loadPendingEpisodes);
   $("refresh-catalog-candidates").addEventListener("click",loadPendingAnime);
-  $("sync-button").addEventListener("click",async()=>{
-    $("sync-button").disabled=true;$("sync-message").textContent="Annictから作品データを取得しています…";
+  async function runAnnictSync(mode){
+    const button=mode==="preview"?$("preview-button"):$("sync-button");
+    button.disabled=true;
+    $("sync-message").textContent=mode==="preview"?"Annictから候補を読み込んでいます（保存はしません）…":"Annictから作品データを取得しています…";
+    $("sync-preview").textContent="";
     try{
       const start=Number($("start-page").value)||1;
       const max=Number($("max-pages").value)||3;
-      const result=await ANIXIA.syncAnnictCatalog(start,max);
+      const result=await ANIXIA.syncAnnictCatalog(start,max,mode);
+      if(mode==="preview"){
+        $("sync-message").textContent="プレビュー: "+result.recordsSeen+"件。データベースへの登録・更新は行っていません。";
+        $("sync-preview").textContent=(result.candidates||[]).map(item=>[
+          (item.alreadyImported?"[登録済み] ":"[新規候補] ")+item.title,
+          "Annict ID: "+item.sourceId,
+          "形式候補: "+item.proposedFormat+" / 元データ: "+(item.sourceMedia||"不明"),
+          "年・シーズン: "+(item.releaseYear||"不明")+" / "+(item.seasonName||"不明"),
+          "話数: "+(item.episodeCount??"不明"),
+          "公式URL: "+(item.officialUrl||"なし"),
+          "公開済み: "+(item.alreadyPublished?"はい":"いいえ")
+        ].join("\n")).join("\n\n");
+        if(result.nextPage)$("sync-message").textContent+=" 次ページ: "+result.nextPage;
+        return;
+      }
       $("sync-message").textContent=[
         "状態: "+result.status,
         "取得ページ数: "+result.pagesRequested,
@@ -330,9 +347,15 @@
         "Annict全体件数: "+(result.totalCount??"不明"),
         "次のページ: "+(result.nextPage??"完了")
       ].join("\n");
+      $("continue-sync-button").hidden=!result.nextPage;
       if(result.nextPage)$("start-page").value=result.nextPage;
-    }catch(e){console.error(e);$("sync-message").textContent="同期に失敗しました: "+(e.message||"設定と同期ログを確認してください。");}
-    finally{$("sync-button").disabled=false;}
-  });
+    }catch(e){
+      console.error(e);
+      $("sync-message").textContent="処理に失敗しました: "+(e.message||"設定と同期ログを確認してください。");
+    }finally{button.disabled=false;}
+  }
+  $("preview-button").addEventListener("click",()=>runAnnictSync("preview"));
+  $("sync-button").addEventListener("click",()=>runAnnictSync("sync"));
+  $("continue-sync-button").addEventListener("click",()=>runAnnictSync("sync"));
   init();
 })();
