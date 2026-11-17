@@ -146,3 +146,11 @@ Open the episode review queue in `admin.html`. Each imported episode is listed w
 - Mushoku Tensei — Studio Bind（Q71811168）
 
 Re:ZeroとMushoku Tenseiの話数は、Wikidataに記載された数値の対象時点・範囲が不明確なため登録していません。人物・声優・スタッフは識別子と役割の照合が済むまで登録しないでください。
+
+
+## 人物・スタッフ初期登録
+Anohanaのスタッフとして、次の2名を登録しています。
+- 長井龍雪（Tatsuyuki Nagai、Q1073727）：監督
+- 岡田麿里（Mari Okada、Q3209229）：脚本
+
+人物のWikidata IDとANIXIA内の作品役割を紐付けています。画像・略歴本文は未取得です。声優・キャラクターについては、識別子と役割を照合してから追加してください。
