@@ -265,6 +265,7 @@ Deno.serve(async (req: Request) => {
       const characterRows: any[] = [];
       const organizationRows: any[] = [];
       const seriesRows: any[] = [];
+      const characterSeriesPairs = new Map<string, string>();
       for (const cast of casts) {
         if (cast.person?.id != null && textOrNull(cast.person.name)) {
           const p = cast.person;
@@ -288,6 +289,7 @@ Deno.serve(async (req: Request) => {
           });
           if (c.series?.id != null && textOrNull(c.series.name)) {
             const s = c.series;
+            characterSeriesPairs.set(String(c.id), String(s.id));
             seriesRows.push({
               source: "annict", source_id: String(s.id),
               name: textOrNull(s.name, 300), name_ro: textOrNull(s.name_ro, 300),
@@ -330,6 +332,16 @@ Deno.serve(async (req: Request) => {
       const characterMap = await getIdMap(admin, "characters", characterRows.map(row => row.source_id));
       const organizationMap = await getIdMap(admin, "organizations", organizationRows.map(row => row.source_id));
       const seriesMap = await getIdMap(admin, "series", seriesRows.map(row => row.source_id));
+
+      for (const [characterSourceId, seriesSourceId] of characterSeriesPairs) {
+        const characterId = characterMap.get(characterSourceId);
+        const seriesId = seriesMap.get(seriesSourceId);
+        if (!characterId || !seriesId) continue;
+        const { error } = await admin.from("characters")
+          .update({ series_id: seriesId })
+          .eq("id", characterId);
+        if (error) throw error;
+      }
 
       await Promise.all([
         upsertExternalIds(admin, "people_external_ids", "person_id", personMap, peopleRows.map(row => row.source_id), "https://annict.com/people/"),
@@ -444,7 +456,7 @@ Deno.serve(async (req: Request) => {
         const role = item._type === "cast"
           ? "声優"
           : (textOrNull(item.role_text || item.role_other, 200) || "スタッフ");
-        const externalId = String(item.id);
+        const externalId = item._type + ":" + String(item.id);
         let relationId = staffRelationMap.get(externalId);
         if (!relationId) {
           const { data: inserted, error } = await admin.from("anime_staff").insert({
