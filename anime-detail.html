@@ -41,6 +41,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="anixia-client.js"></script>
 <script src="anixia-detail.js" defer></script>
+<script src="performance.js" defer></script>
+<link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 </head>
 <body>
 <header class="site-header"><div class="container nav">
@@ -53,7 +56,7 @@
 <div id="detail-error" class="anixia-empty" hidden></div>
 <div id="detail-content" hidden>
 <section class="anixia-detail-hero">
-<img id="poster" class="anixia-detail-poster" alt="">
+<img id="poster" class="anixia-detail-poster" alt="" decoding="async" loading="eager" fetchpriority="high">
 <div>
 <div class="anixia-detail-kicker">ANIME INFORMATION</div>
 <h1 id="title"></h1><div id="subtitle" class="anixia-detail-subtitle"></div>
