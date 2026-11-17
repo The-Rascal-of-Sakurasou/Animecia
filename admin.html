@@ -82,8 +82,9 @@
   <button id="add-relation" class="admin-button" type="button">関連作品を登録</button>
   <p id="relation-message" class="admin-message" aria-live="polite"></p>
   <div id="anime-relations-list"><p class="admin-message">作品を選択してください。</p></div>
-  <h3 style="color:#fff;font-size:15px;margin-top:25px">データ品質チェック</h3>
-  <p>未公開候補を中心に、基本情報の不足を確認します。自動判定は確認漏れを減らす補助であり、公開可否を自動決定するものではありません。</p>
+  <h3 style="color:#fff;font-size:15px;margin-top:25px">データ品質管理</h3>
+  <p>公開・未公開を含む作品とエピソードを検査します。検出結果は確認候補であり、自動で作品の公開状態やデータを書き換えることはありません。</p>
+  <button id="refresh-catalog-quality" class="admin-button" type="button">品質を再検査</button>
   <div id="catalog-quality-check"><p class="admin-message">候補を読み込んでいます…</p></div>
 </section>
 
