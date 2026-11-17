@@ -209,9 +209,62 @@
     return result.data || [];
   }
 
+  async function getQuiz(quizId) {
+    const db = getClient();
+    const quiz = await db.from("quizzes").select("id,title,description,category,difficulty").eq("id", quizId).eq("is_published", true).maybeSingle();
+    if (quiz.error) throw quiz.error;
+    if (!quiz.data) return null;
+    const questions = await db.from("quiz_questions").select("id,question_text,explanation,question_order,points").eq("quiz_id", quizId).order("question_order", { ascending: true });
+    if (questions.error) throw questions.error;
+    const ids = (questions.data || []).map(q => q.id);
+    if (!ids.length) return { ...quiz.data, questions: [] };
+    const choices = await db.from("quiz_choices").select("id,question_id,choice_text,choice_order").in("question_id", ids).order("choice_order", { ascending: true });
+    if (choices.error) throw choices.error;
+    return {
+      ...quiz.data,
+      questions: (questions.data || []).map(q => ({
+        ...q,
+        choices: (choices.data || []).filter(choice => choice.question_id === q.id)
+      }))
+    };
+  }
+
+  async function submitQuiz(quizId, answers) {
+    const result = await getClient().functions.invoke("submit-quiz-attempt", {
+      body: { quizId, answers }
+    });
+    if (result.error) throw result.error;
+    return result.data?.result || null;
+  }
+
+  async function diagnoseAnime(options = {}) {
+    const db = getClient();
+    const genreIds = Array.isArray(options.genreIds) ? options.genreIds.slice(0, 3) : [];
+    let matched = new Map();
+    if (genreIds.length) {
+      const relation = await db.from("anime_genres").select("anime_id,genre_id").in("genre_id", genreIds).range(0, 999);
+      if (relation.error) throw relation.error;
+      (relation.data || []).forEach(row => matched.set(row.anime_id, (matched.get(row.anime_id) || 0) + 1));
+      if (!matched.size) return [];
+    }
+    let query = db.from("anime").select("id,title,title_ja,title_kana,format,release_year,season,poster_url,watchers_count,reviews_count").eq("is_published", true);
+    if (options.format) query = query.eq("format", options.format);
+    if (options.year) query = query.eq("release_year", Number(options.year));
+    if (options.season) query = query.eq("season", options.season);
+    if (matched.size) query = query.in("id", [...matched.keys()]);
+    const result = await query.order("watchers_count", { ascending: false, nullsFirst: false }).limit(60);
+    if (result.error) throw result.error;
+    return (result.data || []).map(row => ({
+      ...row,
+      match_count: matched.get(row.id) || 0,
+      match_score: (matched.get(row.id) || 0) * 100 + (row.watchers_count || 0) + (row.reviews_count || 0) * 0.5
+    })).sort((a, b) => b.match_score - a.match_score);
+  }
+
   w.ANIXIA = Object.freeze({
     URL, getClient, listAnime, getAnime, getGenres, getStudios,
     getCatalogCount, getUser, getUserAnimeState, toggleFavorite,
-    saveWatchEntry, saveRating, getMyDashboard, updateProfile, listQuizzes
+    saveWatchEntry, saveRating, getMyDashboard, updateProfile,
+    listQuizzes, getQuiz, submitQuiz, diagnoseAnime
   });
 })(window);
