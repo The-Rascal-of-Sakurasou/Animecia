@@ -8,7 +8,7 @@
 
   function card(a,meta){
     return `<a class="anixia-library-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}">
-      ${a.poster_url?`<img src="${esc(a.poster_url)}" alt="" loading="lazy">`:'<div style="aspect-ratio:3/4;background:#263b59;display:grid;place-items:center;color:#91a2bb;font-weight:900">ANIXIA</div>'}
+      <div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url,title(a))}</div>
       <div><b>${esc(title(a))}</b><small>${esc(meta||[a.release_year,a.format].filter(Boolean).join(" · "))}</small></div>
     </a>`;
   }
