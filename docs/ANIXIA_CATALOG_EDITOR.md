@@ -45,3 +45,11 @@ The schema, grants, and RLS policies have been checked. At the time of implement
 ## Episode moderation
 
 Open the episode review queue in `admin.html`. Each imported episode is listed with its parent work, episode number, title, source, air date, and synopsis when available. Review the relationship and information before selecting `確認して公開`. Publication is per episode; the parent anime's publication status is not changed.
+
+
+## Annict候補プレビューとページ継続
+- 「取得候補をプレビュー」は、承認済み・有効化済みのデータソースに限り、指定ページの候補を読み取ります。ANIXIAのデータベースには保存しません。
+- プレビューでは作品名、Annict ID、元のメディア表記、ANIXIA側の形式候補、放送年・シーズン、話数、公式URL、登録済み・公開済み状態を確認できます。
+- 「同期を開始」は候補を非公開状態で登録・更新します。結果が partial で次ページが返された場合、「次のページから続行」を押すと、そのページから続けられます。
+- プレビューも同期も、サーバー側で管理者認証とデータソースの承認・有効状態を確認します。利用条件の確認が完了するまでAnnictは無効のままにしてください。
+- 現在、ページ継続に対応するのは作品基本情報です。作品詳細（エピソード・キャスト・スタッフ）の4ページ超の継続取得は未実装であり、上限超過時は安全のため書き込みを停止します。
