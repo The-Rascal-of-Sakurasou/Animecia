@@ -358,3 +358,13 @@ All 6 migration files are present in the repository and applied to the active Su
 - キャラクターのWikidata QIDは未確認のため、ANIXIA内部キー（anixia_curated）を採用し、外部QIDを捏造しない。
 - 作品詳細RPCのvoice_actors配列により、キャラクター欄でCVを表示する構成。
 - 公式・準公式キャスト情報を参照し、全キャラクター網羅ではなく主役級の初期登録とする。
+
+
+### あの花・Angel Beats! メインキャスト登録（2026-11-17）
+
+- あの花の主要キャラクター6人と声優6人を登録。
+- Angel Beats!の主要キャラクター5人と声優5人を登録。
+- 作品詳細APIの characters.voice_actors に配役を紐付け。
+- 人物・キャラクターはANIXIA内部キーで管理。外部QID未確認のため付与しない。
+- アニプレックスの公式キャラクター・キャストページを出典として記録。
+- 全キャスト網羅ではなく、主要キャラクターを対象とした段階的登録。
