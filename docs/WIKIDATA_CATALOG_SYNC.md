@@ -48,3 +48,20 @@ The Cron job reads the secret from vault.decrypted_secrets at runtime and sends 
 
 ## Source limitations
 Wikidata is community-maintained and may contain incomplete or incorrect classifications. A Japan country-of-origin statement and a matching class do not prove that every item meets ANIXIA's editorial inclusion policy. Review each unpublished candidate before publication. The Query Service is rate-limited; this implementation makes one bounded query per scheduled run and uses a descriptive User-Agent.
+
+## Episode synchronization
+
+- Edge Function: `sync-wikidata-episodes` (JWT verification enabled; administrator role is checked inside the function).
+- Admin manual preview/import: ANIXIA Admin → Wikidataエピソード自動収録.
+- The importer checks published Wikidata anime works with a positive episode count and imports episode entities connected through `part of (P361)` and season `has part(s) (P527)` statements.
+- It reads episode labels, Japanese labels, original Japanese titles (`P1476`), publication dates (`P577`) and series ordinals (`P1545`) when present.
+- Imported episode rows are always unpublished. The admin episode-review queue remains the publication gate.
+- Existing episode records from other sources cause that work to be skipped, avoiding mixed-source ordering conflicts.
+- Existing Wikidata episode rows are not overwritten. Newly discovered rows are appended after the existing display order.
+- The public detail page does not infer an episode number from display order. If the source has no ordinal, it shows that the episode number is unregistered.
+- Wikidata episode coverage is incomplete and may omit many episodes. Missing source data is not treated as evidence that an episode does not exist.
+- The Wikidata Query Service is rate-limited; requests are sequential and include a descriptive User-Agent.
+
+### Episode field limitations
+
+The Annict REST API episode endpoint documents episode ID, number, display number, sort number, title and related work/episode references. It does not document per-episode broadcast date or duration fields. ANIXIA therefore leaves those fields blank unless another source provides a verifiable value. See the [Annict episode API specification](https://docs.annict.com/docs/ja/api/v1/episodes).
