@@ -36,7 +36,10 @@
       p_studio_id: options.studioId || null,
       p_sort: options.sort || "newest",
       p_limit: limit,
-      p_offset: offset
+      p_offset: offset,
+      p_tag_ids: Array.isArray(options.tagIds) ? [...new Set(options.tagIds)].slice(0, 30) : [],
+      p_person_query: safeTerm(options.personQuery) || null,
+      p_character_query: safeTerm(options.characterQuery) || null
     });
     if (result.error) throw result.error;
     const data = result.data || [];
@@ -57,6 +60,12 @@
 
   async function getStudios() {
     const result = await getClient().from("studios").select("id,name,name_ja").order("name_ja", { ascending: true }).limit(500);
+    if (result.error) throw result.error;
+    return result.data || [];
+  }
+
+  async function getTags() {
+    const result = await getClient().from("tags").select("id,name,name_ja").order("name_ja", { ascending: true }).limit(500);
     if (result.error) throw result.error;
     return result.data || [];
   }
@@ -395,7 +404,7 @@
 
 
   w.ANIXIA = Object.freeze({
-    URL, getClient, listAnime, getAnime, getGenres, getStudios,
+    URL, getClient, listAnime, getAnime, getGenres, getStudios, getTags,
     getCatalogCount, getPublicAnimeByIds, getUser, getUserAnimeState, toggleFavorite,
     saveWatchEntry, saveRating, getMyDashboard, createReview,
     listPendingReviews, moderateReview, updateProfile, listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog,
