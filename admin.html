@@ -40,7 +40,8 @@
 <div class="admin-field"><label for="detail-staff-page">スタッフ開始ページ</label><input id="detail-staff-page" type="number" min="0" value="1"></div>
 <div style="display:flex;gap:10px;flex-wrap:wrap"><button id="detail-sync-button" class="admin-button" type="button">詳細データを同期</button><button id="detail-continue-button" class="admin-button" type="button" hidden>続きから同期</button></div>
 <p id="detail-sync-message" class="admin-message" aria-live="polite"></p>
-<div style="border-top:1px solid #30435f;margin-top:22px;padding-top:18px">
+<section id="admin-poster-sync" class="admin-panel" hidden>
+<div style="border-top:1px solid #30435f;margin-top:0;padding-top:0">
 <h3 style="color:#fff;font-size:15px">作品ポスター画像の同期（TMDB）</h3>
 <p>公開済み作品のタイトル・公開年を照合し、一致度が高い日本作品のポスターだけを登録します。通常はポスター未登録作品が対象です。</p>
 <p class="admin-warning">事前にSupabase Edge Function Secretsへ <code>TMDB_API_KEY</code> を登録してください。APIキーはGitHubやこの画面に入力しないでください。TMDB APIは非商用利用の条件と出典表示が必要です。</p>
