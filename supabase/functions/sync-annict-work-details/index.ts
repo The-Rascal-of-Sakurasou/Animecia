@@ -452,10 +452,13 @@ Deno.serve(async (req: Request) => {
           }).select("id").single();
           if (error) {
             // A matching relation may have been created by a concurrent import.
-            const { data: found, error: findError } = await admin.from("anime_staff")
+            let relationQuery = admin.from("anime_staff")
               .select("id").eq("anime_id", anime.id).eq("person_id", personId)
-              .eq("role", role)
-              .eq("character_id", characterId).limit(1).maybeSingle();
+              .eq("role", role);
+            relationQuery = characterId
+              ? relationQuery.eq("character_id", characterId)
+              : relationQuery.is("character_id", null);
+            const { data: found, error: findError } = await relationQuery.limit(1).maybeSingle();
             if (findError || !found) throw error;
             relationId = found.id;
           } else {
