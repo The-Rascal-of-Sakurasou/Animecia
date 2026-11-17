@@ -18,7 +18,7 @@
 .admin-warning{border-left:3px solid #f2a51a;padding:10px 12px;background:#241d12;color:#d8c39d;font-size:11px;line-height:1.7}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="anixia-client.js"></script><script src="anixia-admin.js?v=wikidata-sync-20261117" defer></script>
+<script src="anixia-client.js"></script><script src="anixia-admin.js?v=wikidata-episode-sync-20261117" defer></script>
 <link rel="preconnect" href="https://trvnxggqzlhqdhoyiliy.supabase.co" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
@@ -45,7 +45,19 @@
   <pre id="wikidata-sync-preview" class="admin-message" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
   <p><a href="https://www.wikidata.org/wiki/Wikidata:Licensing" target="_blank" rel="noopener noreferrer">Wikidataのライセンス</a> · <a href="https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual/ja" target="_blank" rel="noopener noreferrer">Query Serviceの利用上の注意</a></p>
 </section>
-\n<hr><h3>作品詳細データの同期</h3><p>Annictの作品IDを指定します。エピソード・キャスト・スタッフを各1ページずつ取得し、次ページがある場合はカーソルを更新して続行できます。</p>
+\n
+<section id="wikidata-episode-sync-panel" class="admin-panel">
+  <h2>Wikidataエピソード自動収録</h2>
+  <p>公開済みのWikidata作品を対象に、エピソード名・話数表記・公開日を照合して取得します。取得したエピソードは必ず非公開で登録し、審査後に個別公開します。</p>
+  <p class="admin-warning">Wikidataに登録されたエピソードだけが対象です。未登録・不完全な作品もあります。既存のAnnict等のエピソードがある作品は混在を避けるため自動取込をスキップします。既存レコードや公開状態は上書きしません。</p>
+  <div class="admin-field"><label for="wikidata-episode-limit">1回に確認する作品数</label><select id="wikidata-episode-limit"><option value="3">3作品</option><option value="5">5作品</option><option value="8" selected>8作品</option><option value="10">10作品</option></select></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap"><button id="wikidata-episode-preview-button" class="admin-button" type="button">取得候補をプレビュー</button><button id="wikidata-episode-sync-button" class="admin-button" type="button">エピソードを同期</button></div>
+  <p id="wikidata-episode-sync-message" class="admin-message" aria-live="polite"></p>
+  <pre id="wikidata-episode-sync-preview" class="admin-message" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
+  <p><a href="https://www.wikidata.org/wiki/Wikidata:Licensing" target="_blank" rel="noopener noreferrer">Wikidataのライセンス</a> · <a href="https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples" target="_blank" rel="noopener noreferrer">SPARQLクエリ例</a></p>
+</section>
+
+<hr><h3>作品詳細データの同期</h3><p>Annictの作品IDを指定します。エピソード・キャスト・スタッフを各1ページずつ取得し、次ページがある場合はカーソルを更新して続行できます。</p>
 <div class="admin-field"><label for="detail-work-id">Annict作品ID</label><input id="detail-work-id" type="text" inputmode="numeric" placeholder="例: 12345"></div>
 <div class="admin-field"><label for="detail-episode-page">エピソード開始ページ</label><input id="detail-episode-page" type="number" min="0" value="1"></div>
 <div class="admin-field"><label for="detail-cast-page">キャスト開始ページ</label><input id="detail-cast-page" type="number" min="0" value="1"></div>
