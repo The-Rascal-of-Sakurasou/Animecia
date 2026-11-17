@@ -125,6 +125,46 @@
     return result.data.user || null;
   }
 
+  async function getUserAnimeState(animeId, userId) {
+    const db = getClient();
+    const [favorite, watch, rating] = await Promise.all([
+      db.from("favorites").select("anime_id").eq("anime_id", animeId).eq("user_id", userId).maybeSingle(),
+      db.from("watch_entries").select("status,episodes_watched,notes").eq("anime_id", animeId).eq("user_id", userId).maybeSingle(),
+      db.from("ratings").select("score").eq("anime_id", animeId).eq("user_id", userId).maybeSingle()
+    ]);
+    if (favorite.error || watch.error || rating.error) throw favorite.error || watch.error || rating.error;
+    return { favorite: !!favorite.data, watch: watch.data || null, rating: rating.data || null };
+  }
+
+  async function toggleFavorite(animeId, userId, currentlyFavorite) {
+    const db = getClient();
+    if (currentlyFavorite) {
+      const result = await db.from("favorites").delete().eq("anime_id", animeId).eq("user_id", userId);
+      if (result.error) throw result.error;
+      return false;
+    }
+    const result = await db.from("favorites").insert({ anime_id: animeId, user_id: userId });
+    if (result.error) throw result.error;
+    return true;
+  }
+
+  async function saveWatchEntry(animeId, userId, status, episodesWatched) {
+    const result = await getClient().from("watch_entries").upsert({
+      anime_id: animeId, user_id: userId, status,
+      episodes_watched: Math.max(0, Number(episodesWatched) || 0)
+    }, { onConflict: "user_id,anime_id" });
+    if (result.error) throw result.error;
+    return true;
+  }
+
+  async function saveRating(animeId, userId, score) {
+    const result = await getClient().from("ratings").upsert({
+      anime_id: animeId, user_id: userId, score: Number(score)
+    }, { onConflict: "user_id,anime_id" });
+    if (result.error) throw result.error;
+    return true;
+  }
+
   async function listQuizzes() {
     const result = await getClient().from("quizzes").select("id,title,description,category,difficulty,created_at").eq("is_published", true).order("difficulty", { ascending: true });
     if (result.error) throw result.error;
@@ -133,6 +173,7 @@
 
   w.ANIXIA = Object.freeze({
     URL, getClient, listAnime, getAnime, getGenres, getStudios,
-    getCatalogCount, getUser, listQuizzes
+    getCatalogCount, getUser, getUserAnimeState, toggleFavorite,
+    saveWatchEntry, saveRating, listQuizzes
   });
 })(window);
