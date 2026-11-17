@@ -1,717 +1,134 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ANIXIA｜アニメを探す、評価する、記録する</title>
-<meta name="description" content="ANIXIAは、アニメを探して、評価して、レビューして、自分の視聴履歴を管理できる日本向けアニメデータベースです。">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080d18">
+<title>ANIXIA｜アニメを探す・記録する・楽しむ</title>
+<meta name="description" content="ANIXIAは、アニメ作品を探し、比較し、視聴記録やレビューを管理できる日本語のアニメ総合プラットフォームです。">
 <link rel="canonical" href="https://the-rascal-of-sakurasou.github.io/anixia/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="ANIXIA｜アニメを探す、評価する、記録する">
-<meta property="og:description" content="今期アニメから名作まで。アニメを探して、評価して、記録する。">
+<meta property="og:title" content="ANIXIA｜アニメを探す・記録する・楽しむ">
+<meta property="og:description" content="次に観る作品が見つかる。アニメを探す、知る、記録する、比べる。">
 <meta property="og:url" content="https://the-rascal-of-sakurasou.github.io/anixia/">
 <meta property="og:site_name" content="ANIXIA">
 <meta property="og:locale" content="ja_JP">
-<meta name="theme-color" content="#101114">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="anime-data.js"></script>
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","name":"ANIXIA","url":"https://the-rascal-of-sakurasou.github.io/anixia/","potentialAction":{"@type":"SearchAction","target":"https://the-rascal-of-sakurasou.github.io/anixia/anime.html?search={search_term_string}","query-input":"required name=search_term_string"}}
-</script>
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://trvnxggqzlhqdhoyiliy.supabase.co" crossorigin>
+<link rel="stylesheet" href="site-theme.css?v=anixia-20261117">
 <style>
-:root{--bg:#f4f5f7;--surface:#fff;--ink:#15171b;--muted:#70757d;--line:#e6e8eb;--accent:#5b5ce2;--accent2:#7778f0;--dark:#101114;--shadow:0 10px 30px rgba(16,17,20,.07)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;line-height:1.6}a{color:inherit}button,input{font:inherit}button{cursor:pointer}img{display:block;max-width:100%}.container{width:min(1240px,calc(100% - 32px));margin:auto}
-header{position:sticky;top:0;z-index:50;background:rgba(16,17,20,.94);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.08);color:#fff}.nav{min-height:68px;display:flex;align-items:center;gap:28px}.brand{font-size:22px;font-weight:900;letter-spacing:-.04em;text-decoration:none}.nav-links{display:flex;gap:20px;align-items:center;flex:1}.nav-links a{color:#bfc2c8;text-decoration:none;font-size:13px;font-weight:650}.nav-links a:hover{color:#fff}.nav-actions{display:flex;gap:8px;align-items:center}.nav-btn{border:1px solid #3a3d44;background:#191b20;color:#fff;border-radius:9px;padding:8px 13px;text-decoration:none;font-size:12px;font-weight:750}.nav-btn.primary{background:#fff;color:#111;border-color:#fff}.mobile-nav{display:none}
-.hero{margin:26px 0 18px;border-radius:24px;overflow:hidden;background:radial-gradient(circle at 85% 10%,rgba(119,120,240,.38),transparent 32%),linear-gradient(135deg,#111217,#1a1c25);color:#fff;box-shadow:0 18px 45px rgba(16,17,20,.16)}.hero-inner{padding:58px 54px 52px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.8fr);gap:45px;align-items:end}.eyebrow{color:#aeb1ff;font-size:12px;font-weight:800;letter-spacing:.14em}.hero h1{font-size:clamp(34px,5vw,62px);line-height:1.08;letter-spacing:-.055em;margin:10px 0 18px;max-width:800px}.hero p{color:#c8cad0;margin:0;max-width:680px;font-size:15px}.hero-search{background:#fff;border-radius:15px;padding:7px;display:flex;box-shadow:0 14px 35px rgba(0,0,0,.22)}.hero-search input{border:0;outline:0;min-width:0;flex:1;padding:12px 13px;color:#111}.hero-search button{border:0;background:#111;color:#fff;border-radius:10px;padding:0 19px;font-weight:800}.hero-links{display:none}
-.hero-side{border:1px solid rgba(255,255,255,.12);border-radius:17px;padding:19px;background:rgba(255,255,255,.05)}.hero-side-label{font-size:11px;color:#9ea2ad;font-weight:800}.hero-side strong{display:block;font-size:27px;margin:4px 0}.hero-side span{font-size:12px;color:#b9bbc3}.hero-side-row{display:flex;justify-content:space-between;gap:15px;border-top:1px solid rgba(255,255,255,.1);padding-top:12px;margin-top:12px}
-.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 34px}.quick a{background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:18px;text-decoration:none;transition:.18s;box-shadow:0 3px 12px rgba(0,0,0,.03)}.quick a:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:#d7d9ff}.quick small{color:#8a8e96;font-size:10px;font-weight:850;letter-spacing:.1em}.quick strong{display:block;margin-top:4px;font-size:15px}.quick span{display:block;color:var(--muted);font-size:11px;margin-top:4px}
-.section{margin:38px 0}.section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:15px}.section-title{margin:0;font-size:23px;letter-spacing:-.035em}.section-desc{margin:4px 0 0;color:var(--muted);font-size:12px}.more{font-size:12px;font-weight:750;text-decoration:none;color:#565b65}.more:hover{text-decoration:underline}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 3px 14px rgba(0,0,0,.03)}
-.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px}.card{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;transition:.18s;box-shadow:0 3px 12px rgba(0,0,0,.035)}.card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:#d8d9f8}.poster{aspect-ratio:3/4;background:#e9eaed;position:relative;overflow:hidden}.poster img{width:100%;height:100%;object-fit:cover}.poster.noimg{display:flex;align-items:center;justify-content:center;color:#92969e;font-size:11px}.badge{position:absolute;top:8px;left:8px;background:rgba(17,18,22,.84);color:#fff;padding:4px 7px;border-radius:7px;font-size:10px;font-weight:800}.score{position:absolute;right:8px;top:8px;background:#fff;color:#111;padding:4px 7px;border-radius:7px;font-size:10px;font-weight:900;box-shadow:0 2px 8px rgba(0,0,0,.14)}.card-body{padding:11px}.card-title{font-size:13px;font-weight:800;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.meta{font-size:10px;color:#858991;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.loading,.empty{grid-column:1/-1;padding:26px;text-align:center;color:#858991;font-size:12px}.skeleton-wrap{display:grid;gap:9px}.skeleton{height:72px;border-radius:10px;background:linear-gradient(90deg,#f0f1f3 25%,#fafafa 37%,#f0f1f3 63%);background-size:400% 100%;animation:skeleton-shimmer 1.25s ease-in-out infinite}.skeleton-card{height:210px;border-radius:12px;background:linear-gradient(90deg,#eef0f3 25%,#fafafa 37%,#eef0f3 63%);background-size:400% 100%;animation:skeleton-shimmer 1.25s ease-in-out infinite}.skeleton-pill{height:36px;border-radius:10px;background:linear-gradient(90deg,#eef0f3 25%,#fafafa 37%,#eef0f3 63%);background-size:400% 100%;animation:skeleton-shimmer 1.25s ease-in-out infinite}@keyframes skeleton-shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
-.rank-layout{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}.rank-list{padding:7px}.rank-item{display:grid;grid-template-columns:42px 58px minmax(0,1fr) auto;align-items:center;gap:12px;padding:10px;border-radius:11px;text-decoration:none}.rank-item:hover{background:#f5f6f8}.rank-no{font-size:17px;font-weight:900;text-align:center;color:#8b8f98}.rank-item:nth-child(1) .rank-no{color:#5b5ce2}.rank-thumb{width:58px;height:70px;object-fit:cover;border-radius:7px;background:#eee}.rank-title{font-size:13px;font-weight:800}.rank-meta{font-size:10px;color:#888;margin-top:3px}.rank-score{font-weight:900;font-size:14px}.rank-score span{display:block;color:#999;font-size:9px;text-align:right}
-.review-box{padding:22px}.review-intro{display:flex;justify-content:space-between;gap:20px;align-items:start}.review-quote{font-size:17px;font-weight:750;line-height:1.7;margin:0}.review-note{font-size:11px;color:#888}.review-link{display:block;margin-top:17px;padding-top:15px;border-top:1px solid var(--line);text-decoration:none}.review-link strong{font-size:12px}.review-link p{font-size:11px;color:#666;margin:4px 0 0}
-.discovery{display:grid;grid-template-columns:1fr 1fr;gap:14px}.discover-card{padding:25px;text-decoration:none;min-height:155px;position:relative;overflow:hidden}.discover-card:after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;right:-45px;bottom:-65px;background:#f0f0ff}.discover-card h3{margin:6px 0 4px;font-size:20px}.discover-card p{margin:0;color:#70747d;font-size:12px;max-width:470px}.discover-card small{font-weight:850;color:#6265d9;font-size:10px;letter-spacing:.08em}
-.genre-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.genre{padding:12px 10px;text-align:center;background:#fff;border:1px solid var(--line);border-radius:10px;text-decoration:none;font-size:11px;font-weight:750}.genre:hover{border-color:#c9caff;background:#f8f8ff}
-.features{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.feature{padding:21px}.feature b{font-size:12px;color:#6265d9}.feature h3{font-size:16px;margin:7px 0}.feature p{font-size:11px;color:#72767e;margin:0}
-footer{margin-top:55px;background:#111217;color:#b9bbc1}.footer-inner{padding:34px 0;display:flex;justify-content:space-between;gap:25px}.footer-brand{color:#fff;font-weight:900;font-size:19px}.footer-links{display:flex;gap:15px;flex-wrap:wrap}.footer-links a{font-size:11px;color:#aeb1b8;text-decoration:none}.footer-copy{font-size:10px;color:#777b83;margin-top:20px}
-@media(max-width:950px){.hero-inner{grid-template-columns:1fr}.hero-side{max-width:560px}.cards{grid-template-columns:repeat(4,1fr)}.rank-layout{grid-template-columns:1fr}.genre-grid{grid-template-columns:repeat(4,1fr)}}
-@media(max-width:700px){.container{width:min(100% - 20px,1240px)}.nav{min-height:60px}.nav-links{display:none}.mobile-nav{display:block}.nav-actions .nav-btn:not(.primary){display:none}.brand{font-size:20px}.hero{margin-top:14px;border-radius:18px}.hero-inner{padding:35px 22px 25px;gap:25px}.hero h1{font-size:38px}.hero-search{width:100%}.quick{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:repeat(2,1fr);gap:10px}.rank-item{grid-template-columns:31px 48px minmax(0,1fr) auto;gap:8px}.rank-thumb{width:48px;height:60px}.discovery,.features{grid-template-columns:1fr}.genre-grid{grid-template-columns:repeat(3,1fr)}.section-title{font-size:20px}.footer-inner{display:block}.footer-links{margin-top:14px}}
-.home-hero{display:grid;grid-template-columns:minmax(0,1.55fr) 360px;gap:24px;background:#101827;color:#fff;border-radius:0 0 4px 4px;padding:58px 48px;margin-bottom:38px;position:relative;overflow:hidden}.home-hero:after{content:"";position:absolute;width:360px;height:360px;border:1px solid rgba(245,158,11,.22);border-radius:50%;right:-150px;bottom:-180px}.home-hero-copy{position:relative;z-index:1}.home-hero h1{font-size:clamp(34px,5vw,58px);line-height:1.15;letter-spacing:-.04em;margin:10px 0 20px}.home-hero h1 span{color:#f59e0b}.home-hero p{max-width:720px;color:#c9d0da;margin:0 0 25px;font-size:15px}.hero-search{display:flex;max-width:680px;background:#fff;padding:5px;border-radius:4px}.hero-search input{flex:1;border:0;outline:0;padding:13px 14px;color:#17191d;min-width:0}.hero-search button{border:0;background:#e87900;color:#fff;font-weight:800;padding:0 24px;border-radius:3px}.hero-shortcuts{display:flex;gap:16px;flex-wrap:wrap;margin-top:17px}.hero-shortcuts a{color:#dbe1e9;text-decoration:none;font-size:13px;border-bottom:1px solid #566174;padding-bottom:2px}.hero-stat-card{background:#18243a;border:1px solid #2a3850;padding:25px;align-self:stretch;position:relative;z-index:1}.hero-stat-label{font-size:10px;letter-spacing:.16em;color:#8f9bad}.hero-stat-card>strong{display:block;font-size:40px;line-height:1.1;margin:10px 0 2px}.hero-stat-card>span{font-size:12px;color:#9ca8b8}.hero-stat-grid{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #304058;margin-top:22px;padding-top:17px;gap:12px}.hero-stat-grid b{display:block;font-size:21px}.hero-stat-grid small{color:#9ca8b8;font-size:11px}.hero-database-link{display:block;color:#fff;text-decoration:none;margin-top:20px;font-size:13px;font-weight:700}.home-section{padding:0 0 52px}.season-feature{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:14px}.feature-anime{display:grid;grid-template-columns:96px 1fr;min-height:155px;background:#fff;border:1px solid #e4e7eb;text-decoration:none;color:inherit}.feature-anime .poster{height:155px;border-radius:0}.feature-anime .poster img{height:100%;width:100%;object-fit:cover}.feature-copy{padding:16px}.feature-rank{font-size:11px;font-weight:800;color:#e87900}.feature-copy h3{font-size:15px;line-height:1.45;margin:7px 0}.feature-score{font-weight:900;font-size:20px}.feature-score span{font-size:10px;color:#7a828d;font-weight:500;margin-left:4px}.season-ranking{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;background:#fff;border:1px solid #e4e7eb}.season-row{display:grid;grid-template-columns:42px 58px 1fr auto;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #edf0f2;text-decoration:none;color:inherit;min-width:0}.season-row .rank-no{font-weight:900;color:#7c8490}.season-row img,.season-row .row-thumb{width:58px;height:76px;object-fit:cover;background:#e9edf2}.season-row .row-title{font-size:13px;font-weight:800;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.season-row .row-meta{font-size:10px;color:#818894;margin-top:3px}.season-row .row-score{text-align:right;font-size:17px;font-weight:900;color:#e87900}.season-row .row-score small{display:block;font-size:9px;color:#8b929c;font-weight:500}.home-side-panel{background:#101827;color:#fff;padding:28px;display:flex;flex-direction:column}.home-side-panel .eyebrow{color:#f59e0b}.home-side-panel h3{font-size:25px;margin:7px 0 10px}.home-side-panel p{color:#b9c2cf;font-size:13px;margin:0 0 20px}.side-action{color:#fff;text-decoration:none;border-top:1px solid #2b394e;padding:13px 0;font-size:13px;font-weight:700}.home-cta{display:flex;justify-content:space-between;align-items:center;gap:30px;background:#18243a;color:#fff;padding:34px 38px;margin:0 0 50px}.home-cta h2{margin:5px 0 7px;font-size:27px}.home-cta p{margin:0;color:#bdc6d3;font-size:13px}.cta-actions{display:flex;flex-direction:column;gap:8px;min-width:210px}.cta-actions a{color:#fff;text-decoration:none;border:1px solid #40516a;padding:10px 14px;font-size:12px;font-weight:700;text-align:center}.cta-actions a:first-child{background:#e87900;border-color:#e87900}.loading,.empty{padding:30px;text-align:center;color:#7b838e}@media(max-width:900px){.home-hero{grid-template-columns:1fr;padding:38px 28px}.season-feature{grid-template-columns:1fr}.season-ranking{grid-template-columns:1fr}.home-cta{flex-direction:column;align-items:flex-start}.cta-actions{width:100%}}@media(max-width:640px){.home-hero{padding:30px 18px;margin-left:-16px;margin-right:-16px}.home-hero h1{font-size:34px}.hero-search input{font-size:13px}.hero-search button{padding:0 16px}.hero-shortcuts{gap:11px}.feature-anime{grid-template-columns:76px 1fr}.feature-anime .poster{height:145px}.season-row{grid-template-columns:28px 48px 1fr auto;padding:9px}.season-row img,.season-row .row-thumb{width:48px;height:64px}.home-cta{padding:26px 20px}.home-cta h2{font-size:22px}}.home-v4 .card{position:relative}.home-v4 .quick-add{position:absolute;right:7px;bottom:48px;width:30px;height:30px;border:0;border-radius:50%;background:#e87900;color:#fff;font-weight:900;box-shadow:0 3px 9px rgba(0,0,0,.18);z-index:3}.home-v4 .quick-add.added{background:#198754}.home-v4 .home-reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.home-v4 .home-review{background:#fff;border:1px solid #e4e7eb;padding:16px;text-decoration:none;color:inherit;min-height:145px}.home-v4 .home-review-top{display:flex;justify-content:space-between;gap:10px;font-size:12px}.home-v4 .home-review-top span{color:#e87900;font-weight:900}.home-v4 .home-review>b{display:block;margin-top:9px;font-size:13px}.home-v4 .home-review p{font-size:11px;color:#68717e;line-height:1.6;margin:6px 0}.home-v4 .home-review small{color:#89909a}@media(max-width:700px){.home-v4 .home-reviews{grid-template-columns:1fr}} 
-/* Homepage refinement: clearer hierarchy and responsive discovery */
-.home-v4{padding-bottom:28px}
-.home-section{margin-top:42px}
-.home-section .section-head{align-items:flex-end;gap:16px;margin-bottom:18px}
-.home-section .section-title{letter-spacing:-.04em}
-.home-section .section-desc{max-width:620px}
-.home-quick>a,.home-discover>a,.home-rank-side,.home-section .home-review{border-radius:14px}
-.home-quick>a{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
-.home-quick>a:hover{transform:translateY(-2px);border-color:#d8d9ff;box-shadow:0 10px 24px rgba(18,20,30,.07)}
-.season-row{border-radius:12px;transition:background .16s ease,border-color .16s ease}
-.season-row:hover{background:#f7f7ff;border-color:#dedfff}
-.season-row .row-title{line-height:1.45}
-.home-rank-side{border:1px solid #e3e5eb}
-.home-discover>a{transition:transform .18s ease,box-shadow .18s ease}
-.home-discover>a:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(18,20,30,.07)}
-.home-v4 .home-review{border-radius:13px;transition:transform .18s ease,box-shadow .18s ease}
-.home-v4 .home-review:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(18,20,30,.07)}
-.home-cta{border-radius:18px;overflow:hidden}
-@media(max-width:900px){
- .home-section{margin-top:34px}
- .home-v4 .home-reviews{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:640px){
- .home-section{margin-top:28px}
- .home-section .section-head{align-items:flex-start}
- .home-section .section-title{font-size:25px}
- .home-v4 .home-reviews{grid-template-columns:1fr}
- .home-rank-layout{gap:14px}
-}
-
+.anixia-home{max-width:1240px;width:calc(100% - 36px);margin:0 auto;padding-bottom:64px}
+.anixia-nav{display:flex;align-items:center;gap:26px;min-height:72px}
+.anixia-brand{font-size:25px;font-weight:950;letter-spacing:-.055em;text-decoration:none;color:#fff}
+.anixia-brand span{color:#f2a51a}
+.anixia-navlinks{display:flex;align-items:center;gap:20px;flex:1}
+.anixia-navlinks a{font-size:13px;color:#c4cede;text-decoration:none;font-weight:700}
+.anixia-navlinks a:hover{color:#f2a51a}
+.anixia-account{border:1px solid #3a4b64;border-radius:10px;padding:9px 14px;color:#fff;text-decoration:none;font-size:12px;font-weight:800}
+.anixia-hero{margin:30px 0 22px;padding:54px;border:1px solid #263852;border-radius:22px;background:radial-gradient(circle at 84% 5%,rgba(242,165,26,.14),transparent 28%),linear-gradient(135deg,#101c30,#172942 65%,#1b2c45);display:grid;grid-template-columns:minmax(0,1.5fr) minmax(220px,.55fr);gap:36px;align-items:center}
+.anixia-kicker{font-size:11px;font-weight:900;letter-spacing:.18em;color:#f2b84d}
+.anixia-hero h1{font-size:clamp(36px,5vw,60px);line-height:1.1;letter-spacing:-.06em;margin:12px 0 18px;color:#fff}
+.anixia-hero p{color:#c5d0df;font-size:14px;line-height:1.9;max-width:620px;margin:0 0 24px}
+.anixia-search{display:flex;gap:8px;background:#fff;border-radius:12px;padding:7px;max-width:650px}
+.anixia-search input{flex:1;min-width:0;border:0!important;background:transparent!important;color:#182337!important;padding:11px 13px;font-size:14px}
+.anixia-search button{border:0;border-radius:8px;background:#f2a51a;color:#1b2230;font-weight:900;padding:0 22px}
+.anixia-hero-stat{border:1px solid #344861;background:rgba(7,15,28,.38);border-radius:16px;padding:24px}
+.anixia-hero-stat small{color:#aab8cb;font-size:10px;letter-spacing:.14em;font-weight:800}
+.anixia-hero-stat strong{display:block;font-size:42px;line-height:1.2;margin:8px 0;color:#fff}
+.anixia-hero-stat p{font-size:11px;color:#aab8cb;margin:0}
+.anixia-shortcuts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:0 0 38px}
+.anixia-shortcut{display:block;padding:18px;border:1px solid #293b56;border-radius:14px;background:#111b2b;color:#fff;text-decoration:none;transition:.18s}
+.anixia-shortcut:hover{transform:translateY(-3px);border-color:#f2a51a;background:#17243a}
+.anixia-shortcut small{font-size:10px;color:#f2b84d;font-weight:900;letter-spacing:.12em}
+.anixia-shortcut strong{display:block;margin-top:7px;font-size:15px}
+.anixia-shortcut span{display:block;margin-top:5px;color:#a3b0c2;font-size:11px;line-height:1.6}
+.anixia-section{margin:38px 0}
+.anixia-section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:15px}
+.anixia-section-head h2{font-size:22px;letter-spacing:-.035em;margin:0;color:#f2f5fa}
+.anixia-section-head p{font-size:11px;color:#a3b0c2;margin:5px 0 0}
+.anixia-section-head a{font-size:12px;color:#f2b84d;text-decoration:none;font-weight:800}
+.anixia-work-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px}
+.anixia-work-card{display:block;min-width:0;border:1px solid #293b56;border-radius:13px;overflow:hidden;background:#111b2b;color:#fff;text-decoration:none;transition:.18s}
+.anixia-work-card:hover{transform:translateY(-3px);border-color:#f2a51a;box-shadow:0 12px 26px rgba(0,0,0,.2)}
+.anixia-poster{aspect-ratio:3/4;background:linear-gradient(145deg,#263b59,#101827);display:flex;align-items:center;justify-content:center;color:#8293ad;font-weight:950;letter-spacing:.14em;overflow:hidden}
+.anixia-poster img{width:100%;height:100%;object-fit:cover}
+.anixia-work-copy{padding:11px}
+.anixia-work-copy strong{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;line-height:1.5}
+.anixia-work-copy small{display:block;margin-top:6px;color:#9eacc0;font-size:10px}
+.anixia-state{grid-column:1/-1;padding:25px;border:1px dashed #354862;border-radius:12px;color:#a3b0c2;text-align:center;font-size:12px}
+.anixia-genre-links{display:flex;flex-wrap:wrap;gap:9px}
+.anixia-genre-links a{border:1px solid #30435f;background:#111b2b;color:#dbe4f0;border-radius:999px;padding:9px 14px;font-size:12px;text-decoration:none}
+.anixia-genre-links a:hover{border-color:#f2a51a;color:#f2b84d}
+.anixia-footer{border-top:1px solid #293b56;padding:28px 0;color:#8f9db1;font-size:11px}
+.anixia-footer strong{color:#fff;font-size:16px}
+@media(max-width:900px){.anixia-hero{grid-template-columns:1fr;padding:36px}.anixia-hero-stat{max-width:300px}.anixia-shortcuts{grid-template-columns:repeat(3,1fr)}.anixia-work-grid{grid-template-columns:repeat(3,1fr)}.anixia-navlinks{gap:12px}}
+@media(max-width:650px){.anixia-home{width:calc(100% - 22px)}.anixia-nav{min-height:60px;gap:10px}.anixia-brand{font-size:21px}.anixia-navlinks{display:none}.anixia-account{margin-left:auto}.anixia-hero{margin:16px 0 18px;padding:27px 20px;border-radius:16px;gap:22px}.anixia-hero h1{font-size:36px}.anixia-hero p{font-size:13px}.anixia-search button{padding:0 14px}.anixia-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.anixia-shortcut{padding:14px}.anixia-work-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.anixia-section{margin:30px 0}.anixia-section-head h2{font-size:19px}}
 </style>
-<style id="animecia-home-v4">
-.home-v4 .home-section{margin:26px 0}
-.home-v4 .home-section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:0 0 11px}
-.home-v4 .home-section-head h2{margin:0;font-size:21px;font-weight:950;letter-spacing:-.035em}
-.home-v4 .home-section-head a{font-size:12px;font-weight:850;color:#e87900;text-decoration:none}
-.home-v4 .home-section-head a:hover{text-decoration:underline}
- .home-v4 .quick-navigation a,.home-v4 .quick a{min-height:92px;padding:17px!important}
-.home-v4 .quick-navigation{gap:10px!important}
-.home-v4 .feature-grid,.home-v4 .home-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.home-v4 .home-tools{display:grid;grid-template-columns:1.35fr .65fr;gap:14px}
-.home-v4 .tool-panel{padding:20px}
-.home-v4 .tool-panel h3{margin:0 0 6px;font-size:17px}
-.home-v4 .tool-panel p{margin:0;color:#70757d;font-size:11px}
-.home-v4 .tool-links{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:13px}
-.home-v4 .tool-link{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border:1px solid #e4e7eb;border-radius:9px;text-decoration:none;font-size:11px;font-weight:800;background:#fff}
-.home-v4 .tool-link:hover{border-color:#f0b36d;background:#fffaf5}
-.home-v4 .tool-link span{color:#e87900;font-size:10px}
-.home-v4 .section-card{padding:18px}
-.home-v4 .section-card .section-head{margin-bottom:12px}
-.home-v4 .database-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.home-v4 .database-stat{padding:13px;background:#f7f8fa;border:1px solid #e7e9ec;border-radius:9px}
-.home-v4 .database-stat b{display:block;font-size:18px}
-.home-v4 .database-stat span{font-size:10px;color:#777}
-@media(max-width:900px){.home-v4 .home-tools{grid-template-columns:1fr}}
-@media(max-width:470px){.home-v4 .tool-links{grid-template-columns:1fr}.home-v4 .database-stats{grid-template-columns:1fr}}
-.home-v4 .feature-grid>*{min-width:0}
-@media(max-width:900px){.home-v4 .feature-grid,.home-v4 .home-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:470px){.home-v4 .feature-grid,.home-v4 .home-grid{grid-template-columns:1fr 1fr;gap:8px}}
-</style>
-<style id="animecia-home-v8">
-/* Homepage: compact Japanese portal layout */
-.home-v4 .home-hero{grid-template-columns:minmax(0,1fr) 285px;padding:40px 38px;margin-top:18px;margin-bottom:30px}
-.home-v4 .home-hero h1{font-size:clamp(30px,4vw,48px);margin:7px 0 14px}
-.home-v4 .home-hero-copy>p{font-size:13px;max-width:610px;margin-bottom:18px}
-.home-v4 .hero-search{max-width:700px}
-.home-v4 .hero-shortcuts{gap:8px;margin-top:12px}
-.home-v4 .hero-shortcuts a{font-size:11px;padding:6px 9px;border:1px solid #334158;border-radius:999px}
-.home-v4 .hero-stat-card{padding:20px}
-.home-v4 .hero-stat-card>strong{font-size:32px}
-.home-v4 .home-section{padding-bottom:34px;margin:20px 0}
-.home-v4 .section-head{margin-bottom:9px}
-.home-v4 .section-title{font-size:19px}
-.home-v4 .home-section .section-desc{display:none}
-.home-v4 .season-feature{gap:10px;margin-bottom:9px}
-.home-v4 .feature-anime{min-height:132px;grid-template-columns:78px 1fr}
-.home-v4 .feature-anime .poster{height:132px}
-.home-v4 .feature-copy{padding:12px}
-.home-v4 .feature-copy h3{font-size:13px;margin:5px 0}
-.home-v4 .feature-score{font-size:18px}
-.home-v4 .season-ranking{grid-template-columns:1fr 1fr}
-.home-v4 .season-row{grid-template-columns:30px 45px minmax(0,1fr) auto;padding:8px 10px}
-.home-v4 .season-row img,.home-v4 .season-row .row-thumb{width:45px;height:60px}
-.home-v4 .season-row .row-title{font-size:12px}
-.home-v4 .season-row .row-score{font-size:15px}
-.home-v4 .rank-layout{grid-template-columns:minmax(0,1fr) 260px;gap:10px}
-.home-v4 .rank-list{padding:4px}
-.home-v4 .rank-item{grid-template-columns:30px 48px minmax(0,1fr) auto;padding:8px}
-.home-v4 .rank-thumb{width:48px;height:60px}
-.home-v4 .rank-title{font-size:12px}
-.home-v4 .home-side-panel{padding:20px}
-.home-v4 .home-side-panel h3{font-size:20px}
-.home-v4 .home-side-panel p{display:none}
-.home-v4 .cards{grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
-.home-v4 .card-body{padding:8px}
-.home-v4 .card-title{font-size:11px}
-.home-v4 .meta{font-size:9px}
-.home-v4 .genre-grid{grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}
-.home-v4 .genre{padding:9px 6px;font-size:10px}
-.home-v4 .home-cta{padding:23px 28px;margin-bottom:30px}
-.home-v4 .home-cta h2{font-size:21px;margin:3px 0}
-.home-v4 .home-cta p{display:none}
-.home-v4 .cta-actions{min-width:170px}
-.home-v4 .cta-actions a{padding:8px 11px;font-size:11px}
-@media(max-width:1050px){
- .home-v4 .cards{grid-template-columns:repeat(5,minmax(0,1fr))}
- .home-v4 .genre-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
-}
-@media(max-width:820px){
- .home-v4 .home-hero{grid-template-columns:1fr;padding:30px 24px}
- .home-v4 .hero-stat-card{display:none}
- .home-v4 .rank-layout{grid-template-columns:1fr}
- .home-v4 .home-side-panel{display:none}
- .home-v4 .cards{grid-template-columns:repeat(4,minmax(0,1fr))}
- .home-v4 .genre-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
-}
-@media(max-width:600px){
- .home-v4 .season-ranking{grid-template-columns:1fr}
- .home-v4 .cards{grid-template-columns:repeat(3,minmax(0,1fr))}
- .home-v4 .genre-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
- .home-v4 .home-hero{margin-left:-11px;margin-right:-11px;border-radius:0 0 12px 12px}
-}
-@media(max-width:430px){
- .home-v4 .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
- .home-v4 .genre-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
- .home-v4 .home-hero h1{font-size:30px}
-}
-</style>
-<style id="animecia-home-function-scroll-v1">.home-function-scroll{width:100%;background:#fff;border-bottom:1px solid #e5e7eb;box-shadow:0 2px 10px rgba(17,24,39,.04);overflow:hidden}.home-function-scroll-inner{width:min(1240px,calc(100% - 32px));margin:auto;display:flex;gap:8px;overflow-x:auto;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:9px 0}.home-function-scroll-inner::-webkit-scrollbar{display:none}.home-function-scroll-inner a{flex:0 0 auto;display:flex;align-items:baseline;gap:7px;padding:8px 13px;border:1px solid #e2e6eb;border-radius:999px;background:#f8f9fb;text-decoration:none;color:#20242a;transition:.16s}.home-function-scroll-inner a:hover{border-color:#e1b77d;background:#fff8f0;transform:translateY(-1px)}.home-function-scroll-inner b{font-size:11px;font-weight:900}.home-function-scroll-inner span{font-size:9px;color:#8a919b}@media(max-width:600px){.home-function-scroll-inner{width:calc(100% - 20px);padding:8px 0;gap:6px}.home-function-scroll-inner a{padding:7px 11px}.home-function-scroll-inner b{font-size:10px}.home-function-scroll-inner span{font-size:8px}}</style>
-<style id="animecia-home-v9">
-.home-v4{padding-bottom:20px}.home-v4 .home-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 28px}.home-v4 .home-quick a,.home-v4 .home-discover a{background:#fff;border:1px solid #e2e6eb;border-radius:11px;padding:15px 16px;text-decoration:none;box-shadow:0 4px 15px rgba(17,24,39,.045);transition:.18s}.home-v4 .home-quick a:hover,.home-v4 .home-discover a:hover{transform:translateY(-2px);border-color:#e1c19e;box-shadow:0 10px 25px rgba(17,24,39,.08)}.home-v4 .home-quick span,.home-v4 .home-discover span{display:block;color:#e87900;font-size:9px;font-weight:950;letter-spacing:.12em}.home-v4 .home-quick b,.home-v4 .home-discover b{display:block;margin-top:5px;font-size:14px}.home-v4 .home-quick small,.home-v4 .home-discover small{display:block;margin-top:3px;color:#737c88;font-size:10px}.home-v4 .home-rank-layout{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:10px}.home-v4 .home-rank-list{background:#fff;border:1px solid #e2e6eb;border-radius:11px;overflow:hidden}.home-v4 .home-rank-row{display:grid;grid-template-columns:34px 48px minmax(0,1fr) auto;align-items:center;gap:9px;padding:8px 10px;border-bottom:1px solid #edf0f3;text-decoration:none}.home-v4 .home-rank-row:last-child{border-bottom:0}.home-v4 .home-rank-row:hover{background:#fafbfc}.home-v4 .home-rank-row .rank-no{font-size:14px;color:#7d8793;font-weight:950;text-align:center}.home-v4 .home-rank-row:first-child .rank-no{color:#e87900;font-size:19px}.home-v4 .home-rank-row img,.home-v4 .home-rank-row .no-image{width:48px;height:62px;object-fit:cover;border-radius:5px;background:#edf0f4}.home-v4 .home-rank-row .rank-title{font-size:12px;font-weight:900;line-height:1.4;min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.home-v4 .home-rank-row .rank-meta{font-size:9px;color:#808894;margin-top:3px}.home-v4 .home-rank-row .rank-score{color:#e87900;font-size:14px;font-weight:950}.home-v4 .home-rank-row .rank-score small{display:block;color:#89919c;font-size:8px;text-align:right}.home-v4 .home-rank-side{background:#101827;color:#fff;border-radius:11px;padding:20px}.home-v4 .home-rank-side b{font-size:16px}.home-v4 .home-rank-side p{font-size:11px;color:#bdc7d4;line-height:1.65;margin:7px 0 12px}.home-v4 .home-rank-side a{display:block;padding:10px 0;border-top:1px solid #2c394c;color:#fff;font-size:11px;font-weight:850}.home-v4 .home-discover{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.home-v4 .home-discover a{min-height:100px}@media(max-width:820px){.home-v4 .home-quick{grid-template-columns:repeat(2,1fr)}.home-v4 .home-rank-layout{grid-template-columns:1fr}.home-v4 .home-rank-side{display:none}.home-v4 .home-discover{grid-template-columns:1fr}}@media(max-width:480px){.home-v4 .home-quick{gap:7px}.home-v4 .home-quick a{padding:12px}.home-v4 .home-quick b{font-size:12px}.home-v4 .home-quick small{font-size:9px}.home-v4 .home-rank-row{grid-template-columns:27px 43px minmax(0,1fr) auto;padding:7px}.home-v4 .home-rank-row img,.home-v4 .home-rank-row .no-image{width:43px;height:56px}}
-</style><style id="animecia-main-nav-v1">
-.animecia-main-nav{display:flex;align-items:center;gap:2px;white-space:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.animecia-main-nav::-webkit-scrollbar{display:none}
-.animecia-main-nav a{display:inline-flex;align-items:center;height:38px;padding:0 10px;border-radius:7px;text-decoration:none;white-space:nowrap}
-.animecia-main-nav a:hover{background:#f3f5f7}
-@media(max-width:900px){.animecia-main-nav{order:3;grid-column:1/-1;width:100%;padding:5px 0 2px;margin-top:2px}.animecia-main-nav a{height:34px;padding:0 9px;font-size:11px}}
-</style><style id="animecia-home-maki-v1">
-/* Home: seasonal-anime portal inspired layout */
-.home-v4{max-width:1180px}
-.home-v4 .home-hero{
-  margin:0 -16px 24px;
-  border-radius:0 0 10px 10px;
-  background:#17191d;
-  padding:38px 34px 30px;
-  grid-template-columns:minmax(0,1fr) 270px;
-  gap:28px;
-}
-.home-v4 .home-hero h1{font-size:clamp(30px,4.2vw,48px);margin:5px 0 12px}
-.home-v4 .home-hero-copy>p{font-size:13px;margin-bottom:16px;color:#c9cdd3}
-.home-v4 .hero-search{max-width:680px;border-radius:6px}
-.home-v4 .hero-search button{background:#e87900;border-radius:4px}
-.home-v4 .hero-shortcuts{gap:7px;margin-top:10px}
-.home-v4 .hero-shortcuts a{font-size:11px;padding:5px 9px;border:1px solid #3d424b;border-radius:4px}
-.home-v4 .hero-stat-card{border-radius:6px;padding:18px;background:#20242b;border-color:#343941}
-.home-v4 .hero-stat-card>strong{font-size:29px}
-.home-v4 .home-quick{
-  display:grid!important;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-  margin-bottom:30px;
-}
-.home-v4 .home-quick a{
-  border-radius:7px;
-  padding:13px 14px!important;
-  min-height:76px;
-}
-.home-v4 .home-quick span{font-size:9px;color:#e87900}
-.home-v4 .home-quick b{font-size:13px}
-.home-v4 .home-quick small{font-size:10px}
-.home-v4 .home-section{margin:24px 0;padding-bottom:22px}
-.home-v4 .section-head{border-bottom:2px solid #20242a;padding-bottom:8px;margin-bottom:10px}
-.home-v4 .section-title{font-size:20px}
-.home-v4 .section-head .eyebrow{font-size:9px}
-.home-v4 .more{font-size:11px;color:#e87900}
-.home-v4 .season-feature{
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-}
-.home-v4 .feature-anime{
-  grid-template-columns:76px 1fr;
-  min-height:126px;
-  border-radius:5px;
-}
-.home-v4 .feature-anime .poster{height:126px}
-.home-v4 .feature-copy{padding:11px}
-.home-v4 .feature-rank{font-size:10px}
-.home-v4 .feature-copy h3{font-size:12px}
-.home-v4 .feature-score{font-size:17px;color:#e87900}
-.home-v4 .home-rank-layout{grid-template-columns:1fr 260px;gap:10px}
-.home-v4 .home-rank-list{
-  background:#fff;border:1px solid #e3e5e8;border-radius:5px;overflow:hidden
-}
-.home-v4 .home-rank-row{
-  display:grid;
-  grid-template-columns:36px 52px minmax(0,1fr) 55px;
-  align-items:center;
-  gap:9px;
-  padding:8px 11px;
-  border-bottom:1px solid #edf0f2;
-}
-.home-v4 .home-rank-row:last-child{border-bottom:0}
-.home-v4 .home-rank-row:hover{background:#fafafa}
-.home-v4 .home-rank-row .rank-no{font-size:14px}
-.home-v4 .home-rank-row img,.home-v4 .home-rank-row .no-image{width:52px;height:67px}
-.home-v4 .home-rank-row .rank-title{font-size:12px}
-.home-v4 .home-rank-row .rank-meta{font-size:9px}
-.home-v4 .home-rank-row .rank-score{font-size:15px;color:#e87900}
-.home-v4 .home-rank-side{border-radius:5px;padding:18px}
-.home-v4 .home-rank-side b{font-size:14px}
-.home-v4 .home-rank-side p{font-size:11px}
-.home-v4 .home-rank-side a{font-size:11px}
-.home-v4 .cards{grid-template-columns:repeat(5,1fr);gap:8px}
-.home-v4 .card{border-radius:5px}
-.home-v4 .card-body{padding:9px}
-.home-v4 .card-title{font-size:11px}
-.home-v4 .meta{font-size:9px}
-.home-v4 .genre-grid{grid-template-columns:repeat(6,1fr);gap:6px}
-.home-v4 .genre{border-radius:5px;padding:9px 6px;font-size:10px}
-.home-v4 .home-discover{gap:8px}
-.home-v4 .home-discover a{border-radius:5px;padding:18px}
-.home-v4 .home-discover b{font-size:15px}
-.home-v4 .home-discover small{font-size:10px}
-.home-v4 .home-reviews{grid-template-columns:repeat(3,1fr);gap:8px}
-.home-v4 .home-review{border-radius:5px;padding:13px;min-height:130px}
-.home-v4 .home-review-top{font-size:11px}
-.home-v4 .home-review>b{font-size:12px}
-.home-v4 .home-review p{font-size:10px}
-.home-v4 .home-cta{border-radius:5px;padding:26px 30px;margin-bottom:38px}
-.home-v4 .home-cta h2{font-size:22px}
-@media(max-width:900px){
- .home-v4 .home-hero{grid-template-columns:1fr}
- .home-v4 .home-rank-layout{grid-template-columns:1fr}
- .home-v4 .home-rank-side{display:none}
- .home-v4 .season-feature{grid-template-columns:1fr}
- .home-v4 .genre-grid{grid-template-columns:repeat(4,1fr)}
-}
-@media(max-width:640px){
- .home-v4 .home-hero{margin:0 -10px 18px;padding:30px 18px 24px}
- .home-v4 .home-quick{grid-template-columns:repeat(2,1fr)!important}
- .home-v4 .home-quick a{min-height:70px}
- .home-v4 .cards{grid-template-columns:repeat(2,1fr)}
- .home-v4 .genre-grid{grid-template-columns:repeat(3,1fr)}
- .home-v4 .home-reviews{grid-template-columns:1fr}
- .home-v4 .home-cta{display:block}
- .home-v4 .cta-actions{margin-top:14px}
-}
-</style>
-<style id="animecia-home-mobile-fix">
-/* 今期アニメの横切れ防止 */
-.home-v4 #season-feature{
-  width:100%;
-  min-width:0;
-}
-.home-v4 #season-feature .feature-anime{
-  width:100%;
-  min-width:0;
-  max-width:100%;
-  overflow:hidden;
-  display:grid;
-  grid-template-columns:96px minmax(0,1fr) !important;
-  align-items:stretch;
-}
-.home-v4 #season-feature .feature-anime > .poster{
-  width:96px !important;
-  min-width:0 !important;
-  max-width:96px !important;
-  height:126px !important;
-  overflow:hidden;
-}
-.home-v4 #season-feature .feature-anime > .poster img{
-  display:block;
-  width:100% !important;
-  height:100% !important;
-  max-width:none !important;
-  object-fit:cover;
-}
-.home-v4 #season-feature .feature-copy{
-  min-width:0;
-  max-width:100%;
-  overflow:hidden;
-}
-.home-v4 #season-feature .feature-copy h3{
-  min-width:0;
-  max-width:100%;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:normal;
-  overflow-wrap:anywhere;
-}
-@media (max-width:640px){
-  .home-v4 #season-feature .feature-anime{
-    grid-template-columns:96px minmax(0,1fr) !important;
-    min-height:126px;
-  }
-  .home-v4 #season-feature .feature-anime > .poster{
-    width:96px !important;
-    max-width:96px !important;
-    height:126px !important;
-  }
-  .home-v4 #season-feature .feature-copy{
-    padding:11px 12px;
-  }
-  .home-v4 #season-feature .feature-copy h3{
-    font-size:13px;
-    line-height:1.45;
-  }
-}
-</style>
-<style id="animecia-admin-login-mini">.admin-login-mini{text-align:center;padding:0 0 14px}.admin-login-mini a{font-size:10px;color:#9aa0a8;text-decoration:none;opacity:.7}.admin-login-mini a:hover{color:#666;opacity:1;text-decoration:underline}</style>
-<link rel="stylesheet" href="header.css">
-<link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co" crossorigin><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script src="performance.js" defer></script><style id="animecia-title-index-size-fix-v1">
-.home-v4 .home-title-index .home-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
-.home-v4 .home-title-index .card-body{padding:8px}
-.home-v4 .home-title-index .card-title{font-size:11px;line-height:1.4}
-.home-v4 .home-title-index .meta{font-size:9px;margin-top:4px}
-@media(max-width:1050px){.home-v4 .home-title-index .home-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
-@media(max-width:820px){.home-v4 .home-title-index .home-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media(max-width:600px){.home-v4 .home-title-index .home-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}}
-@media(max-width:430px){.home-v4 .home-title-index .home-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}}
-</style>
-<style id="animecia-home-three-sections-unified-v1">
-/* 今期アニメ・タイトル五十音順・ANIXIAランキングの作品表示を共通カードサイズに統一 */
-.home-v4 .season-feature{
-  grid-template-columns:repeat(6,minmax(0,1fr));
-  gap:9px;
-}
-.home-v4 .season-feature .feature-anime{
-  display:block;
-  min-height:0;
-  background:#fff;
-}
-.home-v4 .season-feature .feature-anime .poster{
-  width:100%;
-  height:auto;
-  aspect-ratio:3/4;
-}
-.home-v4 .season-feature .feature-copy{
-  padding:8px;
-}
-.home-v4 .season-feature .feature-rank{
-  font-size:9px;
-}
-.home-v4 .season-feature .feature-copy h3{
-  font-size:11px;
-  line-height:1.4;
-  margin:4px 0;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-}
-.home-v4 .season-feature .feature-score{
-  font-size:12px;
-}
-.home-v4 .season-feature .feature-score span{
-  font-size:8px;
-}
-.home-v4 .home-title-index .home-grid{
-  grid-template-columns:repeat(6,minmax(0,1fr));
-  gap:9px;
-}
-.home-v4 .home-title-index .card-body{
-  padding:8px;
-}
-.home-v4 .home-title-index .card-title{
-  font-size:11px;
-  line-height:1.4;
-}
-.home-v4 .home-title-index .meta{
-  font-size:9px;
-  margin-top:4px;
-}
-.home-v4 .home-rank-layout{
-  grid-template-columns:1fr;
-}
-.home-v4 .home-rank-list{
-  display:grid;
-  grid-template-columns:repeat(6,minmax(0,1fr));
-  gap:9px;
-  background:transparent;
-  border:0;
-  overflow:visible;
-}
-.home-v4 .home-rank-row{
-  display:block;
-  position:relative;
-  padding:0;
-  background:#fff;
-  border:1px solid #e2e6eb;
-  border-radius:14px;
-  overflow:hidden;
-}
-.home-v4 .home-rank-row .rank-no{
-  position:absolute;
-  z-index:2;
-  left:7px;
-  top:7px;
-  min-width:24px;
-  padding:3px 5px;
-  border-radius:7px;
-  background:rgba(16,24,39,.86);
-  color:#fff;
-  font-size:10px;
-}
-.home-v4 .home-rank-row:first-child .rank-no{
-  color:#fff;
-  font-size:11px;
-}
-.home-v4 .home-rank-row img,
-.home-v4 .home-rank-row .no-image{
-  display:block;
-  width:100%;
-  height:auto;
-  aspect-ratio:3/4;
-  border-radius:0;
-  object-fit:cover;
-}
-.home-v4 .home-rank-row>div:not(.no-image){
-  padding:8px;
-}
-.home-v4 .home-rank-row .rank-title{
-  font-size:11px;
-  line-height:1.4;
-}
-.home-v4 .home-rank-row .rank-meta{
-  font-size:9px;
-  margin-top:4px;
-}
-.home-v4 .home-rank-row .rank-score{
-  padding:0 8px 8px;
-  font-size:12px;
-}
-.home-v4 .home-rank-row .rank-score small{
-  display:inline;
-  margin-left:3px;
-  font-size:8px;
-}
-.home-v4 .home-rank-side{
-  display:none;
-}
-@media(max-width:1050px){
-  .home-v4 .season-feature,
-  .home-v4 .home-title-index .home-grid,
-  .home-v4 .home-rank-list{
-    grid-template-columns:repeat(5,minmax(0,1fr));
-  }
-}
-@media(max-width:820px){
-  .home-v4 .season-feature,
-  .home-v4 .home-title-index .home-grid,
-  .home-v4 .home-rank-list{
-    grid-template-columns:repeat(4,minmax(0,1fr));
-  }
-}
-@media(max-width:600px){
-  .home-v4 .season-feature,
-  .home-v4 .home-title-index .home-grid,
-  .home-v4 .home-rank-list{
-    grid-template-columns:repeat(3,minmax(0,1fr));
-  }
-}
-@media(max-width:430px){
-  .home-v4 .season-feature,
-  .home-v4 .home-title-index .home-grid,
-  .home-v4 .home-rank-list{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:8px;
-  }
-}
-</style>
-<script src="auth-core.js"></script>
-<link rel="stylesheet" href="site-theme.css?v=20261011c">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="anixia-client.js"></script>
+<script src="anixia-home.js" defer></script>
 </head>
 <body>
 <header class="site-header">
-<div class="container nav">
-<a class="brand" href="index.html" aria-label="ANIXIA ホーム">ANIXIA</a>
-<nav class="nav-links animecia-main-nav" aria-label="メインメニュー">
-<a href="index.html">ホーム</a>
-<a href="anime.html">アニメを探す</a>
-<a href="season.html">今期アニメ</a>
-<a href="ranking.html">ランキング</a>
-<a href="discover.html">ジャンル</a>
-<a href="recommendations.html">おすすめ</a>
-<a href="memo.html">メモ</a>
-<a href="community.html">コミュニティ</a><a href="compare.html">作品比較</a><a href="mypage.html">マイページ</a>
-</nav>
-<form class="header-search" action="anime.html" method="get" role="search">
-<input name="search" type="search" placeholder="アニメを検索…" aria-label="アニメを検索">
-</form>
-<div class="nav-actions">
-<a class="nav-btn primary" href="login.html" id="auth-link">ログイン</a>
-</div>
-</div>
+  <div class="anixia-home anixia-nav">
+    <a class="anixia-brand" href="index.html" aria-label="ANIXIA ホーム">ANI<span>X</span>IA</a>
+    <nav class="anixia-navlinks" aria-label="メインメニュー">
+      <a href="anime.html">作品検索</a>
+      <a href="season.html">今期アニメ</a>
+      <a href="ranking.html">ランキング</a>
+      <a href="recommendations.html">おすすめ診断</a>
+      <a href="quiz.html">クイズ</a>
+    </nav>
+    <a class="anixia-account" id="account-link" href="login.html">ログイン</a>
+  </div>
 </header>
+<main class="anixia-home">
+  <section class="anixia-hero">
+    <div>
+      <div class="anixia-kicker">ANIME DISCOVERY PLATFORM</div>
+      <h1>次に観る作品が、<br>見つかる。</h1>
+      <p>膨大なアニメ作品の中から、気になる作品を探す。視聴記録を残す。評価やレビューを通じて、新しい作品と出会う。ANIXIAは、アニメをもっと楽しむための総合プラットフォームです。</p>
+      <form class="anixia-search" id="hero-search" role="search">
+        <input id="search-input" type="search" placeholder="作品名・読み仮名で検索…" aria-label="アニメ作品を検索">
+        <button type="submit">検索する</button>
+      </form>
+    </div>
+    <aside class="anixia-hero-stat">
+      <small>PUBLIC ANIME CATALOG</small>
+      <strong id="catalog-count">—</strong>
+      <p>公開中の作品データ</p>
+    </aside>
+  </section>
 
-<div class="home-function-scroll" aria-label="ANIXIAの機能"><div class="home-function-scroll-inner"><a href="anime.html"><b>アニメを探す</b><span>作品検索</span></a><a href="season.html"><b>今期アニメ</b><span>放送作品</span></a><a href="ranking.html"><b>ランキング</b><span>評価・人気</span></a><a href="discover.html"><b>ジャンル</b><span>作品を発見</span></a><a href="recommendations.html"><b>おすすめ</b><span>次に観る作品</span></a><a href="compare.html"><b>作品比較</b><span>作品を比較</span></a><a href="memo.html"><b>メモ</b><span>メモに保存</span></a><a href="community.html"><b>コミュニティ</b><span>みんなの投稿</span></a><a href="mypage.html"><b>マイページ</b><span>あなたの記録</span></a></div></div>
+  <section class="anixia-shortcuts" aria-label="主要機能">
+    <a class="anixia-shortcut" href="anime.html"><small>DATABASE</small><strong>作品を探す</strong><span>タイトル・ジャンル・年代から検索</span></a>
+    <a class="anixia-shortcut" href="recommendations.html"><small>DISCOVERY</small><strong>おすすめ診断</strong><span>好みに合う作品を見つける</span></a>
+    <a class="anixia-shortcut" href="quiz.html"><small>QUIZ</small><strong>クイズに挑戦</strong><span>アニメ知識を試す</span></a>
+    <a class="anixia-shortcut" href="ranking.html"><small>RANKING</small><strong>ランキング</strong><span>人気・評価から作品を発見</span></a>
+    <a class="anixia-shortcut" href="mypage.html"><small>MY LIBRARY</small><strong>視聴を記録</strong><span>お気に入りと視聴状況を管理</span></a>
+  </section>
 
-<main class="container home-v4">
-<section class="home-hero"><div class="home-hero-copy"><div class="eyebrow">JAPAN ANIME DATABASE</div><h1>観たいアニメを、<br><span>見つける。</span>記録する。</h1><p>今期アニメ、ランキング、ジャンル、過去作品をまとめて探せる日本向けアニメデータベース。</p><form class="hero-search" id="search-form"><input id="search-input" type="search" placeholder="作品名・英題・ローマ字で検索" autocomplete="off" aria-label="アニメを検索"><button type="submit">検索</button></form></div><div class="hero-stat-card"><span class="hero-stat-label">ANIME DATABASE</span><strong id="database-count">—</strong><span>登録・公開作品</span><div class="hero-stat-grid"><div><b id="genre-count">—</b><small>ジャンル</small></div><div><b id="season-count-side">—</b><small>今期作品</small></div></div><a href="anime.html" class="hero-database-link">作品データベースを見る →</a></div></section>
-<section class="home-quick"><a href="anime.html"><span>01</span><b>アニメを探す</b><small>作品名・英題・ローマ字</small></a><a href="season.html"><span>02</span><b>今期アニメ</b><small>放送中・放送予定の作品</small></a><a href="ranking.html"><span>03</span><b>ランキング</b><small>評価・人気から探す</small></a><a href="memo.html"><span>04</span><b>メモに保存</b><small>気になる作品を保存</small></a></section><section class="home-section"><div class="section-head"><div><div class="eyebrow orange">SEASONAL ANIME</div><h2 class="section-title">今期アニメ</h2><p class="section-desc">今期の作品を一覧でチェック</p></div><a class="more" href="season.html">今期をすべて見る →</a></div><div class="season-feature" id="season-feature"><div class="loading"><div class="skeleton-wrap"><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div></div></div></div></section>
+  <section class="anixia-section">
+    <div class="anixia-section-head"><div><h2>人気の作品</h2><p>視聴者数を基準にした作品一覧</p></div><a href="ranking.html">ランキングを見る →</a></div>
+    <div class="anixia-work-grid" id="popular-works"><p class="anixia-state">作品情報を読み込んでいます…</p></div>
+  </section>
 
-<section class="home-section home-title-index"><div class="section-head"><div><div class="eyebrow orange">TITLE INDEX</div><h2 class="section-title">タイトル（五十音順）</h2><p class="section-desc">作品タイトルから五十音順に探せます</p></div><a class="more" href="anime.html">作品一覧を見る →</a></div><div class="home-grid" id="home-title-index"><div class="loading">作品を読み込んでいます…</div></div></section>
+  <section class="anixia-section">
+    <div class="anixia-section-head"><div><h2>新着作品</h2><p>最近追加・更新された作品</p></div><a href="anime.html">作品を探す →</a></div>
+    <div class="anixia-work-grid" id="new-works"><p class="anixia-state">作品情報を読み込んでいます…</p></div>
+  </section>
 
-<section class="home-section home-ranking"><div class="section-head"><div><div class="eyebrow orange">TOP RANKING</div><h2 class="section-title">ANIXIAランキング</h2><p class="section-desc">評価・人気データから表示</p></div><a class="more" href="ranking.html">ランキングを見る →</a></div><div class="home-rank-layout"><div class="home-rank-list" id="home-rank-list"><div class="loading">ランキングを読み込んでいます…</div></div><aside class="home-rank-side"><b>探し方を広げる</b><p>評価だけでなく、ジャンルや年代、今期作品からも探せます。</p><a href="recommendations.html">おすすめを探す →</a><a href="discover.html">ジャンルから探す →</a><a href="memo.html">メモを確認 →</a></aside></div></section><section class="home-section"><div class="section-head"><div><div class="eyebrow orange">GENRE</div><h2 class="section-title">ジャンルから探す</h2></div><a class="more" href="discover.html">ジャンル一覧 →</a></div><div class="genre-grid" id="genre-grid"><div class="loading"><div class="skeleton-wrap" style="grid-template-columns:repeat(6,minmax(0,1fr))"><div class="skeleton-pill"></div><div class="skeleton-pill"></div><div class="skeleton-pill"></div><div class="skeleton-pill"></div><div class="skeleton-pill"></div><div class="skeleton-pill"></div></div></div></div></section>
-<section class="home-section"><div class="section-head"><div><div class="eyebrow orange">DISCOVER</div><h2 class="section-title">ANIXIAで探す</h2></div></div><div class="home-discover"><a href="recommendations.html"><span>RECOMMEND</span><b>次に観る作品を探す</b><small>好みや条件からおすすめを見つける</small></a><a href="discover.html"><span>GENRE</span><b>ジャンルから探す</b><small>SF、ファンタジー、ミステリーなど</small></a><a href="memo.html"><span>MEMO</span><b>メモを確認する</b><small>気になる作品を保存して確認</small></a></div></section><section class="home-section"><div class="section-head"><div><div class="eyebrow orange">COMMUNITY</div><h2 class="section-title">話題のレビュー</h2></div><a class="more" href="community.html">コミュニティを見る →</a></div><div class="home-reviews" id="home-reviews"><div class="loading"><div class="skeleton-wrap" style="grid-template-columns:repeat(3,minmax(0,1fr))"><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div></div></div></div></section><section class="home-cta"><div><div class="eyebrow">ANIMECIA MY LIST</div><h2>観た作品を、あなたのアニメ史に。</h2></div><div class="cta-actions"><a href="mypage.html">マイページを見る →</a><a href="community.html">コミュニティを見る →</a></div></section>
+  <section class="anixia-section">
+    <div class="anixia-section-head"><div><h2>ジャンルから探す</h2><p>気分に合ったジャンルから作品を発見</p></div><a href="discover.html">すべて見る →</a></div>
+    <div class="anixia-genre-links" id="genre-links"><p class="anixia-state">ジャンル情報を読み込んでいます…</p></div>
+  </section>
+
+  <footer class="anixia-footer">
+    <strong>ANIXIA</strong>
+    <p>アニメを探す、知る、記録する、比べる。</p>
+    <p>© ANIXIA</p>
+  </footer>
 </main>
-<footer>
-<div class="container footer-inner">
-<div><div class="footer-brand">ANIXIA</div><div class="footer-copy">アニメを探す、評価する、記録する。</div><div class="admin-login-mini" aria-label="管理者向け"><a href="admin-login.html">管理者ログイン</a></div>
-</div>
-<div class="footer-links">
-<a href="anime.html">アニメを探す</a><a href="season.html">今期アニメ</a>
-<a href="discover.html">ジャンル</a><a href="recommendations.html">おすすめ</a><a href="memo.html">メモ</a><a href="community.html">コミュニティ</a><a href="mypage.html">マイページ</a><a href="compare.html">作品比較</a><a href="login.html" id="footer-login-link">ログイン</a>
-</div>
-</div>
-</footer>
-
-<script>
-const SUPABASE_URL="https://bhgdjuwlxvbaeraaivmh.supabase.co";
-const SUPABASE_KEY="sb_publishable_-rZ4HusVezs5IlZQnUQ-Kw_SLUd8R0c";
-let sb=null;
-function initSupabase(){if(!sb&&window.supabase?.createClient)sb=ANIXIAAuth.client();return sb;}
-function waitForSupabase(){return new Promise((resolve,reject)=>{const start=Date.now();(function check(){const client=initSupabase();if(client)return resolve(client);if(Date.now()-start>10000)return reject(new Error("Supabase SDK timeout"));setTimeout(check,50)})();});}
-const titleOf=a=>ANIXIAData.title(a);
-const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const valid=a=>ANIXIAData.isPublic(a)&&(a.start_date==null||a.start_date>="1963-01-01")&&/[ぁ-んァ-ヶ一-龯々ー]/.test(a.title_japanese||a.title_native||a.title_user_preferred||a.title||"");
-const img=(a,cls="")=>a?.cover_image?'<img class="'+cls+'" src="'+esc(a.cover_image)+'" alt="'+esc(titleOf(a))+'" loading="lazy" onerror="this.style.visibility=\'hidden\'" decoding="async" fetchpriority="high">':'<div class="row-thumb">画像なし</div>';
-function card(a){
- const title=ANIXIAData.title(a),score=a._animecia_rating!=null?Number(a._animecia_rating):null;
- return '<div class="card"><a href="anime-detail.html?id='+encodeURIComponent(a.id)+'"><div class="poster '+(a.cover_image?"":"noimg")+'">'+(a.cover_image?'<img src="'+esc(a.cover_image)+'" alt="'+esc(title)+'" loading="lazy" decoding="async">':"画像なし")+(score!=null?'<span class="score">★ '+score.toFixed(1)+'</span>':"")+'</div><div class="card-body"><div class="card-title">'+esc(title)+'</div><div class="meta">'+esc(a.season_year||"")+' '+esc(a.format||"")+'</div></div></a></div>';
-}
-function renderFailure(id,msg){const el=document.getElementById(id);if(el)el.innerHTML='<div class="empty">'+esc(msg)+'</div>';}
-async function safe(promise){
-  try{return await promise;}
-  catch(error){console.warn("ANIXIA homepage optional data unavailable:",error);return {data:[],error};}
-}
-async function catalogRPC(params){
-  let result=await sb.rpc("search_anime_catalog_v2",params);
-  if(result.error){
-    console.warn("search_anime_catalog_v2 failed; falling back:",result.error);
-    result=await sb.rpc("search_anime_catalog",params);
-  }
-  if(!result.error)return result.data||[];
-
-  console.warn("Catalog RPCs unavailable; using direct public-view fallback:",result.error);
-  // Homepage queries use no text/genre/studio filters, so a direct read can
-  // safely keep the homepage populated while a PostgREST schema cache recovers.
-  if(params.p_query||params.p_genre_id||params.p_studio_id)throw result.error;
-  let query=sb.from("animecia_public_anime").select(
-    "id,title,title_japanese,title_native,title_user_preferred,title_romaji,title_english,english_title,cover_image,banner_image,format,genre,description,review,synopsis,official_url,site_url,streaming_links,start_date,end_date,episodes,duration,season,season_year,status,source,average_score,popularity,favourites_count",
-    {count:"exact"}
-  ).gte("start_date","1963-01-01");
-  if(params.p_year!=null)query=query.eq("season_year",params.p_year);
-  if(params.p_season)query=query.eq("season",params.p_season);
-  if(params.p_status)query=query.eq("status",params.p_status);
-  if(params.p_format)query=query.eq("format",params.p_format);
-  if(params.p_sort==="score")query=query.order("average_score",{ascending:false,nullsFirst:false});
-  else if(params.p_sort==="popularity")query=query.order("favourites_count",{ascending:false,nullsFirst:false});
-  else if(params.p_sort==="newest")query=query.order("start_date",{ascending:false,nullsFirst:false});
-  else if(params.p_sort==="oldest")query=query.order("start_date",{ascending:true,nullsFirst:false});
-  else query=query.order("title_japanese",{ascending:true,nullsFirst:false});
-  const limit=Math.max(1,Math.min(Number(params.p_limit)||24,1000));
-  const offset=Math.max(0,Number(params.p_offset)||0);
-  const direct=await query.order("id",{ascending:true}).range(offset,offset+limit-1);
-  if(direct.error)throw direct.error;
-  return (direct.data||[]).map(row=>({...row,search_rank:0,total_count:direct.count||0}));
-}
-async function safeCatalog(params){
-  try{return await catalogRPC(params);}
-  catch(error){console.error("Homepage catalog section failed:",error);return [];}
-}
-
-async function load(){
-  const now=new Date();
-  const year=now.getFullYear();
-  const month=now.getMonth()+1;
-  const season=month<=3?"WINTER":month<=6?"SPRING":month<=9?"SUMMER":"FALL";
-  const emptyParams={
-    p_query:null,p_genre_id:null,p_studio_id:null,p_year:null,
-    p_season:null,p_status:null,p_format:null,p_limit:1,p_offset:0
-  };
-
-  const [seasonRes,genreRes,rankingRes,reviewRes,titleRows,countRes]=await Promise.all([
-    safeCatalog({...emptyParams,p_year:year,p_season:season,p_sort:"score",p_limit:12}),
-    safe(sb.rpc("get_catalog_genres")),
-    safeCatalog({...emptyParams,p_sort:"score",p_limit:10}),
-    safe(sb.from("reviews")
-      .select("id,anime_id,title,content,rating,spoiler,likes_count,created_at")
-      .order("created_at",{ascending:false})
-      .limit(6)),
-    safeCatalog({...emptyParams,p_sort:"title",p_limit:24}),
-    safe(sb.from("animecia_public_anime")
-      .select("id",{count:"exact",head:true})
-      .gte("start_date","1963-01-01"))
-  ]);
-
-  // 件数は一覧取得RPCの返却行に依存させず、公開ビューのexact countで独立して確認する。
-  const catalogCount=Number(countRes?.count ?? titleRows[0]?.total_count ?? 0);
-  const databaseCount=document.getElementById("database-count");
-  if(databaseCount)databaseCount.textContent=catalogCount.toLocaleString("ja-JP")+"作品";
-
-  const genres=(genreRes.data||[]).filter(g=>g&&g.id!=null&&g.name);
-  const uniqueGenres=[...new Map(genres.map(g=>[String(g.id),g])).values()];
-  const genreCount=document.getElementById("genre-count");
-  const genreCountSide=document.getElementById("genre-count-side");
-  if(genreCount)genreCount.textContent=uniqueGenres.length.toLocaleString("ja-JP");
-  if(genreCountSide)genreCountSide.textContent=uniqueGenres.length.toLocaleString("ja-JP");
-  const genreGrid=document.getElementById("genre-grid");
-  if(genreGrid){
-    genreGrid.innerHTML=uniqueGenres.slice(0,50).map(g=>
-      '<a class="genre" href="anime.html?genre='+encodeURIComponent(g.id)+'">'+esc(g.name)+'</a>'
-    ).join("")||'<div class="empty">ジャンル情報を準備中です。</div>';
-  }
-
-  const seasonRows=(seasonRes||[]).filter(a=>
-    a &&
-    a.start_date &&
-    a.start_date>="1963-01-01"
-  );
-  const seasonCount=Number(seasonRows[0]?.total_count||0);
-  const seasonSide=document.getElementById("season-count-side");
-  if(seasonSide)seasonSide.textContent=seasonCount.toLocaleString("ja-JP");
-
-  const feature=document.getElementById("season-feature");
-  if(feature){
-    feature.innerHTML=seasonRows.slice(0,3).map(a=>{
-      const s=ANIXIAData.score(a);
-      return '<a class="feature-anime" href="anime-detail.html?id='+encodeURIComponent(a.id)+'">'+
-        '<div class="poster '+(a.cover_image?"":"noimg")+'">'+
-        (a.cover_image?'<img src="'+esc(a.cover_image)+'" alt="'+esc(titleOf(a))+'" loading="lazy" decoding="async">':"画像なし")+
-        '</div><div class="feature-copy"><h3>'+esc(titleOf(a))+'</h3>'+
-        '<div class="feature-score">'+(s!=null?s.toFixed(1):"—")+(s!=null?'<span>評価</span>':"")+
-        '</div></div></a>';
-    }).join("")||'<div class="empty">今期作品の登録データがありません。作品データの更新後に表示されます。</div>';
-  }
-
-  const titleBox=document.getElementById("home-title-index");
-  if(titleBox){
-    const rows=titleRows.filter(a=>a&&a.start_date&&a.start_date>="1963-01-01");
-    titleBox.innerHTML=rows.map(card).join("")||'<div class="empty">作品データがまだありません。</div>';
-  }
-
-  const rankingRows=(rankingRes||[]).filter(a=>
-    a &&
-    a.start_date &&
-    a.start_date>="1963-01-01" &&
-    a.average_score!=null
-  );
-  renderHomeRanking(rankingRows,new Map());
-
-  const reviewRows=reviewRes.data||[];
-  const reviewIds=[...new Set(reviewRows.map(r=>r.anime_id).filter(Boolean))].slice(0,12);
-  let reviewAnime=[];
-  if(reviewIds.length){
-    const rr=await safe(sb.from("animecia_public_anime")
-      .select("id,title,title_japanese,title_native,title_user_preferred,title_romaji,title_english,english_title,cover_image,start_date,format,season_year,anime_verification_status,original_country_code,original_country_status,catalog_policy_decision,is_adult,is_kids,is_preschool,is_sensitive_visual,duplicate_status,source_metadata")
-      .in("id",reviewIds));
-    // トップのレビュー欄も共通の公開条件で判定する。
-    reviewAnime=(rr.data||[]).filter(ANIXIAData.isPublic);
-  }
-  renderReviews(reviewRows,new Map(reviewAnime.map(a=>[String(a.id),a])));
-}
-function renderHomeRanking(rows,eng){const box=document.getElementById("home-rank-list");if(!box)return;if(!rows.length){box.innerHTML='<div class="empty">評価データがまだありません。</div>';return;}box.innerHTML=rows.slice(0,10).map((a,i)=>{const e=eng.get(String(a.id));const s=ANIXIAData.score(a);return '<a class="home-rank-row" href="anime-detail.html?id='+a.id+'"><span class="rank-no">'+(i+1)+'</span>'+(a.cover_image?'<img src="'+esc(a.cover_image)+'" alt="'+esc(titleOf(a))+'" loading="lazy" decoding="async">':'<div class="no-image"></div>')+'<div><div class="rank-title">'+esc(titleOf(a))+'</div><div class="rank-meta">'+esc(a.season_year||"")+' '+esc(a.format||"")+'</div></div><div class="rank-score">'+(s!=null?s.toFixed(1):"—")+'<small>評価</small></div></a>';}).join("");}function renderReviews(rows,animeMap){
- const box=document.getElementById("home-reviews");if(!box)return;
- if(!rows.length){box.innerHTML='<div class="empty">レビューが投稿されると、ここに表示されます。</div>';return;}
- box.innerHTML=rows.map(r=>{const a=animeMap.get(String(r.anime_id));return '<a class="home-review" href="anime-detail.html?id='+r.anime_id+'"><div class="home-review-top"><strong>'+esc(a?titleOf(a):"作品レビュー")+'</strong><span>★ '+(r.rating!=null?Number(r.rating).toFixed(1):"—")+'</span></div><b>'+esc(r.title||"レビュー")+'</b><p>'+esc(String(r.content||"").slice(0,120))+'</p><small>♥ '+Number(r.likes_count||0)+'</small></a>';}).join("");
-}
-function bindQuickAdds(){
- document.querySelectorAll(".quick-add").forEach(btn=>btn.onclick=async e=>{e.preventDefault();e.stopPropagation();try{const {data:{user}}=await sb.auth.getUser();if(!user){location.href="login.html";return;}const r=await sb.from("favorites").upsert({user_id:user.id,anime_id:Number(btn.dataset.animeId)},{onConflict:"user_id,anime_id"});if(r.error)throw r.error;btn.textContent="✓";btn.classList.add("added");}catch(err){console.error(err);btn.textContent="!";}});
-}
-document.getElementById("search-form").addEventListener("submit",e=>{e.preventDefault();const q=document.getElementById("search-input").value.trim();if(q)location.href="anime.html?search="+encodeURIComponent(q);});
-(async()=>{try{await waitForSupabase();await load()}catch(e){console.error(e);renderFailure("season-feature","作品データを取得できませんでした。時間をおいて再読み込みしてください。");renderFailure("home-rank-list","作品データの読み込みに失敗しました。");renderFailure("genre-grid","ジャンル情報を準備中です。");}})();
-</script>
-<script src="auth-nav.js"></script>
 </body>
 </html>
-
