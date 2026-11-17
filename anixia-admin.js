@@ -364,9 +364,9 @@
       return;
     }
     const pages={
-      episodes:Number($("detail-episode-page").value)||1,
-      casts:Number($("detail-cast-page").value)||1,
-      staffs:Number($("detail-staff-page").value)||1
+      episodes:$("detail-episode-page").value.trim()===""?1:Math.max(0,Number($("detail-episode-page").value)||0),
+      casts:$("detail-cast-page").value.trim()===""?1:Math.max(0,Number($("detail-cast-page").value)||0),
+      staffs:$("detail-staff-page").value.trim()===""?1:Math.max(0,Number($("detail-staff-page").value)||0)
     };
     button.disabled=true;
     $("detail-continue-button").disabled=true;
@@ -374,9 +374,9 @@
     try{
       const result=await ANIXIA.syncAnnictWorkDetails(workId,pages);
       const next=result.nextPages||{};
-      if(next.episodes)$("detail-episode-page").value=next.episodes;
-      if(next.casts)$("detail-cast-page").value=next.casts;
-      if(next.staffs)$("detail-staff-page").value=next.staffs;
+      $("detail-episode-page").value=next.episodes??0;
+      $("detail-cast-page").value=next.casts??0;
+      $("detail-staff-page").value=next.staffs??0;
       $("detail-continue-button").hidden=!result.hasMore;
       $("detail-sync-message").textContent=[
         "処理状態: "+result.status,
