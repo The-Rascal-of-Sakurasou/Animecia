@@ -192,7 +192,7 @@ All 6 migration files are present in the repository and applied to the active Su
 
 
 ### Advanced public catalogue search (2026-11-17)
-- Added migration `20261117125000_advanced_catalog_search.sql` and deployed the 12-argument `search_public_anime` overload. The existing 9-argument overload remains available for compatibility with older pages.
+- Added migration `20261117123832_advanced_catalog_search.sql` and deployed the 12-argument `search_public_anime` overload. The existing 9-argument overload remains available for compatibility with older pages.
 - The expanded RPC searches primary titles, kana titles, and `anime_titles` alternate-title records; it also filters by multiple tags, production studios (including linked secondary studios), staff/voice-actor names, and character names.
 - The new RPC returns published anime only, caps result size at 50, caps title/person/character search terms at 80 characters, and limits tag filtering to the first 30 supplied IDs.
 - Explicitly revoked the default PUBLIC execute grant and granted execution only to `anon`, `authenticated`, and `service_role`; the function uses an empty search path and schema-qualified objects.
