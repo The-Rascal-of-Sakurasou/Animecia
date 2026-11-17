@@ -20,10 +20,10 @@
 .anixia-filter-grid{display:grid;grid-template-columns:2fr repeat(4,minmax(130px,1fr));gap:10px}
 .anixia-field{display:flex;flex-direction:column;gap:6px}
 .anixia-field label{font-size:11px;font-weight:800;color:#aebbd0}
-.anixia-field input,.anixia-field select{width:100%;height:42px;border:1px solid #30435f;border-radius:8px;background:#0b1423;color:#f2f5fa;padding:0 11px;font-size:13px}
+.anixia-field input,.anixia-field select{width:100%;height:42px;border:1px solid #30435f;border-radius:8px;background:#0b1423;color:#f2f5fa;padding:0 11px;font-size:13px}.anixia-field select[multiple]{height:104px;padding:7px}.anixia-field .field-help{font-size:10px;color:#8fa0b9;line-height:1.5}
 .anixia-filter-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:13px}
 .anixia-filter-actions p{font-size:12px;color:#a3b0c2;margin:0}
-.anixia-filter-actions button{border:0;border-radius:8px;background:#f2a51a;color:#171b22;font-weight:900;padding:10px 16px}
+.anixia-filter-actions button{border:0;border-radius:8px;background:#f2a51a;color:#171b22;font-weight:900;padding:10px 16px}.anixia-filter-actions .secondary{border:1px solid #344861;background:#17243a;color:#e8edf5}
 .anixia-results-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:20px 0 12px}
 .anixia-results-head strong{font-size:13px;color:#e8edf5}
 .anixia-results-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px}
@@ -77,9 +77,12 @@
       <div class="anixia-field"><label for="season">クール</label><select id="season"><option value="">すべて</option><option value="winter">冬</option><option value="spring">春</option><option value="summer">夏</option><option value="autumn">秋</option></select></div>
       <div class="anixia-field"><label for="format">形式</label><select id="format"><option value="">すべて</option><option value="tv">TV</option><option value="movie">劇場版</option><option value="ova">OVA</option><option value="ona">ONA</option><option value="special">特別編</option><option value="web">Web</option><option value="other">その他</option></select></div>
       <div class="anixia-field"><label for="studio">制作会社</label><select id="studio"><option value="">すべて</option></select></div>
-      <div class="anixia-field"><label for="sort">並び順</label><select id="sort"><option value="newest">新着・新しい順</option><option value="popular">視聴者数順</option><option value="reviews">レビュー数順</option><option value="title">タイトル順</option></select></div>
+      <div class="anixia-field"><label for="tag">タグ（複数選択可）</label><select id="tag" multiple size="4" aria-describedby="tag-help"></select><small id="tag-help" class="field-help">複数選択すると、いずれかのタグを持つ作品を表示します。</small></div>
+      <div class="anixia-field"><label for="person">声優・スタッフ</label><input id="person" type="search" placeholder="名前で検索…" autocomplete="off"></div>
+      <div class="anixia-field"><label for="character">キャラクター</label><input id="character" type="search" placeholder="キャラクター名で検索…" autocomplete="off"></div>
+      <div class="anixia-field"><label for="sort">並び順</label><select id="sort"><option value="newest">新着・新しい順</option><option value="popular">視聴者数順</option><option value="reviews">レビュー数順</option><option value="rating">評価順（5件以上）</option><option value="title">タイトル順</option></select></div>
     </div>
-    <div class="anixia-filter-actions"><p id="result-summary" aria-live="polite">検索条件を設定してください。</p><button type="submit">検索する</button></div>
+    <div class="anixia-filter-actions"><p id="result-summary" aria-live="polite">検索条件を設定してください。</p><div><button type="button" id="reset" class="secondary">条件をクリア</button> <button type="submit">検索する</button></div></div>
   </form>
   <div class="anixia-results-head"><strong>検索結果</strong><span id="result-count"></span></div>
   <section id="results" class="anixia-results-grid" aria-live="polite"><p class="anixia-state">作品情報を読み込んでいます…</p></section>
