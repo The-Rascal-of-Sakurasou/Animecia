@@ -18,9 +18,13 @@
     document.title=name+"｜作品情報・視聴記録｜ANIXIA";
     const desc=(a.synopsis||name+"の作品情報を確認できます。").slice(0,150);
     document.querySelector('meta[name="description"]').content=desc;
-    $("poster").src=a.poster_url||"";
     $("poster").alt=name+"のポスター";
     $("poster").hidden=!a.poster_url;
+    $("poster-fallback").hidden=!!a.poster_url;
+    if(a.poster_url){
+      $("poster").src=a.poster_url;
+      $("poster").onerror=()=>{$("poster").hidden=true;$("poster-fallback").hidden=false;};
+    }else $("poster").removeAttribute("src");
     $("title").textContent=name;
     $("subtitle").textContent=[a.title,a.title_kana].filter((v,i,arr)=>v&&v!==name&&arr.indexOf(v)===i).join(" / ");
     $("meta").innerHTML=[fmt(a.format),a.release_year,a.season,a.episode_count?String(a.episode_count)+"話":""].filter(Boolean).map(x=>'<span>'+esc(x)+'</span>').join("");
