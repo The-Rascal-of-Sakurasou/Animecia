@@ -35,6 +35,13 @@
     if (options.season) base = base.eq("season", options.season);
     if (options.format) base = base.eq("format", options.format);
     if (options.studioId) base = base.eq("studio_id", options.studioId);
+    if (options.genreId) {
+      const relation = await db.from("anime_genres").select("anime_id").eq("genre_id", options.genreId);
+      if (relation.error) throw relation.error;
+      const ids = (relation.data || []).map(row => row.anime_id);
+      if (!ids.length) return { data: [], count: 0 };
+      base = base.in("id", ids);
+    }
 
     const term = safeTerm(options.query);
     if (term) {
