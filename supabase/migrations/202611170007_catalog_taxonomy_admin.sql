@@ -47,8 +47,6 @@ as $$
 declare
   v_genres uuid[];
   v_tags uuid[];
-  v_genre_count integer;
-  v_tag_count integer;
 begin
   if not private.is_anixia_admin() then
     raise exception 'ANIXIA administrator permission required' using errcode = '42501';
@@ -58,17 +56,17 @@ begin
     raise exception 'Anime record not found' using errcode = 'P0002';
   end if;
 
-  select coalesce(array_agg(distinct x), '{}'::uuid[])
+  select coalesce(array_agg(distinct genre_id), '{}'::uuid[])
     into v_genres
-    from unnest(coalesce(p_genre_ids, '{}'::uuid[])) as x;
-  select coalesce(array_agg(distinct x), '{}'::uuid[])
+    from unnest(coalesce(p_genre_ids, '{}'::uuid[])) as u(genre_id);
+  select coalesce(array_agg(distinct tag_id), '{}'::uuid[])
     into v_tags
-    from unnest(coalesce(p_tag_ids, '{}'::uuid[])) as x;
+    from unnest(coalesce(p_tag_ids, '{}'::uuid[])) as u(tag_id);
 
-  if exists (select 1 from unnest(v_genres) x where not exists (select 1 from public.genres g where g.id = x)) then
+  if exists (select 1 from unnest(v_genres) as u(genre_id) where not exists (select 1 from public.genres g where g.id = u.genre_id)) then
     raise exception 'Unknown genre ID supplied' using errcode = '22023';
   end if;
-  if exists (select 1 from unnest(v_tags) x where not exists (select 1 from public.tags t where t.id = x)) then
+  if exists (select 1 from unnest(v_tags) as u(tag_id) where not exists (select 1 from public.tags t where t.id = u.tag_id)) then
     raise exception 'Unknown tag ID supplied' using errcode = '22023';
   end if;
 
@@ -76,15 +74,12 @@ begin
   delete from public.anime_tags where anime_id = p_anime_id;
 
   insert into public.anime_genres (anime_id, genre_id)
-  select p_anime_id, x from unnest(v_genres) as x
+  select p_anime_id, genre_id from unnest(v_genres) as u(genre_id)
   on conflict (anime_id, genre_id) do nothing;
 
   insert into public.anime_tags (anime_id, tag_id)
-  select p_anime_id, x from unnest(v_tags) as x
+  select p_anime_id, tag_id from unnest(v_tags) as u(tag_id)
   on conflict (anime_id, tag_id) do nothing;
-
-  get diagnostics v_genre_count = row_count;
-  select count(*) into v_tag_count from public.anime_tags where anime_id = p_anime_id;
 
   return jsonb_build_object(
     'anime_id', p_anime_id,
