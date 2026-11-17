@@ -5,6 +5,8 @@ on:
       - "anixia-client.js"
       - "anixia-admin.js"
       - "anixia-auth-pages.js"
+      - "anixia-genres.js"
+      - "genres.html"
       - "supabase/functions/**"
       - ".github/workflows/validate-anixia-core.yml"
   push:
@@ -29,6 +31,7 @@ jobs:
           node --check anixia-client.js
           node --check anixia-admin.js
           node --check anixia-auth-pages.js
+          node --check anixia-genres.js
 
   edge-function-types:
     runs-on: ubuntu-latest
