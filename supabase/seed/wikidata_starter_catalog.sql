@@ -499,3 +499,91 @@ where not exists (
  select 1 from public.anime_staff s
  where s.anime_id=a.id and s.person_id=p.id and s.role='voice_actor' and s.character_id=c.id
 );
+
+
+-- Ninth curated batch (2026-11-17): STEINS;GATE principal characters, voice actors and screenwriter.
+-- Work entity: Wikidata Q20590069. Japanese names and cast pairings are checked against KADOKAWA Animation's official lineup.
+insert into public.people(name,name_ja,name_kana,name_en,person_type,source,source_id)
+values
+ ('Mamoru Miyano','宮野真守','みやの まもる','Mamoru Miyano','voice_actor','wikidata','Q519821'),
+ ('Tomokazu Seki','関智一','せき ともかず','Tomokazu Seki','voice_actor','wikidata','Q284401'),
+ ('Yukari Tamura','田村ゆかり','たむら ゆかり','Yukari Tamura','voice_actor','wikidata','Q1022023'),
+ ('Yū Kobayashi','小林ゆう','こばやし ゆう','Yū Kobayashi','voice_actor','wikidata','Q1324072'),
+ ('Jukki Hanada','花田十輝','はなだ じゅっき','Jukki Hanada','screenwriter','wikidata','Q1088019')
+on conflict (source,source_id) do nothing;
+
+insert into public.people_external_ids(person_id,source,external_id,source_url,last_verified_at)
+select p.id,'wikidata',v.qid,'https://www.wikidata.org/wiki/'||v.qid,now()
+from (values
+ ('Q519821'),
+ ('Q49524'),
+ ('Q284401'),
+ ('Q1022023'),
+ ('Q1324072'),
+ ('Q1042804'),
+ ('Q1088019')
+) v(qid)
+join public.people p
+  on (p.source='wikidata' and p.source_id=v.qid)
+  or (v.qid='Q49524' and p.source='anixia_curated' and p.source_id='anixia:voice-actor:kana-hanazawa')
+on conflict do nothing;
+
+insert into public.characters(name,name_ja,name_kana,name_en,source,source_id)
+select v.name,v.name_ja,v.name_kana,v.name_en,'anixia_curated',v.character_key
+from (values
+ ('Rintaro Okabe','岡部倫太郎','おかべ りんたろう','Rintaro Okabe','anixia:steins-gate:okabe'),
+ ('Mayuri Shiina','椎名まゆり','しいな まゆり','Mayuri Shiina','anixia:steins-gate:mayuri'),
+ ('Itaru Hashida','橋田至','はしだ いたる','Itaru Hashida','anixia:steins-gate:itaru'),
+ ('Suzuha Amane','阿万音鈴羽','あまね すずは','Suzuha Amane','anixia:steins-gate:suzuha'),
+ ('Luka Urushibara','漆原るか','うるしばら るか','Luka Urushibara','anixia:steins-gate:luka')
+) v(name,name_ja,name_kana,name_en,character_key)
+where not exists (
+ select 1 from public.characters c
+ where c.source='anixia_curated' and c.source_id=v.character_key
+);
+
+insert into public.anime_characters(anime_id,character_id,role)
+select a.id,c.id,v.role
+from (values
+ ('anixia:steins-gate:okabe','main'),
+ ('anixia:steins-gate:mayuri','main'),
+ ('anixia:steins-gate:itaru','main'),
+ ('anixia:steins-gate:suzuha','supporting'),
+ ('anixia:steins-gate:luka','supporting')
+) v(character_key,role)
+join public.anime a on a.source='wikidata' and a.source_id='Q20590069'
+join public.characters c on c.source='anixia_curated' and c.source_id=v.character_key
+where not exists (
+ select 1 from public.anime_characters ac
+ where ac.anime_id=a.id and ac.character_id=c.id
+);
+
+insert into public.anime_staff(anime_id,person_id,role,character_id)
+select a.id,p.id,'voice_actor',c.id
+from (values
+ ('anixia:steins-gate:okabe','Q519821'),
+ ('anixia:steins-gate:kurisu','Q1042804'),
+ ('anixia:steins-gate:mayuri','Q49524'),
+ ('anixia:steins-gate:itaru','Q284401'),
+ ('anixia:steins-gate:suzuha','Q1022023'),
+ ('anixia:steins-gate:luka','Q1324072')
+) v(character_key,person_qid)
+join public.anime a on a.source='wikidata' and a.source_id='Q20590069'
+join public.characters c on c.source='anixia_curated' and c.source_id=v.character_key
+join public.people_external_ids x on x.source='wikidata' and x.external_id=v.person_qid
+join public.people p on p.id=x.person_id
+where not exists (
+ select 1 from public.anime_staff s
+ where s.anime_id=a.id and s.person_id=p.id and s.role='voice_actor' and s.character_id=c.id
+);
+
+insert into public.anime_staff(anime_id,person_id,role,character_id)
+select a.id,p.id,'screenwriter',null
+from public.anime a
+join public.people p on p.source='wikidata' and p.source_id='Q1088019'
+where a.source='wikidata' and a.source_id='Q20590069'
+  and not exists (
+    select 1 from public.anime_staff s
+    where s.anime_id=a.id and s.person_id=p.id
+      and s.role='screenwriter' and s.character_id is null
+  );
