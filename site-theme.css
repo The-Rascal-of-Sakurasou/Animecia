@@ -1386,3 +1386,7 @@ footer a,.site-footer a{color:#586474!important}
 .logo:after{content:none!important;display:none!important}
 .auth-panel>a[href="index.html"]{display:block!important;width:142px!important;height:44px!important;margin-bottom:12px!important;background-image:var(--anixia-logo-url)!important;background-repeat:no-repeat!important;background-position:left center!important;background-size:contain!important;color:transparent!important;font-size:0!important}
 @media(max-width:700px){.anixia-logo,.brand,.logo{width:124px!important;height:39px!important;min-width:124px!important;flex-basis:124px!important}}
+
+/* Brand placement on authentication and administration screens */
+.admin-brand>a{display:block!important;width:142px!important;height:44px!important;margin:0 auto 12px!important;background-image:var(--anixia-logo-url)!important;background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important;color:transparent!important;font-size:0!important;line-height:0!important}
+.footer-brand{display:inline-block!important;width:142px!important;height:44px!important;background-image:var(--anixia-logo-url)!important;background-repeat:no-repeat!important;background-position:left center!important;background-size:contain!important;color:transparent!important;font-size:0!important}
