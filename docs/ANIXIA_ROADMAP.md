@@ -300,3 +300,13 @@ All 6 migration files are present in the repository and applied to the active Su
 - 実データで `search_public_anime` と `suggest_public_catalog` を検証。`Evangelion`、`まどマギ`、`Pocket Monsters` で各作品が検索・候補表示されることを確認。
 - ポケモンの話数はWikidataの更新時点を確認できないため未設定。Wikidataの情報をANIXIAが完全な一次情報として保証するものではなく、話数等の変動情報は追加確認が必要。
 - 現在の公開作品は4件。人物・キャラクター・制作会社・エピソード等の本格データ投入は次工程。
+
+
+### Wikidata第2バッチ・制作会社関連付け（2026-11-17）
+- TVアニメ5作品を追加：Steins;Gate（Q20590069）、Anohana（Q483943）、Angel Beats!（Q531552）、Mushoku Tensei（Q102126892）、Re:Zero（Q65086934）。
+- 既存4作品と合わせて公開作品は9件。全9作品のWikidata外部IDを保存し、別名検索・サジェストの動作を確認。
+- 話数の変動・確認時点が不明確なRe:ZeroとMushoku Tenseiはepisode_countをNULLにした。確認できたSteins;Gate 26話、Anohana 11話、Angel Beats! 13話のみ登録。
+- 制作会社2社を登録：A-1 Pictures（Q277763）、Studio Bind（Q71811168）。Wikidata上で確認できるAnohana→A-1 Pictures、Mushoku Tensei→Studio Bindの関係をanime_studiosに登録。
+- 作品・制作会社の出典リンクは各Wikidata項目に保存。画像・ポスター・あらすじ本文は未取得。
+- seed SQLを9作品・2制作会社対応に更新し、再実行可能なupsert形式を維持。
+- 人物・声優・スタッフ・キャラクターは、同名異人や役割誤認を避けるため未登録。次工程でWikidata IDと作品上の役割を個別確認して追加する。
