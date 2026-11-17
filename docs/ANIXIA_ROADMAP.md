@@ -309,7 +309,7 @@ All 6 migration files are present in the repository and applied to the active Su
 - 制作会社2社を登録：A-1 Pictures（Q277763）、Studio Bind（Q71811168）。Wikidata上で確認できるAnohana→A-1 Pictures、Mushoku Tensei→Studio Bindの関係をanime_studiosに登録。
 - 作品・制作会社の出典リンクは各Wikidata項目に保存。画像・ポスター・あらすじ本文は未取得。
 - seed SQLを9作品・2制作会社対応に更新し、再実行可能なupsert形式を維持。
-- 人物・声優・スタッフ・キャラクターは、同名異人や役割誤認を避けるため未登録。次工程でWikidata IDと作品上の役割を個別確認して追加する。
+- 人物・声優・スタッフ・キャラクターは、Wikidata IDと作品上の役割を個別確認して少数登録を開始。全作品の網羅的な追加は未完了。
 
 
 ### 人物・スタッフの初期関連付け（2026-11-17）
@@ -320,7 +320,7 @@ All 6 migration files are present in the repository and applied to the active Su
 
 ### Wikidata小規模カタログ登録（2026-11-17・追加更新）
 
-- 現在のSupabase実データ：公開作品9件、制作会社2件、人物6件、制作会社関係2件、スタッフ関係7件。
+- 現在のSupabase実データ：公開作品9件、制作会社2件、人物8件、制作会社関係2件、スタッフ関係9件、キャラクター2件、声優クレジット2件。
 - 作品9件：新世紀エヴァンゲリオン、ポケットモンスター、カウボーイビバップ、魔法少女まどか☆マギカ、Steins;Gate、Anohana、Angel Beats!、無職転生、Re:ゼロ。
 - 人物・役割：長井龍雪（Anohana監督）、岡田麿里（Anohana脚本）、庵野秀明（エヴァンゲリオン監督・脚本）、新房昭之（まどか☆マギカ監督）、虚淵玄（まどか☆マギカ脚本）、麻枝准（Angel Beats!脚本）。
 - 制作会社関係：A-1 Pictures—Anohana、Studio Bind—無職転生。
@@ -335,4 +335,13 @@ All 6 migration files are present in the repository and applied to the active Su
 - 声優として緒方恵美（Q254368）と林原めぐみ（Q266670）を登録。
 - anime_characters で作品とキャラクターを、anime_staff.character_id でキャラクターと声優を紐付け。
 - 画像・あらすじ等は取り込まず、Wikidataの構造化識別子・名称・配役関係に限定。
-- DB上の登録数とseed再実行の冪等性を確認する。画面上の表示・ブラウザー実機確認は未完了。
+- DB上の登録数とseed再実行の冪等性を確認。作品詳細RPCにvoice_actorsを追加するマイグレーションを適用し、anixia-detail.jsでCV表示を実装。SQLで返却内容を確認済み。ブラウザー実機確認は未完了。
+
+
+### 作品詳細のキャスト表示（2026-11-17）
+
+- `get_public_anime_detail` のキャラクター情報に voice_actors 配列を追加し、役名・声優名を返す。
+- `anixia-detail.js` で「CV：声優名」をキャラクター一覧に併記。
+- マイグレーション `20261117134547_include_voice_actors_in_public_anime_detail.sql` を追加。
+- DBから取得した新世紀エヴァンゲリオンの2キャラクター・2声優の組み合わせでRPC返却値を検証。
+- Pagesビルドとブラウザー実機表示の最終確認は待ち。
