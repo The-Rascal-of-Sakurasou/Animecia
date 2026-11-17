@@ -3,9 +3,9 @@
   const $=id=>document.getElementById(id);
   const message=text=>{$("message").textContent=text;};
   const redirectTarget=()=>{
-    const value=new URLSearchParams(location.search).get("redirect");
-    if(!value||value.startsWith("//")||value.includes("://"))return "mypage.html";
-    return value.startsWith("/")?value.slice(1):value;
+    const value=new URLSearchParams(location.search).get("redirect") || "";
+    const allowed=["mypage.html","anime.html","ranking.html","quiz.html","recommendations.html","discover.html","season.html"];
+    return allowed.includes(value) ? value : "mypage.html";
   };
   const login=$("login-form");
   if(login)login.addEventListener("submit",async e=>{
