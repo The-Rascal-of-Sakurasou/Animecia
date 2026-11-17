@@ -24,6 +24,8 @@
     $("season").value = params.get("season") || "";
     $("format").value = params.get("format") || "";
     $("studio").value = params.get("studio") || "";
+    $("person").value = params.get("person") || "";
+    $("character").value = params.get("character") || "";
     $("sort").value = params.get("sort") || "newest";
 
     const years = $("year");
@@ -39,6 +41,16 @@
       const studios = await ANIXIA.getStudios();
       studios.forEach(s => $("studio").add(new Option(s.name_ja || s.name, s.id)));
     } catch (e) { console.warn("studio options unavailable", e); }
+
+    try {
+      const tags = await ANIXIA.getTags();
+      tags.forEach(t => $("tag").add(new Option(t.name_ja || t.name, t.id)));
+      const selected = new Set([
+        ...params.getAll("tag"),
+        ...(params.get("tags") || "").split(",").filter(Boolean)
+      ]);
+      Array.from($("tag").options).forEach(option => { option.selected = selected.has(option.value); });
+    } catch (e) { console.warn("tag options unavailable", e); }
   }
 
   async function search() {
@@ -50,6 +62,9 @@
       season: $("season").value,
       format: $("format").value,
       studioId: $("studio").value,
+      tagIds: Array.from($("tag").selectedOptions).map(option => option.value),
+      personQuery: $("person").value.trim(),
+      characterQuery: $("character").value.trim(),
       sort: $("sort").value,
       limit: PAGE_SIZE,
       offset: page * PAGE_SIZE
@@ -65,7 +80,7 @@
       $("result-count").textContent = lastCount ? `${lastCount.toLocaleString("ja-JP")}件` : `${result.data.length}件`;
       $("result-summary").textContent = result.data.length ? "検索結果を表示しています。" : "作品データが登録されると、ここに表示されます。";
       $("prev").disabled = page === 0;
-      $("next").disabled = result.data.length < PAGE_SIZE;
+      $("next").disabled = (page + 1) * PAGE_SIZE >= lastCount;
       $("page-label").textContent = `${page + 1}ページ目`;
       const params = new URLSearchParams();
       if (query) params.set("search", query);
@@ -74,6 +89,9 @@
       if (options.season) params.set("season", options.season);
       if (options.format) params.set("format", options.format);
       if (options.studioId) params.set("studio", options.studioId);
+      options.tagIds.forEach(id => params.append("tag", id));
+      if (options.personQuery) params.set("person", options.personQuery);
+      if (options.characterQuery) params.set("character", options.characterQuery);
       if (options.sort !== "newest") params.set("sort", options.sort);
       history.replaceState(null, "", location.pathname + (params.size ? "?" + params.toString() : ""));
     } catch (error) {
@@ -87,6 +105,12 @@
   }
 
   $("filter-form").addEventListener("submit", event => { event.preventDefault(); page = 0; search(); });
+  $("reset").addEventListener("click", () => {
+    $("filter-form").reset();
+    $("tag").selectedIndex = -1;
+    page = 0;
+    search();
+  });
   $("prev").addEventListener("click", () => { if (page > 0) { page--; search(); window.scrollTo({top:0,behavior:"smooth"}); } });
   $("next").addEventListener("click", () => { page++; search(); window.scrollTo({top:0,behavior:"smooth"}); });
   populateFilters().then(search);
