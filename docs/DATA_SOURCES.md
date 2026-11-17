@@ -129,3 +129,24 @@ Wikidataはクエリサービスの負荷を避けるため、将来の自動同
 - `anixia-detail.js` はキャラクター名の横に「CV：声優名」を表示する。
 - 新世紀エヴァンゲリオンの碇シンジ／緒方恵美、綾波レイ／林原めぐみの2組をSQLで確認。
 - 公開ブラウザーでの表示確認はデプロイ後に実施する。
+
+
+### 追加キャラクター・声優（2026-11-17）
+
+| 作品 | キャラクター | 声優 | 声優Wikidata ID |
+|---|---|---|---|
+| Steins;Gate | 牧瀬紅莉栖 | 今井麻美 | Q1042804 |
+| 無職転生 | ルーデウス・グレイラット | 内山夕実 | Q322979 |
+| Re:ゼロ | ナツキ・スバル | 小林裕介 | Q17158282 |
+| カウボーイビバップ | スパイク・スピーゲル | 山寺宏一 | Q333194 |
+| ポケットモンスター | サトシ | 松本梨香 | Q943714 |
+
+声優の人物識別子はWikidataで照合。キャラクターはWikidataの識別子が確実に照合できなかったため、ANIXIA内部キー（source = anixia_curated）で管理し、外部QIDを割り当てていない。配役根拠は以下を参照。
+
+- Steins;Gate：<https://kadokawa-animation.jp/lineup/steinsgate>
+- 無職転生：<https://www.tvmaze.com/shows/52279/mushoku-tensei-jobless-reincarnation/cast>
+- Re:ゼロ：<https://www.wikidata.org/wiki/Q65086934>
+- カウボーイビバップ：<https://server.elscione.com/Officially%20Translated%20Light%20Novels/Mushoku%20Tensei/> は対象外。山寺宏一／スパイクの役割は <https://www.amazon.co.jp/> ではなく、BFI資料 <https://bfidatadigipres.github.io/pdf/2022-04-14-cowboy-bebop.pdf> を参照。
+- ポケットモンスター：<https://www.pocketmonsters.net/staff/view/3456>
+
+上記は選定した主役級キャラクターの初期登録であり、全キャラクター・全キャストを網羅したものではない。Wikidata ID未確認のキャラクターにはQIDを付与せず、ANIXIA内部キーを使用。
