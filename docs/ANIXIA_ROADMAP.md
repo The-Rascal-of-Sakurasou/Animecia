@@ -218,3 +218,14 @@ All 6 migration files are present in the repository and applied to the active Su
 - The deployed legacy function's body already checks the `x-anixia-import-key` against the server secret before using privileged credentials, but JWT verification was disabled at the platform layer.
 - Deployed version 3 with `verify_jwt=true`, preserving the existing source code and import-key check. Verification confirmed the function is ACTIVE and JWT verification is enabled.
 - This is a conservative hardening step, not proof that no external caller exists. Keep the endpoint monitored and remove it only after confirming there are no external scheduled/manual integrations.
+
+
+### Annict importer safeguards (2026-11-17)
+- Found that the catalog-level importer did not check the Annict source approval registry, even though the detail importer already required `rights_review_status='approved'` and `is_enabled=true`.
+- Added the same fail-closed approval gate to `sync-annict-catalog`. A missing source row or database lookup error now stops the run; an unapproved or disabled source returns HTTP 423 before any provider request or catalogue write.
+- Deployed `sync-annict-catalog` as active version 3 with JWT verification enabled. GitHub commit: `e75021625a38a3bece7abcb6a088a4de6a7bcdca`.
+- Found that the detail importer could stop after four pages while still reporting completion. It now detects remaining pagination and fails before writing any detail records, rather than silently importing a partial collection as complete.
+- Removed the explicit `is_published=false` value from episode upserts. New episodes still use the database default (false), while later syncs no longer unpublish episodes already approved by an administrator.
+- Deployed `sync-annict-work-details` as active version 4 with JWT verification enabled. GitHub commit: `2ebd6f9ccf9039a7a00d0986d1f14d8952c069cc`.
+- Neither importer was executed against Annict during this review. Annict remains pending/disabled; no provider data was imported.
+- Remaining limitations: the detail importer is intentionally capped at four pages per collection and currently stops safely when a collection exceeds that cap; a resumable paged detail-import workflow is still needed. Work-format mapping and richer genre/relation metadata also require source-field validation.
