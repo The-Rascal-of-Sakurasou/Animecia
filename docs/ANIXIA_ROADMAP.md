@@ -280,3 +280,5 @@ All 6 migration files are present in the repository and applied to the active Su
 - すべて `EXISTS` 条件で判定し、1作品に複数の一致があっても結果が重複しない。公開済み作品だけを返す既存条件・絞り込み・並び順・ページネーション・返却形式は維持。
 - 別名テーブルをData APIに直接公開せず、既存の公開検索RPC内でのみ参照。
 - 実データが未登録のため、実在する作品・人物での検索確認は未実施。テスト用データを一時作成してロールバックする検証を実施予定。
+
+- 旧9引数版 `search_public_anime` も12引数版へ委譲する `SECURITY INVOKER` ラッパーに変更し、既存の呼び出し元でも別名対応検索を利用できるようにした。
