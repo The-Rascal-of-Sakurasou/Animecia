@@ -143,6 +143,25 @@ Deno.serve(async (req: Request) => {
     const { data: adminCheck, error: adminError } = await userClient.rpc("is_anixia_admin");
     if (adminError || adminCheck !== true) return json({ error: "この操作にはANIXIA管理者権限が必要です。" }, 403);
 
+    // Fail closed: no provider request or catalog write until the source has been
+    // explicitly approved and enabled by an administrator.
+    const admin = createClient(url, service, { auth: { persistSession: false, autoRefreshToken: false } });
+    const { data: source, error: sourceError } = await admin.from("catalog_sources")
+      .select("rights_review_status,is_enabled")
+      .eq("code", "annict")
+      .single();
+    if (sourceError) {
+      console.error("ANIXIA catalog source check failed:", sourceError);
+      return json({ error: "データソースの利用承認状態を確認できません。同期は停止しました。" }, 503);
+    }
+    if (!source?.is_enabled || source.rights_review_status !== "approved") {
+      return json({
+        error: "Annictの利用条件確認が完了していないため、同期は停止中です。",
+        rightsReviewStatus: source?.rights_review_status || "unknown",
+        enabled: Boolean(source?.is_enabled)
+      }, 423);
+    }
+
     const body = await req.json().catch(() => ({}));
     const startPage = Math.min(100000, Math.max(1, Math.floor(Number(body?.startPage) || 1)));
     const maxPages = Math.min(5, Math.max(1, Math.floor(Number(body?.maxPages) || 3)));
