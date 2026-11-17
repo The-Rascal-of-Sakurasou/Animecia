@@ -316,3 +316,14 @@ All 6 migration files are present in the repository and applied to the active Su
 - Anohanaの監督として長井龍雪（Tatsuyuki Nagai、Q1073727）、脚本として岡田麿里（Mari Okada、Q3209229）を登録。
 - `people` / `people_external_ids` / `anime_staff` に人物IDと役割を保存。人物画像・略歴本文は取得していない。
 - 人物名サジェストと作品スタッフ関係のSQL検証を実施。声優・キャラクターの追加は、Wikidataの識別子と作品内役割を個別照合してから進める。
+
+
+### Wikidata小規模カタログ登録（2026-11-17・追加更新）
+
+- 現在のSupabase実データ：公開作品9件、制作会社2件、人物6件、制作会社関係2件、スタッフ関係7件。
+- 作品9件：新世紀エヴァンゲリオン、ポケットモンスター、カウボーイビバップ、魔法少女まどか☆マギカ、Steins;Gate、Anohana、Angel Beats!、無職転生、Re:ゼロ。
+- 人物・役割：長井龍雪（Anohana監督）、岡田麿里（Anohana脚本）、庵野秀明（エヴァンゲリオン監督・脚本）、新房昭之（まどか☆マギカ監督）、虚淵玄（まどか☆マギカ脚本）、麻枝准（Angel Beats!脚本）。
+- 制作会社関係：A-1 Pictures—Anohana、Studio Bind—無職転生。
+- Wikidata識別子・タイトル・役割を使った検索／サジェストのSQL確認を実施。データは少数の手動登録であり、全作品の網羅性はない。
+- 初期データのseedはNULLを含むスタッフ関係の重複を避けるNOT EXISTS方式にし、再実行時の冪等性を維持。
+- GitHub Pagesの最新ビルド（SHA `a0d55ade3fd3cf8881607bfcd66ecf48e83d0779`）は成功。ブラウザーでの表示確認は別途必要。
