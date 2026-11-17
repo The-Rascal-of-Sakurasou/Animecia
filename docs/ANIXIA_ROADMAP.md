@@ -189,3 +189,14 @@ All 6 migration files are present in the repository and applied to the active Su
 - Corrected the embedded anime relationship in the pending-episode query to use the actual `episodes_anime_id_fkey` constraint.
 - Security review found inherited anonymous write grants on catalogue tables. Migration `202611170010_revoke_anon_catalog_writes.sql` removes INSERT/UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER privileges for `anon` on genres, tags, anime taxonomy joins, anime relations, alternate titles, episodes, studios, series, and production organizations. RLS policies remain in place.
 - Post-migration checks confirmed anonymous INSERT/UPDATE/DELETE privileges are false for all 12 checked catalogue tables.
+
+
+### Advanced public catalogue search (2026-11-17)
+- Added migration `20261117125000_advanced_catalog_search.sql` and deployed the 12-argument `search_public_anime` overload. The existing 9-argument overload remains available for compatibility with older pages.
+- The expanded RPC searches primary titles, kana titles, and `anime_titles` alternate-title records; it also filters by multiple tags, production studios (including linked secondary studios), staff/voice-actor names, and character names.
+- The new RPC returns published anime only, caps result size at 50, caps title/person/character search terms at 80 characters, and limits tag filtering to the first 30 supplied IDs.
+- Explicitly revoked the default PUBLIC execute grant and granted execution only to `anon`, `authenticated`, and `service_role`; the function uses an empty search path and schema-qualified objects.
+- Updated `anixia-client.js`, `anime.html`, and `anixia-anime.js` with tag multi-select, staff/person search, character search, URL-preserved filters, and a reset control.
+- Direct database invocation with empty filters succeeded and returned 0 rows, as expected because the anime table is currently empty. Function grants and the empty search_path were verified.
+- Browser/API end-to-end testing with real anime data remains pending. The UI cannot demonstrate the new filters until tags and anime records are populated.
+- Supabase Advisor still flags public-facing SECURITY DEFINER RPCs because anonymous execution is intentional for public catalogue access. These functions must continue to enforce published-only output and bounded inputs. The admin taxonomy RPC retains its in-function administrator check.
