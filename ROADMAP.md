@@ -1,6 +1,6 @@
 # ANIXIA 開発ロードマップ
 
-更新日：2026-11-17
+更新日：2026-11-18
 
 ## 開発方針
 
@@ -10,9 +10,11 @@ ANIXIAは、アニメデータベースを核に、作品発見・視聴管理�
 - URLパス：/anixia/
 - フロントエンド：GitHub Pages + HTML/CSS/JavaScript
 - バックエンド：Supabase PostgreSQL / Auth / RLS
-- 第一候補データソース：Annict API
-- 補助候補：Jikan
-- 将来候補：TMDB
+- 主データソース：Wikidata（構造化データ）
+- 補助同期：Wikidataのシーズン作品同期
+- Annict：利用条件の再確認が完了するまで無効
+- Jikan：公開APIの終了により採用しない
+- TMDB：個人情報入力を避ける方針により採用しない
 - 運用費目標：無料枠を使い月額0円
 
 ## Phase 0 — ブランド・環境の整備
