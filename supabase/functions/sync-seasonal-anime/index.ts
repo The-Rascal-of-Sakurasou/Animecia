@@ -16,10 +16,14 @@ const FORMATS: Record<string, string> = {
   Q63952888: "tv",
   Q20650540: "movie",
   Q220898: "ova",
-  Q1047299: "web",
+  Q1047299: "ona",
   Q117209498: "movie",
   Q117467240: "web",
-  Q11086742: "tv"
+  Q11086742: "tv",
+  Q113671041: "ona",
+  Q113687694: "ova",
+  Q117467246: "tv",
+  Q117717390: "movie"
 };
 
 function currentSeason() {
@@ -42,8 +46,8 @@ function currentSeason() {
 
 function buildQuery(limit: number, offset: number, range: ReturnType<typeof currentSeason>) {
   return `
-SELECT DISTINCT ?item ?itemLabel ?jaLabel ?date ?episodes ?class ?malId WHERE {
-  VALUES ?class { wd:Q63952888 wd:Q20650540 wd:Q220898 wd:Q1047299 wd:Q117209498 wd:Q117467240 wd:Q11086742 }
+SELECT ?item ?itemLabel ?jaLabel ?date ?episodes ?malId (GROUP_CONCAT(DISTINCT STR(?class);separator="|") AS ?classes) WHERE {
+  VALUES ?class { wd:Q63952888 wd:Q20650540 wd:Q220898 wd:Q1047299 wd:Q117209498 wd:Q117467240 wd:Q11086742 wd:Q113671041 wd:Q113687694 wd:Q117467246 wd:Q117717390 }
   ?item wdt:P31 ?class ; wdt:P495 wd:Q17 .
   OPTIONAL { ?item wdt:P580 ?startDate . }
   OPTIONAL { ?item wdt:P577 ?publicationDate . }
@@ -58,6 +62,7 @@ SELECT DISTINCT ?item ?itemLabel ?jaLabel ?date ?episodes ?class ?malId WHERE {
   OPTIONAL { ?item wdt:P4086 ?malId . }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "ja,en". }
 }
+GROUP BY ?item ?itemLabel ?jaLabel ?date ?episodes ?malId
 ORDER BY ?date ?item
 LIMIT ${limit}
 OFFSET ${offset}`;
@@ -107,7 +112,7 @@ function mapBindings(bindings: any[], range: ReturnType<typeof currentSeason>) {
     const season = month <= 3 ? "winter" : month <= 6 ? "spring" : month <= 9 ? "summer" : "autumn";
     const releaseYear = Number(releasedOn.slice(0, 4));
     const format = FORMATS[cls] || "other";
-    if (!["tv", "movie", "ova", "web"].includes(format)) continue;
+    if (!["tv", "movie", "ova", "ona", "web"].includes(format)) continue;
     if (!byQid.has(qid)) {
       byQid.set(qid, {
         qid,
@@ -182,7 +187,7 @@ async function persist(db: any, works: any[]) {
         episode_count: work.episode_count,
         episodes_count: work.episodes_count,
         country_code: "JP",
-        is_published: true,
+        is_published: false,
         source_synced_at: new Date().toISOString()
       });
     } else {
