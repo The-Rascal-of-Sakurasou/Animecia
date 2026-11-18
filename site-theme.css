@@ -1396,7 +1396,7 @@ footer a,.site-footer a{color:#586474!important}
 /* ANIXIA poster image states */
 .anixia-poster{position:relative;overflow:hidden;background:linear-gradient(145deg,#17263d,#263b59)!important}
 .anixia-poster img[data-anixia-poster]{width:100%;height:100%;object-fit:cover}
-.anixia-poster-fallback{display:grid;place-items:center;width:100%;height:100%;min-height:100px;background:linear-gradient(145deg,#17263d,#263b59);color:#f2b84d;font-size:clamp(15px,2vw,23px);font-weight:950;letter-spacing:.16em}
+.anixia-poster-fallback{position:relative;display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box;width:100%;height:100%;min-height:100px;overflow:hidden;padding:clamp(10px,3%,18px);background:radial-gradient(circle at 85% 18%,rgba(242,184,77,.22),transparent 32%),linear-gradient(145deg,#101827 0%,#263b59 58%,#17263d 100%);color:#f2b84d;text-align:left;letter-spacing:normal}.anixia-poster-fallback:before{content:"";position:absolute;inset:9px;border:1px solid rgba(242,184,77,.25);pointer-events:none}.anixia-poster-brand{position:relative;font-size:clamp(9px,1.2vw,12px);font-weight:950;letter-spacing:.2em}.anixia-poster-title{position:relative;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5;overflow:hidden;color:#fff;font-size:clamp(12px,1.8vw,19px);line-height:1.45;font-weight:900;overflow-wrap:anywhere}.anixia-poster-caption{position:relative;color:rgba(255,255,255,.58);font-size:clamp(7px,.9vw,9px);font-weight:700;letter-spacing:.2em}
 .anixia-poster-fallback[hidden]{display:none!important}
 .anixia-result-poster{position:relative;overflow:hidden;background:linear-gradient(145deg,#17263d,#263b59)!important}
 .anixia-result-poster img[data-anixia-poster]{width:100%;height:100%;object-fit:cover}
