@@ -1,67 +1,100 @@
-# ANIXIA Wikidata catalog synchronization
+# ANIXIA automatic catalog and metadata synchronization
 
 ## Overview
+
+ANIXIA uses scheduled Supabase Edge Functions to collect structured anime catalog data and fill missing metadata. Synchronization is incremental and uses external source IDs to avoid duplicate records.
+
+### Active sources
+
+- **Wikidata (CC0):** anime work candidates, titles, format, year, country, episode count, external IDs, aliases, genres, people, characters, staff links, series and work relations.
+- **Wikimedia Commons:** candidate poster images only when the file's license and attribution data can be verified.
+- **Annict:** disabled until its source terms and rights review are approved.
+- **TMDB:** not used by the current workflow.
+
+## Scheduled jobs
+
+All schedules below are UTC. Japan time is UTC+9.
+
+| Cron job | UTC schedule | Japan time | Purpose |
+|---|---:|---:|---|
+| anixia-wikidata-catalog-sync | Daily 02:30 | Daily 11:30 | Discover and register new anime work candidates |
+| anixia-wikidata-enrichment-sync | Daily 03:15 | Daily 12:15 | Fill structured metadata and relationships |
+| anixia-wikidata-episodes-sync | Sunday 04:00 | Sunday 13:00 | Discover episode entities and add pending episode rows |
+| anixia-commons-poster-sync | Sunday 05:00 | Sunday 14:00 | Find reusable Commons images with attribution |
+
+The schedules are registered in Supabase Cron and use a secret retrieved from Supabase Vault at execution time. Batch sizes are deliberately bounded to reduce timeouts and respect Wikidata Query Service limits.
+
+## Work catalog synchronization
+
+- Edge Function: `sync-wikidata-catalog`
 - Source: Wikidata structured data (CC0).
-- Query scope: Japan-origin animation classes: anime TV series, anime film, OVA, ONA, anime short film, animated web series and anime television programs.
-- A start/publication date from 1963 onward is required.
-- Imports titles, format, year, Japan country code, episode count and Wikidata QID only.
-- Images, banners and synopsis/prose are never imported.
-- New rows remain unpublished by default. The existing ANIXIA admin review queue is the publication gate.
-- Upsert uses ignoreDuplicates to preserve existing metadata. A separate qualification step automatically publishes every imported Wikidata record that meets the catalog gate; it does not rewrite titles, descriptions or other user metadata.
+- Scope: Japanese-origin animation candidates within supported formats and date criteria.
+- Imports structured work metadata and Wikidata QIDs.
+- Uses `catalog_sync_state` for the incremental offset and `catalog_sync_runs` for execution history.
+- Uses `upsert(..., ignoreDuplicates: true)` to avoid replacing existing rows.
+- New candidates remain unpublished. Publication must be handled by the separate administrator review workflow.
 
-## Operation
-- Edge Function: sync-wikidata-catalog
-- Admin manual preview/sync: ANIXIA Admin → Wikidata自動作品収録.
-- Supabase Cron: daily at 02:30 UTC (11:30 Japan time), batch size 50.
-- Offset is stored in catalog_sync_state and advanced after successful syncs.
-- Each run is recorded in catalog_sync_runs.
-- The first two test batches scanned 20 source rows and imported 17 new records. The database now contains 26 Wikidata-sourced rows: 17 unpublished candidates and 9 published records.
+## Metadata enrichment
 
-## First-time secret provisioning
-The original cron token must never be committed to Git or placed in browser code. Generate it inside Postgres, store it in Supabase Vault, and store only its SHA-256 hash in catalog_sync_secrets:
-
-```sql
-do $$
-declare
-  sync_token text := encode(extensions.gen_random_bytes(32), 'hex');
-begin
-  perform vault.create_secret(
-    sync_token,
-    'anixia_wikidata_sync_token',
-    'Private token for scheduled ANIXIA Wikidata catalog synchronization'
-  );
-  insert into public.catalog_sync_secrets (id, secret_hash)
-  values (1, encode(extensions.digest(sync_token, 'sha256'), 'hex'))
-  on conflict (id) do update
-    set secret_hash = excluded.secret_hash, updated_at = now();
-end $$;
-```
-
-The Cron job reads the secret from vault.decrypted_secrets at runtime and sends it in the x-anixia-cron-token header. Do not display or export the decrypted value.
-
-## Security
-- The Edge Function accepts either a signed-in ANIXIA administrator (checked with is_anixia_admin) or the high-entropy cron token.
-- Only the SHA-256 hash is stored in catalog_sync_secrets; the original token is stored in Supabase Vault.
-- The token is not included in frontend code or Git history.
-- catalog_sync_secrets and catalog_sync_state have RLS enabled and no anon/authenticated grants.
-- Gateway JWT verification is disabled for this one function because it supports the separate private cron-token authentication path; all requests are then checked by the function itself.
-
-## Source limitations
-Wikidata is community-maintained and may contain incomplete or incorrect classifications. Automatic publication is limited to records with a Japanese title, a valid QID, a release year from 1963 onward, Japan as country of origin, and a supported format (TV, movie, OVA or ONA/web). Records missing a Japanese title remain unpublished rather than requiring a manual approval step. The Query Service is rate-limited; this implementation makes one bounded query per scheduled run and uses a descriptive User-Agent.
+- Edge Function: `sync-wikidata-enrichment`
+- Scheduled daily with a batch limit of 50 works.
+- Adds missing/source-linked external IDs, aliases, official URLs, episode counts, people, characters, staff relationships, genres, series and prequel/sequel relationships.
+- Existing manual values and publication states are preserved.
+- Structured data is imported only when the source provides a supported value. Missing values are left blank.
+- Prose synopsis text is not copied from Wikidata. It requires a separate source with appropriate reuse rights and attribution.
 
 ## Episode synchronization
 
-- Edge Function: `sync-wikidata-episodes` (JWT verification enabled; administrator role is checked inside the function).
-- Admin manual preview/import: ANIXIA Admin → Wikidataエピソード自動収録.
-- The importer checks published Wikidata anime works with a positive episode count and imports episode entities connected through `part of (P361)` and season `has part(s) (P527)` statements.
-- It reads episode labels, Japanese labels, original Japanese titles (`P1476`), publication dates (`P577`) and series ordinals (`P1545`) when present.
-- Imported episode rows are always unpublished. The admin episode-review queue remains the publication gate.
-- Existing episode records from other sources cause that work to be skipped, avoiding mixed-source ordering conflicts.
-- Existing Wikidata episode rows are not overwritten. Newly discovered rows are appended after the existing display order.
-- The public detail page does not infer an episode number from display order. If the source has no ordinal, it shows that the episode number is unregistered.
-- Wikidata episode coverage is incomplete and may omit many episodes. Missing source data is not treated as evidence that an episode does not exist.
-- The Wikidata Query Service is rate-limited; requests are sequential and include a descriptive User-Agent.
+- Edge Function: `sync-wikidata-episodes`
+- Scheduled weekly with a batch limit of 5 works per run.
+- Checks published Wikidata works with a positive episode count.
+- Uses episode class, `part of the series (P179)`, `part of (P361)`, season `has part(s) (P527)`, and season property `P4908` relationships where present.
+- Reads Japanese/other labels, original title (`P1476`), publication date (`P577`) and series ordinal (`P1545`) when available.
+- The query includes anime television series episode class (`Q102364578`) as well as the general television episode classes.
+- Existing episode rows from other sources cause the work to be skipped to avoid mixing source ordering.
+- Existing Wikidata episode rows are not overwritten. New rows are appended after the current display order.
+- Every imported episode remains unpublished until an administrator reviews it.
+- Wikidata does not provide episode data for every anime. An empty result is not proof that the work has no episodes.
 
-### Episode field limitations
+## Images
 
-The Annict REST API episode endpoint documents episode ID, number, display number, sort number, title and related work/episode references. It does not document per-episode broadcast date or duration fields. ANIXIA therefore leaves those fields blank unless another source provides a verifiable value. See the [Annict episode API specification](https://docs.annict.com/docs/ja/api/v1/episodes).
+- Edge Function: `sync-commons-posters`
+- Uses Wikimedia Commons file metadata and records attribution/source information alongside image URLs.
+- Only images with verifiable licensing/attribution are eligible.
+- A failed match leaves the poster field blank; no unverified image is assigned.
+- The current catalog has not yet demonstrated broad poster coverage. Image synchronization success must be measured by actual updated-row counts, not merely by the Edge Function being active.
+
+## Rights and source policy
+
+- Wikidata structured data is CC0.
+- Wikimedia Commons files have individual license and attribution requirements; each file must be checked independently.
+- Annict remains disabled pending rights review.
+- No source is treated as permission to copy arbitrary synopsis prose or images.
+- Source approval is checked before the corresponding synchronization runs.
+
+## Security
+
+- Scheduled functions authenticate with a high-entropy cron token stored in Supabase Vault.
+- Only a SHA-256 hash of the token is stored in the database.
+- The token is never included in browser code or committed to Git.
+- Functions that set `verify_jwt: false` perform their own administrator-or-cron-token validation before accessing data.
+- Synchronization secrets and state tables are not available to anonymous users.
+- Keep Edge Function secrets, service-role credentials and decrypted Vault values out of logs, browser code and Git history.
+
+## Current verification notes
+
+- Work, metadata, episode and image jobs are registered as active Cron jobs.
+- A recent metadata enrichment test processed 26 works and recorded 555 added/linked structured values.
+- A later 10-work enrichment test completed successfully and found no additional missing values in that batch.
+- Episode synchronization has successfully imported 2 Wikidata episode rows. Both remain unpublished for review. Other tested works returned no matching episode entities.
+- Poster URL coverage is currently 0 in the inspected anime table. The image job is active, but broad image coverage is not yet verified.
+- The latest catalog table count observed during development was 313 anime rows. Counts change as synchronization continues.
+
+## Known limitations and next steps
+
+- Wikidata is community-maintained and may be incomplete or inconsistent.
+- Query Service requests are subject to a 60-second query deadline, rate limits and concurrency restrictions. Requests must use a descriptive User-Agent, stay sequential/bounded, and honor `Retry-After` on HTTP 429.
+- Episode coverage remains low; improve matching against season/series relationships and validate each new query against representative anime before increasing batch sizes.
+- Poster coverage requires diagnosing Commons search matching and expanding the supported search strategy without relaxing license checks.
+- Synopsis, streaming availability, ratings and other prose/provider-specific fields need additional approved sources before they can be populated automatically.
+- Do not auto-publish uncertain data. Keep source provenance and administrator review available for every imported record.
