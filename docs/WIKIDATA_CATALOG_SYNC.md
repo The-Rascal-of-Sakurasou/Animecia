@@ -19,7 +19,7 @@ All schedules below are UTC. Japan time is UTC+9.
 |---|---:|---:|---|
 | anixia-wikidata-catalog-sync | Daily 02:30 | Daily 11:30 | Discover and register new anime work candidates |
 | anixia-wikidata-enrichment-sync | Daily 03:15 | Daily 12:15 | Fill structured metadata and relationships |
-| anixia-seasonal-anime-sync | Daily 03:35 | Daily 12:35 | Discover and synchronize current-season works |
+| anixia-seasonal-anime-sync | Daily 03:35 | Daily 12:35 | Discover and synchronize current-season works |\n| anixia-wikipedia-synopsis-sync | Daily 04:30 | Daily 13:30 | Fill missing Japanese synopsis text with attribution |
 | anixia-wikidata-episodes-sync | Sunday 04:00 | Sunday 13:00 | Discover episode entities and add episode rows |
 | anixia-commons-poster-sync | Sunday 05:00 | Sunday 14:00 | Find reusable Commons images with attribution |
 
@@ -67,7 +67,7 @@ The schedules are registered in Supabase Cron and use a secret retrieved from Su
 ## Images
 
 - Edge Function: `sync-commons-posters`
-- Uses Wikimedia Commons file metadata and records attribution/source information alongside image URLs.
+- Uses Wikimedia Commons file metadata and records attribution/source information alongside image URLs.\n- Requires a title match in the filename or image description, poster/key-visual context, portrait dimensions, a recognized CC BY/CC BY-SA/CC0/Public Domain license URL, and author/credit metadata where required.
 - Only images with verifiable licensing/attribution are eligible.
 - A failed match leaves the poster field blank; no unverified image is assigned.
 - The current catalog has not yet demonstrated broad poster coverage. Image synchronization success must be measured by actual updated-row counts, not merely by the Edge Function being active.
@@ -95,7 +95,7 @@ The schedules are registered in Supabase Cron and use a secret retrieved from Su
 - A recent metadata enrichment test processed 26 works and recorded 555 added/linked structured values.
 - A later 10-work enrichment test completed successfully and found no additional missing values in that batch.
 - Episode synchronization has successfully imported 2 Wikidata episode rows. Both remain unpublished for review. Other tested works returned no matching episode entities.
-- Poster URL coverage is currently 0 in the inspected anime table. The image job is active, but broad image coverage is not yet verified.
+- Poster URL coverage is currently 0 in the inspected anime table. The image job is active, but broad image coverage is not yet verified. Free-to-reuse promotional posters may be scarce; do not replace this check with unlicensed artwork.
 - The latest catalog table count observed during development was 313 anime rows. Counts change as synchronization continues.
 
 ## Known limitations and next steps
@@ -104,5 +104,5 @@ The schedules are registered in Supabase Cron and use a secret retrieved from Su
 - Query Service requests are subject to a 60-second query deadline, rate limits and concurrency restrictions. Requests must use a descriptive User-Agent, stay sequential/bounded, and honor `Retry-After` on HTTP 429.
 - Episode coverage remains low; improve matching against season/series relationships and validate each new query against representative anime before increasing batch sizes.
 - Poster coverage requires diagnosing Commons search matching and expanding the supported search strategy without relaxing license checks.
-- Synopsis, streaming availability, ratings and other prose/provider-specific fields need additional approved sources before they can be populated automatically.
+- Synopsis text is imported only from exact-match Japanese Wikipedia lead extracts with attribution and revision links; not every anime has a suitable article. Streaming availability, ratings and other provider-specific fields need additional approved sources before they can be populated automatically.
 - Do not auto-publish uncertain data. Keep source provenance and administrator review available for every imported record.
