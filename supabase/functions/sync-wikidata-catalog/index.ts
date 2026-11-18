@@ -70,6 +70,37 @@ async function fetchMalIds(qids:string[]){
  }
  return found;
 }
+async function persistMalMappings(db:any,works:any[]){
+ const validWorks=works.filter((row:any)=>row?.id&&/^Q[0-9]+$/.test(String(row.source_id||"")));
+ if(!validWorks.length)return {linked:0,alreadyLinked:0,missing:0,ambiguous:0,collision:0,idsFound:0};
+ const malByQid=await fetchMalIds(validWorks.map((row:any)=>String(row.source_id)));
+ const existingResult=await db.from("anime_external_ids").select("anime_id,external_id").eq("source","myanimelist").limit(5000);
+ if(existingResult.error)throw existingResult.error;
+ const assignedByAnime=new Map<string,string>();
+ const assignedByMal=new Map<string,string>();
+ for(const row of existingResult.data||[]){
+  assignedByAnime.set(String(row.anime_id),String(row.external_id));
+  assignedByMal.set(String(row.external_id),String(row.anime_id));
+ }
+ const inserts:any[]=[];
+ let alreadyLinked=0,missing=0,ambiguous=0,collision=0;
+ for(const work of validWorks){
+  const animeId=String(work.id),qid=String(work.source_id),ids=malByQid.get(qid);
+  if(!ids||ids.size===0){missing++;continue;}
+  if(ids.size!==1){ambiguous++;continue;}
+  const malId=[...ids][0],sameAnime=assignedByAnime.get(animeId);
+  if(sameAnime){if(sameAnime===malId)alreadyLinked++;else collision++;continue;}
+  if(assignedByMal.has(malId)){collision++;continue;}
+  inserts.push({anime_id:animeId,source:"myanimelist",external_id:malId,source_url:"https://myanimelist.net/anime/"+malId,is_primary:false,last_verified_at:new Date().toISOString()});
+  assignedByAnime.set(animeId,malId);
+  assignedByMal.set(malId,animeId);
+ }
+ if(inserts.length){
+  const saved=await db.from("anime_external_ids").upsert(inserts,{onConflict:"source,external_id",ignoreDuplicates:true});
+  if(saved.error)throw saved.error;
+ }
+ return {linked:inserts.length,alreadyLinked,missing,ambiguous,collision,idsFound:malByQid.size};
+}
 Deno.serve(async(req:Request)=>{
  const origin=req.headers.get("Origin");
  if(origin&&origin!==allowedOrigin)return json({error:"Origin not allowed"},403);
@@ -104,35 +135,8 @@ Deno.serve(async(req:Request)=>{
    const worksResult=await db.from("anime").select("id,source_id")
     .eq("source","wikidata").not("source_id","is",null).order("source_id").limit(1000);
    if(worksResult.error)throw worksResult.error;
-   const works=(worksResult.data||[]).filter((row:any)=>/^Q[0-9]+$/.test(String(row.source_id||"")));
-   const malByQid=await fetchMalIds(works.map((row:any)=>String(row.source_id)));
-   const existingResult=await db.from("anime_external_ids").select("anime_id,external_id").eq("source","myanimelist").limit(5000);
-   if(existingResult.error)throw existingResult.error;
-   const assignedByAnime=new Map<string,string>();
-   const assignedByMal=new Map<string,string>();
-   for(const row of existingResult.data||[]){
-    assignedByAnime.set(String(row.anime_id),String(row.external_id));
-    assignedByMal.set(String(row.external_id),String(row.anime_id));
-   }
-   const inserts:any[]=[];
-   let alreadyLinked=0,missing=0,ambiguous=0,collision=0;
-   for(const work of works){
-    const animeId=String(work.id),qid=String(work.source_id),ids=malByQid.get(qid);
-    if(!ids||ids.size===0){missing++;continue;}
-    if(ids.size!==1){ambiguous++;continue;}
-    const malId=[...ids][0];
-    const sameAnime=assignedByAnime.get(animeId);
-    if(sameAnime){if(sameAnime===malId)alreadyLinked++;else collision++;continue;}
-    if(assignedByMal.has(malId)){collision++;continue;}
-    inserts.push({anime_id:animeId,source:"myanimelist",external_id:malId,source_url:"https://myanimelist.net/anime/"+malId,is_primary:false,last_verified_at:new Date().toISOString()});
-    assignedByAnime.set(animeId,malId);
-    assignedByMal.set(malId,animeId);
-   }
-   if(inserts.length){
-    const saved=await db.from("anime_external_ids").upsert(inserts,{onConflict:"source,external_id",ignoreDuplicates:true});
-    if(saved.error)throw saved.error;
-   }
-   return json({status:"completed",worksChecked:works.length,wikidataMALIdsFound:malByQid.size,linked:inserts.length,alreadyLinked,missing,ambiguous,collision,sourceProperty:"Wikidata P4086"});
+   const report=await persistMalMappings(db,worksResult.data||[]);
+   return json({status:"completed",worksChecked:(worksResult.data||[]).length,wikidataMALIdsFound:report.idsFound,...report,sourceProperty:"Wikidata P4086"});
   }
   const mode=body?.mode==="preview"?"preview":"sync";
   const limit=Math.min(100,Math.max(10,Math.floor(Number(body?.limit)||50)));
@@ -170,6 +174,8 @@ Deno.serve(async(req:Request)=>{
      const mapped=await db.from("anime_external_ids").upsert(externalIds,{onConflict:"source,external_id",ignoreDuplicates:true});
      if(mapped.error)throw mapped.error;
     }
+    const malMapping=await persistMalMappings(db,imported.data||[]);
+    var malIdsLinked=malMapping.linked;
    }
    const next=bindings.length>=limit?offset+limit:0,now=new Date().toISOString();
    const stateUpdate=await db.from("catalog_sync_state").update({next_offset:next,last_success_at:now,updated_at:now}).eq("source","wikidata");
@@ -177,7 +183,7 @@ Deno.serve(async(req:Request)=>{
    const inserted=saved.data?.length||0;
    const finish=await db.from("catalog_sync_runs").update({finished_at:now,status:"succeeded",pages_requested:1,records_seen:bindings.length,records_inserted_or_updated:inserted}).eq("id",run.data.id);
    if(finish.error)throw finish.error;
-   return json({status:"completed",offset,nextOffset:next,recordsSeen:bindings.length,validCandidates:rows.length,recordsInsertedOrUpdated:inserted,sweepRestarted:next===0});
+   return json({status:"completed",offset,nextOffset:next,recordsSeen:bindings.length,validCandidates:rows.length,recordsInsertedOrUpdated:inserted,linkedMyAnimeListIds:typeof malIdsLinked==="number"?malIdsLinked:0,sweepRestarted:next===0});
   }catch(error){
    await db.from("catalog_sync_runs").update({finished_at:new Date().toISOString(),status:"failed",pages_requested:1,records_seen:bindings.length,error_message:JSON.stringify(error).slice(0,1000)}).eq("id",run.data.id);
    throw error;
