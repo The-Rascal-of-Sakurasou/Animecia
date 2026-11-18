@@ -72,3 +72,39 @@ The snapshot excludes production data, Auth users, passwords, secrets, Vault con
 - GitHub: added the schema snapshot and this reconciliation report.
 - Static SQL inventory check: completed; details in [SCHEMA_SNAPSHOT_STATIC_AUDIT_2026-11-17.md](SCHEMA_SNAPSHOT_STATIC_AUDIT_2026-11-17.md).
 - PostgreSQL replay validation: not yet performed; no disposable database was created because that may incur additional cost.
+
+---
+
+## 6. Recheck on 2026-11-18
+
+The inventory was refreshed against the current main branch and live Supabase migration history. Counts have changed since the original report:
+
+- Repository migration files: **76**
+- Applied Supabase migration history rows: **48**
+- Exact version-prefix matches: **29**
+- Repository files without an exact applied-version match: **47**
+- Applied DB history rows without an exact repository-file match: **19**
+
+The 47 repository files without exact version matches comprise:
+- 36 older `20261011...` files
+- 10 catalog-expansion files named `202611170001...` through `202611170010...`, whose numeric prefixes do not match the corresponding applied database versions
+- 1 later file, `20261118130000_anime_duplicate_review_mal_id_match.sql`, whose migration name exists in the database history under version `20261118034611`
+
+The 19 database history rows without exact repository-file matches comprise:
+- 5 foundation migrations listed above
+- 11 catalog-expansion history rows listed above (including the second `catalog_expansion` row)
+- 1 poster-provenance migration listed above
+- `20261118034611_anime_duplicate_review_mal_id_match`
+- `20261118034935_register_wikimedia_commons_source`
+
+Matching migration names are useful clues, not proof that SQL contents are identical. No filename was renamed and no migration history was repaired during this recheck.
+
+## 7. Isolated snapshot replay findings
+
+The GitHub Actions replay test was run only against a temporary, unlinked local Supabase stack. It did not connect to the production project.
+
+- First failure: foreign-key constraints were applied before referenced primary keys. Constraint ordering was corrected in commit `05652cb679bb53cb80f140032054c581220ee4ce`.
+- Second failure: the RLS policy file was applied before its helper functions. The apply order was corrected in commit `0ea0505a8ab4018ddf4aa4659663c2a0c127eabf`.
+- Third failure: a 9-argument `public.search_public_anime` wrapper was defined before the 12-argument overload it calls. The two definitions were reordered in commit `9aa4ea8735062ccf529f23cefd64430776441c7e`.
+
+The next isolated replay run is pending after the third fix. A successful run is still required before the snapshot can be called replay-validated. Even after it passes, migration-history reconciliation remains a separate task.
