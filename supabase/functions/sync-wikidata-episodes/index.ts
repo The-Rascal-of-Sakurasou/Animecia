@@ -283,7 +283,7 @@ Deno.serve(async (req: Request) => {
           aired_at: item.aired_at,
           synopsis: null,
           duration_seconds: null,
-          is_published: Boolean(item.title_ja),
+          is_published: false,
           source_synced_at: now
         }));
 
@@ -339,18 +339,7 @@ Deno.serve(async (req: Request) => {
         }, { onConflict: "source" });
         if (cursorUpdateError) throw cursorUpdateError;
 
-        // Publish only Japanese-titled Wikidata episodes attached to public works.
-        const publishableIds = candidates.map((work: any) => work.id);
-        if (publishableIds.length) {
-          const { error: publishError } = await admin.from("episodes").update({
-            is_published: true,
-            updated_at: now
-          })
-            .eq("source", "wikidata")
-            .not("title_ja", "is", null)
-            .in("anime_id", publishableIds);
-          if (publishError) throw publishError;
-        }
+        // New episode rows remain unpublished until administrator review.
       }
 
       if (mode === "sync" && run.data?.id) {
