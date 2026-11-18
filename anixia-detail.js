@@ -56,16 +56,27 @@
     }).join(""):'<div class="anixia-empty">公開済みのエピソード情報はありません。</div>';
     $("synopsis").textContent=a.synopsis||"あらすじ情報はまだ登録されていません。";
     const synopsisSource=$("synopsis-source");
-    if(a.synopsis_source_url && a.synopsis_license_url){
-      const sourceTitle=a.synopsis_source_title||"Wikipedia";
-      const articleUrl=esc(a.synopsis_source_url);
-      const revisionUrl=esc(a.synopsis_source_revision_url||a.synopsis_source_url);
-      const licenseUrl=esc(a.synopsis_license_url);
+    const synopsisCredit=a.synopsis_credit||{};
+    if(synopsisCredit.source_url && synopsisCredit.license_url){
+      const sourceTitle=synopsisCredit.source_title||"出典";
+      const articleUrl=esc(synopsisCredit.source_url);
+      const revisionUrl=esc(synopsisCredit.revision_url||synopsisCredit.source_url);
+      const licenseUrl=esc(synopsisCredit.license_url);
       synopsisSource.hidden=false;
-      synopsisSource.innerHTML='出典：<a href="'+articleUrl+'" target="_blank" rel="noopener noreferrer">Wikipedia「'+esc(sourceTitle)+'」</a> · <a href="'+revisionUrl+'" target="_blank" rel="noopener noreferrer">'+esc(a.synopsis_attribution||"Wikipedia contributors")+'・編集履歴</a> · <a href="'+licenseUrl+'" target="_blank" rel="noopener noreferrer">'+esc(a.synopsis_license||"CC BY-SA 4.0")+'</a>';
+      synopsisSource.innerHTML='出典：<a href="'+articleUrl+'" target="_blank" rel="noopener noreferrer">'+esc(sourceTitle)+'</a> · <a href="'+revisionUrl+'" target="_blank" rel="noopener noreferrer">'+esc(synopsisCredit.attribution||"提供元")+'・改訂履歴</a> · <a href="'+licenseUrl+'" target="_blank" rel="noopener noreferrer">'+esc(synopsisCredit.license||"ライセンス")+'</a>';
     }else{
       synopsisSource.hidden=true;
       synopsisSource.textContent="";
+    }
+    const posterSource=$("poster-source");
+    const posterCredit=a.poster_credit||{};
+    if(posterCredit.source_url && posterCredit.license_url){
+      const sourceName=posterCredit.source==="wikimedia_commons"?"Wikimedia Commons":"画像出典";
+      posterSource.hidden=false;
+      posterSource.innerHTML='画像出典：<a href="'+esc(posterCredit.source_url)+'" target="_blank" rel="noopener noreferrer">'+sourceName+'</a> · '+esc(posterCredit.attribution||"作者情報なし")+' · <a href="'+esc(posterCredit.license_url)+'" target="_blank" rel="noopener noreferrer">'+esc(posterCredit.license||"ライセンス")+'</a>';
+    }else{
+      posterSource.hidden=true;
+      posterSource.textContent="";
     }
     const studioNames=(a.studios||[]).map(s=>s.name_ja||s.name).filter(Boolean);
     const info=[["形式",fmt(a.format)],["放送年",a.release_year||"未登録"],["シーズン",a.season||"未登録"],["話数",a.episode_count||a.episodes_count||"未登録"],["放送状況",a.status||"未登録"],["制作会社",studioNames.join("・")||(a.studio?(a.studio.name_ja||a.studio.name):"未登録")]];
