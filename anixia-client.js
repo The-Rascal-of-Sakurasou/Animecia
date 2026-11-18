@@ -461,9 +461,10 @@
   function posterMarkup(url, alt = "") {
     const safeUrl = String(url || "").trim();
     const safeAlt = String(alt || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-    if (!safeUrl) return '<span class="anixia-poster-fallback" aria-label="画像未登録">ANIXIA</span>';
+    const fallback = '<span class="anixia-poster-fallback" aria-label="タイトル画像未登録"><span class="anixia-poster-brand">ANIXIA</span><strong class="anixia-poster-title">' + safeAlt + '</strong><small class="anixia-poster-caption">TITLE ARCHIVE</small></span>';
+    if (!safeUrl) return fallback;
     const safeSrc = safeUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
-    return '<img data-anixia-poster src="' + safeSrc + '" alt="' + safeAlt + '" loading="lazy" decoding="async"><span class="anixia-poster-fallback" hidden aria-label="画像を表示できません">ANIXIA</span>';
+    return '<img data-anixia-poster src="' + safeSrc + '" alt="' + safeAlt + '" loading="lazy" decoding="async">' + fallback.replace('aria-label="タイトル画像未登録"', 'hidden aria-label="画像を表示できません"');
   }
 
   document.addEventListener("error", event => {
