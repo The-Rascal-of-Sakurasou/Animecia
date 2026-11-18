@@ -197,9 +197,11 @@ async function searchImage(work: any) {
   }
   const candidates = [...new Set([work.title_ja, work.title, work.title_kana].filter((v: unknown) => String(v || "").trim().length >= 3))].slice(0, 3);
   for (const query of candidates) {
+    const searchTerms = [query, query + " poster", query + " key visual", query + " cover"];
+    for (const searchTerm of searchTerms) {
     const params = new URLSearchParams({
       action: "query", format: "json", formatversion: "2",
-      generator: "search", gsrsearch: query, gsrnamespace: "6", gsrlimit: "10",
+      generator: "search", gsrsearch: searchTerm, gsrnamespace: "6", gsrlimit: "15",
       prop: "imageinfo", iiprop: "url|size|extmetadata", iiurlwidth: "600",
       origin: "*"
     });
@@ -244,6 +246,7 @@ async function searchImage(work: any) {
         license: best.license.short,
         licenseUrl: best.license.url
       };
+    }
     }
   }
   return null;
