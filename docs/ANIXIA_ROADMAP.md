@@ -434,3 +434,14 @@ All 6 migration files are present in the repository and applied to the active Su
   - `20261118034935_register_wikimedia_commons_source.sql`
   - `20261118035115_restore_review_gate_for_wikidata_catalog.sql`
   - `20261118035226_re_enable_review_gated_wikidata_ingestion.sql`
+
+
+### 自動カタログ収録システム・最新状態（2026-11-18）
+- Wikidataの構造化データを使った日次カタログ同期・メタデータ拡充・季節同期を稼働。
+- 2026-11-18の季節同期テストで62件を照合し、59件を追加。作品は合計383件（公開377件、非公開候補6件）。
+- エピソード同期は日次実行、現在2件を登録。
+- Wikimedia Commonsはパブリックドメイン／CC0のみを採用対象に変更。現在ポスター0件。
+- 日本語Wikipediaの本文・あらすじ取り込み機能は停止し、登録0件。Annictも利用条件の確認が終わるまで無効。
+- Wikidataのかな表記（P1814）が存在する場合に読み仮名を補完する処理を追加。公開作品291件はまだ読み仮名が未設定であり、出典が見つからない値は推測で補わない。
+- 季節同期は既存の手入力済み情報を上書きせず、空欄のみを補完。
+- 詳細仕様：`docs/AUTOMATED_CATALOG_INGESTION.md`。
