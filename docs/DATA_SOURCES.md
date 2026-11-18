@@ -8,7 +8,7 @@
 - Wikidata作品データ：313件（公開308件、非公開候補5件）。非公開5件は日本語タイトルが未設定。
 - MyAnimeList IDの重複割り当て：0件。管理者専用の重複候補検査：0件。
 - 作品の自動収録と公開確定は分離。公開は管理者審査後に行う。
-- シーズン作品同期Cron：毎日03:35 UTC（日本時間12:35）。全作品カタログ同期の定期Cronは現在有効ではない。
+- シーズン作品同期Cron：毎日03:35 UTC（日本時間12:35）。全作品カタログ同期Cronも有効。いずれも公開確定は管理者審査ルールに従う。
 
 ## 1. 採用方針
 
@@ -74,7 +74,7 @@ REST API作品情報： https://developers.annict.com/docs/rest-api/v1/works
 ### Wikidata（稼働中）
 
 - Supabase Edge Function：`sync-wikidata-catalog`。
-- 全作品カタログ同期：Edge Function `sync-wikidata-catalog`。現行版は候補を収録し、公開状態は自動変更しない。現在、全作品カタログ用の定期Cronは有効化されていない。
+- 全作品カタログ同期：Edge Function `sync-wikidata-catalog`。Supabase Cron `anixia-wikidata-catalog-sync` が毎日02:30 UTC（日本時間11:30）に最大50件を取得し、候補を自動収録する。公開状態は自動変更しない。
 - シーズン作品同期：Edge Function `sync-seasonal-anime`。Supabase Cron `anixia-seasonal-anime-sync` が毎日03:35 UTC（日本時間12:35）に実行する。作品の公開状態はDB側の管理者審査ルールに従う。
 - HTTP 429では `Retry-After` を尊重し、5xxでは間隔を空けて再試行する。
 - 取得対象は日本由来（country of origin = Japan）で、1963年以降の対象クラスに属する作品。作品名・形式・年・話数などの構造化情報のみを扱う。
