@@ -46,6 +46,20 @@ for file in \
 do
   echo "::group::Apply $file to the disposable local database"
   psql "$DB_URL" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/schema-snapshot/$file"
+  if [[ "$file" == "04_functions_and_triggers.sql" ]]; then
+    echo "Checking both public anime-search overloads are present"
+    psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
+      DO \$\$
+      BEGIN
+        IF to_regprocedure('public.search_public_anime(text,uuid,integer,text,public.anime_format,uuid,text,integer,integer,uuid[],text,text)') IS NULL THEN
+          RAISE EXCEPTION '12-argument search_public_anime overload is missing';
+        END IF;
+        IF to_regprocedure('public.search_public_anime(text,uuid,integer,text,public.anime_format,uuid,text,integer,integer)') IS NULL THEN
+          RAISE EXCEPTION '9-argument search_public_anime overload is missing';
+        END IF;
+      END
+      \$\$;"
+  fi
   echo "::endgroup::"
 done
 
