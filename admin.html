@@ -121,6 +121,10 @@
   <p>公開・未公開を含む作品とエピソードを検査します。検出結果は確認候補であり、自動で作品の公開状態やデータを書き換えることはありません。</p>
   <button id="refresh-catalog-quality" class="admin-button" type="button">品質を再検査</button>
   <div id="catalog-quality-check"><p class="admin-message">候補を読み込んでいます…</p></div>
+  <h3 style="color:#fff;font-size:15px;margin-top:30px">作品の重複候補</h3>
+  <p>作品名・別名を正規化し、公開年と作品形式も一致する作品を候補として表示します。候補の検出だけを行い、自動統合・削除・公開状態の変更はしません。</p>
+  <button id="refresh-anime-duplicates" class="admin-button" type="button">作品の重複候補を再検査</button>
+  <div id="anime-duplicate-candidates"><p class="admin-message">作品の重複候補を確認しています…</p></div>
   <h3 style="color:#fff;font-size:15px;margin-top:30px">重複候補・名称統合</h3>
   <p>日本語・かな・英語・別名を正規化して一致候補を表示します。候補は同一性の証明ではありません。作品との関連情報を確認し、同一レコードと判断できる場合だけ統合してください。作品本体の統合は対象外です。</p>
   <button id="refresh-entity-duplicates" class="admin-button" type="button">重複候補を再検査</button>
