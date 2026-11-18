@@ -97,24 +97,57 @@ async function searchImage(work: any) {
           }
         }
 
-        // If the anime item has no direct image, check its own Commons category.
-        // Some works store the category on the linked franchise item instead.
-        let commonsCategory = entityPayload?.entities?.[qid]?.claims?.P373?.[0]?.mainsnak?.datavalue?.value;
-        if (!commonsCategory) {
-          const franchiseId = entityPayload?.entities?.[qid]?.claims?.P8345?.[0]?.mainsnak?.datavalue?.value?.id;
-          if (franchiseId) {
-            const franchiseParams = new URLSearchParams({
-              action: "wbgetentities", ids: franchiseId, props: "claims", format: "json", origin: "*"
-            });
-            const franchiseResponse = await fetch("https://www.wikidata.org/w/api.php?" + franchiseParams, {
-              headers: { "User-Agent": "ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/; anime image metadata)" }
-            });
-            if (franchiseResponse.ok) {
-              const franchisePayload = await franchiseResponse.json();
-              commonsCategory = franchisePayload?.entities?.[franchiseId]?.claims?.P373?.[0]?.mainsnak?.datavalue?.value;
+        // Follow the Wikidata media-franchise link for a logo image (P154)
+        // and Commons category (P373), while preferring exact item metadata.
+        const franchiseId = entityPayload?.entities?.[qid]?.claims?.P8345?.[0]?.mainsnak?.datavalue?.value?.id;
+        let franchiseClaims: any = null;
+        if (franchiseId) {
+          const franchiseParams = new URLSearchParams({
+            action: "wbgetentities", ids: franchiseId, props: "claims", format: "json", origin: "*"
+          });
+          const franchiseResponse = await fetch("https://www.wikidata.org/w/api.php?" + franchiseParams, {
+            headers: { "User-Agent": "ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/; anime image metadata)" }
+          });
+          if (franchiseResponse.ok) {
+            const franchisePayload = await franchiseResponse.json();
+            franchiseClaims = franchisePayload?.entities?.[franchiseId]?.claims || null;
+          }
+        }
+        const logoFileName =
+          entityPayload?.entities?.[qid]?.claims?.P154?.[0]?.mainsnak?.datavalue?.value ||
+          franchiseClaims?.P154?.[0]?.mainsnak?.datavalue?.value;
+        if (typeof logoFileName === "string" && logoFileName.trim()) {
+          const logoParams = new URLSearchParams({
+            action: "query", format: "json", formatversion: "2",
+            titles: "File:" + logoFileName, prop: "imageinfo",
+            iiprop: "url|size|extmetadata", iiurlwidth: "600", origin: "*"
+          });
+          const logoResponse = await fetch("https://commons.wikimedia.org/w/api.php?" + logoParams, {
+            headers: { "User-Agent": "ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/; public anime database)" }
+          });
+          if (logoResponse.ok) {
+            const logoPayload = await logoResponse.json();
+            const logoPage = (logoPayload?.query?.pages || [])[0];
+            const logoInfo = logoPage?.imageinfo?.[0];
+            const width = Number(logoInfo?.width || 0), height = Number(logoInfo?.height || 0);
+            const license = licenseInfo(logoInfo?.extmetadata || {});
+            if (logoInfo?.thumburl && logoInfo?.descriptionurl &&
+                String(logoInfo.thumburl).startsWith("https://upload.wikimedia.org/") &&
+                width >= 200 && height >= 80 && width / height >= 0.5 &&
+                width / height <= 6 && license) {
+              return {
+                url: logoInfo.thumburl,
+                id: logoPage.title,
+                page: logoInfo.descriptionurl,
+                attribution: license.attribution,
+                license: license.short
+              };
             }
           }
         }
+        const commonsCategory =
+          entityPayload?.entities?.[qid]?.claims?.P373?.[0]?.mainsnak?.datavalue?.value ||
+          franchiseClaims?.P373?.[0]?.mainsnak?.datavalue?.value;
         if (typeof commonsCategory === "string" && commonsCategory.trim()) {
           const categoryParams = new URLSearchParams({
             action: "query", format: "json", formatversion: "2",
