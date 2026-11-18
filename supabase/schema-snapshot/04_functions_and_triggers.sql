@@ -883,29 +883,6 @@ AS $function$
   LIMIT least(greatest(coalesce(p_limit, 20), 1), 30);
 $function$;
 
-CREATE OR REPLACE FUNCTION public.search_public_anime(p_query text DEFAULT NULL::text, p_genre_id uuid DEFAULT NULL::uuid, p_year integer DEFAULT NULL::integer, p_season text DEFAULT NULL::text, p_format anime_format DEFAULT NULL::anime_format, p_studio_id uuid DEFAULT NULL::uuid, p_sort text DEFAULT 'newest'::text, p_limit integer DEFAULT 24, p_offset integer DEFAULT 0)
- RETURNS TABLE(id uuid, title text, title_ja text, title_kana text, synopsis text, format anime_format, release_year integer, season text, episode_count integer, poster_url text, watchers_count integer, reviews_count integer, studio_id uuid, average_score numeric, rating_count bigint, total_count bigint)
- LANGUAGE sql
- STABLE
- SET search_path TO ''
-AS $function$
-  select *
-  from public.search_public_anime(
-    p_query,
-    p_genre_id,
-    p_year,
-    p_season,
-    p_format,
-    p_studio_id,
-    p_sort,
-    p_limit,
-    p_offset,
-    array[]::uuid[],
-    null::text,
-    null::text
-  );
-$function$;
-
 CREATE OR REPLACE FUNCTION public.search_public_anime(p_query text, p_genre_id uuid, p_year integer, p_season text, p_format anime_format, p_studio_id uuid, p_sort text, p_limit integer, p_offset integer, p_tag_ids uuid[], p_person_query text, p_character_query text)
  RETURNS TABLE(id uuid, title text, title_ja text, title_kana text, synopsis text, format anime_format, release_year integer, season text, episode_count integer, poster_url text, watchers_count integer, reviews_count integer, studio_id uuid, average_score numeric, rating_count bigint, total_count bigint)
  LANGUAGE sql
@@ -1112,6 +1089,29 @@ AS $function$
     f.title asc
   limit least(greatest(coalesce(p_limit, 24), 1), 50)
   offset least(greatest(coalesce(p_offset, 0), 0), 10000);
+$function$;
+
+CREATE OR REPLACE FUNCTION public.search_public_anime(p_query text DEFAULT NULL::text, p_genre_id uuid DEFAULT NULL::uuid, p_year integer DEFAULT NULL::integer, p_season text DEFAULT NULL::text, p_format anime_format DEFAULT NULL::anime_format, p_studio_id uuid DEFAULT NULL::uuid, p_sort text DEFAULT 'newest'::text, p_limit integer DEFAULT 24, p_offset integer DEFAULT 0)
+ RETURNS TABLE(id uuid, title text, title_ja text, title_kana text, synopsis text, format anime_format, release_year integer, season text, episode_count integer, poster_url text, watchers_count integer, reviews_count integer, studio_id uuid, average_score numeric, rating_count bigint, total_count bigint)
+ LANGUAGE sql
+ STABLE
+ SET search_path TO ''
+AS $function$
+  select *
+  from public.search_public_anime(
+    p_query,
+    p_genre_id,
+    p_year,
+    p_season,
+    p_format,
+    p_studio_id,
+    p_sort,
+    p_limit,
+    p_offset,
+    array[]::uuid[],
+    null::text,
+    null::text
+  );
 $function$;
 
 CREATE OR REPLACE FUNCTION public.submit_quiz_attempt(p_user_id uuid, p_quiz_id uuid, p_answers jsonb)
