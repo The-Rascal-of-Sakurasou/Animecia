@@ -7,7 +7,7 @@
 - Imports titles, format, year, Japan country code, episode count and Wikidata QID only.
 - Images, banners and synopsis/prose are never imported.
 - New rows remain unpublished by default. The existing ANIXIA admin review queue is the publication gate.
-- Upsert uses ignoreDuplicates, so manual edits and publication decisions are not overwritten.
+- Upsert uses ignoreDuplicates to preserve existing metadata. A separate qualification step automatically publishes every imported Wikidata record that meets the catalog gate; it does not rewrite titles, descriptions or other user metadata.
 
 ## Operation
 - Edge Function: sync-wikidata-catalog
