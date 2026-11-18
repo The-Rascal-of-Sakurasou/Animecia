@@ -13,19 +13,27 @@ const cleanHtml = (value: unknown) => String(value ?? "").replace(/<[^>]*>/g, " 
 
 function licenseInfo(meta: Record<string, any>) {
   const short = cleanHtml(meta?.LicenseShortName?.value);
-  const url = cleanHtml(meta?.LicenseUrl?.value);
+  const rawUrl = cleanHtml(meta?.LicenseUrl?.value);
+  const url = rawUrl.startsWith("//") ? "https:" + rawUrl : rawUrl;
   const artist = cleanHtml(meta?.Artist?.value);
   const credit = cleanHtml(meta?.Credit?.value);
-  const s = short.toLowerCase();
-  const u = url.toLowerCase();
-  const allowed =
-    /^(cc0|public domain|pd|cc by(?:-sa)?(?:\s|$))/i.test(short) ||
-    u.includes("creativecommons.org/publicdomain/zero") ||
-    /creativecommons\.org\/licenses\/by(?:-sa)?\//.test(u) ||
-    /publicdomain\/mark/.test(u);
-  if (!allowed || /non.?commercial|\bnd\b|fair use|all rights reserved/i.test(short + " " + url)) return null;
-  if (!short || (!artist && !credit && !/^cc0|^public domain|^pd/i.test(short))) return null;
-  return { short, url, artist, credit, attribution: [artist || credit, short, url].filter(Boolean).join(" · ") };
+  const normalized = short.toLowerCase();
+  const licenseUrl = url.toLowerCase();
+  const cc0 = /^(cc0|cc zero)$/i.test(short) && /creativecommons\.org\/publicdomain\/zero\//.test(licenseUrl);
+  const publicDomain = /^(public domain|pd|public domain mark)$/i.test(short) && /creativecommons\.org\/publicdomain\/mark\//.test(licenseUrl);
+  const ccBy = /^cc by(?:\s|$)/i.test(short) && /creativecommons\.org\/licenses\/by\/\d+(?:\.\d+)?\//.test(licenseUrl);
+  const ccBySa = /^cc by-sa(?:\s|$)/i.test(short) && /creativecommons\.org\/licenses\/by-sa\/\d+(?:\.\d+)?\//.test(licenseUrl);
+  const allowed = cc0 || publicDomain || ccBy || ccBySa;
+  if (!allowed || !/^https:\/\/creativecommons\.org\//i.test(url)) return null;
+  if (/non.?commercial|by-nc|\bnd\b|by-nd|fair.?use|all.?rights.?reserved/i.test(normalized + " " + licenseUrl)) return null;
+  if ((ccBy || ccBySa) && !artist && !credit) return null;
+  return {
+    short,
+    url,
+    artist,
+    credit,
+    attribution: [artist || credit || "Unknown author", short, url].filter(Boolean).join(" · ")
+  };
 }
 
 
@@ -52,6 +60,7 @@ async function searchImage(work: any) {
     const response = await fetch("https://commons.wikimedia.org/w/api.php?" + params, {
       headers: { "User-Agent": "ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/; public anime database)" }
     });
+    if (response.status === 429) throw new Error("Wikimedia Commons rate limit (429)");
     if (!response.ok) throw new Error("Wikimedia Commons API error: " + response.status);
     const payload = await response.json();
     const pages = Array.isArray(payload?.query?.pages) ? payload.query.pages : [];
@@ -60,20 +69,20 @@ async function searchImage(work: any) {
       const info = page.imageinfo?.[0];
       if (!info?.thumburl || !info?.descriptionurl || !String(info.thumburl).startsWith("https://upload.wikimedia.org/")) return null;
       const rawFileName = String(page.title || "").replace(/^File:/i, "").replace(/\.[a-z0-9]{2,5}$/i, "");
+      const rawDescription = cleanHtml(info.extmetadata?.ImageDescription?.value);
       const fileName = norm(rawFileName);
-      const description = norm(cleanHtml(info.extmetadata?.ImageDescription?.value));
-      const posterContext = /poster|key[ -]?visual|cover|dvd|blu[ -]?ray|promotional|artwork|ポスター|キービジュアル|表紙/i.test(rawFileName + " " + cleanHtml(info.extmetadata?.ImageDescription?.value));
+      const description = norm(rawDescription);
+      const posterContext = /poster|key[ -]?visual|cover|dvd|blu[ -]?ray|promotional|artwork|ポスター|キービジュアル|表紙/i.test(rawFileName + " " + rawDescription);
       if (!posterContext) return null;
       const exact = fileName === target || description === target;
       const contains = fileName.includes(target) || description.includes(target);
+      if (!contains) return null;
       const width = Number(info.width || 0), height = Number(info.height || 0);
       if (width < 200 || height < 280 || width / height < 0.38 || width / height > 0.9) return null;
       const license = licenseInfo(info.extmetadata || {});
       if (!license) return null;
       const yearMatch = work.release_year && String(page.title).includes(String(work.release_year));
-      // Commons search already ranks title-related results. Permit a unique,
-      // portrait poster result even when the filename uses a romanized title.
-      return { page, info, license, score: (exact ? 100 : contains ? 90 : 60) + (yearMatch ? 10 : 0) };
+      return { page, info, license, score: (exact ? 100 : 90) + (yearMatch ? 10 : 0) };
     }).filter(Boolean).sort((a: any, b: any) => b.score - a.score);
     if (ranked.length && (!ranked[1] || ranked[0].score > ranked[1].score)) {
       const best = ranked[0];
@@ -84,49 +93,6 @@ async function searchImage(work: any) {
         attribution: best.license.attribution,
         license: best.license.short
       };
-    }
-  }
-
-  // Wikidata P18 fallback: use only Commons-hosted files with an accepted
-  // open licence and portrait dimensions. P18 directly associates the file
-  // with the anime entity, avoiding title/romanization search ambiguity.
-  const qid = String(work.source_id || "");
-  if (/^Q[1-9]\\d*$/.test(qid)) {
-    const entityParams = new URLSearchParams({
-      action: "wbgetentities", ids: qid, props: "claims", format: "json", origin: "*"
-    });
-    const entityResponse = await fetch("https://www.wikidata.org/w/api.php?" + entityParams, {
-      headers: { "User-Agent": "ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/; poster metadata sync)" }
-    });
-    if (entityResponse.ok) {
-      const entityPayload = await entityResponse.json();
-      const fileName = entityPayload?.entities?.[qid]?.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
-      if (typeof fileName === "string" && fileName.trim()) {
-        const imageParams = new URLSearchParams({
-          action: "query", format: "json", formatversion: "2",
-          titles: "File:" + fileName, prop: "imageinfo",
-          iiprop: "url|size|extmetadata", iiurlwidth: "600", origin: "*"
-        });
-        const imageResponse = await fetch("https://commons.wikimedia.org/w/api.php?" + imageParams, {
-          headers: { "User-Agent": "ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/; public anime database)" }
-        });
-        if (imageResponse.ok) {
-          const imagePayload = await imageResponse.json();
-          const page = (imagePayload?.query?.pages || [])[0];
-          const info = page?.imageinfo?.[0];
-          const width = Number(info?.width || 0), height = Number(info?.height || 0);
-          const license = licenseInfo(info?.extmetadata || {});
-          if (info?.thumburl && info?.descriptionurl &&
-              String(info.thumburl).startsWith("https://upload.wikimedia.org/") &&
-              width >= 200 && height >= 280 && width / height >= 0.38 &&
-              width / height <= 0.9 && license) {
-            return {
-              url: info.thumburl, id: page.title, page: info.descriptionurl,
-              attribution: license.attribution, license: license.short
-            };
-          }
-        }
-      }
     }
   }
   return null;
