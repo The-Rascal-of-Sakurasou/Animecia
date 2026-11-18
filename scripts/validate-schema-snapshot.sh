@@ -46,7 +46,7 @@ do
     grep -q '^SET ROLE supabase_admin;' "$ROOT/supabase/schema-snapshot/$file"
     grep -q '^ALTER DEFAULT PRIVILEGES FOR ROLE supabase_admin ' "$ROOT/supabase/schema-snapshot/$file"
     grep -q '^RESET ROLE;' "$ROOT/supabase/schema-snapshot/$file"
-    echo "Validated reserved supabase_admin defaults structurally"
+    echo "Validated reserved supabase_admin defaults structurally (no reserved membership grant attempted)"
   else
     psql "$DB_URL" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/schema-snapshot/$file"
   fi
