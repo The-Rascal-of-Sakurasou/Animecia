@@ -304,9 +304,26 @@ Deno.serve(async (req: Request) => {
     if (body?.mode === "preview") {
       const bindings = await fetchPage(100, 0, range);
       const works = mapBindings(bindings, range);
+      const diagnostics = {
+        withQid: bindings.filter((b: any) => /Q\d+$/.test(String(b?.item?.value || ""))).length,
+        withLabel: bindings.filter((b: any) => Boolean(String(b?.itemLabel?.value || "").trim())).length,
+        withJapaneseLabel: bindings.filter((b: any) => Boolean(String(b?.jaLabel?.value || "").trim()) || /[\u3000-\u30ff\u3400-\u9fff]/.test(String(b?.itemLabel?.value || ""))).length,
+        withDate: bindings.filter((b: any) => /^(\d{4}-\d{2}-\d{2})/.test(String(b?.date?.value || ""))).length,
+        recognizedClass: bindings.filter((b: any) => {
+          const cls = String(b?.class?.value || "").match(/(Q\d+)$/)?.[1] || "";
+          return Boolean(FORMATS[cls]);
+        }).length
+      };
       return json({
         mode: "preview", season: range.seasonName, start: range.start, end: range.end,
-        recordsSeen: bindings.length,
+        recordsSeen: bindings.length, diagnostics,
+        rawSample: bindings.slice(0, 5).map((b: any) => ({
+          item: b?.item?.value || null,
+          itemLabel: b?.itemLabel?.value || null,
+          jaLabel: b?.jaLabel?.value || null,
+          date: b?.date?.value || null,
+          class: b?.class?.value || null
+        })),
         candidates: works.map(w => ({
           qid: w.qid, title: w.title, format: w.format, releasedOn: w.released_on,
           season: w.season_name, malIds: [...w.malIds]
