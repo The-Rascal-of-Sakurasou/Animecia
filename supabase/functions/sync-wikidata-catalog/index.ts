@@ -10,7 +10,7 @@ const query=(limit:number,offset:number)=>
 " ?item wdt:P31 ?class ; wdt:P495 wd:Q17 ."+
 " OPTIONAL { ?item wdt:P580 ?startDate . } OPTIONAL { ?item wdt:P577 ?publicationDate . }"+
 " BIND(COALESCE(?startDate, ?publicationDate) AS ?date) FILTER(BOUND(?date) && YEAR(?date)>=1963)"+
-" FILTER NOT EXISTS { ?item wdt:P136/wdt:P279* ?adultGenre . VALUES ?adultGenre { wd:Q136926229 wd:Q49148153 wd:Q185529 wd:Q599558 wd:Q2275499 wd:Q16254232 wd:Q2292320 wd:Q172067 } }"+
+" FILTER NOT EXISTS { ?item wdt:P136 ?adultGenre . VALUES ?adultGenre { wd:Q136926229 wd:Q49148153 wd:Q185529 wd:Q599558 wd:Q2275499 wd:Q16254232 wd:Q2292320 wd:Q172067 } }"+
 " OPTIONAL { ?item wdt:P1113 ?episodes . }"+
 " OPTIONAL { ?item rdfs:label ?jaLabel . FILTER(LANG(?jaLabel)='ja') }"+
 " SERVICE wikibase:label { bd:serviceParam wikibase:language 'ja,en'. }"+
