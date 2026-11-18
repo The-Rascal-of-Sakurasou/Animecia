@@ -467,6 +467,12 @@
     return '<img data-anixia-poster src="' + safeSrc + '" alt="' + safeAlt + '" loading="lazy" decoding="async">' + fallback.replace('aria-label="タイトル画像未登録"', 'hidden aria-label="画像を表示できません"');
   }
 
+  document.addEventListener("load", event => {
+    const image = event.target;
+    if (!(image instanceof HTMLImageElement) || !image.hasAttribute("data-anixia-poster")) return;
+    image.classList.toggle("anixia-poster-logo", image.naturalWidth > image.naturalHeight * 1.15);
+  }, true);
+
   document.addEventListener("error", event => {
     const image = event.target;
     if (!(image instanceof HTMLImageElement) || !image.hasAttribute("data-anixia-poster")) return;
