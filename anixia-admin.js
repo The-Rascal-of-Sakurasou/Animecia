@@ -150,6 +150,7 @@
       fillTaxonomySelect("metadata-tags",taxonomy.tags);
       status.textContent="作品 "+animeRows.length+"件、ジャンル "+taxonomy.genres.length+"件、タグ "+taxonomy.tags.length+"件を読み込みました。";
       await renderCatalogQuality(animeRows);
+      await loadAnimeDuplicateCandidates();
       const requested=new URLSearchParams(location.search).get("anime");
       if(requested&&animeRows.some(a=>a.id===requested)){
         $("metadata-anime").value=requested;
@@ -159,6 +160,38 @@
       console.error(e);
       status.textContent="管理用データを読み込めませんでした。権限とデータベース接続を確認してください。";
       $("catalog-quality-check").innerHTML='<p class="admin-message">品質チェックを実行できませんでした。</p>';
+    }
+  }
+
+  async function loadAnimeDuplicateCandidates(){
+    const el=$("anime-duplicate-candidates");
+    el.innerHTML='<p class="admin-message">作品名・別名・公開年・作品形式を照合しています…</p>';
+    try{
+      const report=await ANIXIA.getAdminAnimeDuplicateCandidates(100);
+      const items=Array.isArray(report.items)?report.items:[];
+      if(!items.length){
+        el.innerHTML='<p class="admin-message">現在、同一タイトル・公開年・作品形式が一致する作品候補はありません。</p>';
+        return;
+      }
+      const formatLabels={tv:"TV",movie:"映画",ova:"OVA",web:"Web",other:"その他"};
+      el.innerHTML='<p class="admin-message">候補 '+esc(String(report.candidate_count??items.length))+' 件（最大100件表示）。ここでは作品の統合を行いません。</p>'+
+        items.map(item=>{
+          const leftIds=(item.left_external_ids||[]).map(x=>x.source+":"+x.external_id).join(" / ")||"なし";
+          const rightIds=(item.right_external_ids||[]).map(x=>x.source+":"+x.external_id).join(" / ")||"なし";
+          const names=Array.isArray(item.matched_names)?item.matched_names.join(" / "):"";
+          return '<article style="padding:13px;border:1px solid #30435f;border-radius:10px;margin:10px 0;background:#0b1423">'+
+            '<div style="font-size:10px;color:#9fb1ca">'+esc(String(item.release_year))+'年 · '+esc(formatLabels[item.format]||item.format||"形式不明")+' · 一致名称 '+esc(String(item.matched_name_count||0))+'件</div>'+
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:9px 0">'+
+              '<div><strong style="color:#fff;font-size:12px">'+esc(item.left_title||item.left_original_title||"名称未設定")+'</strong><div style="font-size:10px;color:#8fa1ba">'+(item.left_is_published?"公開中":"未公開")+' · '+esc(item.left_source||"手動登録")+'</div><div style="font-size:10px;color:#aebbd0">外部ID: '+esc(leftIds)+'</div></div>'+
+              '<div><strong style="color:#fff;font-size:12px">'+esc(item.right_title||item.right_original_title||"名称未設定")+'</strong><div style="font-size:10px;color:#8fa1ba">'+(item.right_is_published?"公開中":"未公開")+' · '+esc(item.right_source||"手動登録")+'</div><div style="font-size:10px;color:#aebbd0">外部ID: '+esc(rightIds)+'</div></div>'+
+            '</div>'+
+            '<p style="font-size:11px;color:#d8c39d;margin:6px 0">一致した名称: '+esc(names)+'</p>'+
+            '<p style="font-size:10px;color:#aebbd0;margin:0">作品ID: '+esc(item.left_id)+' / '+esc(item.right_id)+'</p>'+
+          '</article>';
+        }).join("");
+    }catch(e){
+      console.error(e);
+      el.innerHTML='<p class="admin-message">作品の重複候補を取得できませんでした。管理者権限とデータベース接続を確認してください。</p>';
     }
   }
 
@@ -410,6 +443,7 @@
   $("refresh-episodes").addEventListener("click",loadPendingEpisodes);
   $("refresh-catalog-quality").addEventListener("click",()=>renderCatalogQuality(adminAnimeRows));
   $("refresh-entity-duplicates").addEventListener("click",loadEntityDuplicateCandidates);
+  $("refresh-anime-duplicates").addEventListener("click",loadAnimeDuplicateCandidates);
   $("refresh-catalog-candidates").addEventListener("click",loadPendingAnime);
   async function runAnnictSync(mode){
     const button=mode==="preview"?$("preview-button"):$("sync-button");
