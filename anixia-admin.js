@@ -512,6 +512,31 @@
   }
   $("wikidata-preview-button").addEventListener("click",()=>runWikidataSync("preview"));
   $("wikidata-sync-button").addEventListener("click",()=>runWikidataSync("sync"));
+  async function runWikidataMalIdSync(){
+    const button=$("wikidata-mal-id-sync-button");
+    button.disabled=true;
+    $("wikidata-sync-message").textContent="WikidataのMyAnimeList ID（P4086）を照合しています…";
+    $("wikidata-sync-preview").textContent="";
+    try{
+      const {data,error}=await ANIXIA.getClient().functions.invoke("sync-wikidata-catalog",{body:{mode:"sync_mal_ids"}});
+      if(error)throw new Error(data?.error||error.message||"照合に失敗しました。");
+      if(data?.error)throw new Error(data.error);
+      $("wikidata-sync-message").textContent=[
+        "外部ID照合完了",
+        "確認した既存作品: "+(data.worksChecked??0),
+        "WikidataでIDが見つかった作品: "+(data.wikidataMALIdsFound??0),
+        "新規紐付け: "+(data.linked??0),
+        "既に紐付け済み: "+(data.alreadyLinked??0),
+        "ID未登録: "+(data.missing??0),
+        "複数ID・競合のため保留: "+((data.ambiguous??0)+(data.collision??0))
+      ].join("\\n");
+    }catch(e){
+      console.error(e);
+      $("wikidata-sync-message").textContent="ID照合に失敗しました: "+(e.message||"管理者権限と接続状態を確認してください。");
+    }finally{button.disabled=false;}
+  }
+  $("wikidata-mal-id-sync-button").addEventListener("click",runWikidataMalIdSync);
+
   async function runWikidataEpisodeSync(mode){
     const button=mode==="preview"?$("wikidata-episode-preview-button"):$("wikidata-episode-sync-button");
     button.disabled=true;
