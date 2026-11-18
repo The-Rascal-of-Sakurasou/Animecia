@@ -37,7 +37,7 @@ function mapRow(b:any){
  const episodes=Number(b?.episodes?.value);
  if(!/^Q\d+$/.test(qid)||!title||!year||year<1963)return null;
  const format= formats[cls]||"other";
- const autoPublish=Boolean(titleJa)&&["tv","movie","ova"].includes(format);
+ const autoPublish=Boolean(titleJa)&&["tv","movie","ova","web"].includes(format);
  return {source:"wikidata",source_id:qid,title,title_ja:titleJa,format,release_year:year,country_code:"JP",episode_count:Number.isInteger(episodes)&&episodes>0?episodes:null,episodes_count:Number.isInteger(episodes)&&episodes>0?episodes:null,is_published:autoPublish,source_synced_at:new Date().toISOString()};
 }
 async function digestHex(value:string){
@@ -161,6 +161,14 @@ Deno.serve(async(req:Request)=>{
   try{
    const saved=rows.length?await db.from("anime").upsert(rows,{onConflict:"source,source_id",ignoreDuplicates:true}).select("id"):{data:[],error:null};
    if(saved.error)throw saved.error;
+   // If a previously incomplete Wikidata record later gains a Japanese title,
+   // publish it without overwriting any other existing/manual metadata.
+   for(const row of rows){
+    if(!row.title_ja||!["tv","movie","ova","web"].includes(row.format))continue;
+    const backfilled=await db.from("anime").update({title_ja:row.title_ja,is_published:true})
+     .eq("source","wikidata").eq("source_id",row.source_id).is("title_ja",null);
+    if(backfilled.error)throw backfilled.error;
+   }
    if(rows.length){
     const sourceIds=rows.map(row=>row.source_id);
     const imported=await db.from("anime").select("id,source_id").eq("source","wikidata").in("source_id",sourceIds);
