@@ -2254,3 +2254,8 @@ button,a,.photo-btn,.tab,.secondary-btn,.admin-button{
 
 /* Preserve wide licensed title logos inside portrait poster frames. */
 .anixia-poster img.anixia-poster-logo,.anixia-result-poster img.anixia-poster-logo,.anixia-detail-poster-frame img.anixia-poster-logo{object-fit:contain!important;box-sizing:border-box;padding:9%;background:linear-gradient(145deg,#17263d,#263b59)!important}
+
+/* Attribution stays visible on every reusable artwork thumbnail. */
+.anixia-poster,.anixia-result-poster{position:relative}
+.anixia-poster-credit{position:absolute;z-index:4;inset-inline:4px;bottom:4px;display:block;max-height:2.6em;overflow:hidden;padding:3px 5px;border-radius:4px;background:rgba(8,13,22,.88);color:#fff!important;font-size:8px;line-height:1.25;text-decoration:none!important;overflow-wrap:anywhere}
+.anixia-poster-credit:focus-visible{outline:2px solid #f2b84d;outline-offset:2px}
