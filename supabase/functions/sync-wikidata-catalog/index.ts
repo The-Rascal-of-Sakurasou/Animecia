@@ -50,14 +50,15 @@ async function fetchMalIds(qids:string[]){
   const values=batch.map(qid=>"wd:"+qid).join(" ");
   const sparql="SELECT ?item ?malId WHERE { VALUES ?item { "+values+" } ?item wdt:P4086 ?malId . } ORDER BY ?item ?malId";
   const endpoint="https://query.wikidata.org/sparql?"+new URLSearchParams({query:sparql,format:"json"});
-  let bindings:any[]=[];
+  let bindings:any[]=[],requestSucceeded=false;
   for(let attempt=0;attempt<4;attempt++){
    const response=await fetch(endpoint,{headers:{"Accept":"application/sparql-results+json","User-Agent":"ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/)"}});
    if(response.status===429){await wait(Math.min(60,Math.max(2,Number(response.headers.get("Retry-After")||10)))*1000);continue;}
    if([500,502,503,504].includes(response.status)&&attempt<3){await wait((attempt+1)*2500);continue;}
    if(!response.ok)throw new Error("Wikidata MAL-ID lookup HTTP "+response.status);
-   const payload=await response.json();bindings=Array.isArray(payload?.results?.bindings)?payload.results.bindings:[];break;
+   const payload=await response.json();bindings=Array.isArray(payload?.results?.bindings)?payload.results.bindings:[];requestSucceeded=true;break;
   }
+  if(!requestSucceeded)throw new Error("Wikidata MAL-ID lookup failed after retries.");
   if(!bindings.length)continue;
   for(const binding of bindings){
    const qid=String(binding?.item?.value||"").match(/(Q[0-9]+)$/)?.[1];
