@@ -375,6 +375,11 @@ Deno.serve(async (req: Request) => {
           const entity = workEntities.get(String(work.source_id));
           if (!entity) continue;
           const update: AnyRecord = {};
+          const titleKana = claimText(entity, "P1814");
+          if (titleKana && !work.title_kana) {
+            update.title_kana = titleKana;
+            counts.titleKana++;
+          }
           const official = safeUrl(claimText(entity, "P856"));
           if (official && !work.official_url && !work.official_site_url) {
             update.official_url = official;
@@ -683,7 +688,7 @@ Deno.serve(async (req: Request) => {
           records_inserted_or_updated: [
             counts.externalIds, counts.aliases, counts.officialUrls, counts.episodeCounts,
             counts.staffLinks, counts.genres, counts.relations, counts.characterLinks,
-            counts.voiceActorLinks, counts.entityAliases
+            counts.voiceActorLinks, counts.entityAliases, counts.titleKana
           ].reduce((sum: number, value: any) => sum + Number(value || 0), 0),
           error_message: null
         }).eq("id", run.data.id);
