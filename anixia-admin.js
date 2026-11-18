@@ -473,6 +473,7 @@
         "取得ページ数: "+result.pagesRequested,
         "確認作品数: "+result.recordsSeen,
         "未公開候補の登録・更新数: "+result.recordsInsertedOrUpdated,
+        "既存作品へのMAL IDによる紐付け数: "+(result.linkedToExistingByMALId||0),
         "Annict全体件数: "+(result.totalCount??"不明"),
         "次のページ: "+(result.nextPage??"完了")
       ].join("\n");
