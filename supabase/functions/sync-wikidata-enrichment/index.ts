@@ -230,13 +230,25 @@ Deno.serve(async (req: Request) => {
     const body = await req.json().catch(() => ({}));
     const mode = body?.mode === "preview" ? "preview" : "sync";
     const limit = Math.min(50, Math.max(1, Math.floor(Number(body?.limit) || 50)));
+    const cursorResult = await db.from("catalog_sync_state").select("next_offset")
+      .eq("source", "wikidata-enrichment").maybeSingle();
+    if (cursorResult.error) throw cursorResult.error;
+    const offset = Math.max(0, Number(cursorResult.data?.next_offset) || 0);
     const workResult = await db.from("anime")
-      .select("id,title,title_ja,title_kana,source_id,official_url,official_site_url,episode_count,episodes_count")
+      .select("id,title,title_ja,title_kana,source_id,official_url,official_site_url,episode_count,episodes_count", { count: "exact" })
       .eq("source", SOURCE).eq("is_published", true).not("source_id", "is", null)
-      .order("release_year", { ascending: true }).limit(limit);
+      .order("release_year", { ascending: true }).order("source_id", { ascending: true })
+      .range(offset, offset + limit - 1);
     if (workResult.error) throw workResult.error;
     const works = (workResult.data || []).filter((w: AnyRecord) => qid(String(w.source_id || "")));
-    if (!works.length) return json({ status: "completed", mode, works: 0, message: "対象作品はありません。" });
+    if (!works.length) {
+      if (mode === "sync") {
+        const now = new Date().toISOString();
+        const reset = await db.from("catalog_sync_state").upsert({ source: "wikidata-enrichment", next_offset: 0, last_success_at: now, updated_at: now }, { onConflict: "source" });
+        if (reset.error) throw reset.error;
+      }
+      return json({ status: "completed", mode, works: 0, offset, nextOffset: 0, worksTotal: workResult.count || 0, message: "対象作品はありません。" });
+    }
 
     const run = mode === "sync"
       ? await db.from("catalog_sync_runs").insert({
@@ -654,8 +666,9 @@ Deno.serve(async (req: Request) => {
       }
 
       if (mode === "sync" && run.data?.id) {
+        const finishedAt = new Date().toISOString();
         const finished = await db.from("catalog_sync_runs").update({
-          finished_at: new Date().toISOString(), status: "succeeded",
+          finished_at: finishedAt, status: "succeeded",
           pages_requested: 1, records_seen: works.length,
           records_inserted_or_updated: [
             counts.externalIds, counts.aliases, counts.officialUrls, counts.episodeCounts,
@@ -665,9 +678,16 @@ Deno.serve(async (req: Request) => {
           error_message: null
         }).eq("id", run.data.id);
         if (finished.error) throw finished.error;
+        const nextOffset = offset + works.length >= (workResult.count || 0) ? 0 : offset + works.length;
+        const cursorUpdate = await db.from("catalog_sync_state").upsert({
+          source: "wikidata-enrichment", next_offset: nextOffset,
+          last_success_at: finishedAt, updated_at: finishedAt
+        }, { onConflict: "source" });
+        if (cursorUpdate.error) throw cursorUpdate.error;
       }
+      const nextOffset = mode === "sync" ? (offset + works.length >= (workResult.count || 0) ? 0 : offset + works.length) : offset;
       return json({
-        status: "completed", mode, worksProcessed: works.length,
+        status: "completed", mode, worksProcessed: works.length, offset, nextOffset, worksTotal: workResult.count || 0,
         counts,
         source: "Wikidata structured data (CC0)",
         note: "Only missing or source-linked structured fields are added. Existing manual values and publication states are preserved. Prose descriptions and unlicensed images are not imported."
