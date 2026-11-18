@@ -15,19 +15,12 @@ trap cleanup EXIT
 echo "Creating a temporary, unlinked Supabase project at $WORKDIR"
 cd "$WORKDIR"
 supabase init --yes
-
 if grep -q '^\[inbucket\]' supabase/config.toml; then
   echo "Unsupported legacy [inbucket] config section detected." >&2
   exit 1
 fi
-
-# This temporary project is deliberately not linked to any hosted Supabase project.
-# No production credentials or secrets are used by this validation.
 supabase start
 
-# Use the local database URL reported by this temporary, unlinked project.
-# psql executes complete SQL files; db query uses a prepared statement and
-# cannot execute files containing multiple SQL commands.
 if ! command -v psql >/dev/null 2>&1; then
   sudo apt-get update
   sudo apt-get install -y postgresql-client
@@ -45,6 +38,10 @@ for file in \
   07_default_privileges.sql
 do
   echo "::group::Apply $file to the disposable local database"
+  if [[ "$file" == "07_default_privileges.sql" ]]; then
+    # Replay-only role membership grant; confined to the ephemeral database.
+    psql "$DB_URL" -v ON_ERROR_STOP=1 -c "DO \$\$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='supabase_admin') THEN EXECUTE 'GRANT supabase_admin TO postgres'; END IF; END \$\$;"
+  fi
   psql "$DB_URL" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/schema-snapshot/$file"
   if [[ "$file" == "04_functions_and_triggers.sql" ]]; then
     echo "Checking both public anime-search overloads are present"
@@ -74,76 +71,25 @@ DECLARE
   actual_triggers integer;
   actual_extensions integer;
 BEGIN
-  SELECT count(*) INTO actual_tables
-  FROM pg_class c
-  JOIN pg_namespace n ON n.oid = c.relnamespace
-  WHERE n.nspname IN ('public', 'private')
-    AND c.relkind IN ('r', 'p');
-
-  SELECT count(*) INTO actual_constraints
-  FROM pg_constraint c
-  JOIN pg_namespace n ON n.oid = c.connamespace
-  WHERE n.nspname IN ('public', 'private');
-
-  SELECT count(*) INTO actual_rls_tables
-  FROM pg_class c
-  JOIN pg_namespace n ON n.oid = c.relnamespace
-  WHERE n.nspname IN ('public', 'private')
-    AND c.relkind IN ('r', 'p')
-    AND c.relrowsecurity;
-
-  SELECT count(*) INTO actual_policies
-  FROM pg_policies
-  WHERE schemaname IN ('public', 'private');
-
-  SELECT count(*) INTO actual_functions
-  FROM pg_proc p
-  JOIN pg_namespace n ON n.oid = p.pronamespace
-  WHERE n.nspname IN ('public', 'private')
-    AND p.prokind = 'f';
-
-  SELECT count(*) INTO actual_triggers
-  FROM pg_trigger t
-  JOIN pg_class c ON c.oid = t.tgrelid
-  JOIN pg_namespace n ON n.oid = c.relnamespace
-  WHERE n.nspname IN ('public', 'private', 'auth')
-    AND NOT t.tgisinternal;
-
-  SELECT count(*) INTO actual_extensions
-  FROM pg_extension
-  WHERE extname IN ('pg_cron', 'pg_net', 'pgcrypto', 'uuid-ossp');
-
-  RAISE NOTICE 'tables=%, constraints=%, rls_tables=%, policies=%, functions=%, triggers=%, required_extensions=%',
-    actual_tables, actual_constraints, actual_rls_tables, actual_policies,
-    actual_functions, actual_triggers, actual_extensions;
-
-  IF actual_tables <> 47 THEN
-    RAISE EXCEPTION 'Expected 47 application tables, found %', actual_tables;
-  END IF;
-  IF actual_constraints <> 172 THEN
-    RAISE EXCEPTION 'Expected 172 constraints, found %', actual_constraints;
-  END IF;
-  IF actual_rls_tables <> 47 THEN
-    RAISE EXCEPTION 'Expected RLS on all 47 application tables, found %', actual_rls_tables;
-  END IF;
-  IF actual_policies <> 69 THEN
-    RAISE EXCEPTION 'Expected 69 RLS policies, found %', actual_policies;
-  END IF;
-  IF actual_functions < 20 THEN
-    RAISE EXCEPTION 'Expected at least 20 application functions, found %', actual_functions;
-  END IF;
-  IF actual_triggers < 11 THEN
-    RAISE EXCEPTION 'Expected at least 11 application triggers, found %', actual_triggers;
-  END IF;
-  IF actual_extensions <> 4 THEN
-    RAISE EXCEPTION 'Expected 4 required extensions, found %', actual_extensions;
-  END IF;
+  SELECT count(*) INTO actual_tables FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname IN ('public','private') AND c.relkind IN ('r','p');
+  SELECT count(*) INTO actual_constraints FROM pg_constraint c JOIN pg_namespace n ON n.oid=c.connamespace WHERE n.nspname IN ('public','private');
+  SELECT count(*) INTO actual_rls_tables FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname IN ('public','private') AND c.relkind IN ('r','p') AND c.relrowsecurity;
+  SELECT count(*) INTO actual_policies FROM pg_policies WHERE schemaname IN ('public','private');
+  SELECT count(*) INTO actual_functions FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname IN ('public','private') AND p.prokind='f';
+  SELECT count(*) INTO actual_triggers FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname IN ('public','private','auth') AND NOT t.tgisinternal;
+  SELECT count(*) INTO actual_extensions FROM pg_extension WHERE extname IN ('pg_cron','pg_net','pgcrypto','uuid-ossp');
+  RAISE NOTICE 'tables=%, constraints=%, rls_tables=%, policies=%, functions=%, triggers=%, required_extensions=%', actual_tables,actual_constraints,actual_rls_tables,actual_policies,actual_functions,actual_triggers,actual_extensions;
+  IF actual_tables<>47 THEN RAISE EXCEPTION 'Expected 47 application tables, found %',actual_tables; END IF;
+  IF actual_constraints<>172 THEN RAISE EXCEPTION 'Expected 172 constraints, found %',actual_constraints; END IF;
+  IF actual_rls_tables<>47 THEN RAISE EXCEPTION 'Expected RLS on all 47 application tables, found %',actual_rls_tables; END IF;
+  IF actual_policies<>69 THEN RAISE EXCEPTION 'Expected 69 RLS policies, found %',actual_policies; END IF;
+  IF actual_functions<20 THEN RAISE EXCEPTION 'Expected at least 20 application functions, found %',actual_functions; END IF;
+  IF actual_triggers<11 THEN RAISE EXCEPTION 'Expected at least 11 application triggers, found %',actual_triggers; END IF;
+  IF actual_extensions<>4 THEN RAISE EXCEPTION 'Expected 4 required extensions, found %',actual_extensions; END IF;
 END
 $$;
 SQL
-
 echo "::group::Verify reconstructed schema"
 psql "$DB_URL" -v ON_ERROR_STOP=1 -f "$WORKDIR/assert-snapshot.sql"
 echo "::endgroup::"
-
 echo "Schema snapshot replay and catalog assertions passed."
