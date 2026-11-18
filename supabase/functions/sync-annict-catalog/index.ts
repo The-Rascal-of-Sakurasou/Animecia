@@ -273,14 +273,33 @@ Deno.serve(async (req: Request) => {
         work.id !== undefined && typeof work.title === "string" && work.title.trim()
       );
       const sourceIds = validWorks.map((work: any) => String(work.id));
-      const existingResult = sourceIds.length
-        ? await admin.from("anime").select("source_id,is_published")
-            .eq("source", "annict").in("source_id", sourceIds)
-        : { data: [], error: null };
-      if (existingResult.error) throw existingResult.error;
+      const [existingResult, externalResult] = await Promise.all([
+        sourceIds.length
+          ? admin.from("anime").select("source_id,is_published")
+              .eq("source", "annict").in("source_id", sourceIds)
+          : Promise.resolve({ data: [], error: null }),
+        sourceIds.length
+          ? admin.from("anime_external_ids").select("external_id,anime_id")
+              .eq("source", "annict").in("external_id", sourceIds)
+          : Promise.resolve({ data: [], error: null })
+      ]);
+      if (existingResult.error || externalResult.error) {
+        throw existingResult.error || externalResult.error;
+      }
       const existing = new Map((existingResult.data || []).map((row: any) =>
         [String(row.source_id), Boolean(row.is_published)]
       ));
+      const externalAnimeIds = [...new Set((externalResult.data || []).map((row: any) => String(row.anime_id)))];
+      const publishedResult = externalAnimeIds.length
+        ? await admin.from("anime").select("id,is_published").in("id", externalAnimeIds)
+        : { data: [], error: null };
+      if (publishedResult.error) throw publishedResult.error;
+      const publishedByAnimeId = new Map((publishedResult.data || []).map((row: any) =>
+        [String(row.id), Boolean(row.is_published)]
+      ));
+      for (const row of externalResult.data || []) {
+        existing.set(String(row.external_id), publishedByAnimeId.get(String(row.anime_id)) === true);
+      }
       return json({
         mode: "preview",
         page: startPage,
@@ -358,7 +377,7 @@ Deno.serve(async (req: Request) => {
     } catch (error) {
       await admin.from("catalog_sync_runs").update({
         finished_at: new Date().toISOString(),
-        status: upserted > 0 ? "partial" : "failed",
+        status: upserted > 0 || linkedByKnownMalId > 0 ? "partial" : "failed",
         pages_requested: pagesRequested,
         records_seen: recordsSeen,
         records_inserted_or_updated: upserted,
