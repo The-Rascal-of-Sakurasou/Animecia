@@ -38,8 +38,8 @@ eval "$(supabase status -o env)"
 for file in \
   01_tables_and_constraints.sql \
   02_indexes_and_rls.sql \
-  03_policies.sql \
   04_functions_and_triggers.sql \
+  03_policies.sql \
   05_grants.sql \
   06_comments.sql \
   07_default_privileges.sql
