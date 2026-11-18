@@ -61,10 +61,15 @@ jobs:
               }
             }
             walk(root);
-            return found.sort().slice(0, 12);
+            const sorted = found.sort();
+            if (sorted.length <= 12) return sorted;
+            // Spread the sample across the full ID range instead of checking only early IDs.
+            return Array.from({ length: 12 }, (_, i) => sorted[Math.round(i * (sorted.length - 1) / 11)]);
           }
           for (const root of ['anime', 'genre']) {
-            pages.push(...collectIndexPages(root));
+            const samples = collectIndexPages(root);
+            console.log(`${root}: selected ${samples.length} distributed pages`);
+            pages.push(...samples);
           }
           const widths = [320, 360, 375, 390, 430, 600, 768, 820, 1024, 1366, 1920];
           const browser = await chromium.launch({ headless: true });
