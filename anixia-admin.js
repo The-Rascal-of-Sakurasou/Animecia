@@ -503,7 +503,7 @@
         ].join("\n")).join("\n\n");
         return;
       }
-      $("wikidata-sync-message").textContent=["同期完了","取得位置: "+data.offset+" → "+data.nextOffset,"取得候補: "+data.recordsSeen,"形式検査通過: "+data.validCandidates,"新規登録: "+data.recordsInsertedOrUpdated,data.sweepRestarted?"全体走査の先頭へ戻りました。":"次回は続きから取得します。"].join("\n");
+      $("wikidata-sync-message").textContent=["同期完了","取得位置: "+data.offset+" → "+data.nextOffset,"取得候補: "+data.recordsSeen,"形式検査通過: "+data.validCandidates,"新規登録: "+data.recordsInsertedOrUpdated,"MyAnimeList IDの新規紐付け: "+(data.linkedMyAnimeListIds||0),data.sweepRestarted?"全体走査の先頭へ戻りました。":"次回は続きから取得します。"].join("\n");
       await loadPendingAnime();
     }catch(e){
       console.error(e);
