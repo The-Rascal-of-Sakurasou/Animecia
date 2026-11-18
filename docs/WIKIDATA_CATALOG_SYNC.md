@@ -19,7 +19,8 @@ All schedules below are UTC. Japan time is UTC+9.
 |---|---:|---:|---|
 | anixia-wikidata-catalog-sync | Daily 02:30 | Daily 11:30 | Discover and register new anime work candidates |
 | anixia-wikidata-enrichment-sync | Daily 03:15 | Daily 12:15 | Fill structured metadata and relationships |
-| anixia-wikidata-episodes-sync | Sunday 04:00 | Sunday 13:00 | Discover episode entities and add pending episode rows |
+| anixia-seasonal-anime-sync | Daily 03:35 | Daily 12:35 | Discover and synchronize current-season works |
+| anixia-wikidata-episodes-sync | Sunday 04:00 | Sunday 13:00 | Discover episode entities and add episode rows |
 | anixia-commons-poster-sync | Sunday 05:00 | Sunday 14:00 | Find reusable Commons images with attribution |
 
 The schedules are registered in Supabase Cron and use a secret retrieved from Supabase Vault at execution time. Batch sizes are deliberately bounded to reduce timeouts and respect Wikidata Query Service limits.
@@ -42,6 +43,13 @@ The schedules are registered in Supabase Cron and use a secret retrieved from Su
 - Existing manual values and publication states are preserved.
 - Structured data is imported only when the source provides a supported value. Missing values are left blank.
 - Prose synopsis text is not copied from Wikidata. It requires a separate source with appropriate reuse rights and attribution.
+
+## Seasonal anime synchronization
+
+- Edge Function: `sync-seasonal-anime`.
+- Scheduled daily at 03:35 UTC (12:35 Japan time).
+- Finds Japanese animation works with dates in the current Japan-local season and synchronizes seasonal release metadata and available external IDs.
+- This is a separate pipeline from the historical catalog sweep. Monitor duplicate matches and publication-state behavior independently.
 
 ## Episode synchronization
 
