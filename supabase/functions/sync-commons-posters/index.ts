@@ -19,7 +19,7 @@ function licenseInfo(meta: Record<string, any>) {
   const credit = cleanHtml(meta?.Credit?.value);
   const normalized = short.toLowerCase();
   const licenseUrl = url.toLowerCase();
-  const cc0 = /^(?:cc0(?:\\s|$)|cc zero)$/i.test(short) && /creativecommons\.org\/publicdomain\/zero\//.test(licenseUrl);
+  const cc0 = /^(?:cc0(?:\s|$)|cc zero)$/i.test(short) && /creativecommons\.org\/publicdomain\/zero\//.test(licenseUrl);
   const publicDomain = /^(public domain|pd|public domain mark)$/i.test(short) && /creativecommons\.org\/publicdomain\/mark\//.test(licenseUrl);
   const ccBy = /^cc by(?:\s|$)/i.test(short) && /creativecommons\.org\/licenses\/by\/\d+(?:\.\d+)?\//.test(licenseUrl);
   const ccBySa = /^cc by-sa(?:\s|$)/i.test(short) && /creativecommons\.org\/licenses\/by-sa\/\d+(?:\.\d+)?\//.test(licenseUrl);
