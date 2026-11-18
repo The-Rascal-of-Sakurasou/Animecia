@@ -191,8 +191,7 @@ async function persist(db: any, works: any[]) {
         season: work.season,
         season_name: work.season_name,
         season_name_text: work.season_name_text,
-        released_on: work.released_on,
-        title_ja: work.title_ja
+        released_on: work.released_on
       }).eq("id", animeId);
       if (update.error) throw update.error;
       updated++;
@@ -225,11 +224,13 @@ async function persist(db: any, works: any[]) {
       season_name: work.season_name,
       season_name_text: work.season_name_text,
       released_on: work.released_on,
-      title_ja: work.title_ja,
-      is_published: true,
       source_synced_at: new Date().toISOString()
     }).eq("id", animeId);
     if (current.error) throw current.error;
+    // Preserve editorial titles and publication state on pre-existing catalogue rows.
+    const titleBackfill = await db.from("anime").update({ title_ja: work.title_ja })
+      .eq("id", animeId).is("title_ja", null);
+    if (titleBackfill.error) throw titleBackfill.error;
     if (!mappings.some((m: any) => m.external_id === work.qid)) {
       mappings.push({
         anime_id: animeId, source: "wikidata", external_id: work.qid,
