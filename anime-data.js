@@ -23,7 +23,7 @@
   function seasonCode(a){ return a?.season||""; }
   function format(a){ return formatNames[a?.format]||a?.format||"—"; }
   function status(a){ return statusNames[a?.status]||a?.status||"—"; }
-  function image(a){ return a?.cover_image||""; }
+  function image(a){ return a?.poster_url||a?.cover_image||""; }
   function score(a){
     const v=a?._animecia_rating??a?.average_rating??a?.average_score;
     if(v===null||v===undefined||v==="") return null;
