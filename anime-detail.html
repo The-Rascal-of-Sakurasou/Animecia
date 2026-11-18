@@ -11,13 +11,14 @@
 <style>
 .anixia-detail{width:min(1120px,calc(100% - 36px));margin:0 auto;padding:30px 0 70px}
 .anixia-detail-hero{display:grid;grid-template-columns:240px minmax(0,1fr);gap:28px;padding:26px;border:1px solid #293b56;border-radius:18px;background:linear-gradient(135deg,#111d30,#182b44)}
-.anixia-detail-poster-frame{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;border-radius:12px;background:#263b59}.anixia-detail-poster{width:100%;height:100%;object-fit:cover;border-radius:12px;background:#263b59}.anixia-detail-poster-frame .anixia-poster-fallback{position:absolute;inset:0;display:grid;place-items:center}
+.anixia-detail-poster-wrap{min-width:0}.anixia-detail-poster-frame{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;border-radius:12px;background:#263b59}.anixia-detail-poster{width:100%;height:100%;object-fit:cover;border-radius:12px;background:#263b59}.anixia-detail-poster-frame .anixia-poster-fallback{position:absolute;inset:0;display:grid;place-items:center}
 .anixia-detail-kicker{color:#f2b84d;font-size:10px;font-weight:900;letter-spacing:.16em}
 .anixia-detail h1{font-size:clamp(26px,4vw,40px);line-height:1.25;margin:8px 0 5px;color:#fff}
 .anixia-detail-subtitle{font-size:13px;color:#aab8cb;margin-bottom:16px}
 .anixia-detail-meta{display:flex;flex-wrap:wrap;gap:7px;margin:15px 0}
 .anixia-detail-meta span,.anixia-detail-tags a{border:1px solid #3b4e68;border-radius:999px;padding:6px 10px;color:#dbe4f0;font-size:11px;text-decoration:none}
-.anixia-detail-synopsis{color:#c5d0df;font-size:13px;line-height:1.9;white-space:pre-line}\n.anixia-detail-source{margin:8px 0 0;color:#8fa2bc;font-size:10px;line-height:1.7}.anixia-detail-source a{color:#a9c7f0;text-decoration:underline;text-underline-offset:2px}
+.anixia-detail-synopsis{color:#c5d0df;font-size:13px;line-height:1.9;white-space:pre-line}
+.anixia-detail-source{margin:8px 0 0;color:#8fa2bc;font-size:10px;line-height:1.7}.anixia-detail-source a{color:#a9c7f0;text-decoration:underline;text-underline-offset:2px}
 .anixia-detail-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr);gap:16px;margin-top:18px}
 .anixia-detail-panel{padding:20px;border:1px solid #293b56;border-radius:14px;background:#111b2b}
 .anixia-detail-panel h2{font-size:17px;margin:0 0 14px;color:#fff}
@@ -64,13 +65,14 @@
 <div id="detail-error" class="anixia-empty" hidden></div>
 <div id="detail-content" hidden>
 <section class="anixia-detail-hero">
-<div id="poster-frame" class="anixia-detail-poster-frame"><img id="poster" class="anixia-detail-poster" alt="" decoding="async" loading="eager" fetchpriority="high"><span id="poster-fallback" class="anixia-poster-fallback" hidden>ANIXIA</span></div>
+<div class="anixia-detail-poster-wrap"><div id="poster-frame" class="anixia-detail-poster-frame"><img id="poster" class="anixia-detail-poster" alt="" decoding="async" loading="eager" fetchpriority="high"><span id="poster-fallback" class="anixia-poster-fallback" hidden>ANIXIA</span></div><p id="poster-source" class="anixia-detail-source" hidden></p></div>
 <div>
 <div class="anixia-detail-kicker">ANIME INFORMATION</div>
 <h1 id="title"></h1><div id="subtitle" class="anixia-detail-subtitle"></div>
 <div id="meta" class="anixia-detail-meta"></div>
 <div id="genres" class="anixia-detail-tags"></div>
-<p id="synopsis" class="anixia-detail-synopsis"></p>\n<p id="synopsis-source" class="anixia-detail-source" hidden></p>
+<p id="synopsis" class="anixia-detail-synopsis"></p>
+<p id="synopsis-source" class="anixia-detail-source" hidden></p>
 </div>
 </section>
 <div class="anixia-detail-grid">
