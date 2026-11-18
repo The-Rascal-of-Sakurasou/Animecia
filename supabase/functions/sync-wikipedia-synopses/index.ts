@@ -36,12 +36,13 @@ async function fetchSynopsis(title: string) {
   if (bareResponse.status === 429) throw new RetryableApiError("Wikipedia REST API rate limited", bareResponse.headers.get("Retry-After"));
   if (!bareResponse.ok) throw new Error("Wikipedia REST API error: " + bareResponse.status);
   const bare = await bareResponse.json();
+  console.log("ANIXIA_WIKI_BARE", JSON.stringify({ requested: title, title: bare?.title, license: bare?.license, latest: bare?.latest }));
   const licenseUrl = String(bare?.license?.url || "").replace(/^http:/i, "https:");
   const licenseTitle = String(bare?.license?.title || "");
   if (!/creativecommons\.org\/licenses\/by-sa\/(?:3\.0|4\.0)\/?$/i.test(licenseUrl.replace(/^\/\//, "https://"))) return null;
   const revisionId = Number(bare?.latest?.id || 0);
   const pageTitle = String(bare?.title || "");
-  if (!revisionId || !pageTitle || norm(pageTitle) !== norm(title)) return null;
+  if (!revisionId || !pageTitle || norm(pageTitle) !== norm(title)) { console.log("ANIXIA_WIKI_TITLE_SKIP", JSON.stringify({ requested: title, pageTitle, revisionId })); return null; }
 
   const params = new URLSearchParams({
     action: "query", format: "json", formatversion: "2",
@@ -55,9 +56,9 @@ async function fetchSynopsis(title: string) {
   if (!apiResponse.ok) throw new Error("Wikipedia Action API error: " + apiResponse.status);
   const payload = await apiResponse.json();
   const page = Array.isArray(payload?.query?.pages) ? payload.query.pages[0] : null;
-  if (!page || page.missing || page.pageprops?.disambiguation || norm(page.title) !== norm(title)) return null;
+  if (!page || page.missing || page.pageprops?.disambiguation || norm(page.title) !== norm(title)) { console.log("ANIXIA_WIKI_PAGE_SKIP", JSON.stringify({ requested: title, pageTitle: page?.title, missing: page?.missing, disambiguation: page?.pageprops?.disambiguation })); return null; }
   const extract = String(page.extract || "").replace(/\r/g, "").trim();
-  if (extract.length < 100 || extract.length > 2400) return null;
+  if (extract.length < 100 || extract.length > 2400) { console.log("ANIXIA_WIKI_EXTRACT_SKIP", JSON.stringify({ requested: title, extractLength: extract.length })); return null; }
   if (/曖昧さ回避|この記事は.*曖昧さ回避/.test(extract.slice(0, 240))) return null;
   const canonicalUrl = String(page.fullurl || ("https://ja.wikipedia.org/wiki/" + encodeURIComponent(page.title.replace(/ /g, "_"))));
   const revisionUrl = "https://ja.wikipedia.org/w/index.php?title=" + encodeURIComponent(page.title) + "&oldid=" + revisionId;
