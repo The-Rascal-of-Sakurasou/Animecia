@@ -529,7 +529,7 @@
         "既に紐付け済み: "+(data.alreadyLinked??0),
         "ID未登録: "+(data.missing??0),
         "複数ID・競合のため保留: "+((data.ambiguous??0)+(data.collision??0))
-      ].join("\\n");
+      ].join("\n");
     }catch(e){
       console.error(e);
       $("wikidata-sync-message").textContent="ID照合に失敗しました: "+(e.message||"管理者権限と接続状態を確認してください。");
