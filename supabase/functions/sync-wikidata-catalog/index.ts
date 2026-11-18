@@ -38,8 +38,7 @@ function mapRow(b:any){
  const episodes=Number(b?.episodes?.value);
  if(!/^Q\d+$/.test(qid)||!title||!year||year<1963)return null;
  const format= formats[cls]||"other";
- const autoPublish=Boolean(titleJa)&&["tv","movie","ova","web"].includes(format);
- return {source:"wikidata",source_id:qid,title,title_ja:titleJa,format,release_year:year,country_code:"JP",episode_count:Number.isInteger(episodes)&&episodes>0?episodes:null,episodes_count:Number.isInteger(episodes)&&episodes>0?episodes:null,is_published:autoPublish,source_synced_at:new Date().toISOString()};
+ return {source:"wikidata",source_id:qid,title,title_ja:titleJa,format,release_year:year,country_code:"JP",episode_count:Number.isInteger(episodes)&&episodes>0?episodes:null,episodes_count:Number.isInteger(episodes)&&episodes>0?episodes:null,is_published:false,source_synced_at:new Date().toISOString()};
 }
 async function digestHex(value:string){
  const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value));
@@ -162,23 +161,7 @@ Deno.serve(async(req:Request)=>{
   try{
    const saved=rows.length?await db.from("anime").upsert(rows,{onConflict:"source,source_id",ignoreDuplicates:true}).select("id"):{data:[],error:null};
    if(saved.error)throw saved.error;
-   // Upsert deliberately preserves existing rows; separately publish every
-   // newly verified candidate in this batch without overwriting other metadata.
-   const publishableIds=rows
-    .filter(row=>row.title_ja&&["tv","movie","ova","web"].includes(row.format))
-    .map(row=>row.source_id);
-   if(publishableIds.length){
-    const published=await db.from("anime").update({is_published:true})
-     .eq("source","wikidata").in("source_id",publishableIds);
-    if(published.error)throw published.error;
-   }
-   const publishIds=rows.filter(row=>row.title_ja&&["tv","movie","ova","web"].includes(row.format)).map(row=>row.source_id);
-   if(publishIds.length){
-    const published=await db.from("anime").update({is_published:true})
-     .eq("source","wikidata").eq("country_code","JP").eq("is_published",false)
-     .in("source_id",publishIds).not("title_ja","is",null);
-    if(published.error)throw published.error;
-   }
+   // New Wikidata candidates stay unpublished; existing publication states are preserved.
    if(rows.length){
     const sourceIds=rows.map(row=>row.source_id);
     const imported=await db.from("anime").select("id,source_id").eq("source","wikidata").in("source_id",sourceIds);
