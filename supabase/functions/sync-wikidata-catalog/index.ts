@@ -42,6 +42,34 @@ async function digestHex(value:string){
  const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value));
  return [...new Uint8Array(digest)].map(v=>v.toString(16).padStart(2,"0")).join("");
 }
+async function fetchMalIds(qids:string[]){
+ const found=new Map<string,Set<string>>();
+ for(let start=0;start<qids.length;start+=40){
+  const batch=qids.slice(start,start+40).filter(qid=>/^Q[0-9]+$/.test(qid));
+  if(!batch.length)continue;
+  const values=batch.map(qid=>"wd:"+qid).join(" ");
+  const sparql="SELECT ?item ?malId WHERE { VALUES ?item { "+values+" } ?item wdt:P4086 ?malId . } ORDER BY ?item ?malId";
+  const endpoint="https://query.wikidata.org/sparql?"+new URLSearchParams({query:sparql,format:"json"});
+  let bindings:any[]=[];
+  for(let attempt=0;attempt<4;attempt++){
+   const response=await fetch(endpoint,{headers:{"Accept":"application/sparql-results+json","User-Agent":"ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/)"}});
+   if(response.status===429){await wait(Math.min(60,Math.max(2,Number(response.headers.get("Retry-After")||10)))*1000);continue;}
+   if([500,502,503,504].includes(response.status)&&attempt<3){await wait((attempt+1)*2500);continue;}
+   if(!response.ok)throw new Error("Wikidata MAL-ID lookup HTTP "+response.status);
+   const payload=await response.json();bindings=Array.isArray(payload?.results?.bindings)?payload.results.bindings:[];break;
+  }
+  if(!bindings.length)continue;
+  for(const binding of bindings){
+   const qid=String(binding?.item?.value||"").match(/(Q[0-9]+)$/)?.[1];
+   const malId=String(binding?.malId?.value||"").trim();
+   if(!qid||!/^\\d+$/.test(malId))continue;
+   if(!found.has(qid))found.set(qid,new Set());
+   found.get(qid)!.add(malId);
+  }
+  if(start+40<qids.length)await wait(1200);
+ }
+ return found;
+}
 Deno.serve(async(req:Request)=>{
  const origin=req.headers.get("Origin");
  if(origin&&origin!==allowedOrigin)return json({error:"Origin not allowed"},403);
@@ -72,6 +100,40 @@ Deno.serve(async(req:Request)=>{
   if(source.error)throw source.error;
   if(!source.data?.is_enabled||source.data.rights_review_status!=="approved")return json({error:"Wikidataの利用承認が有効ではないため、同期を停止しました。"},423);
   const body=await req.json().catch(()=>({}));
+  if(body?.mode==="sync_mal_ids"){
+   const worksResult=await db.from("anime").select("id,source_id")
+    .eq("source","wikidata").not("source_id","is",null).order("source_id").limit(1000);
+   if(worksResult.error)throw worksResult.error;
+   const works=(worksResult.data||[]).filter((row:any)=>/^Q[0-9]+$/.test(String(row.source_id||"")));
+   const malByQid=await fetchMalIds(works.map((row:any)=>String(row.source_id)));
+   const existingResult=await db.from("anime_external_ids").select("anime_id,external_id").eq("source","myanimelist").limit(5000);
+   if(existingResult.error)throw existingResult.error;
+   const assignedByAnime=new Map<string,string>();
+   const assignedByMal=new Map<string,string>();
+   for(const row of existingResult.data||[]){
+    assignedByAnime.set(String(row.anime_id),String(row.external_id));
+    assignedByMal.set(String(row.external_id),String(row.anime_id));
+   }
+   const inserts:any[]=[];
+   let alreadyLinked=0,missing=0,ambiguous=0,collision=0;
+   for(const work of works){
+    const animeId=String(work.id),qid=String(work.source_id),ids=malByQid.get(qid);
+    if(!ids||ids.size===0){missing++;continue;}
+    if(ids.size!==1){ambiguous++;continue;}
+    const malId=[...ids][0];
+    const sameAnime=assignedByAnime.get(animeId);
+    if(sameAnime){if(sameAnime===malId)alreadyLinked++;else collision++;continue;}
+    if(assignedByMal.has(malId)){collision++;continue;}
+    inserts.push({anime_id:animeId,source:"myanimelist",external_id:malId,source_url:"https://myanimelist.net/anime/"+malId,is_primary:false,last_verified_at:new Date().toISOString()});
+    assignedByAnime.set(animeId,malId);
+    assignedByMal.set(malId,animeId);
+   }
+   if(inserts.length){
+    const saved=await db.from("anime_external_ids").upsert(inserts,{onConflict:"source,external_id",ignoreDuplicates:true});
+    if(saved.error)throw saved.error;
+   }
+   return json({status:"completed",worksChecked:works.length,wikidataMALIdsFound:malByQid.size,linked:inserts.length,alreadyLinked,missing,ambiguous,collision,sourceProperty:"Wikidata P4086"});
+  }
   const mode=body?.mode==="preview"?"preview":"sync";
   const limit=Math.min(100,Math.max(10,Math.floor(Number(body?.limit)||50)));
   const state=await db.from("catalog_sync_state").select("next_offset").eq("source","wikidata").single();
