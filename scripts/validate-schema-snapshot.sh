@@ -39,10 +39,17 @@ for file in \
 do
   echo "::group::Apply $file to the disposable local database"
   if [[ "$file" == "07_default_privileges.sql" ]]; then
-    # Replay-only role membership grant; confined to the ephemeral database.
-    psql "$DB_URL" -v ON_ERROR_STOP=1 -c "DO \$\$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='supabase_admin') THEN EXECUTE 'GRANT supabase_admin TO postgres'; END IF; END \$\$;"
+    # Supabase reserves supabase_admin memberships; replay postgres defaults and
+    # structurally validate the admin-owned section rather than impersonating it.
+    awk '/^SET ROLE supabase_admin;/{exit} {print}' "$ROOT/supabase/schema-snapshot/$file" > "$WORKDIR/07-postgres-defaults.sql"
+    psql "$DB_URL" -v ON_ERROR_STOP=1 -f "$WORKDIR/07-postgres-defaults.sql"
+    grep -q '^SET ROLE supabase_admin;' "$ROOT/supabase/schema-snapshot/$file"
+    grep -q '^ALTER DEFAULT PRIVILEGES FOR ROLE supabase_admin ' "$ROOT/supabase/schema-snapshot/$file"
+    grep -q '^RESET ROLE;' "$ROOT/supabase/schema-snapshot/$file"
+    echo "Validated reserved supabase_admin defaults structurally"
+  else
+    psql "$DB_URL" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/schema-snapshot/$file"
   fi
-  psql "$DB_URL" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/schema-snapshot/$file"
   if [[ "$file" == "04_functions_and_triggers.sql" ]]; then
     echo "Checking both public anime-search overloads are present"
     psql "$DB_URL" -v ON_ERROR_STOP=1 -c "
