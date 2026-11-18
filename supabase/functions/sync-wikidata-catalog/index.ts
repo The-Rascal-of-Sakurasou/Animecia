@@ -62,7 +62,7 @@ async function fetchMalIds(qids:string[]){
   for(const binding of bindings){
    const qid=String(binding?.item?.value||"").match(/(Q[0-9]+)$/)?.[1];
    const malId=String(binding?.malId?.value||"").trim();
-   if(!qid||!/^\\d+$/.test(malId))continue;
+   if(!qid||!/^[0-9]+$/.test(malId))continue;
    if(!found.has(qid))found.set(qid,new Set());
    found.get(qid)!.add(malId);
   }
