@@ -53,17 +53,22 @@ async function searchImage(work: any) {
   // Prefer Wikidata P18: the image is directly linked to this exact anime item,
   // so matching does not depend on Japanese/English filename spelling.
   const qid = String(work.source_id || "");
+  const extraTitles: string[] = [];
   if (/^Q[1-9][0-9]*$/.test(qid)) {
     try {
       const entityParams = new URLSearchParams({
-        action: "wbgetentities", ids: qid, props: "claims", format: "json", origin: "*"
+        action: "wbgetentities", ids: qid, props: "claims|labels|aliases", languages: "en|ja", format: "json", origin: "*"
       });
       const entityResponse = await fetch("https://www.wikidata.org/w/api.php?" + entityParams, {
         headers: { "User-Agent": "ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/; anime image metadata)" }
       });
       if (entityResponse.ok) {
         const entityPayload = await entityResponse.json();
-        const fileName = entityPayload?.entities?.[qid]?.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
+        const entity = entityPayload?.entities?.[qid];
+        const enLabel = entity?.labels?.en?.value;
+        if (enLabel) extraTitles.push(enLabel);
+        for (const alias of (entity?.aliases?.en || []).slice(0, 8)) if (alias?.value) extraTitles.push(alias.value);
+        const fileName = entity?.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
         console.log("poster-debug:wikidata", JSON.stringify({qid,p18:fileName,claims:Object.keys(entityPayload?.entities?.[qid]?.claims||{})}));
         if (typeof fileName === "string" && fileName.trim()) {
           const imageParams = new URLSearchParams({
@@ -201,7 +206,7 @@ async function searchImage(work: any) {
     }
   }
   console.log("poster-debug:fallthrough-search",JSON.stringify({qid}));
-  const candidates = [...new Set([work.title_ja, work.title, work.title_kana].filter((v: unknown) => String(v || "").trim().length >= 3))].slice(0, 3);
+  const candidates = [...new Set([work.title_ja, work.title, work.title_kana, ...extraTitles].filter((v: unknown) => String(v || "").trim().length >= 3))].slice(0, 6);
   for (const query of candidates) {
     const searchTerms = [query, query + " poster", query + " key visual", query + " cover"];
     for (const searchTerm of searchTerms) {
