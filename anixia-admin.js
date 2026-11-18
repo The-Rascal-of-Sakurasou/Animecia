@@ -180,7 +180,7 @@
           const rightIds=(item.right_external_ids||[]).map(x=>x.source+":"+x.external_id).join(" / ")||"なし";
           const names=Array.isArray(item.matched_names)?item.matched_names.join(" / "):"";
           return '<article style="padding:13px;border:1px solid #30435f;border-radius:10px;margin:10px 0;background:#0b1423">'+
-            '<div style="font-size:10px;color:#9fb1ca">'+esc(String(item.release_year))+'年 · '+esc(formatLabels[item.format]||item.format||"形式不明")+' · 一致名称 '+esc(String(item.matched_name_count||0))+'件</div>'+
+            '<div style="font-size:10px;color:#9fb1ca">'+esc(item.match_reason||"作品名・公開年・形式一致")+' · '+esc(String(item.release_year??"年不明"))+'年 · '+esc(formatLabels[item.format]||item.format||"形式不明")+' · 一致名称 '+esc(String(item.matched_name_count||0))+'件</div>'+
             '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:9px 0">'+
               '<div><strong style="color:#fff;font-size:12px">'+esc(item.left_title||item.left_original_title||"名称未設定")+'</strong><div style="font-size:10px;color:#8fa1ba">'+(item.left_is_published?"公開中":"未公開")+' · '+esc(item.left_source||"手動登録")+'</div><div style="font-size:10px;color:#aebbd0">外部ID: '+esc(leftIds)+'</div></div>'+
               '<div><strong style="color:#fff;font-size:12px">'+esc(item.right_title||item.right_original_title||"名称未設定")+'</strong><div style="font-size:10px;color:#8fa1ba">'+(item.right_is_published?"公開中":"未公開")+' · '+esc(item.right_source||"手動登録")+'</div><div style="font-size:10px;color:#aebbd0">外部ID: '+esc(rightIds)+'</div></div>'+
