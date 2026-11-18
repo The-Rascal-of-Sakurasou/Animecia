@@ -46,7 +46,7 @@ async function fetchSynopsis(title: string) {
   const page = Array.isArray(payload?.query?.pages) ? payload.query.pages[0] : null;
   if (!page || page.missing || page.pageprops?.disambiguation || norm(page.title) !== norm(title)) return null;
   const extract = String(page.extract || "").replace(/\r/g, "").trim();
-  if (extract.length < 100 || extract.length > 2400) return null;
+  if (extract.length < 50 || extract.length > 2400) return null;
   if (/曖昧さ回避|この記事は.*曖昧さ回避/.test(extract.slice(0, 240))) return null;
   const revisionId = Number(page.lastrevid || page.revisions?.[0]?.revid || 0);
   if (!revisionId) return null;
