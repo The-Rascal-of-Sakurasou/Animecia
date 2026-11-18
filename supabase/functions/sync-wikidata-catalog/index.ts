@@ -162,13 +162,15 @@ Deno.serve(async(req:Request)=>{
   try{
    const saved=rows.length?await db.from("anime").upsert(rows,{onConflict:"source,source_id",ignoreDuplicates:true}).select("id"):{data:[],error:null};
    if(saved.error)throw saved.error;
-   // If a previously incomplete Wikidata record later gains a Japanese title,
-   // publish it without overwriting any other existing/manual metadata.
-   for(const row of rows){
-    if(!row.title_ja||!["tv","movie","ova","web"].includes(row.format))continue;
-    const backfilled=await db.from("anime").update({title_ja:row.title_ja,is_published:true})
-     .eq("source","wikidata").eq("source_id",row.source_id).is("title_ja",null);
-    if(backfilled.error)throw backfilled.error;
+   // Upsert deliberately preserves existing rows; separately publish every
+   // newly verified candidate in this batch without overwriting other metadata.
+   const publishableIds=rows
+    .filter(row=>row.title_ja&&["tv","movie","ova","web"].includes(row.format))
+    .map(row=>row.source_id);
+   if(publishableIds.length){
+    const published=await db.from("anime").update({is_published:true})
+     .eq("source","wikidata").in("source_id",publishableIds);
+    if(published.error)throw published.error;
    }
    const publishIds=rows.filter(row=>row.title_ja&&["tv","movie","ova","web"].includes(row.format)).map(row=>row.source_id);
    if(publishIds.length){
