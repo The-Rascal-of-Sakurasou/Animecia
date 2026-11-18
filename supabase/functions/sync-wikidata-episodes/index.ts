@@ -362,7 +362,7 @@ Deno.serve(async (req: Request) => {
         worksTotal: totalWorks || 0,
         nextOffset: mode === "preview" ? offset : nextOffset,
         results,
-        note: "Episodes with a Japanese title are automatically published only when their parent anime is public. Episodes without a Japanese title remain unpublished for automatic enrichment."
+        note: "All imported episodes remain unpublished until an administrator reviews them."
       });
     } catch (error) {
       if (mode === "sync" && run.data?.id) {
