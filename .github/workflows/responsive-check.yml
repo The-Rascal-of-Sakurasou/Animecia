@@ -81,6 +81,8 @@ jobs:
                   viewport: { width, height: 900 },
                   deviceScaleFactor: width <= 600 ? 2 : 1
                 });
+                const pageErrors = [];
+                page.on('pageerror', error => pageErrors.push(error.message));
                 try {
                   const url = new URL(path, base).href;
                   const response = await page.goto(url, {
@@ -99,6 +101,9 @@ jobs:
                   }
                   if (result.document > result.viewport + 2 || result.body > result.viewport + 2) {
                     failures.push(`${path || '/'} @ ${width}px: horizontal overflow (viewport=${result.viewport}, document=${result.document}, body=${result.body})`);
+                  }
+                  for (const message of pageErrors) {
+                    failures.push(`${path || '/'} @ ${width}px: JavaScript page error: ${message}`);
                   }
                   console.log(`${response?.status() ?? 'ERR'} ${path || '/'} @ ${width}px — ${result.title}`);
                 } catch (error) {
