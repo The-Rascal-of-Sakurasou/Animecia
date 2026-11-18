@@ -113,6 +113,15 @@ Deno.serve(async (req: Request) => {
     if (adminError || isAdmin !== true) return json({ error: "管理者権限が必要です。" }, 403);
   }
 
+  const sourceCheck = await db.from("catalog_sources")
+    .select("rights_review_status,is_enabled")
+    .eq("code", "wikimedia_commons")
+    .single();
+  if (sourceCheck.error) return json({ error: "Wikimedia Commonsの利用承認状態を確認できません。" }, 500);
+  if (!sourceCheck.data?.is_enabled || sourceCheck.data.rights_review_status !== "approved") {
+    return json({ error: "Wikimedia Commonsの利用承認が有効ではないため、同期を停止しました。" }, 423);
+  }
+
   let body: any = {};
   try { body = await req.json(); } catch { body = {}; }
   const limit = Math.min(Math.max(Number(body.limit) || 10, 1), 30);
