@@ -257,6 +257,30 @@
     }
   }
 
+  async function loadCatalogQualityHistory(){
+    const el=$("quality-history-content");
+    if(!el)return;
+    el.innerHTML='<p class="admin-message">品質監視履歴を読み込んでいます…</p>';
+    try{
+      const {data,error}=await ANIXIA.getClient().rpc("admin_get_catalog_quality_history",{p_limit:30});
+      if(error)throw error;
+      const snapshots=data?.snapshots||[], missing=data?.missing_posters||[];
+      const snapshotHtml=snapshots.length?snapshots.map(s=>
+        '<article style="padding:12px;border:1px solid #30435f;border-radius:9px;margin:8px 0;background:#0b1423">'+
+        '<strong style="color:#fff">'+esc(new Date(s.captured_at).toLocaleString("ja-JP"))+'</strong>'+
+        '<p class="admin-message">総数 '+esc(String(s.total_works))+' / 公開 '+esc(String(s.published_works))+' / 未公開 '+esc(String(s.unpublished_works))+
+        '<br>画像欠損 '+esc(String(s.published_missing_poster))+' / あらすじ欠損 '+esc(String(s.published_missing_synopsis))+
+        '<br>公式URL欠損 '+esc(String(s.published_missing_official_url))+' / 制作会社欠損 '+esc(String(s.published_missing_studio))+
+        '<br>重複タイトルグループ '+esc(String(s.duplicate_title_groups))+'</p></article>').join(""):'<p class="admin-message">監視履歴がありません。</p>';
+      const missingHtml=missing.length?missing.map(a=>
+        '<article style="padding:10px;border:1px solid #30435f;border-radius:8px;margin:7px 0;background:#0b1423">'+
+        '<strong style="color:#fff">'+esc(a.title||"作品名未設定")+'</strong>'+
+        '<p class="admin-message">公開年: '+esc(String(a.year||"不明"))+' / source: '+esc(a.source||"不明")+
+        '<br>ID: '+esc(a.source_id||"不明")+'</p></article>').join(""):'<p class="admin-message">画像未設定の作品はありません。</p>';
+      el.innerHTML='<h3 style="color:#fff">日次スナップショット</h3>'+snapshotHtml+
+        '<h3 style="color:#fff">画像未設定の公開作品（最大100件）</h3>'+missingHtml;
+    }catch(e){console.error(e);el.innerHTML='<p class="admin-message">履歴を読み込めませんでした。管理者権限を確認してください。</p>';}
+  }
   async function renderCatalogQuality(rows){
     const el=$("catalog-quality-check");
     el.innerHTML='<p class="admin-message">作品・エピソードの品質を検査しています…</p>';
@@ -395,6 +419,8 @@
       $("admin-status").textContent=admin?"管理者としてログインしています。":"ログイン済みですが、管理者権限がありません。";
       if(admin){
         $("admin-sync").hidden=false;
+        $("admin-quality-history").hidden=false;
+        loadCatalogQualityHistory();
         $("admin-poster-sync").hidden=false;
         $("admin-review-moderation").hidden=false;
         $("admin-catalog-review").hidden=false;
@@ -442,6 +468,7 @@
   });
   $("refresh-episodes").addEventListener("click",loadPendingEpisodes);
   $("refresh-catalog-quality").addEventListener("click",()=>renderCatalogQuality(adminAnimeRows));
+  $("refresh-quality-history")?.addEventListener("click",loadCatalogQualityHistory);
   $("refresh-entity-duplicates").addEventListener("click",loadEntityDuplicateCandidates);
   $("refresh-anime-duplicates").addEventListener("click",loadAnimeDuplicateCandidates);
   $("refresh-catalog-candidates").addEventListener("click",loadPendingAnime);
