@@ -314,7 +314,7 @@ Deno.serve(async (req: Request) => {
     if (runInsert.error) throw runInsert.error;
     const runId = runInsert.data.id;
 
-    let page = startPage, pagesRequested = 0, recordsSeen = 0, upserted = 0;
+    let page = startPage, pagesRequested = 0, recordsSeen = 0, upserted = 0, linkedByKnownMalId = 0;
     let totalCount: number | null = null, nextPage: number | null = null;
     try {
       for (let i = 0; i < maxPages; i++) {
@@ -330,7 +330,8 @@ Deno.serve(async (req: Request) => {
             .map(mapWork);
           if (rows.length) {
             const saved = await persistAnnictRows(admin, rows);
-            upserted += saved.processed;
+            upserted += saved.newlyCreatedOrUpdated;
+            linkedByKnownMalId += saved.linkedByKnownMalId;
           }
         }
 
@@ -352,7 +353,7 @@ Deno.serve(async (req: Request) => {
       return json({
         status: done ? "completed" : "partial",
         pagesRequested, recordsSeen, recordsInsertedOrUpdated: upserted,
-        totalCount, nextPage, done
+        totalCount, nextPage, done, linkedToExistingByMALId: linkedByKnownMalId
       });
     } catch (error) {
       await admin.from("catalog_sync_runs").update({
