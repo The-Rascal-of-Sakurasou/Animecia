@@ -36,7 +36,9 @@ function mapRow(b:any){
  const cls=String(b?.class?.value||"").match(/(Q\d+)$/)?.[1]||"";
  const episodes=Number(b?.episodes?.value);
  if(!/^Q\d+$/.test(qid)||!title||!year||year<1963)return null;
- return {source:"wikidata",source_id:qid,title,title_ja:titleJa,format:formats[cls]||"other",release_year:year,country_code:"JP",episode_count:Number.isInteger(episodes)&&episodes>0?episodes:null,episodes_count:Number.isInteger(episodes)&&episodes>0?episodes:null,source_synced_at:new Date().toISOString()};
+ const format= formats[cls]||"other";
+ const autoPublish=Boolean(titleJa)&&["tv","movie","ova"].includes(format);
+ return {source:"wikidata",source_id:qid,title,title_ja:titleJa,format,release_year:year,country_code:"JP",episode_count:Number.isInteger(episodes)&&episodes>0?episodes:null,episodes_count:Number.isInteger(episodes)&&episodes>0?episodes:null,is_published:autoPublish,source_synced_at:new Date().toISOString()};
 }
 async function digestHex(value:string){
  const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value));
