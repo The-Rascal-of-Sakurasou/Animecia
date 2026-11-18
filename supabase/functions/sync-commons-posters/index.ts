@@ -86,6 +86,49 @@ async function searchImage(work: any) {
       };
     }
   }
+
+  // Wikidata P18 fallback: use only Commons-hosted files with an accepted
+  // open licence and portrait dimensions. P18 directly associates the file
+  // with the anime entity, avoiding title/romanization search ambiguity.
+  const qid = String(work.source_id || "");
+  if (/^Q[1-9]\\d*$/.test(qid)) {
+    const entityParams = new URLSearchParams({
+      action: "wbgetentities", ids: qid, props: "claims", format: "json", origin: "*"
+    });
+    const entityResponse = await fetch("https://www.wikidata.org/w/api.php?" + entityParams, {
+      headers: { "User-Agent": "ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/; poster metadata sync)" }
+    });
+    if (entityResponse.ok) {
+      const entityPayload = await entityResponse.json();
+      const fileName = entityPayload?.entities?.[qid]?.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
+      if (typeof fileName === "string" && fileName.trim()) {
+        const imageParams = new URLSearchParams({
+          action: "query", format: "json", formatversion: "2",
+          titles: "File:" + fileName, prop: "imageinfo",
+          iiprop: "url|size|extmetadata", iiurlwidth: "600", origin: "*"
+        });
+        const imageResponse = await fetch("https://commons.wikimedia.org/w/api.php?" + imageParams, {
+          headers: { "User-Agent": "ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/; public anime database)" }
+        });
+        if (imageResponse.ok) {
+          const imagePayload = await imageResponse.json();
+          const page = (imagePayload?.query?.pages || [])[0];
+          const info = page?.imageinfo?.[0];
+          const width = Number(info?.width || 0), height = Number(info?.height || 0);
+          const license = licenseInfo(info?.extmetadata || {});
+          if (info?.thumburl && info?.descriptionurl &&
+              String(info.thumburl).startsWith("https://upload.wikimedia.org/") &&
+              width >= 200 && height >= 280 && width / height >= 0.38 &&
+              width / height <= 0.9 && license) {
+            return {
+              url: info.thumburl, id: page.title, page: info.descriptionurl,
+              attribution: license.attribution, license: license.short
+            };
+          }
+        }
+      }
+    }
+  }
   return null;
 }
 
@@ -138,7 +181,7 @@ Deno.serve(async (req: Request) => {
     offset = Math.max(0, Number(state.data?.next_offset) || 0);
   }
   const buildQuery = (startAt: number) => {
-    let query = db.from("anime").select("id,title,title_ja,title_kana,release_year,poster_url")
+    let query = db.from("anime").select("id,title,title_ja,title_kana,release_year,poster_url,source_id")
       .eq("is_published", true).order("release_year", { ascending: false, nullsFirst: false });
     if (requestedIds.length) query = query.in("id", requestedIds);
     if (!force) query = query.is("poster_url", null);
