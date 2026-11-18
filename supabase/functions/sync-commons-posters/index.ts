@@ -96,9 +96,68 @@ async function searchImage(work: any) {
             }
           }
         }
+
+        // If the anime item has no direct image, check its own Commons category.
+        // Some works store the category on the linked franchise item instead.
+        let commonsCategory = entityPayload?.entities?.[qid]?.claims?.P373?.[0]?.mainsnak?.datavalue?.value;
+        if (!commonsCategory) {
+          const franchiseId = entityPayload?.entities?.[qid]?.claims?.P8345?.[0]?.mainsnak?.datavalue?.value?.id;
+          if (franchiseId) {
+            const franchiseParams = new URLSearchParams({
+              action: "wbgetentities", ids: franchiseId, props: "claims", format: "json", origin: "*"
+            });
+            const franchiseResponse = await fetch("https://www.wikidata.org/w/api.php?" + franchiseParams, {
+              headers: { "User-Agent": "ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/; anime image metadata)" }
+            });
+            if (franchiseResponse.ok) {
+              const franchisePayload = await franchiseResponse.json();
+              commonsCategory = franchisePayload?.entities?.[franchiseId]?.claims?.P373?.[0]?.mainsnak?.datavalue?.value;
+            }
+          }
+        }
+        if (typeof commonsCategory === "string" && commonsCategory.trim()) {
+          const categoryParams = new URLSearchParams({
+            action: "query", format: "json", formatversion: "2",
+            generator: "categorymembers", gcmtitle: "Category:" + commonsCategory,
+            gcmnamespace: "6", gcmlimit: "50", prop: "imageinfo",
+            iiprop: "url|size|extmetadata", iiurlwidth: "600", origin: "*"
+          });
+          const categoryResponse = await fetch("https://commons.wikimedia.org/w/api.php?" + categoryParams, {
+            headers: { "User-Agent": "ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/; public anime database)" }
+          });
+          if (categoryResponse.ok) {
+            const categoryPayload = await categoryResponse.json();
+            const categoryPages = Array.isArray(categoryPayload?.query?.pages) ? categoryPayload.query.pages : [];
+            const categoryMatches = categoryPages.map((page: any) => {
+              const info = page.imageinfo?.[0];
+              if (!info?.thumburl || !info?.descriptionurl || !String(info.thumburl).startsWith("https://upload.wikimedia.org/")) return null;
+              const fileName = String(page.title || "").replace(/^File:/i, "");
+              const logoFile = /logo|ロゴ/i.test(fileName);
+              const posterFile = /poster|key[ -]?visual|cover|ポスター|キービジュアル|表紙/i.test(fileName);
+              if (!logoFile && !posterFile) return null;
+              const width = Number(info.width || 0), height = Number(info.height || 0);
+              const validShape = logoFile
+                ? width >= 200 && height >= 80 && width / height >= 1.1 && width / height <= 6
+                : width >= 200 && height >= 280 && width / height >= 0.38 && width / height <= 0.9;
+              const license = licenseInfo(info.extmetadata || {});
+              if (!validShape || !license) return null;
+              return { page, info, license, score: (posterFile ? 100 : 90) + (logoFile ? 5 : 0) };
+            }).filter(Boolean).sort((a: any, b: any) => b.score - a.score);
+            if (categoryMatches.length) {
+              const best = categoryMatches[0];
+              return {
+                url: best.info.thumburl,
+                id: best.page.title,
+                page: best.info.descriptionurl,
+                attribution: best.license.attribution,
+                license: best.license.short
+              };
+            }
+          }
+        }
       }
     } catch (error) {
-      console.warn("Wikidata P18 lookup failed for " + qid + ": " + String(error).slice(0, 160));
+      console.warn("Wikidata/Commons category lookup failed for " + qid + ": " + String(error).slice(0, 160));
     }
   }
   const candidates = [...new Set([work.title_ja, work.title, work.title_kana].filter((v: unknown) => String(v || "").trim().length >= 3))].slice(0, 3);
