@@ -1,4 +1,4 @@
--- Wikipedia synopsis provenance, public attribution, and scheduled sync.
+-- Synopsis and poster provenance fields; Wikipedia prose remains disabled.
 ALTER TABLE public.anime
   ADD COLUMN IF NOT EXISTS synopsis_source text,
   ADD COLUMN IF NOT EXISTS synopsis_source_title text,
@@ -9,7 +9,9 @@ ALTER TABLE public.anime
   ADD COLUMN IF NOT EXISTS synopsis_license_url text,
   ADD COLUMN IF NOT EXISTS synopsis_attribution text,
   ADD COLUMN IF NOT EXISTS synopsis_synced_at timestamptz,
-  ADD COLUMN IF NOT EXISTS synopsis_attempted_at timestamptz;
+  ADD COLUMN IF NOT EXISTS synopsis_attempted_at timestamptz,
+  ADD COLUMN IF NOT EXISTS poster_license text,
+  ADD COLUMN IF NOT EXISTS poster_license_url text;
 
 CREATE INDEX IF NOT EXISTS anime_synopsis_pending_idx
 ON public.anime (synopsis_attempted_at NULLS FIRST, release_year DESC NULLS LAST)
@@ -33,20 +35,48 @@ BEGIN
   definition := pg_get_functiondef('public.get_public_anime_detail(uuid)'::regprocedure);
   definition := replace(
     definition,
-    $needle$'synopsis', a.synopsis, 'synopsis_en', a.synopsis_en,$needle$,
-    $replacement$'synopsis', a.synopsis, 'synopsis_en', a.synopsis_en,
-    'synopsis_source', a.synopsis_source,
-    'synopsis_source_title', a.synopsis_source_title,
-    'synopsis_source_url', a.synopsis_source_url,
-    'synopsis_source_revision_id', a.synopsis_source_revision_id,
-    'synopsis_source_revision_url', a.synopsis_source_revision_url,
-    'synopsis_license', a.synopsis_license,
-    'synopsis_license_url', a.synopsis_license_url,
-    'synopsis_attribution', a.synopsis_attribution,
-    'synopsis_synced_at', a.synopsis_synced_at,$replacement$
+    $needle
+  EXECUTE definition;
+END $$;
+synopsis', a.synopsis, 'synopsis_en', a.synopsis_en,$needle$,
+    $replacement
+  EXECUTE definition;
+END $$;
+synopsis', a.synopsis, 'synopsis_en', a.synopsis_en,
+    'synopsis_credit', jsonb_build_object(
+      'source', a.synopsis_source,
+      'source_title', a.synopsis_source_title,
+      'source_url', a.synopsis_source_url,
+      'revision_id', a.synopsis_source_revision_id,
+      'revision_url', a.synopsis_source_revision_url,
+      'license', a.synopsis_license,
+      'license_url', a.synopsis_license_url,
+      'attribution', a.synopsis_attribution,
+      'synced_at', a.synopsis_synced_at
+    ),$replacement$
   );
-  IF position('synopsis_source_revision_url' in definition) = 0 THEN
-    RAISE EXCEPTION 'Could not safely extend get_public_anime_detail';
+  definition := replace(
+    definition,
+    $posterNeedle
+  EXECUTE definition;
+END $$;
+poster_url', a.poster_url, 'banner_url', a.banner_url,$posterNeedle$,
+    $posterReplacement
+  EXECUTE definition;
+END $$;
+poster_url', a.poster_url,
+    'poster_credit', jsonb_build_object(
+      'source', a.poster_source,
+      'source_id', a.poster_source_id,
+      'source_url', a.poster_source_url,
+      'attribution', a.poster_attribution,
+      'license', a.poster_license,
+      'license_url', a.poster_license_url
+    ),
+    'banner_url', a.banner_url,$posterReplacement$
+  );
+  IF position('synopsis_credit' in definition) = 0 OR position('poster_credit' in definition) = 0 THEN
+    RAISE EXCEPTION 'Could not safely extend public anime detail response';
   END IF;
   EXECUTE definition;
 END $$;
