@@ -42,7 +42,17 @@
       p_character_query: safeTerm(options.characterQuery) || null
     });
     if (result.error) throw result.error;
-    const data = result.data || [];
+    let data = result.data || [];
+    const imageIds = data.filter(work => work.poster_url).map(work => work.id);
+    if (imageIds.length) {
+      const creditResult = await db.rpc("get_public_poster_credits", { p_anime_ids: imageIds });
+      if (!creditResult.error) {
+        const credits = new Map((creditResult.data || []).map(item => [item.anime_id, item]));
+        data = data.map(work => ({ ...work, poster_credit: credits.get(work.id) || null }));
+      } else {
+        console.warn("poster credits unavailable; uncredited artwork will stay hidden", creditResult.error);
+      }
+    }
     return { data, count: Number(data[0]?.total_count || 0) };
   }
 
@@ -458,13 +468,18 @@
   }
 
 
-  function posterMarkup(url, alt = "") {
+  function posterMarkup(url, alt = "", credit = null) {
     const safeUrl = String(url || "").trim();
-    const safeAlt = String(alt || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const safeAlt = escapeHtml(alt);
     const fallback = '<span class="anixia-poster-fallback" aria-label="タイトル画像未登録"><span class="anixia-poster-brand">ANIXIA</span><strong class="anixia-poster-title">' + safeAlt + '</strong><small class="anixia-poster-caption">TITLE ARCHIVE</small></span>';
-    if (!safeUrl) return fallback;
+    const sourceUrl = String(credit?.source_url || "");
+    const attribution = String(credit?.attribution || "");
+    if (!safeUrl || !sourceUrl.startsWith("https://") || !attribution) return fallback;
     const safeSrc = safeUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
-    return '<img data-anixia-poster src="' + safeSrc + '" alt="' + safeAlt + '" loading="lazy" decoding="async">' + fallback.replace('aria-label="タイトル画像未登録"', 'hidden aria-label="画像を表示できません"');
+    const creditText = [attribution, credit?.license].filter(Boolean).join(" · ");
+    const creditLink = '<a class="anixia-poster-credit" href="' + escapeHtml(sourceUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(creditText) + '</a>';
+    return '<img data-anixia-poster src="' + safeSrc + '" alt="' + safeAlt + '" loading="lazy" decoding="async">' + fallback.replace('aria-label="タイトル画像未登録"', 'hidden aria-label="画像を表示できません"') + creditLink;
   }
 
   document.addEventListener("load", event => {
