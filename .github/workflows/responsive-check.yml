@@ -1,0 +1,94 @@
+name: Responsive layout smoke test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "site-theme.css"
+      - "sw.js"
+      - "*.html"
+      - "anime/**/index.html"
+      - "genre/**/index.html"
+      - ".github/workflows/responsive-check.yml"
+  schedule:
+    - cron: "23 18 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  responsive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Check representative pages at desktop, tablet and mobile widths
+        env:
+          BASE_URL: https://the-rascal-of-sakurasou.github.io/anixia/
+        run: |
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright';
+
+          const base = process.env.BASE_URL;
+          const pages = [
+            '', 'discover.html', 'ranking.html', 'anime-detail.html',
+            'community.html', 'messages.html', 'profile.html',
+            'admin.html', 'quiz-play.html', 'genres.html'
+          ];
+          const widths = [320, 360, 375, 390, 430, 600, 768, 820, 1024, 1366, 1920];
+          const browser = await chromium.launch({ headless: true });
+          const failures = [];
+          try {
+            for (const path of pages) {
+              for (const width of widths) {
+                const page = await browser.newPage({
+                  viewport: { width, height: 900 },
+                  deviceScaleFactor: width <= 600 ? 2 : 1
+                });
+                try {
+                  const url = new URL(path, base).href;
+                  const response = await page.goto(url, {
+                    waitUntil: 'domcontentloaded',
+                    timeout: 30000
+                  });
+                  await page.waitForTimeout(800);
+                  const result = await page.evaluate(() => ({
+                    viewport: document.documentElement.clientWidth,
+                    document: document.documentElement.scrollWidth,
+                    body: document.body?.scrollWidth ?? 0,
+                    title: document.title
+                  }));
+                  if (!response?.ok()) {
+                    failures.push(`${path || '/'} @ ${width}px: HTTP ${response?.status() ?? 'no response'}`);
+                  }
+                  if (result.document > result.viewport + 2 || result.body > result.viewport + 2) {
+                    failures.push(`${path || '/'} @ ${width}px: horizontal overflow (viewport=${result.viewport}, document=${result.document}, body=${result.body})`);
+                  }
+                  console.log(`${response?.status() ?? 'ERR'} ${path || '/'} @ ${width}px — ${result.title}`);
+                } catch (error) {
+                  failures.push(`${path || '/'} @ ${width}px: ${error.message}`);
+                } finally {
+                  await page.close();
+                }
+              }
+            }
+          } finally {
+            await browser.close();
+          }
+          if (failures.length) {
+            console.error('\nResponsive smoke-test failures:\n' + failures.join('\n'));
+            process.exit(1);
+          }
+          console.log('\nResponsive smoke test passed for all representative pages and viewport widths.');
+          NODE
