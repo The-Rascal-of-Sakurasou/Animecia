@@ -28,9 +28,21 @@
     $("season-title").textContent = year + "年 " + names[season] + "アニメ";
     $("season-grid").innerHTML = '<p class="season-state">作品情報を読み込んでいます…</p>';
     try {
-      const result = await ANIXIA.listAnime({ year, season, sort: "popular", limit: 60 });
-      $("season-grid").innerHTML = result.data.length
-        ? result.data.map(a => `<a class="season-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}"><div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url, a.title_ja || a.title_kana || a.title || "")}</div><div class="season-card-copy"><b>${esc(a.title_ja || a.title_kana || a.title || "タイトル未登録")}</b><small>${esc(a.format || "形式未登録")}</small></div></a>`).join("")
+      const works = [];
+      let offset = 0;
+      let total = 0;
+      do {
+        const page = await ANIXIA.listAnime({
+          year, season, sort: "popular", limit: 50, offset
+        });
+        total = page.count;
+        works.push(...page.data);
+        offset += page.data.length;
+        if (!page.data.length || offset >= total || offset >= 250) break;
+      } while (true);
+
+      $("season-grid").innerHTML = works.length
+        ? works.map(a => `<a class="season-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}"><div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url, a.title_ja || a.title_kana || a.title || "")}</div><div class="season-card-copy"><b>${esc(a.title_ja || a.title_kana || a.title || "タイトル未登録")}</b><small>${esc(a.format || "形式未登録")}</small></div></a>`).join("")
         : '<p class="season-state">このシーズンの公開作品データはまだありません。</p>';
     } catch (e) {
       console.error(e);
