@@ -229,7 +229,7 @@ Deno.serve(async (req: Request) => {
 
     const body = await req.json().catch(() => ({}));
     const mode = body?.mode === "preview" ? "preview" : "sync";
-    const limit = Math.min(200, Math.max(1, Math.floor(Number(body?.limit) || 100)));
+    const limit = Math.min(50, Math.max(1, Math.floor(Number(body?.limit) || 50)));
     const workResult = await db.from("anime")
       .select("id,title,title_ja,title_kana,source_id,official_url,official_site_url,episode_count,episodes_count")
       .eq("source", SOURCE).eq("is_published", true).not("source_id", "is", null)
@@ -447,6 +447,47 @@ Deno.serve(async (req: Request) => {
             name_ja: label(e, "ja"), name_en: label(e, "en")
           }));
         counts.characters = characterMap.size;
+        
+        const entityAliasRows: AnyRecord[] = [];
+        const aliasSets = [
+          { type: "people", entities: peopleEntities, map: peopleMap },
+          { type: "characters", entities: characterRows, map: characterMap },
+          { type: "studios", entities: studioEntities, map: studioMap },
+          { type: "organizations", entities: organizationEntities, map: organizationMap }
+        ];
+        for (const group of aliasSets) {
+          const entityIds = [...new Set(group.entities.map((e: AnyRecord) => group.map.get(e.id)).filter(Boolean))];
+          if (!entityIds.length) continue;
+          const existingAliases = await db.from("catalog_entity_aliases")
+            .select("entity_id,alias").eq("entity_type", group.type).in("entity_id", entityIds);
+          if (existingAliases.error) throw existingAliases.error;
+          const existingSet = new Set((existingAliases.data || []).map((r: AnyRecord) =>
+            [r.entity_id, String(r.alias).toLocaleLowerCase()].join("|")
+          ));
+          for (const entity of group.entities) {
+            const entityId = group.map.get(entity.id);
+            if (!entityId) continue;
+            for (const lang of ["ja", "en"] as const) {
+              for (const alias of aliases(entity, lang)) {
+                if (alias === label(entity, lang)) continue;
+                const key = [entityId, alias.toLocaleLowerCase()].join("|");
+                if (existingSet.has(key)) continue;
+                existingSet.add(key);
+                entityAliasRows.push({
+                  entity_type: group.type, entity_id: entityId,
+                  alias, language_code: lang, alias_type: "alternate_name"
+                });
+              }
+            }
+          }
+        }
+        if (entityAliasRows.length) {
+          for (let start = 0; start < entityAliasRows.length; start += 500) {
+            const saved = await db.from("catalog_entity_aliases").insert(entityAliasRows.slice(start, start + 500));
+            if (saved.error) throw saved.error;
+          }
+        }
+        counts.entityAliases = entityAliasRows.length;
         const characterLinkRows: AnyRecord[] = [];
         const existingCharacterLinks = await db.from("anime_characters").select("anime_id,character_id")
           .in("anime_id", works.map((w: AnyRecord) => w.id));
@@ -616,7 +657,11 @@ Deno.serve(async (req: Request) => {
         const finished = await db.from("catalog_sync_runs").update({
           finished_at: new Date().toISOString(), status: "succeeded",
           pages_requested: 1, records_seen: works.length,
-          records_inserted_or_updated: Object.values(counts).reduce((sum: number, value: any) => sum + Number(value || 0), 0),
+          records_inserted_or_updated: [
+            counts.externalIds, counts.aliases, counts.officialUrls, counts.episodeCounts,
+            counts.staffLinks, counts.genres, counts.relations, counts.characterLinks,
+            counts.voiceActorLinks, counts.entityAliases
+          ].reduce((sum: number, value: any) => sum + Number(value || 0), 0),
           error_message: null
         }).eq("id", run.data.id);
         if (finished.error) throw finished.error;
