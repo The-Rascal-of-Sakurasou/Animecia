@@ -92,6 +92,23 @@ Deno.serve(async(req:Request)=>{
   try{
    const saved=rows.length?await db.from("anime").upsert(rows,{onConflict:"source,source_id",ignoreDuplicates:true}).select("id"):{data:[],error:null};
    if(saved.error)throw saved.error;
+   if(rows.length){
+    const sourceIds=rows.map(row=>row.source_id);
+    const imported=await db.from("anime").select("id,source_id").eq("source","wikidata").in("source_id",sourceIds);
+    if(imported.error)throw imported.error;
+    const externalIds=(imported.data||[]).map((row:any)=>({
+     anime_id:row.id,
+     source:"wikidata",
+     external_id:String(row.source_id),
+     source_url:"https://www.wikidata.org/wiki/"+String(row.source_id),
+     is_primary:true,
+     last_verified_at:new Date().toISOString()
+    }));
+    if(externalIds.length){
+     const mapped=await db.from("anime_external_ids").upsert(externalIds,{onConflict:"source,external_id",ignoreDuplicates:true});
+     if(mapped.error)throw mapped.error;
+    }
+   }
    const next=bindings.length>=limit?offset+limit:0,now=new Date().toISOString();
    const stateUpdate=await db.from("catalog_sync_state").update({next_offset:next,last_success_at:now,updated_at:now}).eq("source","wikidata");
    if(stateUpdate.error)throw stateUpdate.error;
