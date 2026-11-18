@@ -104,7 +104,7 @@ function mapBindings(bindings: any[], range: ReturnType<typeof currentSeason>) {
     const ja = String(b?.jaLabel?.value || "").trim().slice(0, 500);
     const titleJa = ja || (/[\u3000-\u30ff\u3400-\u9fff]/.test(label) ? label : null);
     const date = String(b?.date?.value || "").match(/^(\d{4}-\d{2}-\d{2})/);
-    const cls = String(b?.class?.value || "").match(/(Q\d+)$/)?.[1] || "";
+    const classes = String(b?.classes?.value || "").match(/Q\d+/g) || [];
     const episodes = Number(b?.episodes?.value);
     const malId = String(b?.malId?.value || "").trim();
     if (!/^Q\d+$/.test(qid) || !titleJa || !date) continue;
@@ -112,7 +112,7 @@ function mapBindings(bindings: any[], range: ReturnType<typeof currentSeason>) {
     const month = Number(releasedOn.slice(5, 7));
     const season = month <= 3 ? "winter" : month <= 6 ? "spring" : month <= 9 ? "summer" : "autumn";
     const releaseYear = Number(releasedOn.slice(0, 4));
-    const format = FORMATS[cls] || "other";
+    const format = classes.map(cls => FORMATS[cls]).find(value => ["tv", "movie", "ova", "ona", "web", "special"].includes(value)) || "other";
     if (!["tv", "movie", "ova", "ona", "web", "special"].includes(format)) continue;
     if (!byQid.has(qid)) {
       byQid.set(qid, {
@@ -188,19 +188,26 @@ async function persist(db: any, works: any[]) {
         episode_count: work.episode_count,
         episodes_count: work.episodes_count,
         country_code: "JP",
-        is_published: false,
+        is_published: true,
         source_synced_at: new Date().toISOString()
       });
     } else {
-      const update = await db.from("anime").update({
-        release_year: work.release_year,
-        season: work.season,
-        season_name: work.season_name,
-        season_name_text: work.season_name_text,
-        released_on: work.released_on
-      }).eq("id", animeId);
-      if (update.error) throw update.error;
-      updated++;
+      const currentResult = await db.from("anime")
+        .select("release_year,season,season_name,season_name_text,released_on")
+        .eq("id", animeId).single();
+      if (currentResult.error) throw currentResult.error;
+      const current = currentResult.data;
+      const patch: Record<string, unknown> = {};
+      if (current.release_year == null && work.release_year != null) patch.release_year = work.release_year;
+      if (current.season == null && work.season != null) patch.season = work.season;
+      if (current.season_name == null && work.season_name != null) patch.season_name = work.season_name;
+      if (current.season_name_text == null && work.season_name_text != null) patch.season_name_text = work.season_name_text;
+      if (current.released_on == null && work.released_on != null) patch.released_on = work.released_on;
+      if (Object.keys(patch).length) {
+        const update = await db.from("anime").update(patch).eq("id", animeId);
+        if (update.error) throw update.error;
+        updated++;
+      }
       mappings.push({
         anime_id: animeId, source: "wikidata", external_id: work.qid,
         source_url: work.wikidataUrl, is_primary: false, last_verified_at: new Date().toISOString()
@@ -230,6 +237,7 @@ async function persist(db: any, works: any[]) {
       season_name: work.season_name,
       season_name_text: work.season_name_text,
       released_on: work.released_on,
+      is_published: true,
       source_synced_at: new Date().toISOString()
     }).eq("id", animeId);
     if (current.error) throw current.error;
@@ -311,8 +319,8 @@ Deno.serve(async (req: Request) => {
         withJapaneseLabel: bindings.filter((b: any) => Boolean(String(b?.jaLabel?.value || "").trim()) || /[\u3000-\u30ff\u3400-\u9fff]/.test(String(b?.itemLabel?.value || ""))).length,
         withDate: bindings.filter((b: any) => /^(\d{4}-\d{2}-\d{2})/.test(String(b?.date?.value || ""))).length,
         recognizedClass: bindings.filter((b: any) => {
-          const cls = String(b?.class?.value || "").match(/(Q\d+)$/)?.[1] || "";
-          return Boolean(FORMATS[cls]);
+          const classes = String(b?.classes?.value || "").match(/Q\d+/g) || [];
+          return classes.some((cls: string) => Boolean(FORMATS[cls]));
         }).length
       };
       return json({
@@ -323,7 +331,7 @@ Deno.serve(async (req: Request) => {
           itemLabel: b?.itemLabel?.value || null,
           jaLabel: b?.jaLabel?.value || null,
           date: b?.date?.value || null,
-          class: b?.class?.value || null
+          classes: b?.classes?.value || null
         })),
         candidates: works.map(w => ({
           qid: w.qid, title: w.title, format: w.format, releasedOn: w.released_on,
