@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
 const allowedOrigin = "https://the-rascal-of-sakurasou.github.io";
 const corsHeaders = {
   "Access-Control-Allow-Origin": allowedOrigin,
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-anixia-cron-token",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Vary": "Origin",
   "Content-Type": "application/json; charset=utf-8"
@@ -19,6 +19,18 @@ function qidFromUri(value: unknown): string | null {
   if (typeof value !== "string") return null;
   return value.match(/(Q\d+)$/)?.[1] || null;
 }
+
+async function digestHex(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return [...new Uint8Array(digest)].map(v => v.toString(16).padStart(2, "0")).join("");
+}
+function sameToken(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
 function safeDate(value: unknown): string | null {
   if (typeof value !== "string") return null;
   const match = value.match(/^(\d{4}-\d{2}-\d{2})/);
@@ -151,25 +163,35 @@ Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
   const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) return json({ error: "管理者ログインが必要です。" }, 401);
+  const cronToken = req.headers.get("x-anixia-cron-token");
   const url = Deno.env.get("SUPABASE_URL");
   const anon = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_PUBLISHABLE_KEY");
   const service = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !anon || !service) return json({ error: "Supabaseのサーバー設定が不足しています。" }, 500);
 
   try {
-    const userClient = createClient(url, anon, {
-      auth: { persistSession: false, autoRefreshToken: false },
-      global: { headers: { Authorization: authHeader } }
-    });
-    const { data: userData, error: userError } = await userClient.auth.getUser();
-    if (userError || !userData.user) return json({ error: "ログイン状態を確認できません。" }, 401);
-    const { data: isAdmin, error: adminError } = await userClient.rpc("is_anixia_admin");
-    if (adminError || isAdmin !== true) return json({ error: "ANIXIA管理者権限が必要です。" }, 403);
-
     const admin = createClient(url, service, {
       auth: { persistSession: false, autoRefreshToken: false }
     });
+    let authorized = false;
+    if (cronToken) {
+      const stored = await admin.from("catalog_sync_secrets").select("secret_hash").eq("id", 1).maybeSingle();
+      if (stored.error) throw stored.error;
+      authorized = Boolean(stored.data?.secret_hash) && sameToken(
+        await digestHex(cronToken), String(stored.data.secret_hash)
+      );
+    }
+    if (!authorized) {
+      if (!authHeader?.startsWith("Bearer ")) return json({ error: "管理者ログインまたは有効な同期トークンが必要です。" }, 401);
+      const userClient = createClient(url, anon, {
+        auth: { persistSession: false, autoRefreshToken: false },
+        global: { headers: { Authorization: authHeader } }
+      });
+      const { data: userData, error: userError } = await userClient.auth.getUser();
+      if (userError || !userData.user) return json({ error: "ログイン状態を確認できません。" }, 401);
+      const { data: isAdmin, error: adminError } = await userClient.rpc("is_anixia_admin");
+      if (adminError || isAdmin !== true) return json({ error: "ANIXIA管理者権限が必要です。" }, 403);
+    }
     const { data: source, error: sourceError } = await admin.from("catalog_sources")
       .select("rights_review_status,is_enabled")
       .eq("code", "wikidata")
@@ -181,7 +203,7 @@ Deno.serve(async (req: Request) => {
 
     const body = await req.json().catch(() => ({}));
     const mode = body?.mode === "preview" ? "preview" : "sync";
-    const limit = Math.min(10, Math.max(1, Math.floor(Number(body?.limit) || 8)));
+    const limit = Math.min(30, Math.max(1, Math.floor(Number(body?.limit) || 30)));
     const { data: works, error: worksError } = await admin.from("anime")
       .select("id,title,title_ja,source_id,episode_count,no_episodes")
       .eq("source", "wikidata")
