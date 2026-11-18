@@ -116,6 +116,103 @@ async function fetchAnnictPage(page: number, token: string) {
   throw new Error("Annict API rate limit or temporary server error persisted after retries.");
 }
 
+async function persistAnnictRows(admin: any, rows: any[]) {
+  const sourceIds = rows.map(row => String(row.source_id));
+  const malIds = [...new Set(rows.map(row => row.mal_anime_id).filter(Boolean).map(String))];
+
+  const [annictIdsResult, localRowsResult, malIdsResult] = await Promise.all([
+    admin.from("anime_external_ids").select("external_id,anime_id")
+      .eq("source", "annict").in("external_id", sourceIds),
+    admin.from("anime").select("id,source_id")
+      .eq("source", "annict").in("source_id", sourceIds),
+    malIds.length
+      ? admin.from("anime_external_ids").select("external_id,anime_id")
+          .eq("source", "myanimelist").in("external_id", malIds)
+      : Promise.resolve({ data: [], error: null })
+  ]);
+  if (annictIdsResult.error || localRowsResult.error || malIdsResult.error) {
+    throw annictIdsResult.error || localRowsResult.error || malIdsResult.error;
+  }
+
+  const knownAnnict = new Map<string, string>();
+  for (const row of annictIdsResult.data || []) knownAnnict.set(String(row.external_id), String(row.anime_id));
+  for (const row of localRowsResult.data || []) knownAnnict.set(String(row.source_id), String(row.id));
+
+  const malToAnime = new Map<string, string>();
+  for (const row of malIdsResult.data || []) malToAnime.set(String(row.external_id), String(row.anime_id));
+
+  const candidateTargets = [...new Set(rows
+    .filter(row => !knownAnnict.has(String(row.source_id)) && row.mal_anime_id && malToAnime.has(String(row.mal_anime_id)))
+    .map(row => malToAnime.get(String(row.mal_anime_id))!))];
+
+  const occupiedResult = candidateTargets.length
+    ? await admin.from("anime_external_ids").select("anime_id,external_id")
+        .eq("source", "annict").in("anime_id", candidateTargets)
+    : { data: [], error: null };
+  if (occupiedResult.error) throw occupiedResult.error;
+  const occupiedTargets = new Set((occupiedResult.data || []).map((row: any) => String(row.anime_id)));
+
+  const linkedByMal = new Map<string, string>();
+  const pending: any[] = [];
+  for (const row of rows) {
+    const sourceId = String(row.source_id);
+    if (knownAnnict.has(sourceId)) continue;
+    const malId = row.mal_anime_id == null ? "" : String(row.mal_anime_id);
+    const targetId = malId ? malToAnime.get(malId) : null;
+    if (targetId && !occupiedTargets.has(targetId)) {
+      linkedByMal.set(sourceId, targetId);
+      occupiedTargets.add(targetId);
+    } else {
+      pending.push(row);
+    }
+  }
+
+  if (pending.length) {
+    const saved = await admin.from("anime").upsert(pending, { onConflict: "source,source_id" });
+    if (saved.error) throw saved.error;
+  }
+
+  const pendingIds = pending.map(row => String(row.source_id));
+  const importedResult = pendingIds.length
+    ? await admin.from("anime").select("id,source_id")
+        .eq("source", "annict").in("source_id", pendingIds)
+    : { data: [], error: null };
+  if (importedResult.error) throw importedResult.error;
+
+  const mappingBySourceId = new Map<string, string>(knownAnnict);
+  for (const [sourceId, animeId] of linkedByMal) mappingBySourceId.set(sourceId, animeId);
+  for (const row of importedResult.data || []) mappingBySourceId.set(String(row.source_id), String(row.id));
+
+  const mappingRows = rows
+    .map(row => {
+      const sourceId = String(row.source_id);
+      const animeId = mappingBySourceId.get(sourceId);
+      return animeId ? {
+        anime_id: animeId,
+        source: "annict",
+        external_id: sourceId,
+        source_url: "https://annict.com/works/" + sourceId,
+        is_primary: false,
+        last_verified_at: new Date().toISOString()
+      } : null;
+    })
+    .filter(Boolean);
+
+  if (mappingRows.length) {
+    const mapped = await admin.from("anime_external_ids").upsert(mappingRows, {
+      onConflict: "source,external_id",
+      ignoreDuplicates: true
+    });
+    if (mapped.error) throw mapped.error;
+  }
+
+  return {
+    processed: rows.length,
+    newlyCreatedOrUpdated: pending.length,
+    linkedByKnownMalId: linkedByMal.size
+  };
+}
+
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get("Origin");
   if (origin && origin !== allowedOrigin) return json({ error: "Origin not allowed" }, 403);
@@ -232,9 +329,8 @@ Deno.serve(async (req: Request) => {
             .filter((work: any) => work.id !== undefined && typeof work.title === "string" && work.title.trim())
             .map(mapWork);
           if (rows.length) {
-            const saved = await admin.from("anime").upsert(rows, { onConflict: "source,source_id" });
-            if (saved.error) throw saved.error;
-            upserted += rows.length;
+            const saved = await persistAnnictRows(admin, rows);
+            upserted += saved.processed;
           }
         }
 
