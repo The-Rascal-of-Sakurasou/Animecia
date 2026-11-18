@@ -61,17 +61,19 @@ async function searchImage(work: any) {
       if (!info?.thumburl || !info?.descriptionurl || !String(info.thumburl).startsWith("https://upload.wikimedia.org/")) return null;
       const rawFileName = String(page.title || "").replace(/^File:/i, "").replace(/\.[a-z0-9]{2,5}$/i, "");
       const fileName = norm(rawFileName);
-      const posterContext = /poster|key[ -]?visual|cover|dvd|blu[ -]?ray|promotional|artwork|ポスター|キービジュアル|表紙/i.test(rawFileName);
+      const description = norm(cleanHtml(info.extmetadata?.ImageDescription?.value));
+      const posterContext = /poster|key[ -]?visual|cover|dvd|blu[ -]?ray|promotional|artwork|ポスター|キービジュアル|表紙/i.test(rawFileName + " " + cleanHtml(info.extmetadata?.ImageDescription?.value));
       if (!posterContext) return null;
-      const exact = fileName === target;
-      const contains = fileName.includes(target);
-      if (!exact && !contains) return null;
+      const exact = fileName === target || description === target;
+      const contains = fileName.includes(target) || description.includes(target);
       const width = Number(info.width || 0), height = Number(info.height || 0);
       if (width < 200 || height < 280 || width / height < 0.38 || width / height > 0.9) return null;
       const license = licenseInfo(info.extmetadata || {});
       if (!license) return null;
       const yearMatch = work.release_year && String(page.title).includes(String(work.release_year));
-      return { page, info, license, score: (exact ? 100 : 80) + (yearMatch ? 10 : 0) };
+      // Commons search already ranks title-related results. Permit a unique,
+      // portrait poster result even when the filename uses a romanized title.
+      return { page, info, license, score: (exact ? 100 : contains ? 90 : 60) + (yearMatch ? 10 : 0) };
     }).filter(Boolean).sort((a: any, b: any) => b.score - a.score);
     if (ranked.length && (!ranked[1] || ranked[0].score > ranked[1].score)) {
       const best = ranked[0];
