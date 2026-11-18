@@ -204,16 +204,25 @@ Deno.serve(async (req: Request) => {
     const body = await req.json().catch(() => ({}));
     const mode = body?.mode === "preview" ? "preview" : "sync";
     const limit = Math.min(30, Math.max(1, Math.floor(Number(body?.limit) || 30)));
-    const { data: works, error: worksError } = await admin.from("anime")
-      .select("id,title,title_ja,source_id,episode_count,no_episodes")
+    const { data: cursorState, error: cursorError } = await admin.from("catalog_sync_state")
+      .select("next_offset")
+      .eq("source", "wikidata-episodes")
+      .maybeSingle();
+    if (cursorError) throw cursorError;
+    const offset = Math.max(0, Number(cursorState?.next_offset) || 0);
+    const { data: works, error: worksError, count: totalWorks } = await admin.from("anime")
+      .select("id,title,title_ja,source_id,episode_count,no_episodes", { count: "exact" })
       .eq("source", "wikidata")
       .eq("is_published", true)
       .gt("episode_count", 0)
+      .or("no_episodes.is.null,no_episodes.eq.false")
       .order("title_ja", { ascending: true })
-      .limit(100);
+      .order("source_id", { ascending: true })
+      .range(offset, offset + limit - 1);
     if (worksError) throw worksError;
 
-    const candidates = (works || []).filter((work: any) => !work.no_episodes).slice(0, limit);
+    const candidates = works || [];
+    const nextOffset = (offset + candidates.length >= (totalWorks || 0)) ? 0 : offset + candidates.length;
     const run = mode === "sync"
       ? await admin.from("catalog_sync_runs").insert({
           source: "wikidata-episodes",
@@ -274,7 +283,7 @@ Deno.serve(async (req: Request) => {
           aired_at: item.aired_at,
           synopsis: null,
           duration_seconds: null,
-          is_published: false,
+          is_published: Boolean(item.title_ja),
           source_synced_at: now
         }));
 
@@ -310,7 +319,7 @@ Deno.serve(async (req: Request) => {
         results.push({
           workId: workQid,
           title: work.title_ja || work.title,
-          status: rows.length ? (mode === "preview" ? "preview" : "imported_unpublished") : "no_new_episodes",
+          status: rows.length ? (mode === "preview" ? "preview" : (rows.every((row: any) => row.is_published) ? "imported_published" : "imported_unpublished")) : "no_new_episodes",
           existingEpisodes: existing.length,
           candidates: mapped.length,
           newCandidates: rows.length,
@@ -318,6 +327,30 @@ Deno.serve(async (req: Request) => {
           sourceUrl: "https://www.wikidata.org/wiki/" + workQid
         });
         if (index < candidates.length - 1) await wait(1100);
+      }
+
+      if (mode === "sync") {
+        const now = new Date().toISOString();
+        const { error: cursorUpdateError } = await admin.from("catalog_sync_state").upsert({
+          source: "wikidata-episodes",
+          next_offset: nextOffset,
+          last_success_at: now,
+          updated_at: now
+        }, { onConflict: "source" });
+        if (cursorUpdateError) throw cursorUpdateError;
+
+        // Publish only Japanese-titled Wikidata episodes attached to public works.
+        const publishableIds = candidates.map((work: any) => work.id);
+        if (publishableIds.length) {
+          const { error: publishError } = await admin.from("episodes").update({
+            is_published: true,
+            updated_at: now
+          })
+            .eq("source", "wikidata")
+            .not("title_ja", "is", null)
+            .in("anime_id", publishableIds);
+          if (publishError) throw publishError;
+        }
       }
 
       if (mode === "sync" && run.data?.id) {
@@ -337,8 +370,10 @@ Deno.serve(async (req: Request) => {
         queriesRequested,
         recordsSeen,
         recordsInserted: mode === "preview" ? 0 : inserted,
+        worksTotal: totalWorks || 0,
+        nextOffset: mode === "preview" ? offset : nextOffset,
         results,
-        note: "All imported episodes remain unpublished. Review each episode in the ANIXIA admin episode queue before publication."
+        note: "Episodes with a Japanese title are automatically published only when their parent anime is public. Episodes without a Japanese title remain unpublished for automatic enrichment."
       });
     } catch (error) {
       if (mode === "sync" && run.data?.id) {
