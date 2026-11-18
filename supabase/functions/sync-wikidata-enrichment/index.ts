@@ -323,9 +323,9 @@ Deno.serve(async (req: Request) => {
       }
 
       const counts: AnyRecord = {
-        externalIds: 0, aliases: 0, officialUrls: 0, episodeCounts: 0,
+        externalIds: 0, aliases: 0, officialUrls: 0, episodeCounts: 0, titleKana: 0,
         studios: 0, organizations: 0, staffLinks: 0, genres: 0, series: 0, relations: 0,
-        characters: 0, characterLinks: 0, voiceActorLinks: 0
+        characters: 0, characterLinks: 0, voiceActorLinks: 0, entityAliases: 0
       };
 
       if (mode === "sync") {
