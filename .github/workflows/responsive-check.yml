@@ -91,7 +91,7 @@ jobs:
                   deviceScaleFactor: width <= 600 ? 2 : 1
                 });
                 const pageErrors = [];
-                page.on('pageerror', error => {\n                  // Authentication bootstrap may be unavailable in the static test context.\n                  if (!error.message.includes('ANIXIAAuth is not defined')) pageErrors.push(error.message);\n                });
+                page.on('pageerror', error => { if (!error.message.includes('ANIXIAAuth is not defined')) pageErrors.push(error.message); });
                 try {
                   const url = new URL(path, base).href;
                   const response = await page.goto(url, {
