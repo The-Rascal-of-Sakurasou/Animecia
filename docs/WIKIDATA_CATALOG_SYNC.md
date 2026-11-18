@@ -19,8 +19,7 @@ All schedules below are UTC. Japan time is UTC+9.
 |---|---:|---:|---|
 | anixia-wikidata-catalog-sync | Daily 02:30 | Daily 11:30 | Discover and register new anime work candidates |
 | anixia-wikidata-enrichment-sync | Daily 03:15 | Daily 12:15 | Fill structured metadata and relationships |
-| anixia-seasonal-anime-sync | Daily 03:35 | Daily 12:35 | Discover and synchronize current-season works |\n| anixia-wikipedia-synopsis-sync | Daily 04:30 | Daily 13:30 | Fill missing Japanese synopsis text with attribution |
-| anixia-wikidata-episodes-sync | Sunday 04:00 | Sunday 13:00 | Discover episode entities and add episode rows |
+| anixia-seasonal-anime-sync | Daily 03:35 | Daily 12:35 | Discover and synchronize current-season works |\n| anixia-wikidata-episodes-sync | Sunday 04:00 | Sunday 13:00 | Discover episode entities and add episode rows |
 | anixia-commons-poster-sync | Sunday 05:00 | Sunday 14:00 | Find reusable Commons images with attribution |
 
 The schedules are registered in Supabase Cron and use a secret retrieved from Supabase Vault at execution time. Batch sizes are deliberately bounded to reduce timeouts and respect Wikidata Query Service limits.
@@ -104,5 +103,5 @@ The schedules are registered in Supabase Cron and use a secret retrieved from Su
 - Query Service requests are subject to a 60-second query deadline, rate limits and concurrency restrictions. Requests must use a descriptive User-Agent, stay sequential/bounded, and honor `Retry-After` on HTTP 429.
 - Episode coverage remains low; improve matching against season/series relationships and validate each new query against representative anime before increasing batch sizes.
 - Poster coverage requires diagnosing Commons search matching and expanding the supported search strategy without relaxing license checks.
-- Synopsis text is imported only from exact-match Japanese Wikipedia lead extracts with attribution and revision links; not every anime has a suitable article. Streaming availability, ratings and other provider-specific fields need additional approved sources before they can be populated automatically.
+- Synopsis text remains empty until an approved source is available. Wikipedia article prose is explicitly disabled by the current rights policy. Streaming availability, ratings and other provider-specific fields need additional approved sources before they can be populated automatically.
 - Do not auto-publish uncertain data. Keep source provenance and administrator review available for every imported record.
