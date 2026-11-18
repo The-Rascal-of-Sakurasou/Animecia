@@ -2119,3 +2119,91 @@ button,a,.photo-btn,.tab,.secondary-btn,.admin-button{
 @media(hover:none){
   .related-card:hover{transform:none!important;box-shadow:none!important}
 }
+
+
+/* ANIXIA responsive hardening — tables, dense admin views and embedded content */
+:where(.container,.content,.page-content,.main-content,.section,.card,.panel,.admin-panel,.profile-card,.post-card,.comment-card,.modal,.dialog,.toolbar,.filters,.filter-bar,.actions,.button-row){
+  min-width:0;
+  max-width:100%;
+}
+:where(.table-wrap,.table-container,.data-table-wrap,.admin-table-wrap,.overflow-x,.horizontal-scroll){
+  display:block;
+  width:100%;
+  max-width:100%;
+  overflow-x:auto;
+  overscroll-behavior-inline:contain;
+  -webkit-overflow-scrolling:touch;
+}
+:where(table,.data-table,.admin-table){
+  width:100%;
+  max-width:100%;
+}
+@media(max-width:820px){
+  :where(.admin-layout,.dashboard-layout,.profile-layout,.community-layout,.two-column,.three-column,.content-grid){
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  :where(.admin-sidebar,.sidebar,.side-panel){
+    position:static!important;
+    width:100%;
+    max-width:100%;
+  }
+  :where(.admin-content,.dashboard-content,.main-column,.content-column){
+    min-width:0;
+    width:100%;
+  }
+  :where(.toolbar,.filters,.filter-bar,.actions,.button-row){
+    flex-wrap:wrap!important;
+  }
+}
+@media(max-width:600px){
+  :where(.admin-layout,.dashboard-layout,.profile-layout,.community-layout,.two-column,.three-column,.content-grid){
+    display:grid;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:12px!important;
+  }
+  :where(.modal,.dialog,.auth-panel,.admin-panel,.profile-card,.post-card,.comment-card){
+    width:100%;
+    max-width:100%;
+    margin-inline:0;
+  }
+  :where(.form-row,.field-row,.admin-form-row){
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:8px!important;
+  }
+  :where(.form-actions,.admin-actions,.profile-actions,.post-actions,.comment-actions){
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  :where(.form-actions,.admin-actions,.profile-actions)>*{
+    min-width:0;
+    max-width:100%;
+  }
+  :where(input,select,textarea,button){
+    max-width:100%;
+  }
+  :where(input,select,textarea){
+    font-size:16px;
+  }
+  :where(.hero,.page-header,.section-header){
+    min-width:0;
+    overflow-wrap:anywhere;
+  }
+  :where(.post-content,.comment-content,.description,.synopsis,.bio,.message-content){
+    overflow-wrap:anywhere;
+    word-break:normal;
+  }
+  :where(iframe,video){
+    width:100%;
+    max-width:100%;
+  }
+}
+@media(max-width:380px){
+  :where(.stats-grid,.metric-grid,.quick-stats){
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  :where(.toolbar,.filters,.filter-bar){
+    gap:7px!important;
+  }
+}
