@@ -23,7 +23,7 @@ const FORMATS: Record<string, string> = {
   Q113671041: "ona",
   Q113687694: "ova",
   Q117467246: "tv",
-  Q117717390: "movie"
+  Q117717390: "movie",\n  Q1261214: "special"
 };
 
 function currentSeason() {
@@ -47,8 +47,8 @@ function currentSeason() {
 function buildQuery(limit: number, offset: number, range: ReturnType<typeof currentSeason>) {
   return `
 SELECT ?item ?itemLabel ?jaLabel ?date ?episodes ?malId (GROUP_CONCAT(DISTINCT STR(?class);separator="|") AS ?classes) WHERE {
-  VALUES ?class { wd:Q63952888 wd:Q20650540 wd:Q220898 wd:Q1047299 wd:Q117209498 wd:Q117467240 wd:Q11086742 wd:Q113671041 wd:Q113687694 wd:Q117467246 wd:Q117717390 }
-  ?item wdt:P31 ?class ; wdt:P495 wd:Q17 .
+  VALUES ?class { wd:Q63952888 wd:Q20650540 wd:Q220898 wd:Q1047299 wd:Q117209498 wd:Q117467240 wd:Q11086742 wd:Q113671041 wd:Q113687694 wd:Q117467246 wd:Q117717390 wd:Q1261214 }
+  ?item wdt:P31 ?class ; wdt:P495 wd:Q17 .\n  FILTER(?class != wd:Q1261214 || EXISTS { ?item wdt:P136/wdt:P279* wd:Q1107 } || EXISTS { ?item wdt:P2079 wd:Q11425 })
   OPTIONAL { ?item wdt:P580 ?startDate . }
   OPTIONAL { ?item wdt:P577 ?publicationDate . }
   BIND(COALESCE(?startDate, ?publicationDate) AS ?date)
@@ -112,7 +112,7 @@ function mapBindings(bindings: any[], range: ReturnType<typeof currentSeason>) {
     const season = month <= 3 ? "winter" : month <= 6 ? "spring" : month <= 9 ? "summer" : "autumn";
     const releaseYear = Number(releasedOn.slice(0, 4));
     const format = FORMATS[cls] || "other";
-    if (!["tv", "movie", "ova", "ona", "web"].includes(format)) continue;
+    if (!["tv", "movie", "ova", "ona", "web", "special"].includes(format)) continue;
     if (!byQid.has(qid)) {
       byQid.set(qid, {
         qid,
