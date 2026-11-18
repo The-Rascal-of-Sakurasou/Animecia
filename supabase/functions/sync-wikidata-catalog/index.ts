@@ -3,11 +3,12 @@ const allowedOrigin="https://the-rascal-of-sakurasou.github.io";
 const headers={"Access-Control-Allow-Origin":allowedOrigin,"Access-Control-Allow-Headers":"authorization, x-client-info, apikey, content-type, x-anixia-cron-token","Access-Control-Allow-Methods":"POST, OPTIONS","Vary":"Origin","Content-Type":"application/json; charset=utf-8"};
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers});
 const wait=(ms:number)=>new Promise(resolve=>setTimeout(resolve,ms));
-const formats:Record<string,string>={"Q63952888":"tv","Q20650540":"movie","Q220898":"ova","Q1047299":"ona","Q117209498":"movie","Q117467240":"web","Q11086742":"tv","Q113671041":"ona","Q113687694":"ova","Q117467246":"tv","Q117717390":"movie"};
+const formats:Record<string,string>={"Q63952888":"tv","Q20650540":"movie","Q220898":"ova","Q1047299":"ona","Q117209498":"movie","Q117467240":"web","Q11086742":"tv","Q113671041":"ona","Q113687694":"ova","Q117467246":"tv","Q117717390":"movie","Q1261214":"special"};
 const query=(limit:number,offset:number)=>
 "SELECT ?item ?itemLabel ?jaLabel ?date ?episodes (GROUP_CONCAT(DISTINCT STR(?class);separator=\"|\") AS ?classes) WHERE {"+
-" VALUES ?class { wd:Q63952888 wd:Q20650540 wd:Q220898 wd:Q1047299 wd:Q117209498 wd:Q117467240 wd:Q11086742 wd:Q113671041 wd:Q113687694 wd:Q117467246 wd:Q117717390 }"+
+" VALUES ?class { wd:Q63952888 wd:Q20650540 wd:Q220898 wd:Q1047299 wd:Q117209498 wd:Q117467240 wd:Q11086742 wd:Q113671041 wd:Q113687694 wd:Q117467246 wd:Q117717390 wd:Q1261214 }"+
 " ?item wdt:P31 ?class ; wdt:P495 wd:Q17 ."+
+" FILTER(?class != wd:Q1261214 || EXISTS { ?item wdt:P136/wdt:P279* wd:Q1107 } || EXISTS { ?item wdt:P2079 wd:Q11425 })"+
 " OPTIONAL { ?item wdt:P580 ?startDate . } OPTIONAL { ?item wdt:P577 ?publicationDate . }"+
 " BIND(COALESCE(?startDate, ?publicationDate) AS ?date) FILTER(BOUND(?date) && YEAR(?date)>=1963)"+
 " FILTER NOT EXISTS { ?item wdt:P136 ?adultGenre . VALUES ?adultGenre { wd:Q136926229 wd:Q49148153 wd:Q185529 wd:Q599558 wd:Q2275499 wd:Q16254232 wd:Q2292320 wd:Q172067 } }"+
@@ -35,7 +36,7 @@ function mapRow(b:any){
  const date=String(b?.date?.value||"").match(/^(\d{4})/);
  const year=date?Number(date[1]):null;
  const classes=String(b?.classes?.value||"").split("|").map((value:string)=>value.match(/(Q\d+)$/)?.[1]||"").filter(Boolean);
- const priority=["Q113687694","Q220898","Q113671041","Q1047299","Q63952888","Q11086742","Q117467246","Q117717390","Q20650540","Q117209498","Q117467240"];
+ const priority=["Q1261214","Q113687694","Q220898","Q113671041","Q1047299","Q63952888","Q11086742","Q117467246","Q117717390","Q20650540","Q117209498","Q117467240"];
  const cls=priority.find(value=>classes.includes(value))||classes[0]||"";
  const episodes=Number(b?.episodes?.value);
  if(!/^Q\d+$/.test(qid)||!title||!year||year<1963)return null;
