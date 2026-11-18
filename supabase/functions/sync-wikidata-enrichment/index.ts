@@ -69,6 +69,36 @@ function sameToken(a: string, b: string): boolean {
   for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return diff === 0;
 }
+
+async function fetchCharacterLinks(workQids: string[]): Promise<{ characterQid: string; workQid: string }[]> {
+  if (!workQids.length) return [];
+  const values = workQids.map(id => "wd:" + id).join(" ");
+  const query = "SELECT DISTINCT ?character ?work WHERE { VALUES ?work { " + values +
+    " } ?character wdt:P1441 ?work . } LIMIT 300";
+  const url = "https://query.wikidata.org/sparql?" + new URLSearchParams({ query, format: "json" });
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const response = await fetch(url, {
+      headers: { "Accept": "application/sparql-results+json", "User-Agent": USER_AGENT }
+    });
+    if (response.status === 429) {
+      await wait(Math.min(60, Math.max(2, Number(response.headers.get("Retry-After") || 10))) * 1000);
+      continue;
+    }
+    if ([500, 502, 503, 504].includes(response.status) && attempt < 3) {
+      await wait((attempt + 1) * 2000);
+      continue;
+    }
+    if (!response.ok) throw new Error("Wikidata character query HTTP " + response.status);
+    const payload = await response.json();
+    const bindings = Array.isArray(payload?.results?.bindings) ? payload.results.bindings : [];
+    return bindings.map((b: AnyRecord) => ({
+      characterQid: String(b?.character?.value || "").match(/(Q[1-9]\d*)$/)?.[1] || "",
+      workQid: String(b?.work?.value || "").match(/(Q[1-9]\d*)$/)?.[1] || ""
+    })).filter((x: AnyRecord) => x.characterQid && x.workQid);
+  }
+  throw new Error("Wikidata character query remained unavailable.");
+}
+
 async function fetchEntities(ids: string[]): Promise<Map<string, AnyRecord>> {
   const result = new Map<string, AnyRecord>();
   const unique = [...new Set(ids.filter((v): v is string => Boolean(qid(v))))].slice(0, 500);
@@ -219,8 +249,15 @@ Deno.serve(async (req: Request) => {
     try {
       const workQids = works.map((w: AnyRecord) => String(w.source_id));
       const workEntities = await fetchEntities(workQids);
+      const characterLinks = await fetchCharacterLinks(workQids);
+      const characterQids = [...new Set(characterLinks.map(link => link.characterQid))];
+      const characterEntities = await fetchEntities(characterQids);
+      for (const [id, entity] of characterEntities.entries()) entity.id = id;
       const relationProps = ["P272", "P57", "P58", "P162", "P86", "P136", "P179", "P155", "P156"];
       const relatedQids = new Set<string>();
+      for (const entity of characterEntities.values()) {
+        for (const voiceActorId of claimIds(entity, "P725")) relatedQids.add(voiceActorId);
+      }
       for (const entity of workEntities.values()) {
         for (const prop of relationProps) for (const id of claimIds(entity, prop)) relatedQids.add(id);
       }
@@ -263,10 +300,20 @@ Deno.serve(async (req: Request) => {
         if (works.some((work: AnyRecord) => claimIds(workEntities.get(String(work.source_id)) || {}, "P136").includes(id))) genreById.set(id, entity);
         if (works.some((work: AnyRecord) => claimIds(workEntities.get(String(work.source_id)) || {}, "P179").includes(id))) seriesById.set(id, entity);
       }
+      for (const character of characterEntities.values()) {
+        for (const voiceActorId of claimIds(character, "P725")) {
+          const voiceActor = relatedEntities.get(voiceActorId);
+          if (voiceActor) {
+            voiceActor.id = voiceActorId;
+            peopleById.set(voiceActorId, voiceActor);
+          }
+        }
+      }
 
       const counts: AnyRecord = {
         externalIds: 0, aliases: 0, officialUrls: 0, episodeCounts: 0,
-        studios: 0, organizations: 0, staffLinks: 0, genres: 0, series: 0, relations: 0
+        studios: 0, organizations: 0, staffLinks: 0, genres: 0, series: 0, relations: 0,
+        characters: 0, characterLinks: 0, voiceActorLinks: 0
       };
 
       if (mode === "sync") {
@@ -369,7 +416,7 @@ Deno.serve(async (req: Request) => {
           const orgIds = claimIds(entity, "P272").map(id => organizationMap.get(id)).filter(Boolean);
           if (orgIds.length) {
             const existing = await db.from("anime_organization_staff").select("organization_id")
-              .eq("anime_id", work.id).eq("role", "production_company").in("organization_id", orgIds);
+              .eq("anime_id", work.id).eq("role", "制作会社").in("organization_id", orgIds);
             if (existing.error) throw existing.error;
             const set = new Set((existing.data || []).map((r: AnyRecord) => String(r.organization_id)));
             const rows = orgIds.filter(id => !set.has(String(id))).map(id => ({
@@ -390,6 +437,38 @@ Deno.serve(async (req: Request) => {
             name_ja: label(e, "ja"), name_en: label(e, "en"),
             wikipedia_url: WIKIDATA + e.id
           }));
+        const characterRows = [...characterEntities.entries()].map(([id, entity]) => {
+          entity.id = id;
+          return entity;
+        });
+        const characterMap = await ensureEntityRows(db, "characters", "character_external_ids", "character_id",
+          characterRows, e => ({
+            name: label(e, "en") || label(e, "ja"),
+            name_ja: label(e, "ja"), name_en: label(e, "en")
+          }));
+        counts.characters = characterMap.size;
+        const characterLinkRows: AnyRecord[] = [];
+        const existingCharacterLinks = await db.from("anime_characters").select("anime_id,character_id")
+          .in("anime_id", works.map((w: AnyRecord) => w.id));
+        if (existingCharacterLinks.error) throw existingCharacterLinks.error;
+        const characterLinkSet = new Set((existingCharacterLinks.data || []).map((r: AnyRecord) =>
+          [r.anime_id, r.character_id].join("|")
+        ));
+        const workIdByQid = new Map(works.map((w: AnyRecord) => [String(w.source_id), String(w.id)]));
+        for (const link of characterLinks) {
+          const animeId = workIdByQid.get(link.workQid);
+          const characterId = characterMap.get(link.characterQid);
+          if (!animeId || !characterId) continue;
+          const key = [animeId, characterId].join("|");
+          if (characterLinkSet.has(key)) continue;
+          characterLinkSet.add(key);
+          characterLinkRows.push({ anime_id: animeId, character_id: characterId, role: "character" });
+        }
+        if (characterLinkRows.length) {
+          const saved = await db.from("anime_characters").insert(characterLinkRows);
+          if (saved.error) throw saved.error;
+          counts.characterLinks = characterLinkRows.length;
+        }
         const staffRows: AnyRecord[] = [];
         const existingStaff = await db.from("anime_staff").select("anime_id,person_id,role,character_id")
           .in("anime_id", works.map((w: AnyRecord) => w.id));
@@ -397,6 +476,21 @@ Deno.serve(async (req: Request) => {
         const staffSet = new Set((existingStaff.data || []).map((r: AnyRecord) =>
           [r.anime_id, r.person_id, r.role, r.character_id || ""].join("|")
         ));
+        for (const link of characterLinks) {
+          const animeId = workIdByQid.get(link.workQid);
+          const characterId = characterMap.get(link.characterQid);
+          const character = characterEntities.get(link.characterQid);
+          if (!animeId || !characterId || !character) continue;
+          for (const voiceActorQid of claimIds(character, "P725")) {
+            const personId = peopleMap.get(voiceActorQid);
+            if (!personId) continue;
+            const key = [animeId, personId, "voice_actor", characterId].join("|");
+            if (staffSet.has(key)) continue;
+            staffSet.add(key);
+            staffRows.push({ anime_id: animeId, person_id: personId, role: "voice_actor", character_id: characterId });
+            counts.voiceActorLinks++;
+          }
+        }
         const roleMap: Record<string, string> = { P57: "director", P58: "screenwriter", P162: "producer", P86: "composer" };
         for (const work of works) {
           const entity = workEntities.get(String(work.source_id));
