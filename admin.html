@@ -18,7 +18,7 @@
 .admin-warning{border-left:3px solid #f2a51a;padding:10px 12px;background:#241d12;color:#d8c39d;font-size:11px;line-height:1.7}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="anixia-client.js?v=anime-id-map-20261118"></script><script src="anixia-admin.js?v=anime-duplicate-review-20261118" defer></script>
+<script src="anixia-client.js?v=anime-id-map-20261118"></script><script src="anixia-admin.js?v=mal-id-backfill-20261118" defer></script>
 <link rel="preconnect" href="https://trvnxggqzlhqdhoyiliy.supabase.co" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
@@ -40,7 +40,7 @@
   <p>Wikidataから日本由来のアニメ作品候補を定期取得します。自動処理は毎日11:30（日本時間）に最大50件を順次確認します。新規レコードは非公開で登録し、既存作品の編集内容・公開状態は上書きしません。必要な場合は下のボタンから手動実行できます。</p>
   <p class="admin-warning">作品名・形式・公開年・話数などの構造化情報のみを取得します。画像・バナー・あらすじ本文は取得しません。自動登録後も「作品候補の審査」で対象作品かどうかを確認してから公開してください。</p>
   <div class="admin-field"><label for="wikidata-limit">1回の取得上限</label><select id="wikidata-limit"><option value="25">25件</option><option value="50" selected>50件</option><option value="100">100件</option></select></div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap"><button id="wikidata-preview-button" class="admin-button" type="button">次回取得候補を確認</button><button id="wikidata-sync-button" class="admin-button" type="button">今すぐ同期</button></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap"><button id="wikidata-preview-button" class="admin-button" type="button">次回取得候補を確認</button><button id="wikidata-sync-button" class="admin-button" type="button">今すぐ同期</button><button id="wikidata-mal-id-sync-button" class="admin-button" type="button">既存作品のMyAnimeList IDを照合</button></div>
   <p id="wikidata-sync-message" class="admin-message" aria-live="polite"></p>
   <pre id="wikidata-sync-preview" class="admin-message" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
   <p><a href="https://www.wikidata.org/wiki/Wikidata:Licensing" target="_blank" rel="noopener noreferrer">Wikidataのライセンス</a> · <a href="https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual/ja" target="_blank" rel="noopener noreferrer">Query Serviceの利用上の注意</a></p>
