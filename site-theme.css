@@ -1932,3 +1932,190 @@ main p{color:inherit}
  .anixia-detail-info{grid-template-columns:95px minmax(0,1fr)!important}
  .rank-row{grid-template-columns:26px 48px minmax(0,1fr)!important}
 }
+
+
+
+/* =========================================================
+   ANIXIA responsive system — PC / tablet / mobile
+   Shared by all pages that load site-theme.css.
+   ========================================================= */
+:root{
+  --anixia-content-max:1320px;
+  --anixia-page-gutter:clamp(14px,2.6vw,32px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{width:100%;max-width:100%;overflow-x:clip;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{width:100%;max-width:100%;min-width:0;margin:0;overflow-x:clip}
+img,svg,video,canvas,iframe{max-width:100%}
+img,video{height:auto}
+button,input,select,textarea{max-width:100%;font:inherit}
+input,select,textarea{min-width:0}
+button,a,[role="button"]{-webkit-tap-highlight-color:transparent}
+a,button,input,select,textarea{touch-action:manipulation}
+p,h1,h2,h3,h4,h5,h6,small,strong,span,dd,dt,td,th{overflow-wrap:anywhere}
+pre,code{max-width:100%;overflow-x:auto}
+table{max-width:100%;border-collapse:collapse}
+main,.anixia-shell,.container,.wrap,.layout,.anixia-page,.season-page,.discover-page,.diag-page,.compare-page,.rank-page,.quiz-page,.memo-page{
+  min-width:0;max-width:100%;
+}
+.anixia-shell{width:min(var(--anixia-content-max),calc(100% - 2 * var(--anixia-page-gutter)));margin-inline:auto}
+.site-header,.site-header *,.anixia-footer,.anixia-footer *{min-width:0}
+.site-header{width:100%;max-width:100%}
+.header-inner,.site-header .container.nav,.site-header .header-inner{
+  width:min(var(--anixia-content-max),100%);max-width:100%;margin-inline:auto;
+}
+.site-header nav,.anixia-main-nav,.nav-links,.anixia-header-actions{
+  min-width:0;
+}
+.site-header nav a,.anixia-main-nav a,.nav-links a{
+  white-space:normal;
+}
+.anixia-work-grid,.season-grid,.discover-grid,.diag-results,.quiz-grid,.related-grid,.stats-grid,.anixia-feature-links,.anixia-genre-links,.anixia-bottom-links{
+  min-width:0;
+}
+.anixia-work-grid>* ,.season-grid>* ,.discover-grid>* ,.diag-results>* ,.quiz-grid>* ,.related-grid>*{
+  min-width:0;max-width:100%;
+}
+.anixia-detail-hero,.anixia-detail-grid,.anime-detail,.layout,.messenger,.profile-layout,.community-layout{
+  min-width:0;max-width:100%;
+}
+.anixia-detail-info,.anime-detail-info,.panel,.auth-panel,.admin-panel,.season-controls,.anixia-filter-panel{
+  min-width:0;max-width:100%;
+}
+.field input,.field select,.field textarea,.anixia-field input,.anixia-field select,.anixia-field textarea,
+input[type="text"],input[type="email"],input[type="password"],input[type="search"],input[type="url"],textarea,select{
+  width:100%;min-width:0;
+}
+button,a,.photo-btn,.tab,.secondary-btn,.admin-button{
+  min-height:40px;
+}
+.anixia-footer-inner{width:min(var(--anixia-content-max),100%);max-width:100%;margin-inline:auto}
+
+/* Large tablets and compact laptops */
+@media (max-width:1100px){
+  .anixia-work-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .related-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .anixia-filter-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .anime-detail{grid-template-columns:minmax(190px,260px) minmax(0,1fr)!important;gap:22px!important;padding:24px!important}
+  .layout{grid-template-columns:minmax(0,1fr) 260px!important}
+  .messenger{grid-template-columns:minmax(220px,30%) minmax(0,1fr)!important}
+}
+
+/* Tablets and large phones */
+@media (max-width:820px){
+  :root{--anixia-page-gutter:18px}
+  .site-header .container.nav,.header-inner{
+    flex-wrap:wrap!important;gap:10px!important;padding:10px 16px!important;
+  }
+  .anixia-main-nav,.site-header .nav-links{
+    order:3;width:100%;max-width:100%;display:flex!important;flex:1 1 100%;
+    overflow-x:auto!important;overflow-y:hidden;white-space:nowrap;
+    gap:6px!important;padding:2px 0 5px;scrollbar-width:thin;
+    -webkit-overflow-scrolling:touch;
+  }
+  .anixia-main-nav a,.site-header .nav-links a{flex:0 0 auto;white-space:nowrap!important}
+  .anixia-header-actions,.site-header .nav-actions{display:flex!important;flex:0 0 auto;gap:8px}
+  .anixia-work-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .season-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .discover-grid,.diag-results{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .anixia-feature-links{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .anixia-genre-links{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .related-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .anixia-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .layout{grid-template-columns:minmax(0,1fr)!important}
+  .messenger{grid-template-columns:minmax(0,1fr)!important;height:auto!important;min-height:0!important}
+  .messenger .sidebar{max-height:300px;overflow:auto}
+  .anixia-detail-grid{grid-template-columns:minmax(0,1fr)!important}
+  .anime-detail{grid-template-columns:minmax(0,1fr)!important}
+  .anime-detail-cover{width:min(220px,100%);margin-inline:auto}
+  .list-toolbar{align-items:stretch;flex-wrap:wrap}
+  .season-controls{flex-wrap:wrap}
+}
+
+/* Smartphones */
+@media (max-width:600px){
+  :root{--anixia-page-gutter:12px}
+  body{font-size:14px}
+  main,.anixia-shell{padding-left:12px!important;padding-right:12px!important}
+  .anixia-shell{width:100%}
+  .site-header,.site-header .container.nav,.header-inner{min-height:56px!important}
+  .site-header .container.nav,.header-inner{padding:8px 12px!important}
+  .anixia-logo{font-size:23px!important}
+  .anixia-main-nav,.site-header .nav-links{gap:3px!important}
+  .anixia-main-nav a,.site-header .nav-links a{font-size:11px!important;padding:7px 9px!important}
+  .anixia-header-actions{gap:6px}
+  .anixia-search-panel{padding:18px 13px!important}
+  .anixia-search-form{display:flex;flex-wrap:wrap;gap:8px!important}
+  .anixia-search-form input{flex:1 1 100%;width:100%;font-size:16px!important}
+  .anixia-search-form button{flex:1 1 auto;min-height:42px}
+  .anixia-search-meta{flex-wrap:wrap;gap:8px}
+  .anixia-section-heading{align-items:flex-start;gap:10px;flex-wrap:wrap}
+  .anixia-work-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  .season-grid,.discover-grid,.diag-results,.related-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  .quiz-grid{grid-template-columns:1fr!important}
+  .anixia-feature-links{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  .anixia-genre-links{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .anixia-bottom-links{grid-template-columns:1fr!important}
+  .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  .anixia-filter-grid{grid-template-columns:minmax(0,1fr)!important}
+  .anixia-page,.discover-page,.diag-page,.compare-page,.rank-page,.quiz-page,.memo-page,.season-page{
+    width:100%!important;max-width:100%!important;padding:18px 12px 44px!important;
+  }
+  .anixia-page-hero,.season-hero,.quiz-hero,.memo-hero,.compare-hero,.discover-hero,.diag-hero,.rank-hero{
+    padding:18px 15px!important;border-radius:10px!important;
+  }
+  .anixia-page-hero h1,.season-hero h1,.quiz-hero h1,.memo-hero h1,.compare-hero h1,.discover-hero h1,.diag-hero h1,.rank-hero h1{
+    font-size:clamp(23px,7vw,32px)!important;line-height:1.25;
+  }
+  .anixia-detail-hero{grid-template-columns:minmax(0,1fr)!important;padding:15px!important;gap:14px!important}
+  .anixia-detail-hero .anixia-detail-poster-frame{width:min(160px,70%)!important;max-width:100%!important;margin-inline:auto}
+  .anixia-detail-info h1,.anime-detail-info h1{font-size:clamp(22px,6vw,29px)!important}
+  .anixia-detail-info,.anime-detail-info{min-width:0}
+  .anixia-detail-actions,.anime-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .anixia-detail-actions>* ,.anime-actions>*{flex:1 1 auto;min-width:0}
+  .anime-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .anime-detail{padding:14px!important;gap:16px!important}
+  .related-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .rank-row{grid-template-columns:26px 48px minmax(0,1fr)!important;gap:8px!important;padding:8px!important}
+  .rank-row img{width:48px!important}
+  .rank-score{grid-column:3!important}
+  .list-toolbar{display:flex;flex-direction:column;align-items:stretch;gap:10px}
+  .list-toolbar>*{max-width:100%;min-width:0}
+  .pagination{gap:5px;margin-top:22px}
+  .pagination a,.pagination button{min-width:36px;min-height:38px;padding:7px 9px}
+  .panel,.auth-panel,.admin-panel,.memo-card,.profile-card{padding:14px!important}
+  .field,.admin-field{min-width:0}
+  .field input,.field select,.field textarea{font-size:16px!important}
+  .post-media-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .messenger{height:auto!important;min-height:0!important}
+  .messenger .sidebar{max-height:240px;overflow:auto}
+  .messenger .chat{min-height:420px;max-height:70dvh}
+  .anixia-footer-inner{padding:28px 14px 18px!important}
+  .anixia-footer-nav{gap:10px 14px!important}
+  .anixia-footer-bottom{flex-direction:column;gap:5px}
+  footer{margin-top:48px!important}
+  .ad-section{width:calc(100% - 24px)!important;margin-top:28px!important}
+  .ad-card{min-height:80px;padding:12px}
+}
+
+/* Narrow phones */
+@media (max-width:380px){
+  .anixia-work-grid,.season-grid,.discover-grid,.diag-results,.related-grid{gap:7px!important}
+  .anixia-feature-link{padding:8px!important;gap:6px!important}
+  .anixia-feature-link strong{font-size:11px}
+  .anixia-feature-link small{font-size:9px}
+  .rank-row{grid-template-columns:23px 42px minmax(0,1fr)!important;gap:6px!important}
+  .rank-row img{width:42px!important}
+  .anime-info-grid{grid-template-columns:minmax(0,1fr)!important}
+  .links{flex-wrap:wrap}
+}
+
+/* Respect device safe areas and touch targets */
+@supports(padding:max(0px)){
+  body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+  .site-header{padding-top:env(safe-area-inset-top)}
+}
+@media(hover:none){
+  .related-card:hover{transform:none!important;box-shadow:none!important}
+}
