@@ -10,6 +10,7 @@ const query=(limit:number,offset:number)=>
 " ?item wdt:P31 ?class ; wdt:P495 wd:Q17 ."+
 " OPTIONAL { ?item wdt:P580 ?startDate . } OPTIONAL { ?item wdt:P577 ?publicationDate . }"+
 " BIND(COALESCE(?startDate, ?publicationDate) AS ?date) FILTER(BOUND(?date) && YEAR(?date)>=1963)"+
+" FILTER NOT EXISTS { ?item wdt:P136/wdt:P279* ?adultGenre . VALUES ?adultGenre { wd:Q136926229 wd:Q49148153 wd:Q185529 wd:Q599558 wd:Q2275499 wd:Q16254232 wd:Q2292320 wd:Q172067 } }"+
 " OPTIONAL { ?item wdt:P1113 ?episodes . }"+
 " OPTIONAL { ?item rdfs:label ?jaLabel . FILTER(LANG(?jaLabel)='ja') }"+
 " SERVICE wikibase:label { bd:serviceParam wikibase:language 'ja,en'. }"+
@@ -168,6 +169,13 @@ Deno.serve(async(req:Request)=>{
     const backfilled=await db.from("anime").update({title_ja:row.title_ja,is_published:true})
      .eq("source","wikidata").eq("source_id",row.source_id).is("title_ja",null);
     if(backfilled.error)throw backfilled.error;
+   }
+   const publishIds=rows.filter(row=>row.title_ja&&["tv","movie","ova","web"].includes(row.format)).map(row=>row.source_id);
+   if(publishIds.length){
+    const published=await db.from("anime").update({is_published:true})
+     .eq("source","wikidata").eq("country_code","JP").eq("is_published",false)
+     .in("source_id",publishIds).not("title_ja","is",null);
+    if(published.error)throw published.error;
    }
    if(rows.length){
     const sourceIds=rows.map(row=>row.source_id);
