@@ -42,7 +42,7 @@
       } while (true);
 
       $("season-grid").innerHTML = works.length
-        ? works.map(a => `<a class="season-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}"><div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url, a.title_ja || a.title_kana || a.title || "")}</div><div class="season-card-copy"><b>${esc(a.title_ja || a.title_kana || a.title || "タイトル未登録")}</b><small>${esc(a.format || "形式未登録")}</small></div></a>`).join("")
+        ? works.map(a => `<a class="season-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}"><div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url, a.title_ja || a.title_kana || a.title || "", a.poster_credit)}</div><div class="season-card-copy"><b>${esc(a.title_ja || a.title_kana || a.title || "タイトル未登録")}</b><small>${esc(a.format || "形式未登録")}</small></div></a>`).join("")
         : '<p class="season-state">このシーズンの公開作品データはまだありません。</p>';
     } catch (e) {
       console.error(e);
