@@ -75,10 +75,10 @@ REST API作品情報： https://developers.annict.com/docs/rest-api/v1/works
 
 - Supabase Edge Function：`sync-wikidata-catalog`。
 - 全作品カタログ同期：Edge Function `sync-wikidata-catalog`。Supabase Cron `anixia-wikidata-catalog-sync` が毎日02:30 UTC（日本時間11:30）に最大50件を取得し、候補を自動収録する。公開状態は自動変更しない。
-- シーズン作品同期：Edge Function `sync-seasonal-anime` v7。Supabase Cron `anixia-seasonal-anime-sync` が毎日03:35 UTC（日本時間12:35）に実行する。対象形式を拡張し、新規候補は非公開で保存する。2026-11-18にプレビュー応答200を確認。
+- シーズン作品同期：Edge Function `sync-seasonal-anime` v12。Supabase Cron `anixia-seasonal-anime-sync` が毎日03:35 UTC（日本時間12:35）に実行する。対象形式を拡張し、新規候補は非公開で保存する。2026-11-18にプレビュー応答200を確認。
 - HTTP 429では `Retry-After` を尊重し、5xxでは間隔を空けて再試行する。
 - 取得対象は日本由来（country of origin = Japan）で、1963年以降の対象クラスに属する作品。作品名・形式・年・話数などの構造化情報のみを扱う。
-- 対象クラスを拡張：TVアニメシリーズ、アニメTV番組、アニメ映画、アニメ長編映画、アニメ短編映画、OVA、OVAシリーズ、ONA、ONAシリーズ、アニメーションTVシリーズ、アニメーションWebシリーズ。映画シリーズ・企画段階・テレビシーズン単位は、作品の重複・誤収録を避けるため現段階では別途扱う。
+- 対象クラスを拡張：TVアニメシリーズ、アニメTV番組、アニメ映画、アニメ長編映画、アニメ短編映画、OVA、OVAシリーズ、ONA、ONAシリーズ、アニメーションTVシリーズ、アニメーションWebシリーズ、アニメTVスペシャル（アニメジャンルまたはアニメーション制作方法の記載があるもの）。映画シリーズ・企画段階・テレビシーズン単位は、作品の重複・誤収録を避けるため現段階では別途扱う。
 - 日本語タイトルがあり、対象形式（TV・映画・OVA・ONA等）と日本由来・1963年以降の条件を満たす作品を候補として収録する。
 - 作品の公開は自動確定しない。管理者審査を通過した作品のみ公開する。日本語タイトルがない作品や形式が不明な作品は候補のまま保留する。
 - Wikidataの明示的な除外分類を同期時に確認するが、分類が欠落・誤りの場合を完全には検出できない。出典IDを保持し、重複候補検査を継続する。
@@ -123,7 +123,7 @@ Annictの大量取得時は、最新の公式条件を再確認した上で、�
 ## 6. 未完了事項
 
 - 2026-11-17の候補審査後の登録数は公開作品26件、非公開候補2件、制作会社4件、人物37人、スタッフ関係41件、キャラクター33件、作品・キャラクター関係33件、声優クレジット33件。人物・キャラクターにはWikidata由来とANIXIA内部キーによるキュレーションの両方が含まれる。全作品の全キャラクター・全キャストを網羅したものではない。
-- Wikidata全作品同期 `sync-wikidata-catalog` v17、シーズン同期 `sync-seasonal-anime` v7、追加情報同期 `sync-wikidata-enrichment` v10をデプロイ済み。全作品同期Cronとシーズン同期Cronはいずれも有効。
+- Wikidata全作品同期 `sync-wikidata-catalog` v18、シーズン同期 `sync-seasonal-anime` v12、追加情報同期 `sync-wikidata-enrichment` v10をデプロイ済み。全作品同期Cronとシーズン同期Cronはいずれも有効。
 - 追加情報同期では、制作会社・スタジオ・キャラクター・ジャンル・シリーズ関連の重複挿入を避けるため、IDの重複排除と一意制約を使った `upsert(..., ignoreDuplicates)` を追加。
 - Annict APIトークンのSupabase Secrets登録状況は、秘密情報を読み出せないため未確認。
 - Supabase Authのユーザー数0、管理者数0を確認。管理者アカウントを登録するまでAnnict同期を実行できない。
