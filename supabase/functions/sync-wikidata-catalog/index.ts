@@ -42,7 +42,7 @@ function mapRow(b:any){
  if(!/^Q\d+$/.test(qid)||!title||!year||year<1963)return null;
  const format=formats[cls]||"other";
  const publishable=Boolean(titleJa)&&["tv","movie","ova","ona","web","special"].includes(format);
- return {source:"wikidata",source_id:qid,title,title_ja:titleJa,format,release_year:year,country_code:"JP",episode_count:Number.isInteger(episodes)&&episodes>0?episodes:null,episodes_count:Number.isInteger(episodes)&&episodes>0?episodes:null,is_published:publishable,source_synced_at:new Date().toISOString()};
+ return {source:"wikidata",source_id:qid,title,title_ja:titleJa,format,release_year:year,country_code:"JP",episode_count:Number.isInteger(episodes)&&episodes>0?episodes:null,episodes_count:Number.isInteger(episodes)&&episodes>0?episodes:null,is_published:false,source_synced_at:new Date().toISOString()};
 }
 async function digestHex(value:string){
  const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value));
@@ -165,13 +165,7 @@ Deno.serve(async(req:Request)=>{
   try{
    const saved=rows.length?await db.from("anime").upsert(rows,{onConflict:"source,source_id",ignoreDuplicates:true}).select("id"):{data:[],error:null};
    if(saved.error)throw saved.error;
-   const publishableIds=rows.filter((row:any)=>Boolean(row.title_ja)&&["tv","movie","ova","ona","web","special"].includes(row.format)).map((row:any)=>row.source_id);
-   if(publishableIds.length){
-    const published=await db.from("anime").update({is_published:true})
-     .eq("source","wikidata").eq("country_code","JP").gte("release_year",1963)
-     .in("format",["tv","movie","ova","ona","web","special"]).in("source_id",publishableIds).not("title_ja","is",null);
-    if(published.error)throw published.error;
-   }
+   // New historical catalog candidates remain unpublished until administrator review.
    if(rows.length){
     const sourceIds=rows.map(row=>row.source_id);
     const imported=await db.from("anime").select("id,source_id").eq("source","wikidata").in("source_id",sourceIds);
