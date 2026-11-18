@@ -25,6 +25,16 @@ fi
 # No production credentials or secrets are used by this validation.
 supabase start
 
+# Use the local database URL reported by this temporary, unlinked project.
+# psql executes complete SQL files; db query uses a prepared statement and
+# cannot execute files containing multiple SQL commands.
+if ! command -v psql >/dev/null 2>&1; then
+  sudo apt-get update
+  sudo apt-get install -y postgresql-client
+fi
+eval "$(supabase status -o env)"
+: "${DB_URL:?Supabase did not provide a local DB_URL}"
+
 for file in \
   01_tables_and_constraints.sql \
   02_indexes_and_rls.sql \
@@ -35,7 +45,7 @@ for file in \
   07_default_privileges.sql
 do
   echo "::group::Apply $file to the disposable local database"
-  supabase db query --local --file "$ROOT/supabase/schema-snapshot/$file"
+  psql "$DB_URL" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/schema-snapshot/$file"
   echo "::endgroup::"
 done
 
@@ -119,7 +129,7 @@ $$;
 SQL
 
 echo "::group::Verify reconstructed schema"
-supabase db query --local --file "$WORKDIR/assert-snapshot.sql"
+psql "$DB_URL" -v ON_ERROR_STOP=1 -f "$WORKDIR/assert-snapshot.sql"
 echo "::endgroup::"
 
 echo "Schema snapshot replay and catalog assertions passed."
