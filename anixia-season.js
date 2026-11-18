@@ -5,15 +5,17 @@
   const seasonFromMonth = month => month <= 3 ? "winter" : month <= 6 ? "spring" : month <= 9 ? "summer" : "autumn";
   const tokyoNow = () => {
     const parts = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Asia/Tokyo", year: "numeric", month: "2-digit"
+      timeZone: "Asia/Tokyo", year: "numeric", month: "2-digit", day: "2-digit"
     }).formatToParts(new Date());
     return {
       year: Number(parts.find(p => p.type === "year").value),
-      month: Number(parts.find(p => p.type === "month").value)
+      month: Number(parts.find(p => p.type === "month").value),
+      day: Number(parts.find(p => p.type === "day").value)
     };
   };
   const current = tokyoNow();
   let currentKey = current.year + "-" + seasonFromMonth(current.month);
+  let lastRefreshDate = `${current.year}-${String(current.month).padStart(2, "0")}-${String(current.day).padStart(2, "0")}`;
   for (let y = current.year + 1; y >= 1960; y--) $("season-year").add(new Option(String(y), String(y)));
   $("season-year").value = String(current.year);
   $("season-name").value = seasonFromMonth(current.month);
@@ -59,13 +61,19 @@
   setInterval(() => {
     const now = tokyoNow();
     const nextKey = now.year + "-" + seasonFromMonth(now.month);
-    if (nextKey === currentKey) return;
-    const wasOnCurrent = $("season-year").value + "-" + $("season-name").value === currentKey;
-    currentKey = nextKey;
-    if (wasOnCurrent) {
-      $("season-year").value = String(now.year);
-      $("season-name").value = seasonFromMonth(now.month);
+    const dateKey = `${now.year}-${String(now.month).padStart(2, "0")}-${String(now.day).padStart(2, "0")}`;
+    const selectedKey = $("season-year").value + "-" + $("season-name").value;
+    if (nextKey !== currentKey) {
+      const wasOnCurrent = selectedKey === currentKey;
+      currentKey = nextKey;
+      if (wasOnCurrent) {
+        $("season-year").value = String(now.year);
+        $("season-name").value = seasonFromMonth(now.month);
+        load();
+      }
+    } else if (dateKey !== lastRefreshDate && selectedKey === currentKey) {
       load();
     }
+    lastRefreshDate = dateKey;
   }, 5 * 60 * 1000);
 })();
