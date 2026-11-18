@@ -25,7 +25,7 @@ function licenseInfo(meta: Record<string, any>) {
   const ccBySa = /^cc by-sa(?:\s|$)/i.test(short) && /creativecommons\.org\/licenses\/by-sa\/\d+(?:\.\d+)?\//.test(licenseUrl);
   // Commons permits reuse under CC0/public-domain and attribution licenses.
   // CC BY / CC BY-SA are accepted only when author or credit metadata exists.
-  const allowed = cc0 || publicDomain || ccBy || ccBySa;
+  const allowed = cc0 || publicDomain;
   if (!allowed || !/^https:\/\/creativecommons\.org\//i.test(url)) return null;
   if (/non.?commercial|by-nc|\bnd\b|by-nd|fair.?use|all.?rights.?reserved/i.test(normalized + " " + licenseUrl)) return null;
   if ((ccBy || ccBySa) && !artist && !credit) return null;
@@ -80,10 +80,13 @@ async function searchImage(work: any) {
             const info = page?.imageinfo?.[0];
             const width = Number(info?.width || 0), height = Number(info?.height || 0);
             const license = licenseInfo(info?.extmetadata || {});
+            const logoFile = /logo|ロゴ/i.test(fileName);
+            const validShape = logoFile
+              ? width >= 200 && height >= 80 && width / height >= 1.1 && width / height <= 6
+              : width >= 200 && height >= 280 && width / height >= 0.38 && width / height <= 0.9;
             if (info?.thumburl && info?.descriptionurl &&
                 String(info.thumburl).startsWith("https://upload.wikimedia.org/") &&
-                width >= 200 && height >= 280 && width / height >= 0.38 &&
-                width / height <= 0.9 && license) {
+                validShape && license) {
               return {
                 url: info.thumburl,
                 id: page.title,
@@ -122,13 +125,17 @@ async function searchImage(work: any) {
       const rawDescription = cleanHtml(info.extmetadata?.ImageDescription?.value);
       const fileName = norm(rawFileName);
       const description = norm(rawDescription);
-      const posterContext = /poster|key[ -]?visual|cover|dvd|blu[ -]?ray|promotional|artwork|ポスター|キービジュアル|表紙/i.test(rawFileName + " " + rawDescription);
+      const logoFile = /logo|ロゴ/i.test(rawFileName + " " + rawDescription);
+      const posterContext = logoFile || /poster|key[ -]?visual|cover|dvd|blu[ -]?ray|promotional|artwork|ポスター|キービジュアル|表紙/i.test(rawFileName + " " + rawDescription);
       if (!posterContext) return null;
       const exact = fileName === target || description === target;
       const contains = fileName.includes(target) || description.includes(target);
       if (!contains) return null;
       const width = Number(info.width || 0), height = Number(info.height || 0);
-      if (width < 200 || height < 280 || width / height < 0.38 || width / height > 0.9) return null;
+      const validShape = logoFile
+        ? width >= 200 && height >= 80 && width / height >= 1.1 && width / height <= 6
+        : width >= 200 && height >= 280 && width / height >= 0.38 && width / height <= 0.9;
+      if (!validShape) return null;
       const license = licenseInfo(info.extmetadata || {});
       if (!license) return null;
       const yearMatch = work.release_year && String(page.title).includes(String(work.release_year));
