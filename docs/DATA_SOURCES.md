@@ -280,3 +280,11 @@ Wikidataから取得した17件を個別に確認し、15件を公開、2件を�
 - 既存の公開作品は、外部IDで同一作品を特定したうえで、空欄の構造化フィールドだけを補完する。手入力済みの値や公開状態を自動で上書きしない。
 - Annictは利用条件の確認が終わるまで無効。TMDB APIキーは使用しない。
 - 同期の実行結果と失敗は `catalog_sync_runs` に記録する。同期トークンはSupabase Vaultで管理する。
+
+
+### 自動同期の現在の利用条件（2026-11-18）
+- **Wikidata**：構造化データはCC0。作品・スタッフ等の構造化情報を取得する。Wikidata公式のライセンス説明：<https://www.wikidata.org/wiki/Wikidata:Licensing>。
+- **Wikimedia Commons**：現在はパブリックドメイン／CC0と確認できる画像だけを採用する。各ファイルの説明ページでライセンスを確認する。<https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia>。
+- **日本語Wikipedia**：本文・あらすじの取り込みは無効化。記事本文のコピーは行わない。
+- **Annict**：利用条件の確認が終わるまで無効。
+- **TMDB**：APIキーを使用しない。
