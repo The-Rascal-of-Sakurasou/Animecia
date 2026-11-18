@@ -3,10 +3,10 @@ const allowedOrigin="https://the-rascal-of-sakurasou.github.io";
 const headers={"Access-Control-Allow-Origin":allowedOrigin,"Access-Control-Allow-Headers":"authorization, x-client-info, apikey, content-type, x-anixia-cron-token","Access-Control-Allow-Methods":"POST, OPTIONS","Vary":"Origin","Content-Type":"application/json; charset=utf-8"};
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers});
 const wait=(ms:number)=>new Promise(resolve=>setTimeout(resolve,ms));
-const formats:Record<string,string>={"Q63952888":"tv","Q20650540":"movie","Q220898":"ova","Q1047299":"web","Q117209498":"movie","Q117467240":"web","Q11086742":"tv"};
+const formats:Record<string,string>={"Q63952888":"tv","Q20650540":"movie","Q220898":"ova","Q1047299":"ona","Q117209498":"movie","Q117467240":"web","Q11086742":"tv","Q113671041":"ona","Q113687694":"ova","Q117467246":"tv","Q117717390":"movie"};
 const query=(limit:number,offset:number)=>
-"SELECT DISTINCT ?item ?itemLabel ?jaLabel ?date ?episodes ?class WHERE {"+
-" VALUES ?class { wd:Q63952888 wd:Q20650540 wd:Q220898 wd:Q1047299 wd:Q117209498 wd:Q117467240 wd:Q11086742 }"+
+"SELECT ?item ?itemLabel ?jaLabel ?date ?episodes (GROUP_CONCAT(DISTINCT STR(?class);separator=\"|\") AS ?classes) WHERE {"+
+" VALUES ?class { wd:Q63952888 wd:Q20650540 wd:Q220898 wd:Q1047299 wd:Q117209498 wd:Q117467240 wd:Q11086742 wd:Q113671041 wd:Q113687694 wd:Q117467246 wd:Q117717390 }"+
 " ?item wdt:P31 ?class ; wdt:P495 wd:Q17 ."+
 " OPTIONAL { ?item wdt:P580 ?startDate . } OPTIONAL { ?item wdt:P577 ?publicationDate . }"+
 " BIND(COALESCE(?startDate, ?publicationDate) AS ?date) FILTER(BOUND(?date) && YEAR(?date)>=1963)"+
@@ -14,7 +14,7 @@ const query=(limit:number,offset:number)=>
 " OPTIONAL { ?item wdt:P1113 ?episodes . }"+
 " OPTIONAL { ?item rdfs:label ?jaLabel . FILTER(LANG(?jaLabel)='ja') }"+
 " SERVICE wikibase:label { bd:serviceParam wikibase:language 'ja,en'. }"+
-" } ORDER BY ?item LIMIT "+limit+" OFFSET "+offset;
+" } GROUP BY ?item ?itemLabel ?jaLabel ?date ?episodes ORDER BY ?item LIMIT "+limit+" OFFSET "+offset;
 async function fetchPage(limit:number,offset:number){
  const url="https://query.wikidata.org/sparql?"+new URLSearchParams({query:query(limit,offset),format:"json"});
  for(let i=0;i<4;i++){
@@ -34,12 +34,14 @@ function mapRow(b:any){
  const title=titleJa||label;
  const date=String(b?.date?.value||"").match(/^(\d{4})/);
  const year=date?Number(date[1]):null;
- const cls=String(b?.class?.value||"").match(/(Q\d+)$/)?.[1]||"";
+ const classes=String(b?.classes?.value||"").split("|").map((value:string)=>value.match(/(Q\d+)$/)?.[1]||"").filter(Boolean);
+ const priority=["Q113687694","Q220898","Q113671041","Q1047299","Q63952888","Q11086742","Q117467246","Q117717390","Q20650540","Q117209498","Q117467240"];
+ const cls=priority.find(value=>classes.includes(value))||classes[0]||"";
  const episodes=Number(b?.episodes?.value);
  if(!/^Q\d+$/.test(qid)||!title||!year||year<1963)return null;
- const format= formats[cls]||"other";
- const publishable=Boolean(titleJa)&&["tv","movie","ova","web"].includes(format);
- return {source:"wikidata",source_id:qid,title,title_ja:titleJa,format,release_year:year,country_code:"JP",episode_count:Number.isInteger(episodes)&&episodes>0?episodes:null,episodes_count:Number.isInteger(episodes)&&episodes>0?episodes:null,is_published:publishable,source_synced_at:new Date().toISOString()};
+ const format=formats[cls]||"other";
+ // All new Wikidata records remain unpublished until the ANIXIA admin review is completed.
+ return {source:"wikidata",source_id:qid,title,title_ja:titleJa,format,release_year:year,country_code:"JP",episode_count:Number.isInteger(episodes)&&episodes>0?episodes:null,episodes_count:Number.isInteger(episodes)&&episodes>0?episodes:null,is_published:false,source_synced_at:new Date().toISOString()};
 }
 async function digestHex(value:string){
  const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value));
@@ -162,13 +164,6 @@ Deno.serve(async(req:Request)=>{
   try{
    const saved=rows.length?await db.from("anime").upsert(rows,{onConflict:"source,source_id",ignoreDuplicates:true}).select("id"):{data:[],error:null};
    if(saved.error)throw saved.error;
-   // Upsert ignores existing rows, so explicitly publish all newly verified candidates.
-   const publishableIds=rows.filter(row=>row.is_published&&row.title_ja).map(row=>row.source_id);
-   if(publishableIds.length){
-    const published=await db.from("anime").update({is_published:true,updated_at:new Date().toISOString()})
-     .eq("source","wikidata").eq("country_code","JP").in("source_id",publishableIds).not("title_ja","is",null);
-    if(published.error)throw published.error;
-   }
    if(rows.length){
     const sourceIds=rows.map(row=>row.source_id);
     const imported=await db.from("anime").select("id,source_id").eq("source","wikidata").in("source_id",sourceIds);
