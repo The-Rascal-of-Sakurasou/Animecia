@@ -38,7 +38,8 @@ function mapRow(b:any){
  const episodes=Number(b?.episodes?.value);
  if(!/^Q\d+$/.test(qid)||!title||!year||year<1963)return null;
  const format= formats[cls]||"other";
- return {source:"wikidata",source_id:qid,title,title_ja:titleJa,format,release_year:year,country_code:"JP",episode_count:Number.isInteger(episodes)&&episodes>0?episodes:null,episodes_count:Number.isInteger(episodes)&&episodes>0?episodes:null,is_published:false,source_synced_at:new Date().toISOString()};
+ const publishable=Boolean(titleJa)&&["tv","movie","ova","web"].includes(format);
+ return {source:"wikidata",source_id:qid,title,title_ja:titleJa,format,release_year:year,country_code:"JP",episode_count:Number.isInteger(episodes)&&episodes>0?episodes:null,episodes_count:Number.isInteger(episodes)&&episodes>0?episodes:null,is_published:publishable,source_synced_at:new Date().toISOString()};
 }
 async function digestHex(value:string){
  const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value));
@@ -161,7 +162,13 @@ Deno.serve(async(req:Request)=>{
   try{
    const saved=rows.length?await db.from("anime").upsert(rows,{onConflict:"source,source_id",ignoreDuplicates:true}).select("id"):{data:[],error:null};
    if(saved.error)throw saved.error;
-   // New Wikidata candidates stay unpublished; existing publication states are preserved.
+   // Upsert ignores existing rows, so explicitly publish all newly verified candidates.
+   const publishableIds=rows.filter(row=>row.is_published&&row.title_ja).map(row=>row.source_id);
+   if(publishableIds.length){
+    const published=await db.from("anime").update({is_published:true,updated_at:new Date().toISOString()})
+     .eq("source","wikidata").eq("country_code","JP").in("source_id",publishableIds).not("title_ja","is",null);
+    if(published.error)throw published.error;
+   }
    if(rows.length){
     const sourceIds=rows.map(row=>row.source_id);
     const imported=await db.from("anime").select("id,source_id").eq("source","wikidata").in("source_id",sourceIds);
