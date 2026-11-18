@@ -411,7 +411,7 @@ Deno.serve(async (req: Request) => {
         for (const work of works) {
           const entity = workEntities.get(String(work.source_id));
           if (!entity) continue;
-          const studioIds = claimIds(entity, "P272").map(id => studioMap.get(id)).filter(Boolean);
+          const studioIds = [...new Set(claimIds(entity, "P272").map(id => studioMap.get(id)).filter(Boolean).map(String))];
           if (studioIds.length) {
             const existing = await db.from("anime_studios").select("studio_id,production_role")
               .eq("anime_id", work.id).in("studio_id", studioIds);
@@ -421,11 +421,13 @@ Deno.serve(async (req: Request) => {
               anime_id: work.id, studio_id: id, production_role: "animation", display_order: 1
             }));
             if (rows.length) {
-              const saved = await db.from("anime_studios").insert(rows);
+              const saved = await db.from("anime_studios").upsert(rows, {
+                onConflict: "anime_id,studio_id,production_role", ignoreDuplicates: true
+              });
               if (saved.error) throw saved.error;
             }
           }
-          const orgIds = claimIds(entity, "P272").map(id => organizationMap.get(id)).filter(Boolean);
+          const orgIds = [...new Set(claimIds(entity, "P272").map(id => organizationMap.get(id)).filter(Boolean).map(String))];
           if (orgIds.length) {
             const existing = await db.from("anime_organization_staff").select("organization_id")
               .eq("anime_id", work.id).eq("role", "制作会社").in("organization_id", orgIds);
@@ -436,7 +438,9 @@ Deno.serve(async (req: Request) => {
               role: "制作会社", role_en: "Production company", display_order: 1
             }));
             if (rows.length) {
-              const saved = await db.from("anime_organization_staff").insert(rows);
+              const saved = await db.from("anime_organization_staff").upsert(rows, {
+                onConflict: "anime_id,organization_id,role", ignoreDuplicates: true
+              });
               if (saved.error) throw saved.error;
             }
           }
@@ -518,7 +522,9 @@ Deno.serve(async (req: Request) => {
           characterLinkRows.push({ anime_id: animeId, character_id: characterId, role: "character" });
         }
         if (characterLinkRows.length) {
-          const saved = await db.from("anime_characters").insert(characterLinkRows);
+          const saved = await db.from("anime_characters").upsert(characterLinkRows, {
+            onConflict: "anime_id,character_id", ignoreDuplicates: true
+          });
           if (saved.error) throw saved.error;
           counts.characterLinks = characterLinkRows.length;
         }
@@ -599,14 +605,16 @@ Deno.serve(async (req: Request) => {
         for (const work of works) {
           const entity = workEntities.get(String(work.source_id));
           if (!entity) continue;
-          const ids = claimIds(entity, "P136").map(id => genreQidToId.get(id)).filter(Boolean);
+          const ids = [...new Set(claimIds(entity, "P136").map(id => genreQidToId.get(id)).filter(Boolean).map(String))];
           if (!ids.length) continue;
           const existing = await db.from("anime_genres").select("genre_id").eq("anime_id", work.id).in("genre_id", ids);
           if (existing.error) throw existing.error;
           const set = new Set((existing.data || []).map((r: AnyRecord) => String(r.genre_id)));
           const rows = ids.filter(id => !set.has(String(id))).map(id => ({ anime_id: work.id, genre_id: id }));
           if (rows.length) {
-            const saved = await db.from("anime_genres").insert(rows);
+            const saved = await db.from("anime_genres").upsert(rows, {
+              onConflict: "anime_id,genre_id", ignoreDuplicates: true
+            });
             if (saved.error) throw saved.error;
             counts.genres += rows.length;
           }
@@ -622,7 +630,7 @@ Deno.serve(async (req: Request) => {
         for (const work of works) {
           const entity = workEntities.get(String(work.source_id));
           if (!entity) continue;
-          const seriesIds = claimIds(entity, "P179").map(id => seriesMap.get(id)).filter(Boolean);
+          const seriesIds = [...new Set(claimIds(entity, "P179").map(id => seriesMap.get(id)).filter(Boolean).map(String))];
           if (!seriesIds.length) continue;
           const existing = await db.from("anime_series").select("series_id,series_role")
             .eq("anime_id", work.id).in("series_id", seriesIds);
@@ -632,7 +640,9 @@ Deno.serve(async (req: Request) => {
             anime_id: work.id, series_id: id, series_role: "franchise", display_order: 1
           }));
           if (rows.length) {
-            const saved = await db.from("anime_series").insert(rows);
+            const saved = await db.from("anime_series").upsert(rows, {
+              onConflict: "anime_id,series_id,series_role", ignoreDuplicates: true
+            });
             if (saved.error) throw saved.error;
           }
         }
