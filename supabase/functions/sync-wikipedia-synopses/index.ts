@@ -30,36 +30,26 @@ class RetryableApiError extends Error {
 const userAgent = "ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/; Japanese anime catalog)";
 
 async function fetchSynopsis(title: string) {
-  const bareUrl = "https://ja.wikipedia.org/w/rest.php/v1/page/" + encodeURIComponent(title) + "/bare";
-  const bareResponse = await fetch(bareUrl, { headers: { "User-Agent": userAgent, "Accept": "application/json" } });
-  if (bareResponse.status === 404) return null;
-  if (bareResponse.status === 429) throw new RetryableApiError("Wikipedia REST API rate limited", bareResponse.headers.get("Retry-After"));
-  if (!bareResponse.ok) throw new Error("Wikipedia REST API error: " + bareResponse.status);
-  const bare = await bareResponse.json();
-  console.log("ANIXIA_WIKI_BARE", JSON.stringify({ requested: title, title: bare?.title, license: bare?.license, latest: bare?.latest }));
-  const licenseUrl = String(bare?.license?.url || "").replace(/^http:/i, "https:");
-  const licenseTitle = String(bare?.license?.title || "");
-  if (!/creativecommons\.org\/licenses\/by-sa\/(?:3\.0|4\.0)\/?$/i.test(licenseUrl.replace(/^\/\//, "https://"))) return null;
-  const revisionId = Number(bare?.latest?.id || 0);
-  const pageTitle = String(bare?.title || "");
-  if (!revisionId || !pageTitle || norm(pageTitle) !== norm(title)) { console.log("ANIXIA_WIKI_TITLE_SKIP", JSON.stringify({ requested: title, pageTitle, revisionId })); return null; }
-
   const params = new URLSearchParams({
     action: "query", format: "json", formatversion: "2",
-    prop: "extracts|info|pageprops", revids: String(revisionId),
-    exintro: "1", explaintext: "1", inprop: "url"
+    prop: "extracts|info|pageprops|revisions",
+    titles: title,
+    exintro: "1", explaintext: "1", inprop: "url",
+    rvprop: "ids", rvlimit: "1"
   });
-  const apiResponse = await fetch("https://ja.wikipedia.org/w/api.php?" + params, {
+  const response = await fetch("https://ja.wikipedia.org/w/api.php?" + params, {
     headers: { "User-Agent": userAgent, "Accept": "application/json" }
   });
-  if (apiResponse.status === 429) throw new RetryableApiError("Wikipedia Action API rate limited", apiResponse.headers.get("Retry-After"));
-  if (!apiResponse.ok) throw new Error("Wikipedia Action API error: " + apiResponse.status);
-  const payload = await apiResponse.json();
+  if (response.status === 429) throw new RetryableApiError("Wikipedia API rate limited", response.headers.get("Retry-After"));
+  if (!response.ok) throw new Error("Wikipedia API error: " + response.status);
+  const payload = await response.json();
   const page = Array.isArray(payload?.query?.pages) ? payload.query.pages[0] : null;
-  if (!page || page.missing || page.pageprops?.disambiguation || norm(page.title) !== norm(title)) { console.log("ANIXIA_WIKI_PAGE_SKIP", JSON.stringify({ requested: title, pageTitle: page?.title, missing: page?.missing, disambiguation: page?.pageprops?.disambiguation })); return null; }
+  if (!page || page.missing || page.pageprops?.disambiguation || norm(page.title) !== norm(title)) return null;
   const extract = String(page.extract || "").replace(/\r/g, "").trim();
-  if (extract.length < 100 || extract.length > 2400) { console.log("ANIXIA_WIKI_EXTRACT_SKIP", JSON.stringify({ requested: title, extractLength: extract.length })); return null; }
+  if (extract.length < 100 || extract.length > 2400) return null;
   if (/曖昧さ回避|この記事は.*曖昧さ回避/.test(extract.slice(0, 240))) return null;
+  const revisionId = Number(page.lastrevid || page.revisions?.[0]?.revid || 0);
+  if (!revisionId) return null;
   const canonicalUrl = String(page.fullurl || ("https://ja.wikipedia.org/wiki/" + encodeURIComponent(page.title.replace(/ /g, "_"))));
   const revisionUrl = "https://ja.wikipedia.org/w/index.php?title=" + encodeURIComponent(page.title) + "&oldid=" + revisionId;
   return {
@@ -68,8 +58,8 @@ async function fetchSynopsis(title: string) {
     sourceUrl: canonicalUrl,
     revisionId,
     revisionUrl,
-    license: licenseTitle || "CC BY-SA",
-    licenseUrl: licenseUrl.startsWith("//") ? "https:" + licenseUrl : licenseUrl,
+    license: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
     attribution: "Wikipedia contributors"
   };
 }
@@ -189,6 +179,6 @@ Deno.serve(async (req: Request) => {
 
   return json({
     ...result,
-    message: "CC BY-SA 4.0をAPIで確認でき、作品名が完全一致したWikipedia記事の冒頭だけを取得しました。出典・改訂版・ライセンス情報を作品データに保存しています。"
+    message: "Wikipediaの正確な作品名一致記事から冒頭文を取得し、記事URL・改訂版・CC BY-SA 4.0の帰属情報を保存しました。"
   }, result.retryAfter ? 429 : 200);
 });
