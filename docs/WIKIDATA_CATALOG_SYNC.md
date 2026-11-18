@@ -68,8 +68,8 @@ The schedules are registered in Supabase Cron and use a secret retrieved from Su
 
 - Edge Function: `sync-commons-posters`
 - Uses Wikimedia Commons file metadata and records attribution/source information alongside image URLs.
-- Requires a title match in the filename or image description, poster/key-visual context, portrait dimensions, a recognized CC BY/CC BY-SA/CC0/Public Domain license URL, and author/credit metadata where required.
-- Only images with verifiable licensing/attribution are eligible.
+- Requires a title match in the filename or image description, poster/key-visual context, portrait dimensions, and a verified CC0 or Public Domain license URL. CC BY/CC BY-SA files are deliberately skipped until attribution can be displayed consistently in every poster placement.
+- Stores the Commons file page, author/credit, license name and license URL. The anime detail page displays the source and license credit. Other catalog views currently accept only CC0/Public Domain images, which do not require attribution.
 - A failed match leaves the poster field blank; no unverified image is assigned.
 - The current catalog has not yet demonstrated broad poster coverage. Image synchronization success must be measured by actual updated-row counts, not merely by the Edge Function being active.
 
