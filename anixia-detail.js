@@ -49,6 +49,18 @@
       return '<article class="anixia-detail-episode"><b>'+esc(numberLabel+" · "+title)+'</b><p>'+esc(date+(e.synopsis?" · "+e.synopsis:""))+'</p></article>';
     }).join(""):'<div class="anixia-empty">公開済みのエピソード情報はありません。</div>';
     $("synopsis").textContent=a.synopsis||"あらすじ情報はまだ登録されていません。";
+    const synopsisSource=$("synopsis-source");
+    if(a.synopsis_source_url && a.synopsis_license_url){
+      const sourceTitle=a.synopsis_source_title||"Wikipedia";
+      const articleUrl=esc(a.synopsis_source_url);
+      const revisionUrl=esc(a.synopsis_source_revision_url||a.synopsis_source_url);
+      const licenseUrl=esc(a.synopsis_license_url);
+      synopsisSource.hidden=false;
+      synopsisSource.innerHTML='出典：<a href="'+articleUrl+'" target="_blank" rel="noopener noreferrer">Wikipedia「'+esc(sourceTitle)+'」</a> · <a href="'+revisionUrl+'" target="_blank" rel="noopener noreferrer">'+esc(a.synopsis_attribution||"Wikipedia contributors")・'編集履歴</a> · <a href="'+licenseUrl+'" target="_blank" rel="noopener noreferrer">'+esc(a.synopsis_license||"CC BY-SA 4.0")+'</a>';
+    }else{
+      synopsisSource.hidden=true;
+      synopsisSource.textContent="";
+    }
     const studioNames=(a.studios||[]).map(s=>s.name_ja||s.name).filter(Boolean);
     const info=[["形式",fmt(a.format)],["放送年",a.release_year||"未登録"],["シーズン",a.season||"未登録"],["話数",a.episode_count||a.episodes_count||"未登録"],["放送状況",a.status||"未登録"],["制作会社",studioNames.join("・")||(a.studio?(a.studio.name_ja||a.studio.name):"未登録")]];
     if(a.official_url)info.push(["公式サイト",'<a href="'+esc(a.official_url)+'" target="_blank" rel="noopener noreferrer">公式サイトを開く</a>']);
