@@ -194,19 +194,21 @@ async function persist(db: any, works: any[]) {
     } else {
       const currentResult = await db.from("anime")
         .select("release_year,season,season_name,season_name_text,released_on")
-        .eq("id", animeId).single();
+        .eq("id", animeId).maybeSingle();
       if (currentResult.error) throw currentResult.error;
       const current = currentResult.data;
-      const patch: Record<string, unknown> = {};
-      if (current.release_year == null && work.release_year != null) patch.release_year = work.release_year;
-      if (current.season == null && work.season != null) patch.season = work.season;
-      if (current.season_name == null && work.season_name != null) patch.season_name = work.season_name;
-      if (current.season_name_text == null && work.season_name_text != null) patch.season_name_text = work.season_name_text;
-      if (current.released_on == null && work.released_on != null) patch.released_on = work.released_on;
-      if (Object.keys(patch).length) {
-        const update = await db.from("anime").update(patch).eq("id", animeId);
-        if (update.error) throw update.error;
-        updated++;
+      if (current) {
+        const patch: Record<string, unknown> = {};
+        if (current.release_year == null && work.release_year != null) patch.release_year = work.release_year;
+        if (current.season == null && work.season != null) patch.season = work.season;
+        if (current.season_name == null && work.season_name != null) patch.season_name = work.season_name;
+        if (current.season_name_text == null && work.season_name_text != null) patch.season_name_text = work.season_name_text;
+        if (current.released_on == null && work.released_on != null) patch.released_on = work.released_on;
+        if (Object.keys(patch).length) {
+          const update = await db.from("anime").update(patch).eq("id", animeId);
+          if (update.error) throw update.error;
+          updated++;
+        }
       }
       mappings.push({
         anime_id: animeId, source: "wikidata", external_id: work.qid,
@@ -282,20 +284,33 @@ Deno.serve(async (req: Request) => {
   try {
     const admin = createClient(url, service, { auth: { persistSession: false, autoRefreshToken: false } });
     let authorized = false;
-    const cronToken = req.headers.get("x-anixia-cron-token");
+    const cronToken = (req.headers.get("x-anixia-cron-token") || "").trim();
     if (cronToken) {
       const secret = await admin.from("catalog_sync_secrets").select("secret_hash").eq("id", 1).maybeSingle();
       if (secret.error) throw secret.error;
-      authorized = Boolean(secret.data?.secret_hash) && (await sha256(cronToken)) === secret.data.secret_hash;
+      authorized = Boolean(secret.data?.secret_hash) && (await sha256(cronToken)) === String(secret.data.secret_hash).trim();
+      console.log("ANIXIA seasonal cron authentication", {
+        hasToken: true,
+        tokenLength: cronToken.length,
+        hasStoredHash: Boolean(secret.data?.secret_hash),
+        hashMatches: authorized
+      });
+      if (!authorized) return json({ error: "Invalid seasonal synchronization token." }, 401);
+    } else {
+      console.log("ANIXIA seasonal cron authentication", {
+        hasToken: false,
+        hasAuthorization: Boolean(req.headers.get("Authorization"))
+      });
     }
     if (!authorized) {
-      const auth = req.headers.get("Authorization");
-      if (!auth?.startsWith("Bearer ")) return json({ error: "Admin login or a valid sync token is required." }, 401);
+      const auth = req.headers.get("Authorization") || "";
+      const token = auth.replace(/^Bearer\\s+/i, "");
+      if (!token || token === auth) return json({ error: "Admin login or a valid sync token is required." }, 401);
       const userClient = createClient(url, anon, {
         auth: { persistSession: false, autoRefreshToken: false },
         global: { headers: { Authorization: auth } }
       });
-      const user = await userClient.auth.getUser();
+      const user = await userClient.auth.getUser(token);
       if (user.error || !user.data.user) return json({ error: "Login could not be verified." }, 401);
       const check = await userClient.rpc("is_anixia_admin");
       if (check.error || check.data !== true) return json({ error: "ANIXIA admin permission is required." }, 403);
