@@ -56,7 +56,7 @@
       const revisionUrl=esc(a.synopsis_source_revision_url||a.synopsis_source_url);
       const licenseUrl=esc(a.synopsis_license_url);
       synopsisSource.hidden=false;
-      synopsisSource.innerHTML='出典：<a href="'+articleUrl+'" target="_blank" rel="noopener noreferrer">Wikipedia「'+esc(sourceTitle)+'」</a> · <a href="'+revisionUrl+'" target="_blank" rel="noopener noreferrer">'+esc(a.synopsis_attribution||"Wikipedia contributors")・'編集履歴</a> · <a href="'+licenseUrl+'" target="_blank" rel="noopener noreferrer">'+esc(a.synopsis_license||"CC BY-SA 4.0")+'</a>';
+      synopsisSource.innerHTML='出典：<a href="'+articleUrl+'" target="_blank" rel="noopener noreferrer">Wikipedia「'+esc(sourceTitle)+'」</a> · <a href="'+revisionUrl+'" target="_blank" rel="noopener noreferrer">'+esc(a.synopsis_attribution||"Wikipedia contributors")+'・編集履歴</a> · <a href="'+licenseUrl+'" target="_blank" rel="noopener noreferrer">'+esc(a.synopsis_license||"CC BY-SA 4.0")+'</a>';
     }else{
       synopsisSource.hidden=true;
       synopsisSource.textContent="";
