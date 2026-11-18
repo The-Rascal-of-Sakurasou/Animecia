@@ -13,6 +13,10 @@
     if(!items.length)return '<span class="anixia-empty">'+label+'はまだ登録されていません。</span>';
     return items.map(x=>'<span>'+esc(x.name_ja||x.name||"名称未登録")+(x.role?' · '+esc(roleLabel(x.role)):"")+'</span>').join("");
   }
+  function setPosterFallback(name){
+    $("poster-fallback").innerHTML='<span class="anixia-poster-brand">ANIXIA</span><strong class="anixia-poster-title">'+esc(name)+'</strong><small class="anixia-poster-caption">TITLE ARCHIVE</small>';
+    $("poster-fallback").hidden=false;
+  }
   function setError(message){$("detail-loading").hidden=true;$("detail-error").hidden=false;$("detail-error").textContent=message;}
   function renderWork(a){
     work=a;
@@ -23,9 +27,10 @@
     $("poster").alt=name+"のポスター";
     $("poster").hidden=!a.poster_url;
     $("poster-fallback").hidden=!!a.poster_url;
+    if(!a.poster_url) setPosterFallback(name);
     if(a.poster_url){
       $("poster").src=a.poster_url;
-      $("poster").onerror=()=>{$("poster").hidden=true;$("poster-fallback").hidden=false;};
+      $("poster").onerror=()=>{$("poster").hidden=true;setPosterFallback(name);};
     }else $("poster").removeAttribute("src");
     $("title").textContent=name;
     $("subtitle").textContent=[a.title,a.title_kana].filter((v,i,arr)=>v&&v!==name&&arr.indexOf(v)===i).join(" / ");
