@@ -47,7 +47,7 @@ The Cron job reads the secret from vault.decrypted_secrets at runtime and sends 
 - Gateway JWT verification is disabled for this one function because it supports the separate private cron-token authentication path; all requests are then checked by the function itself.
 
 ## Source limitations
-Wikidata is community-maintained and may contain incomplete or incorrect classifications. A Japan country-of-origin statement and a matching class do not prove that every item meets ANIXIA's editorial inclusion policy. Review each unpublished candidate before publication. The Query Service is rate-limited; this implementation makes one bounded query per scheduled run and uses a descriptive User-Agent.
+Wikidata is community-maintained and may contain incomplete or incorrect classifications. Automatic publication is limited to records with a Japanese title, a valid QID, a release year from 1963 onward, Japan as country of origin, and a supported format (TV, movie or OVA). Records missing a Japanese title remain unpublished rather than requiring a manual approval step. The Query Service is rate-limited; this implementation makes one bounded query per scheduled run and uses a descriptive User-Agent.
 
 ## Episode synchronization
 
