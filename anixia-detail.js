@@ -30,6 +30,7 @@
     if(!a.poster_url) setPosterFallback(name);
     if(a.poster_url){
       $("poster").src=a.poster_url;
+      $("poster").onload=()=>{$("poster").classList.toggle("anixia-poster-logo",$("poster").naturalWidth>$("poster").naturalHeight*1.15);};
       $("poster").onerror=()=>{$("poster").hidden=true;setPosterFallback(name);};
     }else $("poster").removeAttribute("src");
     $("title").textContent=name;
