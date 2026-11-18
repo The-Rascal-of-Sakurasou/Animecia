@@ -23,7 +23,8 @@ const FORMATS: Record<string, string> = {
   Q113671041: "ona",
   Q113687694: "ova",
   Q117467246: "tv",
-  Q117717390: "movie",\n  Q1261214: "special"
+  Q117717390: "movie",
+  Q1261214: "special"
 };
 
 function currentSeason() {
