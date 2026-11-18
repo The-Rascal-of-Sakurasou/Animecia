@@ -39,6 +39,8 @@ jobs:
         run: |
           node --input-type=module <<'NODE'
           import { chromium } from 'playwright';
+          import { readdirSync } from 'node:fs';
+          import { join, relative, sep } from 'node:path';
 
           const base = process.env.BASE_URL;
           const pages = [
@@ -46,6 +48,24 @@ jobs:
             'community.html', 'messages.html', 'profile.html',
             'admin.html', 'quiz-play.html', 'genres.html'
           ];
+          // Add a deterministic sample of generated work and genre pages.
+          function collectIndexPages(root) {
+            const found = [];
+            function walk(dir) {
+              for (const entry of readdirSync(dir, { withFileTypes: true })) {
+                const full = join(dir, entry.name);
+                if (entry.isDirectory()) walk(full);
+                else if (entry.isFile() && entry.name === 'index.html') {
+                  found.push(relative(process.cwd(), full).split(sep).join('/'));
+                }
+              }
+            }
+            walk(root);
+            return found.sort().slice(0, 12);
+          }
+          for (const root of ['anime', 'genre']) {
+            pages.push(...collectIndexPages(root));
+          }
           const widths = [320, 360, 375, 390, 430, 600, 768, 820, 1024, 1366, 1920];
           const browser = await chromium.launch({ headless: true });
           const failures = [];
