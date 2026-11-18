@@ -23,8 +23,7 @@ function licenseInfo(meta: Record<string, any>) {
   const publicDomain = /^(public domain|pd|public domain mark)$/i.test(short) && /creativecommons\.org\/publicdomain\/mark\//.test(licenseUrl);
   const ccBy = /^cc by(?:\s|$)/i.test(short) && /creativecommons\.org\/licenses\/by\/\d+(?:\.\d+)?\//.test(licenseUrl);
   const ccBySa = /^cc by-sa(?:\s|$)/i.test(short) && /creativecommons\.org\/licenses\/by-sa\/\d+(?:\.\d+)?\//.test(licenseUrl);
-  // Restrict posters to CC0 or Public Domain until attribution can be shown consistently in every poster placement.
-  const allowed = cc0 || publicDomain;
+  const allowed = cc0 || publicDomain || ccBy || ccBySa;
   if (!allowed || !/^https:\/\/creativecommons\.org\//i.test(url)) return null;
   if (/non.?commercial|by-nc|\bnd\b|by-nd|fair.?use|all.?rights.?reserved/i.test(normalized + " " + licenseUrl)) return null;
   if ((ccBy || ccBySa) && !artist && !credit) return null;
@@ -91,7 +90,9 @@ async function searchImage(work: any) {
                 id: page.title,
                 page: info.descriptionurl,
                 attribution: license.attribution,
-                license: license.short
+                license: license.short,
+                licenseUrl: license.url,
+                licenseUrl: license.url
               };
             }
           }
@@ -183,7 +184,8 @@ async function searchImage(work: any) {
                 id: best.page.title,
                 page: best.info.descriptionurl,
                 attribution: best.license.attribution,
-                license: best.license.short
+                license: best.license.short,
+                licenseUrl: best.license.url
               };
             }
           }
