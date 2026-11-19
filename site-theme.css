@@ -3867,3 +3867,7 @@ html body footer.anixia-global-footer .anixia-footer-inner{width:min(var(--anixi
 html body footer.anixia-global-footer :where(.anixia-footer-main,.anixia-footer-nav,.anixia-footer-bottom){display:flex!important;justify-content:flex-start!important;align-items:flex-start!important;margin-left:0!important;text-align:left!important}
 html body footer.anixia-global-footer .anixia-footer-nav{flex-wrap:wrap!important;gap:10px 22px!important}
 @media(max-width:700px){main,[role=main]{width:100%!important}html body header :where(.header-inner,.container,.container.nav,.anixia-shell,.wrap,.nav-inner,.navbar-inner,.wrap.head){min-height:60px!important;padding:0 14px!important;gap:12px!important}html body footer.anixia-global-footer .anixia-footer-inner{padding:28px 14px 18px!important}}
+
+
+/* Poster images are displayed without any provider/source badge or caption. */
+.anixia-detail-source,.anixia-poster-credit,.anixia-poster-credit-line{display:none!important;visibility:hidden!important}
