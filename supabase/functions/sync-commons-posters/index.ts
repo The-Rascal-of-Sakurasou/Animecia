@@ -55,7 +55,6 @@ function sameToken(a: string, b: string): boolean {
 }
 
 async function searchImage(work: any) {
-  console.log("poster-debug:start", JSON.stringify({id:work.id,qid:work.source_id,title:work.title_ja}));
   // Prefer Wikidata P18: the image is directly linked to this exact anime item,
   // so matching does not depend on Japanese/English filename spelling.
   const qid = String(work.source_id || "");
@@ -75,7 +74,6 @@ async function searchImage(work: any) {
         if (enLabel) extraTitles.push(enLabel);
         for (const alias of (entity?.aliases?.en || []).slice(0, 8)) if (alias?.value) extraTitles.push(alias.value);
         const fileName = entity?.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
-        console.log("poster-debug:wikidata", JSON.stringify({qid,p18:fileName,claims:Object.keys(entityPayload?.entities?.[qid]?.claims||{})}));
         if (typeof fileName === "string" && fileName.trim()) {
           const imageParams = new URLSearchParams({
             action: "query", format: "json", formatversion: "2",
@@ -113,7 +111,6 @@ async function searchImage(work: any) {
         // Follow the Wikidata media-franchise link for a logo image (P154)
         // and Commons category (P373), while preferring exact item metadata.
         const franchiseId = entityPayload?.entities?.[qid]?.claims?.P8345?.[0]?.mainsnak?.datavalue?.value?.id;
-        console.log("poster-debug:franchise",JSON.stringify({qid,franchiseId}));
         let franchiseClaims: any = null;
         if (franchiseId) {
           const franchiseParams = new URLSearchParams({
@@ -130,7 +127,6 @@ async function searchImage(work: any) {
         const logoFileName =
           entityPayload?.entities?.[qid]?.claims?.P154?.[0]?.mainsnak?.datavalue?.value ||
           franchiseClaims?.P154?.[0]?.mainsnak?.datavalue?.value;
-        console.log("poster-debug:logo",JSON.stringify({qid,logoFileName}));
         if (typeof logoFileName === "string" && logoFileName.trim()) {
           const logoParams = new URLSearchParams({
             action: "query", format: "json", formatversion: "2",
@@ -164,7 +160,6 @@ async function searchImage(work: any) {
         const commonsCategory =
           entityPayload?.entities?.[qid]?.claims?.P373?.[0]?.mainsnak?.datavalue?.value ||
           franchiseClaims?.P373?.[0]?.mainsnak?.datavalue?.value;
-        console.log("poster-debug:category",JSON.stringify({qid,commonsCategory}));
         if (typeof commonsCategory === "string" && commonsCategory.trim()) {
           const categoryParams = new URLSearchParams({
             action: "query", format: "json", formatversion: "2",
@@ -214,7 +209,6 @@ async function searchImage(work: any) {
       console.warn("Wikidata/Commons category lookup failed for " + qid + ": " + String(error).slice(0, 160));
     }
   }
-  console.log("poster-debug:fallthrough-search",JSON.stringify({qid}));
   const candidates = [...new Set([work.title_ja, work.title, work.title_kana, ...extraTitles].filter((v: unknown) => String(v || "").trim().length >= 3))].slice(0, 6);
   for (const query of candidates) {
     const searchTerms = [query + " logo", query + " poster", query + " key visual", query + " cover", query];
@@ -232,7 +226,6 @@ async function searchImage(work: any) {
     if (!response.ok) throw new Error("Wikimedia Commons API error: " + response.status);
     const payload = await response.json();
     const pages = Array.isArray(payload?.query?.pages) ? payload.query.pages : [];
-    console.log("poster-debug:search-results",JSON.stringify({query,pages:pages.length,titles:pages.slice(0,8).map((p:any)=>p.title)}));
     const target = norm(query);
     const ranked = pages.map((page: any) => {
       const info = page.imageinfo?.[0];
@@ -260,18 +253,6 @@ async function searchImage(work: any) {
       if (!validShape) return null;
       const license = licenseInfo(info.extmetadata || {});
       const yearMatch = work.release_year && String(page.title).includes(String(work.release_year));
-      if (fileName.includes(target) || description.includes(target)) {
-        console.log("poster-debug:matched-candidate", JSON.stringify({
-          query, title: page.title, width, height, ratio: Number((width / Math.max(height, 1)).toFixed(3)),
-          logoFile, posterContext, validShape, licenseShort: cleanHtml(info.extmetadata?.LicenseShortName?.value),
-          licenseUrl: cleanHtml(info.extmetadata?.LicenseUrl?.value),
-          copyrighted: cleanHtml(info.extmetadata?.Copyrighted?.value),
-          metaKeys: Object.keys(info.extmetadata || {}),
-          artistMeta: cleanHtml(info.extmetadata?.Artist?.value || info.extmetadata?.Author?.value),
-          creditMeta: cleanHtml(info.extmetadata?.Credit?.value || info.extmetadata?.Attribution?.value),
-          attribution: license?.attribution || null, accepted: Boolean(validShape && license)
-        }));
-      }
       if (!license) return null;
       return { page, info, license, score: (exact ? 100 : 90) + (yearMatch ? 10 : 0) + (logoFile ? 20 : 0) + (posterFile ? 10 : 0) };
     }).filter(Boolean).sort((a: any, b: any) => b.score - a.score);
