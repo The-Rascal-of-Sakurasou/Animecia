@@ -10,7 +10,7 @@
   };
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const en=()=>localStorage.getItem("anixia-language")==="en";
-  const hasJapanese=value=>/[\\u3040-\\u30ff\\u3400-\\u9fff]/u.test(String(value||""));
+  const hasJapanese=value=>/[\u3040-\u30ff\u3400-\u9fff]/u.test(String(value||""));
   const label = row => en()?(row.name_en||(row.name&&!hasJapanese(row.name)?row.name:"Name unavailable")):(row.name_ja||"日本語表記未登録");
   const initials = row => Array.from(label(row).trim())[0] || "A";
   const kindLabel = value => en()?({voice_actor:"Voice Actor",director:"Director",screenwriter:"Screenwriter",producer:"Producer",composer:"Composer"}[value]||"Person / Staff"):({voice_actor:"声優",director:"監督",screenwriter:"脚本",producer:"プロデューサー",composer:"作曲家"}[value]||"人物・スタッフ");
