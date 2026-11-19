@@ -4365,3 +4365,15 @@ main :where(input,select,textarea){
   color:var(--anixia-text)!important;
   border-color:var(--anixia-surface-border)!important;
 }
+
+
+/* ANIXIA final cross-page normalization: pure white canvas, soft-white feature frames, black content text. */
+html,body{background:#FFFFFF!important;background-color:#FFFFFF!important;background-image:none!important;color:#000000!important}
+body,:where(main,section,article,aside,div,header,footer){color:inherit}
+main,:where(#app,#root,#__next,.app,.site,.site-main,.page-wrapper,.page-container){background-color:transparent!important;background-image:none!important;color:#000000!important}
+body :where(h1,h2,h3,h4,h5,h6,p,li,dt,dd,label,legend,summary,th,td,.title,.description,.subtitle,.muted,.hint,.help-text,.meta,.sub){color:#000000!important}
+main :where(a:not([class*="button"]):not([class*="btn"])){color:#000000!important;text-decoration-color:rgba(0,0,0,.25)!important}
+main :where(.card,.panel,.feature-card,.content-card,.info-card,.stat-card,.service-card,.quiz-card,.rank-card,.anime-card,.work-card,.genre-card,.season-card,.result-card,.recommend-card,.recommendation-card,.profile-card,.setting-card,.auth-panel,.admin-panel,.admin-warning,.admin-code,.modal-content,[class*="-card"],[class*="-panel"],[class*="-tile"],[class*="-widget"],[class*="-box"],[class*="-surface"]){background:#F7F9F8!important;background-color:#F7F9F8!important;background-image:none!important;color:#000000!important;border-color:#E7ECE9!important;box-shadow:none!important}
+main :where(.card,.panel,.feature-card,.content-card,.info-card,.stat-card,.service-card,.quiz-card,.rank-card,.anime-card,.work-card,.genre-card,.season-card,.result-card,.recommend-card,.recommendation-card,.profile-card,.setting-card,.auth-panel,.admin-panel,.admin-warning,.admin-code,.modal-content,[class*="-card"],[class*="-panel"],[class*="-tile"],[class*="-widget"],[class*="-box"],[class*="-surface"]) :where(*){color:#000000!important}
+main :where(button,.button,.btn,[type="submit"],[type="button"],a[class*="button"],a[class*="btn"]){color:#FFFFFF!important}
+main :where(input,select,textarea){background:#FFFFFF!important;color:#000000!important;border-color:#E7ECE9!important}
