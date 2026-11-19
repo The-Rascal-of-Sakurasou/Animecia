@@ -38,11 +38,11 @@
         .site-header,.anixia-global-header{position:sticky;top:0;z-index:9999;min-height:68px;}
         .site-header .anixia-logo,.anixia-global-header .anixia-logo{
           display:inline-flex;align-items:center;flex:none;
-          color:#145438!important;text-decoration:none!important;font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:27px;font-weight:850;letter-spacing:-1.9px;line-height:1;text-shadow:none;
+          color:#03AF6A!important;text-decoration:none!important;font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:27px;font-weight:850;letter-spacing:-1.9px;line-height:1;text-shadow:none;
           transition:opacity .18s ease,transform .18s ease;
         }
         .site-header .anixia-logo .anixia-logo-xia,.anixia-global-header .anixia-logo .anixia-logo-xia{
-          display:inline;position:relative;margin:0;padding:0;color:#42b8e8!important;background:transparent;border:0;border-radius:0;font:inherit;letter-spacing:inherit;line-height:inherit;text-shadow:none;transform:none;
+          display:inline;position:relative;margin:0;padding:0;color:#1DA1F2!important;background:transparent;border:0;border-radius:0;font:inherit;letter-spacing:inherit;line-height:inherit;text-shadow:none;transform:none;
         }
         .site-header .anixia-logo:hover,.anixia-global-header .anixia-logo:hover{
           opacity:.88;transform:translateY(-1px);
@@ -102,7 +102,7 @@
         .anixia-footer-inner{width:min(1320px,100%);margin:0 auto;padding:38px 22px 20px}
         .anixia-footer-main{margin-bottom:24px}
         .anixia-footer-logo{display:inline-flex;color:#03af6a!important;text-decoration:none!important;font:850 27px/1 Inter,"Segoe UI",Arial,sans-serif;letter-spacing:-1.9px}
-        .anixia-footer-logo .anixia-logo-xia{display:inline;position:relative;margin:0;padding:0;color:#42b8e8!important;background:transparent;border:0;border-radius:0;font:inherit;letter-spacing:inherit;line-height:inherit;text-shadow:none;transform:none}
+        .anixia-footer-logo .anixia-logo-xia{display:inline;position:relative;margin:0;padding:0;color:#1DA1F2!important;background:transparent;border:0;border-radius:0;font:inherit;letter-spacing:inherit;line-height:inherit;text-shadow:none;transform:none}
         .anixia-footer-description{margin:10px 0 0!important;color:#a8a8a8!important;font-size:12px!important}
         .anixia-footer-nav{display:flex;flex-wrap:wrap;gap:9px 22px;padding:20px 0;border-top:1px solid rgba(255,255,255,.09);border-bottom:1px solid rgba(255,255,255,.09)}
         .anixia-footer-nav a{color:#e6e6e6!important;text-decoration:none!important;font-size:12px!important;font-weight:650!important;transition:color .15s ease}
