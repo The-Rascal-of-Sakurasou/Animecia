@@ -310,7 +310,7 @@ Deno.serve(async (req: Request) => {
     try {
       const image = await searchImage(work);
       if (!image) { results.unmatched.push(work.title_ja || work.title || work.id); continue; }
-      const { error } = await db.from("anime").update({
+      const { data: updatedRecord, error } = await db.from("anime").update({
         poster_url: image.url,
         poster_source: "wikimedia_commons",
         poster_source_id: image.id,
@@ -319,8 +319,11 @@ Deno.serve(async (req: Request) => {
         poster_license: image.license,
         poster_license_url: image.licenseUrl,
         poster_synced_at: new Date().toISOString()
-      }).eq("id", work.id);
+      }).eq("id", work.id).select("id").maybeSingle();
       if (error) throw error;
+      if (!updatedRecord?.id || updatedRecord.id !== work.id) {
+        throw new Error("画像更新対象の作品レコードが更新されませんでした。RLS・接続先・作品IDを確認してください。");
+      }
       results.updated++;
     } catch (error) {
       results.errors.push((work.title_ja || work.title || work.id) + ": " + String(error).slice(0, 160));
