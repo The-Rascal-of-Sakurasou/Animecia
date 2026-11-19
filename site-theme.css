@@ -3204,3 +3204,19 @@ html,body{background:#fff!important;color:#26332c!important}
 :where(.anixia-eyebrow,.page-kicker,.eyebrow,.section-link,.more,.feature-index,.anixia-service-index,.rank-score,.score,.score-badge,.anime-score){color:var(--anixia-brand-green-dark)!important}
 :where(input,select,textarea):focus{border-color:var(--anixia-brand-green)!important;box-shadow:0 0 0 3px rgba(3,175,106,.13)!important}
 :where(input[type=checkbox],input[type=radio]){accent-color:var(--anixia-brand-green)!important}
+
+/* Explicit wordmark overrides: XIA is blue, without the old boxed X treatment. */
+.site-header .anixia-logo .anixia-logo-xia,
+.anixia-global-header .anixia-logo .anixia-logo-xia,
+.anixia-footer-logo .anixia-logo-xia,
+.anixia-logo .anixia-logo-xia{
+ display:inline!important;width:auto!important;height:auto!important;margin:0!important;padding:0!important;
+ color:#1DA1F2!important;background:transparent!important;border:0!important;border-radius:0!important;
+ transform:none!important;font:inherit!important;letter-spacing:inherit!important;line-height:inherit!important;
+}
+.site-header .anixia-logo .anixia-logo-xia:after,
+.anixia-global-header .anixia-logo .anixia-logo-xia:after,
+.anixia-footer-logo .anixia-logo-xia:after,
+.anixia-logo .anixia-logo-xia:after{
+ content:"";position:absolute;left:7%;right:4%;bottom:-.13em;height:2px;background:#03AF6A;border-radius:2px;
+}
