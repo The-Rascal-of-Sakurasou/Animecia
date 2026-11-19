@@ -40,6 +40,15 @@
       $("display-name").value=p.display_name||"";
       $("username").value=p.username||"";
       $("bio").value=p.bio||"";
+      $("is-public").checked=p.is_public!==false;
+      $("show-posts").checked=p.show_posts!==false;
+      $("show-favorites").checked=p.show_favorites!==false;
+      $("show-anime-follows").checked=p.show_anime_follows!==false;
+      $("show-watch-status").checked=p.show_watch_status!==false;
+      $("show-ratings").checked=p.show_ratings!==false;
+      $("show-reviews").checked=p.show_reviews!==false;
+      $("show-user-follows").checked=p.show_user_follows!==false;
+      $("show-ranking").checked=p.show_ranking!==false;
       renderTab();
     }catch(e){
       console.error(e);
@@ -50,7 +59,15 @@
   $("profile-form").addEventListener("submit",async e=>{
     e.preventDefault();
     try{
-      const result=await ANIXIA.updateProfile((await ANIXIA.getUser()).id,{display_name:$("display-name").value,username:$("username").value,bio:$("bio").value});
+      const result=await ANIXIA.updateProfile((await ANIXIA.getUser()).id,{
+        display_name:$("display-name").value,username:$("username").value,bio:$("bio").value,
+        is_public:$("is-public").checked,show_posts:$("show-posts").checked,
+        show_favorites:$("show-favorites").checked,show_anime_follows:$("show-anime-follows").checked,
+        show_watch_status:$("show-watch-status").checked,show_ratings:$("show-ratings").checked,
+        show_reviews:$("show-reviews").checked,show_user_follows:$("show-user-follows").checked,
+        show_ranking:$("show-ranking").checked
+      });
+      dashboard.profile={...dashboard.profile,...result};
       $("profile-message").textContent="プロフィールを保存しました。";
     }catch(error){console.error(error);$("profile-message").textContent="保存できませんでした。ユーザーIDの重複などを確認してください。";}
   });
