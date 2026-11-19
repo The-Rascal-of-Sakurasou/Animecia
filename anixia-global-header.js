@@ -2,7 +2,6 @@
   "use strict";
   const ROOT = "/anixia/";
   const navItems = [
-    ["ホーム", ""],
     ["作品一覧", "anime.html"],
     ["作品を探す", "discover.html"],
     ["人物・団体", "entities.html"],
@@ -44,7 +43,7 @@
       .anixia-footer-nav a:hover{color:#fff!important}
       .anixia-footer-bottom{display:flex!important;justify-content:flex-start!important;padding-top:12px!important;border-top:1px solid #222!important;color:#fff!important;font-size:10px!important}
       .anixia-admin-login{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:36px!important;margin-top:10px!important;padding:0 12px!important;border:1px solid #000!important;border-radius:6px!important;color:#000!important;background:#000!important;font-size:12px!important;font-weight:750!important;text-decoration:none!important;opacity:1!important;cursor:pointer!important}
-      .anixia-admin-login:hover,.anixia-admin-login:focus{color:#000!important;background:#000!important;border-color:#000!important;outline:none!important}
+      .anixia-admin-login,.anixia-admin-login:hover,.anixia-admin-login:focus,.anixia-admin-login:active{color:#000!important;background:#000!important;border-color:#000!important;outline:none!important;box-shadow:none!important}
       @media(max-width:900px){
         .anixia-global-header-inner{flex-wrap:wrap!important;gap:8px 12px!important;padding:9px 14px!important}
         .anixia-global-nav{order:3!important;flex:1 1 100%!important;width:100%!important}
