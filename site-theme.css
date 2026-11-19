@@ -4821,3 +4821,50 @@ html body footer .anixia-admin-login:active{
   html body header.site-header nav a,
   html body > header:not([class]) nav a{padding:6px 8px!important;font-size:11px!important}
 }
+
+
+/* Shared frame compatibility for legacy page-specific header/footer markup. */
+html body header.site-header .container.nav{
+  width:min(1320px,100%)!important;
+  max-width:1320px!important;
+  min-height:66px!important;
+  margin:0 auto!important;
+  padding:10px 22px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:20px!important;
+  box-sizing:border-box!important;
+  background:transparent!important;
+}
+html body header.site-header .brand:not(:has(.anixia-logo-xia)),
+html body header.site-header .logo,
+html body > header:not([class]) .logo{
+  color:transparent!important;
+  background:linear-gradient(90deg,#03AF6A 0%,#03AF6A 49%,#1DA1F2 51%,#1DA1F2 100%)!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+}
+html body footer .footer-brand{
+  color:transparent!important;
+  background:linear-gradient(90deg,#03AF6A 0%,#03AF6A 49%,#1DA1F2 51%,#1DA1F2 100%)!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+}
+@media(max-width:900px){
+  html body header.site-header .container.nav{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    grid-template-rows:auto auto!important;
+    gap:8px 12px!important;
+    min-height:0!important;
+    padding:9px 14px!important;
+  }
+  html body header.site-header .container.nav nav{
+    grid-column:1/-1!important;
+    grid-row:2!important;
+    width:100%!important;
+  }
+}
