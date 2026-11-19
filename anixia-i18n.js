@@ -280,3 +280,5 @@
 /* Shared bilingual UI cache revision 2. */
 
 /* Cache revision 4: expanded core-page translations. */
+
+/* Cache revision 5: legal/source page translations. */
