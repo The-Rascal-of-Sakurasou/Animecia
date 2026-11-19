@@ -8,7 +8,7 @@
     en: {loading:"Loading…", empty:"No titles are available yet.", failed:"Could not load titles. Please try again later.", year:"Year unknown", genresEmpty:"No genres are available yet.", genresFailed:"Could not load genres.", login:"Log in", mypage:"My Library"}
   };
   const t = () => messages[language()] || messages.ja;
-  const hasJapanese = value => /[\\u3040-\\u30ff\\u3400-\\u9fff]/u.test(String(value||""));
+  const hasJapanese = value => /[\u3040-\u30ff\u3400-\u9fff]/u.test(String(value||""));
   const title = (work) => language() === "en" ? (work.title_en || work.title_romaji || (work.title && !hasJapanese(work.title) ? work.title : "English title unavailable")) : (work.title_ja || work.title_kana || work.title || "タイトル未設定");
   const year = (work) => work.release_year ? String(work.release_year) : t().year;
   const card = (work) => `
