@@ -3,7 +3,8 @@
   const ROOT = "/anixia/";
   const navItems = [
     ["ホーム", ""],
-    ["作品データベース", "anime.html"],
+    ["作品一覧", "anime.html"],
+    ["作品を探す", "discover.html"],
     ["人物・団体", "entities.html"],
     ["今期アニメ", "season.html"],
     ["ジャンル", "genres.html"],
@@ -14,7 +15,6 @@
     ["コミュニティ", "community.html"],
     ["ユーザー検索", "user-search.html"],
     ["メッセージ", "messages.html"],
-    ["マイライブラリ", "mypage.html"]
   ];
 
   function addStyles() {
