@@ -20,7 +20,7 @@
   if(sharedStyleScript&&!document.querySelector('link[data-anixia-unified-theme]')){
     const theme=document.createElement('link');
     theme.rel='stylesheet';
-    theme.href=new URL('site-theme.css?v=anixia-unified-all-pages-20261119g',sharedStyleScript.src).href;
+    theme.href=new URL('site-theme.css?v=anixia-unified-all-pages-20261119h',sharedStyleScript.src).href;
     theme.dataset.anixiaUnifiedTheme='true';
     document.head.appendChild(theme);
   }
@@ -29,7 +29,7 @@
   const performanceScript=Array.from(document.scripts).find(s=>s.src.includes('performance.js'));
   if(performanceScript&&!document.querySelector('script[data-anixia-global-header]')){
     const loader=document.createElement('script');
-    loader.src=new URL('anixia-global-header.js?v=anixia-unified-nav-20261119g',performanceScript.src).href;
+    loader.src=new URL('anixia-global-header.js?v=anixia-unified-nav-20261119h',performanceScript.src).href;
     loader.defer=true;
     loader.dataset.anixiaGlobalHeader='true';
     document.head.appendChild(loader);
