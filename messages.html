@@ -16,7 +16,7 @@ main{max-width:1180px;margin:auto;padding:18px 12px 60px}.messenger{height:calc(
 <script src="auth-core.js"></script>
 <script src="auth-required.js" defer></script>
 <link rel="stylesheet" href="site-theme.css?v=anixia-design-v4-20261119">
-<link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co">
+<link rel="preconnect" href="https://trvnxggqzlhqdhoyiliy.supabase.co">
 </head>
 <body><header><div class="wrap head"><a class="logo" href="index.html">ANIXIA</a><nav class="main-nav"><a href="index.html">ホーム</a><a href="discover.html">探す</a><a href="ranking.html">ランキング</a><a href="community.html">コミュニティ</a><a href="mypage.html">マイページ</a></nav></div></header>
 <main><div id="auth-warning" class="panel empty" style="display:none">ログインが必要です。</div><div id="messenger" class="messenger" style="display:none">
@@ -24,7 +24,7 @@ main{max-width:1180px;margin:auto;padding:18px 12px 60px}.messenger{height:calc(
 <section class="chat"><div class="chat-head"><button id="mobile-back" class="mobile-back">‹</button><div id="chat-avatar"></div><div id="chat-title" class="chat-title"><b>会話を選択してください</b><span>メッセージ</span></div><div class="chat-actions"><a id="profile-link" class="secondary-btn" style="display:none" href="#">プロフィール</a></div></div><div id="messages" class="messages"><div class="empty">会話を選択すると、ここにメッセージが表示されます。</div></div><div id="composer" class="composer" style="display:none"><input id="message-image" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif" multiple hidden><button id="message-image-button" class="attach-btn" type="button" title="写真を追加">＋</button><span id="message-attachment" class="attach-preview"></span><textarea id="message-input" maxlength="2000" placeholder="メッセージを入力"></textarea><button id="send" class="btn send">送信</button></div></section>
 </div></main>
 <script>
-const U="https://bhgdjuwlxvbaeraaivmh.supabase.co",K="sb_publishable_UiVRBLbMIAy-1GZqVY35Zw_uEp-W_GJ",sb=ANIXIAAuth.client();
+const U="https://trvnxggqzlhqdhoyiliy.supabase.co",K="sb_publishable_UiVRBLbMIAy-1GZqVY35Zw_uEp-W_GJ",sb=ANIXIAAuth.client();
 let currentUser,currentThread,selectedUsers=[],selectionMode="dm",channel,threadMeta=new Map();
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=d=>new Date(d).toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});const mediaUrl=(url,stamp)=>{if(!url)return "";try{const u=new URL(url,location.href);if(stamp)u.searchParams.set("v",String(new Date(stamp).getTime()));return u.href}catch(_){return url}};
@@ -49,7 +49,7 @@ async function loadThreads(){
    const preview=latestMap.get(t.id),read=members.find(x=>x.thread_id===t.id)?.last_read_at;
    let unread=0;try{let uq=sb.from("thread_messages").select("id",{count:"exact",head:true}).eq("thread_id",t.id).neq("sender_id",currentUser.id);if(read)uq=uq.gt("created_at",read);const ur=await uq;if(!ur.error)unread=ur.count||0}catch(_){}
    threadMeta.set(t.id,{profile:own,label});
-   const previewText=preview?.attachment_url?"写真":(preview?.body||"メッセージはありません");
+   const previewText=(preview?.attachment_path||preview?.attachment_url)?"写真":(preview?.body||"メッセージはありません");
    html.push('<button class="thread '+(currentThread===t.id?'active':'')+'" data-id="'+t.id+'">'+avatar(own)+'<div class="thread-main"><div class="thread-top"><span class="thread-name">'+esc(label)+'</span><span class="thread-time">'+(preview?esc(fmt(preview.created_at)):"")+'</span></div><div class="thread-preview">'+esc(previewText)+'</div></div>'+(unread?'<span class="unread">'+unread+'</span>':"")+'</button>');
   }
   list.innerHTML=html.join("")||'<div class="empty">会話はありません。</div>';
@@ -65,7 +65,7 @@ async function openThread(id){
  const pl=document.getElementById("profile-link");if(p){pl.style.display="inline-block";pl.href="profile.html?id="+encodeURIComponent(p.id)}else pl.style.display="none";
  document.getElementById("composer").style.display="flex";await loadMessages();
  channel=sb.channel("messages-"+id)
-  .on("postgres_changes",{event:"INSERT",schema:"public",table:"thread_messages",filter:"thread_id=eq."+id},async payload=>{await loadMessages();if(payload?.new?.attachment_url)setTimeout(()=>{if(currentThread===id)loadMessages()},500)})
+  .on("postgres_changes",{event:"INSERT",schema:"public",table:"thread_messages",filter:"thread_id=eq."+id},async payload=>{await loadMessages();if(payload?.new?.attachment_path||payload?.new?.attachment_url)setTimeout(()=>{if(currentThread===id)loadMessages()},500)})
   .on("postgres_changes",{event:"DELETE",schema:"public",table:"thread_messages",filter:"thread_id=eq."+id},loadMessages)
   .subscribe();
 }
@@ -79,17 +79,68 @@ async function loadMessages(){
   let members=[];
   try{const mr=await sb.from("message_members").select("user_id,last_read_at").eq("thread_id",currentThread);if(!mr.error)members=mr.data||[]}catch(e){console.warn("既読情報取得をスキップ",e)}
   let map=new Map();try{map=await getProfiles(data.map(x=>x.sender_id))}catch(e){console.warn("送信者プロフィール取得をスキップ",e)}
+  const mediaRows=[];
+  if(data.length){
+   const mr=await sb.from("thread_message_media").select("message_id,storage_path,sort_order").in("message_id",data.map(x=>x.id)).order("sort_order",{ascending:true});
+   if(!mr.error)mediaRows.push(...(mr.data||[]));
+  }
+  const paths=[...new Set([...mediaRows.map(x=>x.storage_path),...data.map(x=>x.attachment_path).filter(Boolean)])];
+  const signed=new Map();
+  await Promise.all(paths.map(async path=>{
+   const {data,error}=await sb.storage.from("message-media").createSignedUrl(path,3600);
+   if(error){console.warn("メッセージ画像URLを取得できませんでした",error);return}
+   if(data?.signedUrl)signed.set(path,data.signedUrl);
+  }));
   const mediaMap=new Map();
-  if(data.length){try{const mr=await sb.from("thread_message_media").select("message_id,public_url,sort_order").in("message_id",data.map(x=>x.id)).order("sort_order",{ascending:true});if(!mr.error)(mr.data||[]).forEach(x=>{if(!mediaMap.has(x.message_id))mediaMap.set(x.message_id,[]);mediaMap.get(x.message_id).push(x.public_url)})}catch(e){console.warn("写真情報取得をスキップ",e)}}
+  mediaRows.forEach(x=>{const url=signed.get(x.storage_path);if(url){if(!mediaMap.has(x.message_id))mediaMap.set(x.message_id,[]);mediaMap.get(x.message_id).push(url)}});
+  data.forEach(x=>{if(!mediaMap.has(x.id)&&x.attachment_path&&signed.has(x.attachment_path))mediaMap.set(x.id,[signed.get(x.attachment_path)]);else if(!mediaMap.has(x.id)&&x.attachment_url)mediaMap.set(x.id,[x.attachment_url])});
   const others=members.filter(x=>x.user_id!==currentUser.id);let lastDay="";
-  box.innerHTML=data.map(x=>{const mine=x.sender_id===currentUser.id,p=map.get(x.sender_id),name=p?.display_name||p?.username||"ユーザー",dayKey=new Date(x.created_at).toLocaleDateString("ja-JP"),urls=mediaMap.get(x.id)?.length?mediaMap.get(x.id):(x.attachment_url?[x.attachment_url]:[]),photo=urls.length?'<div class="image-message-grid">'+urls.slice(0,4).map(u=>'<a href="'+esc(u)+'" target="_blank" rel="noopener"><img class="image-message" src="'+esc(u)+'" alt="送信された写真" loading="lazy" decoding="async"></a>').join("")+'</div>':"",dayHtml=dayKey!==lastDay?'<div class="day">'+esc(dayKey)+'</div>':"";lastDay=dayKey;let status="送信済み";if(mine){const tm=new Date(x.created_at).getTime(),read=others.filter(o=>o.last_read_at&&new Date(o.last_read_at).getTime()>=tm).length;status=others.length&&read===others.length?"既読":read?"既読 "+read+"/"+others.length:"送信済み"}return dayHtml+'<div class="msg-row '+(mine?"mine":"")+'"><div><div class="bubble">'+esc(x.body||"").replace(/\n/g,"<br>")+photo+'</div><div class="msg-meta">'+esc(name)+" · "+fmt(x.created_at)+(mine?' · '+status+' <button class="delete" data-id="'+x.id+'">削除</button>':"")+'</div></div></div>'}).join("")||'<div class="empty">メッセージはありません。</div>';
+  box.innerHTML=data.map(x=>{
+   const mine=x.sender_id===currentUser.id,p=map.get(x.sender_id),name=p?.display_name||p?.username||"ユーザー",dayKey=new Date(x.created_at).toLocaleDateString("ja-JP"),urls=mediaMap.get(x.id)||[],photo=urls.length?'<div class="image-message-grid">'+urls.slice(0,4).map(u=>'<a href="'+esc(u)+'" target="_blank" rel="noopener"><img class="image-message" src="'+esc(u)+'" alt="送信された写真" loading="lazy" decoding="async"></a>').join("")+'</div>':"",dayHtml=dayKey!==lastDay?'<div class="day">'+esc(dayKey)+'</div>':"";
+   lastDay=dayKey;let status="送信済み";
+   if(mine){const tm=new Date(x.created_at).getTime(),read=others.filter(o=>o.last_read_at&&new Date(o.last_read_at).getTime()>=tm).length;status=others.length&&read===others.length?"既読":read?"既読 "+read+"/"+others.length:"送信済み"}
+   return dayHtml+'<div class="msg-row '+(mine?"mine":"")+'"><div><div class="bubble">'+esc(x.body||"").replace(/\n/g,"<br>")+photo+'</div><div class="msg-meta">'+esc(name)+" · "+fmt(x.created_at)+(mine?' · '+status+' <button class="delete" data-id="'+x.id+'">削除</button>':"")+'</div></div></div>';
+  }).join("")||'<div class="empty">メッセージはありません。</div>';
   try{await sb.from("message_members").update({last_read_at:new Date().toISOString()}).eq("thread_id",currentThread).eq("user_id",currentUser.id)}catch(_){}
   try{await loadThreads()}catch(_){}
-  document.querySelectorAll(".delete").forEach(b=>b.onclick=async()=>{if(!confirm("このメッセージを削除しますか？"))return;try{const mr=await sb.from("thread_message_media").select("storage_path").eq("message_id",b.dataset.id);const dr=await sb.from("thread_messages").delete().eq("id",b.dataset.id).eq("sender_id",currentUser.id);if(dr.error)throw dr.error;if(mr.data?.length)await sb.storage.from("message-media").remove(mr.data.map(x=>x.storage_path));await loadMessages();await loadThreads()}catch(e){alert("削除できませんでした。\n"+(e.message||"エラー"))}});
+  document.querySelectorAll(".delete").forEach(b=>b.onclick=async()=>{
+   if(!confirm("このメッセージを削除しますか？"))return;
+   try{const mr=await sb.from("thread_message_media").select("storage_path").eq("message_id",b.dataset.id);const dr=await sb.from("thread_messages").delete().eq("id",b.dataset.id).eq("sender_id",currentUser.id);if(dr.error)throw dr.error;if(mr.data?.length)await sb.storage.from("message-media").remove(mr.data.map(x=>x.storage_path));await loadMessages();await loadThreads()}
+   catch(e){alert("削除できませんでした。\n"+(e.message||"エラー"))}
+  });
   box.scrollTop=box.scrollHeight;
  }catch(e){console.error("メッセージ読み込みエラー",e);box.innerHTML='<div class="error">メッセージを読み込めませんでした。<br><small>'+esc(e.message||"データ取得エラー")+'</small><br><button type="button" class="btn secondary" onclick="loadMessages()">再読み込み</button></div>'}
 }
-async function send(){const input=document.getElementById("message-input"),fileInput=document.getElementById("message-image"),body=input.value.trim(),files=[...(fileInput?.files||[])];if((!body&&!files.length)||!currentThread)return;if(files.length>4){alert("写真は4枚まで添付できます。");return}const btn=document.getElementById("send");btn.disabled=true;let uploaded=[];try{for(const file of files){if(!file.type.startsWith("image/")||file.size>10*1024*1024)throw new Error("写真は各10MB以下で選択してください。");const path=currentUser.id+"/"+currentThread+"/"+crypto.randomUUID()+"-"+(file.name.replace(/[^a-zA-Z0-9._-]/g,"_").slice(-80)||"photo");const up=await sb.storage.from("message-media").upload(path,file,{contentType:file.type,cacheControl:"3600",upsert:false});if(up.error)throw up.error;uploaded.push({path,type:file.type,url:sb.storage.from("message-media").getPublicUrl(path).data.publicUrl})}const first=uploaded[0];const {data:msg,error}=await sb.from("thread_messages").insert({thread_id:currentThread,sender_id:currentUser.id,body,attachment_url:first?.url||null,attachment_path:first?.path||null,attachment_type:first?.type||null}).select("id").single();if(error)throw error;if(uploaded.length){const rows=uploaded.map((x,i)=>({message_id:msg.id,uploader_id:currentUser.id,storage_path:x.path,public_url:x.url,mime_type:x.type,sort_order:i}));const {error:me}=await sb.from("thread_message_media").insert(rows);if(me){console.warn("メッセージ写真メタデータの保存をスキップ:",me);if(uploaded.length>1)await sb.storage.from("message-media").remove(uploaded.slice(1).map(x=>x.path));}}input.value="";input.style.height="44px";fileInput.value="";document.getElementById("message-attachment").textContent="";document.getElementById("message-attachment").style.display="none";await loadMessages();await loadThreads()}catch(e){console.error(e);if(uploaded.length)await sb.storage.from("message-media").remove(uploaded.map(x=>x.path));alert("送信できませんでした。\n"+(e.message||"エラー"))}finally{btn.disabled=false}}
+async function send(){
+ const input=document.getElementById("message-input"),fileInput=document.getElementById("message-image"),body=input.value.trim(),files=[...(fileInput?.files||[])];
+ if((!body&&!files.length)||!currentThread)return;
+ if(files.length>4){alert("写真は4枚まで添付できます。");return}
+ const btn=document.getElementById("send");btn.disabled=true;let uploaded=[];
+ try{
+  for(const file of files){
+   if(!file.type.startsWith("image/")||file.size>10*1024*1024)throw new Error("写真は各10MB以下で選択してください。");
+   const path=currentUser.id+"/"+currentThread+"/"+crypto.randomUUID()+"-"+(file.name.replace(/[^a-zA-Z0-9._-]/g,"_").slice(-80)||"photo");
+   const up=await sb.storage.from("message-media").upload(path,file,{contentType:file.type,cacheControl:"3600",upsert:false});
+   if(up.error)throw up.error;
+   uploaded.push({path,type:file.type});
+  }
+  const first=uploaded[0];
+  const {data:msg,error}=await sb.from("thread_messages").insert({thread_id:currentThread,sender_id:currentUser.id,body,attachment_url:null,attachment_path:first?.path||null,attachment_type:first?.type||null}).select("id").single();
+  if(error)throw error;
+  if(uploaded.length){
+   const rows=uploaded.map((x,i)=>({message_id:msg.id,uploader_id:currentUser.id,storage_path:x.path,public_url:null,mime_type:x.type,sort_order:i}));
+   const {error:me}=await sb.from("thread_message_media").insert(rows);
+   if(me){console.warn("メッセージ写真メタデータの保存をスキップ:",me);if(uploaded.length>1)await sb.storage.from("message-media").remove(uploaded.slice(1).map(x=>x.path));}
+  }
+  input.value="";input.style.height="44px";fileInput.value="";
+  document.getElementById("message-attachment").textContent="";
+  document.getElementById("message-attachment").style.display="none";
+  await loadMessages();await loadThreads();
+ }catch(e){
+  console.error(e);if(uploaded.length)await sb.storage.from("message-media").remove(uploaded.map(x=>x.path));
+  alert("送信できませんでした。\n"+(e.message||"エラー"));
+ }finally{btn.disabled=false}
+}
 async function searchUsers(){const q=document.getElementById("user-search").value.trim().replace(/^@/,"");const el=document.getElementById("new-results");if(q.length<2){el.innerHTML="";return}const {data,error}=await sb.from("profiles").select("id,username,display_name,avatar_url,avatar_position_x,avatar_position_y,avatar_zoom,updated_at").or("username.ilike.%"+q+"%,display_name.ilike.%"+q+"%").neq("id",currentUser.id).limit(12);if(error){el.innerHTML='<div class="empty">検索できませんでした。</div>';return}el.innerHTML=(data||[]).map(p=>'<button class="user-choice" data-id="'+p.id+'">'+avatar(p)+'<span><b>'+esc(p.display_name||p.username||"ユーザー")+'</b><br><span class="small">@'+esc(p.username||"")+'</span></span></button>').join("")||'<div class="empty">ユーザーが見つかりません。</div>';document.querySelectorAll(".user-choice").forEach(b=>b.onclick=()=>{if(selectionMode!=="group"&&selectedUsers.length>=1){selectedUsers=[]}if(!selectedUsers.includes(b.dataset.id)){selectedUsers.push(b.dataset.id)}renderSelected()})}
 async function renderSelected(){
  const el=document.getElementById("selected-users");
