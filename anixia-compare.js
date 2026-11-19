@@ -27,16 +27,16 @@
     try{
       const works=await Promise.all(ids.map(id=>ANIXIA.getAnime(id)));
       const rows=[
-        ["タイトル",a=>name(a)],
-        ["形式",a=>a.format||"未登録"],
-        ["放送年",a=>a.release_year||"未登録"],
-        ["クール",a=>a.season||"未登録"],
-        ["話数",a=>a.episode_count||"未登録"],
-        ["制作会社",a=>a.studio?(a.studio.name_ja||a.studio.name):"未登録"],
-        ["ジャンル",a=>a.genres.map(g=>g.name_ja||g.name).join("、")||"未登録"],
-        ["視聴者数",a=>a.watchers_count??0],
-        ["レビュー数",a=>a.reviews_count??0],
-        ["あらすじ",a=>a.synopsis||"未登録"]
+        [en()?"Title":"タイトル",a=>name(a)],
+        [en()?"Format":"形式",a=>a.format||"未登録"],
+        [en()?"Year":"放送年",a=>a.release_year||"未登録"],
+        [en()?"Season":"クール",a=>a.season||"未登録"],
+        [en()?"Episodes":"話数",a=>a.episode_count||"未登録"],
+        [en()?"Studio":"制作会社",a=>a.studio?(en()?a.studio.name:(a.studio.name_ja||a.studio.name)):"未登録"],
+        [en()?"Genres":"ジャンル",a=>a.genres.map(g=>en()?g.name:(g.name_ja||g.name)).join(en()?", ":"、")||"未登録"],
+        [en()?"Members":"視聴者数",a=>a.watchers_count??0],
+        [en()?"Reviews":"レビュー数",a=>a.reviews_count??0],
+        [en()?"Synopsis":"あらすじ",a=>en()?(a.synopsis_en||"English synopsis unavailable"):(a.synopsis||"未登録")]
       ];
       $("compare-output").innerHTML='<div class="compare-table-wrap"><table class="compare-table"><thead><tr><th>比較項目</th>'+works.map(a=>'<th>'+esc(name(a))+'</th>').join("")+'</tr></thead><tbody>'+rows.map(([label,get])=>'<tr><th>'+esc(label)+'</th>'+works.map(a=>'<td>'+esc(get(a))+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>';
     }catch(error){console.error(error);$("compare-output").innerHTML='<p class="compare-state">比較データを取得できませんでした。</p>';}
