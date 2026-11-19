@@ -35,7 +35,7 @@
       .in("title_type", ["english", "main", "synonym"])
       .order("title_type", { ascending: true })
       .order("is_primary", { ascending: false })
-      .limit(500);
+      .limit(1000);
     if (result.error) {
       console.warn("English title aliases unavailable", result.error);
       return items;
