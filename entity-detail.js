@@ -55,11 +55,13 @@
       $("works-heading").textContent="参加作品・担当作品";
       $("related-heading").textContent="担当キャラクター";
     }else if(type==="character"){
+      const appearances=await db.from("anime_characters").select("anime_id,role").eq("character_id",id).limit(300);
+      if(appearances.error)throw appearances.error;
+      rows.push(...(appearances.data||[]));
+      const works=await getWorksForLinks(rows); renderWorks(works,rows);
       const credits=await db.from("anime_staff").select("anime_id,role,person_id").eq("character_id",id).limit(300);
       if(credits.error)throw credits.error;
-      rows.push(...(credits.data||[]));
-      const works=await getWorksForLinks(rows); renderWorks(works,[]);
-      const personIds=[...new Set(rows.map(x=>x.person_id).filter(Boolean))];
+      const personIds=[...new Set((credits.data||[]).map(x=>x.person_id).filter(Boolean))];
       if(personIds.length){
         const people=await db.from("people").select("id,name,name_ja,person_type").in("id",personIds.slice(0,100)).limit(100);
         if(people.error)throw people.error;
@@ -69,9 +71,12 @@
       $("works-heading").textContent="登場作品";
       $("related-heading").textContent="担当声優・スタッフ";
     }else{
-      const anime=await db.from("anime").select("id,title,title_ja,title_kana,format,release_year,poster_url").eq("studio_id",id).eq("is_published",true).order("release_year",{ascending:false}).limit(300);
-      if(anime.error)throw anime.error;
-      renderWorks(anime.data||[],[]);
+      const studioLinks=await db.from("anime_studios").select("anime_id,production_role").eq("studio_id",id).order("display_order",{ascending:true}).limit(500);
+      if(studioLinks.error)throw studioLinks.error;
+      const studioAnimeIds=[...new Set((studioLinks.data||[]).map(row=>row.anime_id).filter(Boolean))];
+      const works=await getWorksForLinks(studioAnimeIds.map(anime_id=>({anime_id})));
+      const productionRoles=studioLinks.data||[];
+      renderWorks(works,productionRoles.map(row=>({anime_id:row.anime_id,role:row.production_role})));
       $("entity-related").innerHTML='<div class="entity-empty">制作会社に関する追加情報は順次収録します。</div>';
       $("entity-info").innerHTML=infoRow("読み仮名",entity.name_kana)+infoRow("英語名",entity.name_en)+infoRow("公式サイト",entity.website_url)+infoRow("Wikipedia",entity.wikipedia_url);
       $("works-heading").textContent="制作作品";
