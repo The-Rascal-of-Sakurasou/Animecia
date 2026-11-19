@@ -448,7 +448,7 @@
       btn.className = "anixia-language";
       btn.id = "language-toggle";
       btn.setAttribute("aria-label","Change language");
-      const host = document.querySelector(".header-inner,.container.nav,.wrap.head,.anixia-header-actions,header .nav,header");
+      const host = document.querySelector(".anixia-header-actions,.header-inner,.container.nav,.wrap.head,header .nav,header");
       if (host) host.appendChild(btn);
       else {
         const bar = document.createElement("div");
