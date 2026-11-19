@@ -3,7 +3,7 @@
   const $ = id => document.getElementById(id);
   const en=()=>localStorage.getItem("anixia-language")==="en";
   const names = { winter: en()?"Winter":"冬", spring: en()?"Spring":"春", summer: en()?"Summer":"夏", autumn: en()?"Autumn":"秋" };
-  const hasJapanese=v=>/[\\u3040-\\u30ff\\u3400-\\u9fff]/u.test(String(v||""));
+  const hasJapanese=v=>/[\u3040-\u30ff\u3400-\u9fff]/u.test(String(v||""));
   const title=a=>en()?(a.title_en||(a.title&&!hasJapanese(a.title)?a.title:"English title unavailable")):(a.title_ja||a.title_kana||a.title||"タイトル未登録");
   const seasonFromMonth = month => month <= 3 ? "winter" : month <= 6 ? "spring" : month <= 9 ? "summer" : "autumn";
   const tokyoNow = () => {
