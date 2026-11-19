@@ -15,7 +15,8 @@
       ).join("") : `<p class="discover-state">${en()?"Anime will appear here once catalog data is available.":"作品データが登録されると、ここに表示されます。"}</p>`;
     } catch (e) {
       console.error(e);
-      $(id).innerHTML = `<p class="discover-state">${en()?"Could not load anime.":"作品を読み込めませんでした。"}</p>`;
+      $(id).innerHTML = `<div class="discover-state"><p>${en()?"Could not load anime.":"作品を読み込めませんでした。"}</p><button type="button" class="discover-retry">${en()?"Retry":"再試行"}</button></div>`;
+      $(id).querySelector(".discover-retry")?.addEventListener("click", () => works(id, sort), { once: true });
     }
   }
   async function init() {
@@ -26,7 +27,8 @@
       ).join("") : `<p class="discover-state">${en()?"Genre data is being prepared.":"ジャンルデータを準備しています。"}</p>`;
     } catch (e) {
       console.error(e);
-      $("discover-genres").innerHTML = `<p class="discover-state">${en()?"Could not load genres.":"ジャンルを読み込めませんでした。"}</p>`;
+      $("discover-genres").innerHTML = `<div class="discover-state"><p>${en()?"Could not load genres.":"ジャンルを読み込めませんでした。"}</p><button type="button" id="discover-genres-retry">${en()?"Retry":"再試行"}</button></div>`;
+      $("discover-genres-retry")?.addEventListener("click", init, { once: true });
     }
     await Promise.all([works("discover-popular","popular"), works("discover-new","newest")]);
   }
