@@ -52,25 +52,25 @@
     $("related-works").innerHTML=related.length?related.map(r=>{
       const direction=r.direction==="incoming"?label("関連元","Related From"):label("関連先","Related To");
       return '<a href="anime-detail.html?id='+encodeURIComponent(r.id)+'"><span>'+esc((isEnglish()?englishTitle(r):value(r,"title_ja","title","作品名未登録")))+'</span><small>'+esc(direction+" · "+(relationLabels[r.relation_type]||r.relation_type))+'</small></a>';
-    }).join(""):'<div class="anixia-empty">関連作品はまだ登録されていません。</div>';
+    }).join(""):'<div class="anixia-empty">'+(isEnglish()?"No related anime have been added yet.":"関連作品はまだ登録されていません。")+'</div>';
     const episodes=a.episodes||[];
     $("episodes").innerHTML=episodes.length?episodes.map(e=>{
       const number=String(e.episode_number||"");
       const numberLabel=number?(isEnglish()?"Episode "+number:(number.includes("第")||number.includes("話")?number:"第"+number+"話")):(isEnglish()?"Episode number unavailable (order "+String(e.episode_order||"-")+")":"話数未登録（表示順 "+String(e.episode_order||"-")+")");
-      const title=value(e,"title_ja","title",isEnglish()?"Episode title unavailable":"サブタイトル未登録");
+      const title=isEnglish()?(e.title_en||englishTitle(e)):(e.title_ja||e.title||"サブタイトル未登録");
       const date=e.aired_at?" · "+(isEnglish()?"Aired: ":"")+e.aired_at:"";
-      return '<article class="anixia-detail-episode"><b>'+esc(numberLabel+" · "+title)+'</b><p>'+esc(date+(e.synopsis?" · "+(isEnglish()?"Episode synopsis unavailable in English":e.synopsis):""))+'</p></article>';
-    }).join(""):'<div class="anixia-empty">公開済みのエピソード情報はありません。</div>';
+      return '<article class="anixia-detail-episode"><b>'+esc(numberLabel+" · "+title)+'</b><p>'+esc(date+(isEnglish()?(e.synopsis_en?" · "+e.synopsis_en:""):(e.synopsis?" · "+e.synopsis:"")))+'</p></article>';
+    }).join(""):'<div class="anixia-empty">'+(isEnglish()?"No published episode information is available.":"公開済みのエピソード情報はありません。")+'</div>';
     $("synopsis").textContent=synopsis;
     const synopsisSource=$("synopsis-source");
     const synopsisCredit=a.synopsis_credit||{};
     if(synopsisCredit.source_url && synopsisCredit.license_url){
-      const sourceTitle=synopsisCredit.source_title||"出典";
+      const sourceTitle=synopsisCredit.source_title||(isEnglish()?"Source":"出典");
       const articleUrl=esc(synopsisCredit.source_url);
       const revisionUrl=esc(synopsisCredit.revision_url||synopsisCredit.source_url);
       const licenseUrl=esc(synopsisCredit.license_url);
       synopsisSource.hidden=false;
-      synopsisSource.innerHTML='出典：<a href="'+articleUrl+'" target="_blank" rel="noopener noreferrer">'+esc(sourceTitle)+'</a> · <a href="'+revisionUrl+'" target="_blank" rel="noopener noreferrer">'+esc(synopsisCredit.attribution||"提供元")+'・改訂履歴</a> · <a href="'+licenseUrl+'" target="_blank" rel="noopener noreferrer">'+esc(synopsisCredit.license||"ライセンス")+'</a>';
+      synopsisSource.innerHTML=(isEnglish()?"Source: ":'出典：')+'<a href="'+articleUrl+'" target="_blank" rel="noopener noreferrer">'+esc(sourceTitle)+'</a> · <a href="'+revisionUrl+'" target="_blank" rel="noopener noreferrer">'+esc(synopsisCredit.attribution||(isEnglish()?"Provider":"提供元"))+'・改訂履歴</a> · <a href="'+licenseUrl+'" target="_blank" rel="noopener noreferrer">'+esc(synopsisCredit.license||(isEnglish()?"License":"ライセンス"))+'</a>';
     }else{
       synopsisSource.hidden=true;
       synopsisSource.textContent="";
@@ -82,8 +82,9 @@
       posterSource.removeAttribute("aria-label");
     }
     const studioNames=(a.studios||[]).map(s=>value(s,"name_ja","name",isEnglish()?"Name unavailable":"日本語表記未登録")).filter(Boolean);
-    const info=[["形式",fmt(a.format)],["放送年",a.release_year||"未登録"],["シーズン",a.season||"未登録"],["話数",a.episode_count||a.episodes_count||"未登録"],["放送状況",a.status||"未登録"],["制作会社",studioNames.join("・")||(a.studio?(a.studio.name_ja||"日本語表記未登録"):"未登録")]];
-    if(a.official_url)info.push(["公式サイト",'<a href="'+esc(a.official_url)+'" target="_blank" rel="noopener noreferrer">公式サイトを開く</a>']);
+    const statusMap={finished_airing:label("放送終了","Finished Airing"),currently_airing:label("放送中","Currently Airing"),not_yet_aired:label("放送前","Not Yet Aired"),upcoming:label("放送予定","Upcoming"),cancelled:label("中止","Cancelled")};
+    const info=isEnglish()?[["Format",fmt(a.format)],["Release Year",a.release_year||"Not available"],["Season",season||"Not available"],["Episodes",a.episode_count||a.episodes_count||"Not available"],["Status",statusMap[a.status]||a.status||"Not available"],["Studios",studioNames.join(", ")||(a.studio?(a.studio.name_en||a.studio.name||"Name unavailable"):"Not available")]]:[["形式",fmt(a.format)],["放送年",a.release_year||"未登録"],["シーズン",season||"未登録"],["話数",a.episode_count||a.episodes_count||"未登録"],["放送状況",statusMap[a.status]||a.status||"未登録"],["制作会社",studioNames.join("・")||(a.studio?(a.studio.name_ja||"日本語表記未登録"):"未登録")]];
+    if(a.official_url)info.push([label("公式サイト","Official Website"),'<a href="'+esc(a.official_url)+'" target="_blank" rel="noopener noreferrer">'+label("公式サイトを開く","Open Official Website")+'</a>']);
     $("info").innerHTML=info.map(([k,v])=>'<dt>'+esc(k)+'</dt><dd>'+((typeof v==="string"&&v.startsWith("<a "))?v:esc(v))+'</dd>').join("");
     const characterItems=a.characters||[];
     $("characters").innerHTML=characterItems.length?characterItems.map(character=>{
@@ -91,13 +92,13 @@
       const characterLink=character.id?'<a href="entity-detail.html?type=character&id='+encodeURIComponent(character.id)+'">'+esc(characterName)+'</a>':esc(characterName);
       const voiceActors=(character.voice_actors||[]).map(person=>person.id?'<a href="entity-detail.html?type=person&id='+encodeURIComponent(person.id)+'">'+esc(value(person,"name_ja","name",isEnglish()?"Name unavailable":"日本語表記未登録"))+'</a>':esc(person.name_ja||"日本語表記未登録")).join("、");
       return '<span>'+characterLink+(character.role?' · '+esc(characterRoleLabel(character.role)):"")+(voiceActors?' · CV：'+voiceActors:"")+'</span>';
-    }).join(""):'<span class="anixia-empty">キャラクターはまだ登録されていません。</span>';
+    }).join(""):'<span class="anixia-empty">'+(isEnglish()?"No characters have been added yet.":"キャラクターはまだ登録されていません。")+'</span>';
     const staffItems=a.staff||[];
     $("staff").innerHTML=staffItems.length?staffItems.map(person=>{
       const personName=value(person,"name_ja","name",isEnglish()?"Name unavailable":"日本語表記未登録");
       const link=person.id?'<a href="entity-detail.html?type=person&id='+encodeURIComponent(person.id)+'">'+esc(personName)+'</a>':esc(personName);
       return '<span>'+link+(person.role?' · '+esc(roleLabel(person.role)):"")+'</span>';
-    }).join(""):'<span class="anixia-empty">スタッフはまだ登録されていません。</span>';
+    }).join(""):'<span class="anixia-empty">'+(isEnglish()?"No staff information has been added yet.":"スタッフはまだ登録されていません。")+'</span>';
     $("reviews").innerHTML=a.reviews.length?a.reviews.map(r=>'<article class="anixia-review"><b>'+esc(r.title||"レビュー")+(r.spoiler?" · ネタバレあり":"")+'</b><p>'+esc(r.body)+'</p></article>').join(""):'<div class="anixia-empty">公開レビューはまだありません。</div>';
     $("detail-loading").hidden=true;$("detail-content").hidden=false;
   }
