@@ -116,6 +116,7 @@
   };
   const init = () => {
     document.documentElement.lang = lang;
+    ensureHeader();
     makeControl();
     if (lang === "en") translateStatic();
     document.documentElement.dataset.anixiaLanguage = lang;
