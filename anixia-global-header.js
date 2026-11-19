@@ -42,24 +42,33 @@
     let nav = container.querySelector("nav");
     if (!nav) {
       nav = document.createElement("nav");
-      nav.className = "anixia-global-nav";
-      nav.setAttribute("aria-label", "メインナビゲーション");
-      nav.innerHTML = [
-        ["ホーム", "/anixia/"],
-        ["作品データベース", "/anixia/anime.html"],
-        ["今期アニメ", "/anixia/season.html"],
-        ["ランキング", "/anixia/ranking.html"],
-        ["人物・団体", "/anixia/entities.html"],
-        ["コミュニティ", "/anixia/community.html"]
-      ].map(([label, href]) => `<a href="${href}">${label}</a>`).join("");
       container.appendChild(nav);
     }
+    nav.className = "anixia-global-nav";
+    nav.setAttribute("aria-label", "メインナビゲーション");
+    nav.innerHTML = [
+      ["ホーム", "/anixia/"],
+      ["作品データベース", "/anixia/anime.html"],
+      ["人物・団体", "/anixia/entities.html"],
+      ["今期アニメ", "/anixia/season.html"],
+      ["ランキング", "/anixia/ranking.html"],
+      ["おすすめ診断", "/anixia/recommendations.html"],
+      ["クイズ", "/anixia/quiz.html"],
+      ["コミュニティ", "/anixia/community.html"]
+    ].map(([label, href]) => `<a href="${href}">${label}</a>`).join("");
 
-    let actions = container.querySelector(".anixia-header-actions");
+    // Reuse the existing action area to prevent duplicate account controls.
+    let actions = container.querySelector(".anixia-header-actions, .nav-actions, .header-actions, .userbar");
     if (!actions) {
       actions = document.createElement("div");
-      actions.className = "anixia-header-actions";
       container.appendChild(actions);
+    }
+    actions.className = "anixia-header-actions";
+    if (!actions.querySelector("a,button")) {
+      const account = document.createElement("a");
+      account.href = "/anixia/mypage.html";
+      account.textContent = "マイページ";
+      actions.appendChild(account);
     }
 
     document.querySelectorAll(".auth-panel > a").forEach((link) => {
@@ -76,9 +85,9 @@
           width:min(1200px,100%)!important;min-height:66px!important;margin:0 auto!important;padding:0 22px!important;text-align:left!important;
         }
         .site-header nav,.anixia-global-header nav,.main-nav,.site-nav,.nav-links{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;flex:0 1 auto!important;min-width:0!important;margin:0!important;text-align:left!important;overflow-x:auto}
-        .anixia-global-nav a{color:#fff!important;text-decoration:none!important;white-space:nowrap!important;padding:8px 10px!important;font-size:12px!important;font-weight:650!important}
+        .anixia-global-nav{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:4px!important;flex:1 1 auto!important;min-width:0!important;overflow-x:auto!important;scrollbar-width:none!important}.anixia-global-nav::-webkit-scrollbar{display:none!important}.anixia-global-nav a{color:#fff!important;text-decoration:none!important;white-space:nowrap!important;padding:8px 10px!important;border-radius:6px!important;font-size:12px!important;font-weight:650!important}
         .anixia-global-nav a:hover{color:#03AF6A!important}
-        .anixia-header-actions{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;margin-left:0!important}
+        .anixia-header-actions{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;margin-left:0!important;flex:none!important}.anixia-header-actions a,.anixia-header-actions button{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:36px!important;padding:0 13px!important;border:1px solid #03AF6A!important;border-radius:7px!important;background:#03AF6A!important;color:#fff!important;text-decoration:none!important;font-size:12px!important;font-weight:750!important;white-space:nowrap!important;cursor:pointer!important}
         .site-header .header-actions,.site-header .nav-actions,.site-header .userbar,.anixia-global-header .header-actions,.anixia-global-header .nav-actions,.anixia-global-header .userbar{margin-left:0!important;justify-content:flex-start!important}
         footer.anixia-global-footer,.anixia-footer-inner{ text-align:left!important }
         .anixia-footer-inner{margin:0 auto!important}
@@ -98,7 +107,7 @@
         .site-header .anixia-logo:focus-visible,.anixia-global-header .anixia-logo:focus-visible{outline:2px solid #087a45;outline-offset:6px;border-radius:3px}
         @media(max-width:760px){
           .anixia-global-header-inner,.site-header .header-inner,.site-header .container,.site-header .container.nav,.anixia-global-header .header-inner,.anixia-global-header .container,.anixia-global-header .container.nav,.anixia-global-header .wrap{min-height:58px!important;padding:8px 14px!important;gap:10px!important;flex-wrap:wrap!important}
-          .anixia-global-nav{flex-wrap:wrap!important;gap:4px!important}
+          .anixia-global-nav{flex-wrap:nowrap!important;gap:4px!important;width:100%!important;flex-basis:100%!important}
           .anixia-global-nav a{padding:6px 7px!important}
           .site-header .anixia-logo,.anixia-global-header .anixia-logo{font-size:24px}
         }
