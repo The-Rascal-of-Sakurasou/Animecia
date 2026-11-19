@@ -18,7 +18,16 @@
 | Annict REST API v1 | 作品基本情報・Annict ID・放送時期・話数・エピソード・キャスト等 | 追加候補。2026-11-25施行の規約を確認してから有効化 |
 | Jikan | 追加情報候補 | 未採用。利用条件・再配布・商用条件の確認が完了するまで取得しない |
 | TMDB | 将来の補助候補 | 未採用。商用利用条件・画像条件の個別確認が必要 |
-| AniList | なし | ANIXIAの一括データ取得・同期には採用しない |
+| AniList | なし | ANIXIAの一括データ取得・同期には採用しない。競合する同種サービスでのAPI利用・大量収集を禁止する公式条件があるため、許諾なしでは利用しない |
+
+### AniListを採用しない理由
+
+AniList公式API利用条件：<https://docs.anilist.co/guide/terms-of-use>
+
+- API規約は大量収集・データ蓄積用途を禁止し、同種の競合サービスでの利用も禁止している。
+- ANIXIAはアニメ総合データベースを提供するため、通常のAPI利用条件のままAniListを作品データ・画像の一括取得元にすることはできない。
+- APIの `coverImage` フィールドが存在することは、画像著作権の再利用許諾を意味しない。
+- AniListを採用する場合は、ANIXIAでの利用についてAniListから事前に明示的な許諾を得て、許諾範囲・保存期間・表示条件を確認する。許諾が確認できるまではAPI接続・画像取得・データ保存を行わない。
 
 ## 2. Wikidata
 
@@ -282,9 +291,18 @@ Wikidataから取得した17件を個別に確認し、15件を公開、2件を�
 - 同期の実行結果と失敗は `catalog_sync_runs` に記録する。同期トークンはSupabase Vaultで管理する。
 
 
-### 自動同期の現在の利用条件（2026-11-18）
+### 自動同期の現在の利用条件（2026-11-19）
 - **Wikidata**：構造化データはCC0。作品・スタッフ等の構造化情報を取得する。Wikidata公式のライセンス説明：<https://www.wikidata.org/wiki/Wikidata:Licensing>。
-- **Wikimedia Commons**：現在はパブリックドメイン／CC0と確認できる画像だけを採用する。各ファイルの説明ページでライセンスを確認する。<https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia>。
+- **Wikimedia Commons**：CC0／パブリックドメイン／CC BY／CC BY-SAのうち、ファイル単位でライセンスURLと必要な帰属情報を確認できる画像だけを採用する。CC BY／CC BY-SAは作者またはクレジットが確認できる場合に限る。各ファイルの説明ページでライセンスを確認する。<https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia>。
 - **日本語Wikipedia**：本文・あらすじの取り込みは無効化。記事本文のコピーは行わない。
 - **Annict**：利用条件の確認が終わるまで無効。
 - **TMDB**：APIキーを使用しない。
+
+
+### 作品タイトル画像の同期状況（2026-11-19）
+
+- `sync-commons-posters` Edge Function v30を稼働中。毎日05:00 UTC（日本時間14:00）に最大10件ずつ処理する。
+- 画像検索はWikidataの作品項目に直接結び付く画像・関連カテゴリ・Commons検索を順に確認し、ファイル単位のライセンスと画像形式を検証する。
+- 2026-11-19のDB確認時点：作品383件（公開377件）、`poster_url`登録2件。2件ともWikimedia Commons由来のロゴ画像であり、一般的な縦長ポスターの網羅を意味しない。あらすじ登録0件、読み仮名29件。
+- 画像同期ではPDF等の非画像MIMEを除外し、公開済み作品だけを対象とする。画像が見つからない作品は既存のANIXIAタイトルカードを表示する。
+- AniList APIは同種競合サービスでの利用・大量収集を禁止する公式条件があるため、明示的な許諾がない限り代替画像ソースとして利用しない。
