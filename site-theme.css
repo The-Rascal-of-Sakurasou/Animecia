@@ -4452,3 +4452,18 @@ body{overscroll-behavior-y:none!important;}
   header.anixia-global-header{position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:2147483647!important;width:100%!important}
   header.anixia-global-header .anixia-global-nav{min-width:0!important;overflow-x:auto!important;white-space:nowrap!important}
 }
+
+
+/* ANIXIA shared diagnosis page: match the white card system used across the site. */
+.diag-page{color:#000!important}
+.diag-hero,.diag-panel{background:#F7F9F8!important;border:1px solid #E7ECE9!important;border-radius:14px!important;box-shadow:0 5px 18px rgba(0,0,0,.045)!important;color:#000!important}
+.diag-hero small,.diag-hero h1,.diag-hero p,.diag-panel h2,.diag-help,.diag-fields label,.diag-genre,.diag-card,.diag-card-copy b,.diag-card-copy small,.diag-state{color:#000!important}
+.diag-hero small{color:#03AF6A!important}
+.diag-hero h1{font-size:clamp(25px,3vw,34px)!important}
+.diag-hero p{opacity:1!important}
+.diag-panel{border-top:3px solid #03AF6A!important}
+.diag-genre{background:#fff!important;border:1px solid #E7ECE9!important;border-radius:10px!important}
+.diag-fields select{background:#fff!important;color:#000!important;border:1px solid #D9E2DD!important}
+.diag-submit{background:#03AF6A!important;color:#fff!important;border:1px solid #03AF6A!important;border-radius:8px!important}
+.diag-card{background:#fff!important;border:1px solid #E7ECE9!important}
+.diag-state{background:#fff!important;border:1px dashed #D9E2DD!important}
