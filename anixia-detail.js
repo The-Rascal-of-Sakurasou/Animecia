@@ -2,7 +2,7 @@
   "use strict";
   const $=id=>document.getElementById(id);
   const isEnglish=()=>localStorage.getItem("anixia-language")==="en";
-  const value=(row,ja,en,fallback)=>isEnglish()?(row?.[en]||row?.[ja]||fallback):(row?.[ja]||fallback);
+  const value=(row,ja,en,fallback)=>isEnglish()?(row?.[en]||row?.name_en||row?.[ja]||fallback):(row?.[ja]||fallback);
   const label=(ja,en)=>isEnglish()?en:ja;
   const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const fmt=v=>({tv:"TV",movie:label("劇場版","Movie"),ova:"OVA",ona:"ONA",special:label("特別編","Special"),web:"Web",other:label("その他","Other")}[v]||v||label("未登録","Not available"));
@@ -54,10 +54,10 @@
     const episodes=a.episodes||[];
     $("episodes").innerHTML=episodes.length?episodes.map(e=>{
       const number=String(e.episode_number||"");
-      const numberLabel=number?(number.includes("第")||number.includes("話")?number:"第"+number+"話"):"話数未登録（表示順 "+String(e.episode_order||"-")+")";
+      const numberLabel=number?(isEnglish()?"Episode "+number:(number.includes("第")||number.includes("話")?number:"第"+number+"話")):(isEnglish()?"Episode number unavailable (order "+String(e.episode_order||"-")+")":"話数未登録（表示順 "+String(e.episode_order||"-")+")");
       const title=value(e,"title_ja","title",isEnglish()?"Episode title unavailable":"サブタイトル未登録");
-      const date=e.aired_at?" · "+e.aired_at:"";
-      return '<article class="anixia-detail-episode"><b>'+esc(numberLabel+" · "+title)+'</b><p>'+esc(date+(e.synopsis?" · "+e.synopsis:""))+'</p></article>';
+      const date=e.aired_at?" · "+(isEnglish()?"Aired: ":"")+e.aired_at:"";
+      return '<article class="anixia-detail-episode"><b>'+esc(numberLabel+" · "+title)+'</b><p>'+esc(date+(e.synopsis?" · "+(isEnglish()?"Episode synopsis unavailable in English":e.synopsis):""))+'</p></article>';
     }).join(""):'<div class="anixia-empty">公開済みのエピソード情報はありません。</div>';
     $("synopsis").textContent=synopsis;
     const synopsisSource=$("synopsis-source");
