@@ -3,6 +3,8 @@
   const $ = id => document.getElementById(id);
   const en=()=>localStorage.getItem("anixia-language")==="en";
   const names = { winter: en()?"Winter":"冬", spring: en()?"Spring":"春", summer: en()?"Summer":"夏", autumn: en()?"Autumn":"秋" };
+  const hasJapanese=v=>/[\\u3040-\\u30ff\\u3400-\\u9fff]/u.test(String(v||""));
+  const title=a=>en()?(a.title_en||(a.title&&!hasJapanese(a.title)?a.title:"English title unavailable")):(a.title_ja||a.title_kana||a.title||"タイトル未登録");
   const seasonFromMonth = month => month <= 3 ? "winter" : month <= 6 ? "spring" : month <= 9 ? "summer" : "autumn";
   const tokyoNow = () => {
     const parts = new Intl.DateTimeFormat("en-CA", {
@@ -46,7 +48,7 @@
 
       const seasonalWorks = works.filter(a => ["tv", "ona", "web"].includes(String(a.format || "").toLowerCase()));
       $("season-grid").innerHTML = seasonalWorks.length
-        ? seasonalWorks.map(a => `<a class="season-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}"><div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url, (en() ? a.title : (a.title_ja || a.title_kana || a.title)) || "", a.poster_credit)}</div><div class="season-card-copy"><b>${esc((en() ? a.title : (a.title_ja || a.title_kana || a.title)) || (en() ? "Title unavailable" : "タイトル未登録"))}</b><small>${esc(a.format || (en() ? "Format unavailable" : "形式未登録"))}</small></div></a>`).join("")
+        ? seasonalWorks.map(a => `<a class="season-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}"><div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url, title(a), a.poster_credit)}</div><div class="season-card-copy"><b>${esc(title(a))}</b><small>${esc(a.format || (en() ? "Format unavailable" : "形式未登録"))}</small></div></a>`).join("")
         : (en() ? '<p class="season-state">No TV or streaming anime with verified season data are available for this season yet.</p>' : '<p class="season-state">このシーズンの放送・配信作品はまだ登録されていません。クール情報が確認できた作品のみ表示します。</p>');
     } catch (e) {
       console.error(e);
