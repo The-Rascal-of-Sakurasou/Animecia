@@ -6,7 +6,7 @@
   let lastCount = 0;
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
   const en=()=>localStorage.getItem("anixia-language")==="en";
-  const hasJapanese = value => /[\\u3040-\\u30ff\\u3400-\\u9fff]/u.test(String(value||""));
+  const hasJapanese = value => /[\u3040-\u30ff\u3400-\u9fff]/u.test(String(value||""));
   const displayTitle = a => en() ? (a.title_en || (a.title && !hasJapanese(a.title) ? a.title : "English title unavailable")) : (a.title_ja || a.title_kana || a.title || "タイトル未設定");
   const formatName = value => ({tv:"TV",movie:en()?"Movie":"劇場版",ova:"OVA",ona:"ONA",special:en()?"Special":"特別編",web:"Web",other:en()?"Other":"その他"}[value] || value || (en()?"Format unavailable":"形式未登録"));
 
