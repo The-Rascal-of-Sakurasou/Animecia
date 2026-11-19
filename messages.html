@@ -11,9 +11,9 @@ main{max-width:1180px;margin:auto;padding:18px 12px 60px}.messenger{height:calc(
  .attach-btn{height:42px;min-width:42px;border:1px solid #cfd3d7;background:#fff;border-radius:999px;cursor:pointer;font-weight:800}.attach-preview{position:absolute;left:10px;bottom:58px;display:none;padding:5px 8px;border-radius:9px;background:#eef3f7;font-size:12px;max-width:75%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.attach-preview-wrap{display:flex;align-items:center;gap:7px}.attach-photo-list{display:flex;gap:5px;align-items:center}.attach-photo-item{position:relative;width:42px;height:42px}.attach-photo-item img{width:42px;height:42px;border-radius:7px;object-fit:cover}.attach-photo-remove{position:absolute;right:-5px;top:-5px;width:18px;height:18px;border:0;border-radius:50%;background:#111;color:#fff;cursor:pointer;font-size:12px;line-height:18px;padding:0}.attach-clear{border:0;background:#111;color:#fff;border-radius:999px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:800}.image-message-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:6px;max-width:320px}.image-message{display:block;width:100%;aspect-ratio:1;max-height:180px;border-radius:12px;object-fit:cover;background:#f1f3f5;cursor:pointer}</style>
 
 <script src="performance.js" defer></script>
-<link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co">
+<link rel="preconnect" href="https://trvnxggqzlhqdhoyiliy.supabase.co">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<script src="auth-core.js" defer></script>
+<script src="auth-core.js"></script>
 <script src="auth-required.js" defer></script>
 <link rel="stylesheet" href="site-theme.css?v=anixia-design-v4-20261119">
 </head>
@@ -23,7 +23,7 @@ main{max-width:1180px;margin:auto;padding:18px 12px 60px}.messenger{height:calc(
 <section class="chat"><div class="chat-head"><button id="mobile-back" class="mobile-back">‹</button><div id="chat-avatar"></div><div id="chat-title" class="chat-title"><b>会話を選択してください</b><span>メッセージ</span></div><div class="chat-actions"><a id="profile-link" class="secondary-btn" style="display:none" href="#">プロフィール</a></div></div><div id="messages" class="messages"><div class="empty">会話を選択すると、ここにメッセージが表示されます。</div></div><div id="composer" class="composer" style="display:none"><input id="message-image" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif" multiple hidden><button id="message-image-button" class="attach-btn" type="button" title="写真を追加">＋</button><span id="message-attachment" class="attach-preview"></span><textarea id="message-input" maxlength="2000" placeholder="メッセージを入力"></textarea><button id="send" class="btn send">送信</button></div></section>
 </div></main>
 <script>
-const U="https://bhgdjuwlxvbaeraaivmh.supabase.co",K="sb_publishable_-rZ4HusVezs5IlZQnUQ-Kw_SLUd8R0c",sb=ANIXIAAuth.client();
+const U="https://bhgdjuwlxvbaeraaivmh.supabase.co",K="sb_publishable_UiVRBLbMIAy-1GZqVY35Zw_uEp-W_GJ",sb=ANIXIAAuth.client();
 let currentUser,currentThread,selectedUsers=[],selectionMode="dm",channel,threadMeta=new Map();
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=d=>new Date(d).toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});const mediaUrl=(url,stamp)=>{if(!url)return "";try{const u=new URL(url,location.href);if(stamp)u.searchParams.set("v",String(new Date(stamp).getTime()));return u.href}catch(_){return url}};
