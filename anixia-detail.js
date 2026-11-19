@@ -1,17 +1,20 @@
 (() => {
   "use strict";
   const $=id=>document.getElementById(id);
+  const isEnglish=()=>localStorage.getItem("anixia-language")==="en";
+  const value=(row,ja,en,fallback)=>isEnglish()?(row?.[en]||row?.[ja]||fallback):(row?.[ja]||fallback);
+  const label=(ja,en)=>isEnglish()?en:ja;
   const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const fmt=v=>({tv:"TV",movie:"劇場版",ova:"OVA",ona:"ONA",special:"特別編",web:"Web",other:"その他"}[v]||v||"未登録");
+  const fmt=v=>({tv:"TV",movie:label("劇場版","Movie"),ova:"OVA",ona:"ONA",special:label("特別編","Special"),web:"Web",other:label("その他","Other")}[v]||v||label("未登録","Not available"));
   const statusName=v=>({plan_to_watch:"視聴予定",watching:"視聴中",completed:"視聴済み",on_hold:"中断・保留",dropped:"視聴をやめた"}[v]||v);
-  const roleLabel=v=>({voice_actor:"声優",director:"監督",screenwriter:"脚本",series_composition:"シリーズ構成",character_design:"キャラクターデザイン",producer:"プロデューサー",original_creator:"原作"}[v]||v);
+  const roleLabel=v=>({voice_actor:label("声優","Voice Actor"),director:label("監督","Director"),screenwriter:label("脚本","Screenwriter"),series_composition:label("シリーズ構成","Series Composition"),character_design:label("キャラクターデザイン","Character Design"),producer:label("プロデューサー","Producer"),original_creator:label("原作","Original Creator")}[v]||v);
   const characterRoleLabel=v=>({main:"メインキャラクター",supporting:"サブキャラクター",background:"その他"}[v]||v);
   const id=new URLSearchParams(location.search).get("id");
   let work=null,user=null,userState=null;
 
   function tagList(items, label) {
-    if(!items.length)return '<span class="anixia-empty">'+label+'はまだ登録されていません。</span>';
-    return items.map(x=>'<span>'+esc(x.name_ja||x.name||"名称未登録")+(x.role?' · '+esc(roleLabel(x.role)):"")+'</span>').join("");
+    if(!items.length)return '<span class="anixia-empty">'+(isEnglish()?"No entries yet.":label+"はまだ登録されていません。")+'</span>';
+    return items.map(x=>'<span>'+esc(value(x,"name_ja","name",isEnglish()?"Name unavailable":"名称未登録"))+(x.role?' · '+esc(x.role_en||roleLabel(x.role)):"")+'</span>').join("");
   }
   function setPosterFallback(name){
     $("poster-fallback").innerHTML='<span class="anixia-poster-brand">ANIXIA</span><strong class="anixia-poster-title">'+esc(name)+'</strong><small class="anixia-poster-caption">TITLE ARCHIVE</small>';
@@ -20,11 +23,12 @@
   function setError(message){$("detail-loading").hidden=true;$("detail-error").hidden=false;$("detail-error").textContent=message;}
   function renderWork(a){
     work=a;
-    const name=a.title_ja||a.title_kana||a.title;
-    document.title=name+"｜作品情報・視聴記録｜ANIXIA";
-    const desc=(a.synopsis||name+"の作品情報を確認できます。").slice(0,150);
+    const name=isEnglish()?(a.title||a.title_ja||a.title_kana):(a.title_ja||a.title_kana||a.title);
+    document.title=isEnglish()?name+" | Anime Details & Watchlist | ANIXIA":name+"｜作品情報・視聴記録｜ANIXIA";
+    const synopsis=isEnglish()?(a.synopsis_en||a.synopsis||"English synopsis is not available yet."):(a.synopsis||"あらすじ情報はまだ登録されていません。");
+    const desc=(synopsis||name).slice(0,150);
     document.querySelector('meta[name="description"]').content=desc;
-    $("poster").alt=name+"のポスター";
+    $("poster").alt=isEnglish()?name+" poster":name+"のポスター";
     $("poster").hidden=!a.poster_url;
     $("poster-fallback").hidden=!!a.poster_url;
     if(!a.poster_url) setPosterFallback(name);
@@ -34,8 +38,9 @@
       $("poster").onerror=()=>{$("poster").hidden=true;setPosterFallback(name);};
     }else $("poster").removeAttribute("src");
     $("title").textContent=name;
-    $("subtitle").textContent=[a.title,a.title_kana].filter((v,i,arr)=>v&&v!==name&&arr.indexOf(v)===i).join(" / ");
-    $("meta").innerHTML=[fmt(a.format),a.release_year,a.season,a.episode_count?String(a.episode_count)+"話":""].filter(Boolean).map(x=>'<span>'+esc(x)+'</span>').join("");
+    $("subtitle").textContent=(isEnglish()?[a.title_ja,a.title_kana]:[a.title,a.title_kana]).filter((v,i,arr)=>v&&v!==name&&arr.indexOf(v)===i).join(" / ");
+    const season=({winter:label("冬","Winter"),spring:label("春","Spring"),summer:label("夏","Summer"),autumn:label("秋","Autumn")})[String(a.season||"").toLowerCase()]||a.season;
+    $("meta").innerHTML=[fmt(a.format),a.release_year,season,a.episode_count?String(a.episode_count)+(isEnglish()?" episodes":"話"):""].filter(Boolean).map(x=>'<span>'+esc(x)+'</span>').join("");
     $("genres").innerHTML=tagList(a.genres||[],"ジャンル");
     $("tags").innerHTML=tagList(a.tags||[],"タグ");
     $("series").innerHTML=tagList(a.series||[],"シリーズ");
@@ -44,17 +49,17 @@
     const related=a.related_works||[];
     $("related-works").innerHTML=related.length?related.map(r=>{
       const direction=r.direction==="incoming"?"関連元":"関連先";
-      return '<a href="anime-detail.html?id='+encodeURIComponent(r.id)+'"><span>'+esc(r.title_ja||r.title||"作品名未登録")+'</span><small>'+esc(direction+" · "+(relationLabels[r.relation_type]||r.relation_type))+'</small></a>';
+      return '<a href="anime-detail.html?id='+encodeURIComponent(r.id)+'"><span>'+esc(value(r,"title_ja","title",isEnglish()?"Title unavailable":"作品名未登録"))+'</span><small>'+esc(direction+" · "+(relationLabels[r.relation_type]||r.relation_type))+'</small></a>';
     }).join(""):'<div class="anixia-empty">関連作品はまだ登録されていません。</div>';
     const episodes=a.episodes||[];
     $("episodes").innerHTML=episodes.length?episodes.map(e=>{
       const number=String(e.episode_number||"");
       const numberLabel=number?(number.includes("第")||number.includes("話")?number:"第"+number+"話"):"話数未登録（表示順 "+String(e.episode_order||"-")+")";
-      const title=e.title_ja||e.title||"サブタイトル未登録";
+      const title=value(e,"title_ja","title",isEnglish()?"Episode title unavailable":"サブタイトル未登録");
       const date=e.aired_at?" · "+e.aired_at:"";
       return '<article class="anixia-detail-episode"><b>'+esc(numberLabel+" · "+title)+'</b><p>'+esc(date+(e.synopsis?" · "+e.synopsis:""))+'</p></article>';
     }).join(""):'<div class="anixia-empty">公開済みのエピソード情報はありません。</div>';
-    $("synopsis").textContent=a.synopsis||"あらすじ情報はまだ登録されていません。";
+    $("synopsis").textContent=synopsis;
     const synopsisSource=$("synopsis-source");
     const synopsisCredit=a.synopsis_credit||{};
     if(synopsisCredit.source_url && synopsisCredit.license_url){
@@ -74,20 +79,20 @@
       posterSource.textContent="";
       posterSource.removeAttribute("aria-label");
     }
-    const studioNames=(a.studios||[]).map(s=>s.name_ja||"日本語表記未登録").filter(Boolean);
+    const studioNames=(a.studios||[]).map(s=>value(s,"name_ja","name",isEnglish()?"Name unavailable":"日本語表記未登録")).filter(Boolean);
     const info=[["形式",fmt(a.format)],["放送年",a.release_year||"未登録"],["シーズン",a.season||"未登録"],["話数",a.episode_count||a.episodes_count||"未登録"],["放送状況",a.status||"未登録"],["制作会社",studioNames.join("・")||(a.studio?(a.studio.name_ja||"日本語表記未登録"):"未登録")]];
     if(a.official_url)info.push(["公式サイト",'<a href="'+esc(a.official_url)+'" target="_blank" rel="noopener noreferrer">公式サイトを開く</a>']);
     $("info").innerHTML=info.map(([k,v])=>'<dt>'+esc(k)+'</dt><dd>'+((typeof v==="string"&&v.startsWith("<a "))?v:esc(v))+'</dd>').join("");
     const characterItems=a.characters||[];
     $("characters").innerHTML=characterItems.length?characterItems.map(character=>{
-      const characterName=character.name_ja||"日本語表記未登録";
+      const characterName=value(character,"name_ja","name",isEnglish()?"Name unavailable":"日本語表記未登録");
       const characterLink=character.id?'<a href="entity-detail.html?type=character&id='+encodeURIComponent(character.id)+'">'+esc(characterName)+'</a>':esc(characterName);
-      const voiceActors=(character.voice_actors||[]).map(person=>person.id?'<a href="entity-detail.html?type=person&id='+encodeURIComponent(person.id)+'">'+esc(person.name_ja||"日本語表記未登録")+'</a>':esc(person.name_ja||"日本語表記未登録")).join("、");
+      const voiceActors=(character.voice_actors||[]).map(person=>person.id?'<a href="entity-detail.html?type=person&id='+encodeURIComponent(person.id)+'">'+esc(value(person,"name_ja","name",isEnglish()?"Name unavailable":"日本語表記未登録"))+'</a>':esc(person.name_ja||"日本語表記未登録")).join("、");
       return '<span>'+characterLink+(character.role?' · '+esc(characterRoleLabel(character.role)):"")+(voiceActors?' · CV：'+voiceActors:"")+'</span>';
     }).join(""):'<span class="anixia-empty">キャラクターはまだ登録されていません。</span>';
     const staffItems=a.staff||[];
     $("staff").innerHTML=staffItems.length?staffItems.map(person=>{
-      const personName=person.name_ja||"日本語表記未登録"||"名称未登録";
+      const personName=value(person,"name_ja","name",isEnglish()?"Name unavailable":"日本語表記未登録");
       const link=person.id?'<a href="entity-detail.html?type=person&id='+encodeURIComponent(person.id)+'">'+esc(personName)+'</a>':esc(personName);
       return '<span>'+link+(person.role?' · '+esc(roleLabel(person.role)):"")+'</span>';
     }).join(""):'<span class="anixia-empty">スタッフはまだ登録されていません。</span>';
