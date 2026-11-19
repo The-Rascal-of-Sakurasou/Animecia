@@ -4555,3 +4555,7 @@ textarea::placeholder{
   background:#FFFFFF!important;
   border:1px solid #D9E2DD!important;
 }
+
+
+/* Final shared canvas color: pure white on every page. */
+html,body{background:#FFFFFF!important;background-color:#FFFFFF!important;}
