@@ -12,9 +12,9 @@ main{max-width:1080px;margin:0 auto;padding:36px 20px 70px}.hero{margin-bottom:2
 .search-box{display:flex;gap:10px;margin:20px 0}.search-box input{flex:1}.results{display:grid;gap:10px}.user-card{display:flex;gap:14px;align-items:center;padding:16px;border:1px solid #e5e7eb;border-radius:14px;background:#fff}.avatar{width:58px;height:58px;border-radius:50%;object-fit:cover;background:#eef0f3;flex:none}.avatar-placeholder{display:grid;place-items:center;font-weight:800;color:#697386}.grow{flex:1;min-width:0}.name{font-weight:800}.username,.bio,.meta{color:#737373;font-size:13px}.bio{margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{margin-top:7px}.empty,.error{text-align:center;padding:36px;color:#737373}
 </style>
 <script src="performance.js" defer></script>
-<link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co">
+<link rel="preconnect" href="https://trvnxggqzlhqdhoyiliy.supabase.co">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<script src="auth-core.js" defer></script>
+<script src="auth-core.js"></script>
 <link rel="stylesheet" href="site-theme.css?v=anixia-design-v4-20261119">
 </head>
 <body>
@@ -28,7 +28,7 @@ main{max-width:1080px;margin:0 auto;padding:36px 20px 70px}.hero{margin-bottom:2
 </main>
 <script>
 const SUPABASE_URL="https://bhgdjuwlxvbaeraaivmh.supabase.co";
-const SUPABASE_KEY="sb_publishable_-rZ4HusVezs5IlZQnUQ-Kw_SLUd8R0c";
+const SUPABASE_KEY="sb_publishable_UiVRBLbMIAy-1GZqVY35Zw_uEp-W_GJ";
 const supabaseClient=ANIXIAAuth.client();
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const form=document.getElementById("search-form"),q=document.getElementById("q"),results=document.getElementById("results");
@@ -45,7 +45,7 @@ async function search(){
  if(!term){render([]);results.innerHTML='<div class="empty">検索したいユーザー名や表示名を入力してください。</div>';return;}
  results.innerHTML='<div class="empty">検索中…</div>';
  const pattern="%"+term.replace(/[%_\\]/g,"\\$&")+"%";
- const {data,error}=await supabaseClient.from("profiles").select("id,username,display_name,avatar_url,bio").or("username.ilike."+pattern+",display_name.ilike."+pattern).limit(50);
+ const {data,error}=await supabaseClient.from("profiles").select("id,username,display_name,avatar_url,bio").or("username.ilike."+pattern+",display_name.ilike."+pattern).eq("is_public",true).limit(50);
  if(error){console.error(error);results.innerHTML='<div class="error">ユーザー検索に失敗しました。</div>';return;}
  render(data||[]);
 }
