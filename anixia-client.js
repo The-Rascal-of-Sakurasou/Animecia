@@ -105,7 +105,7 @@
   }
 
   async function getGenres() {
-    const result = await getClient().from("genres").select("id,name,name_ja").order("name_ja", { ascending: true });
+    const result = await getClient().from("genres").select("id,name,name_ja,description,description_en").order("name_ja", { ascending: true });
     if (result.error) throw result.error;
     return result.data || [];
   }
@@ -117,7 +117,7 @@
   }
 
   async function getTags() {
-    const result = await getClient().from("tags").select("id,name,name_ja").order("name_ja", { ascending: true }).limit(500);
+    const result = await getClient().from("tags").select("id,name,name_ja,description,description_en").order("name_ja", { ascending: true }).limit(500);
     if (result.error) throw result.error;
     return result.data || [];
   }
