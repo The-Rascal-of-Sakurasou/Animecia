@@ -1,8 +1,8 @@
 /* ANIXIA shared authentication core. Browser-only, publishable key only. */
 (function(w){
   "use strict";
-  var URL="https://bhgdjuwlxvbaeraaivmh.supabase.co";
-  var KEY="sb_publishable_-rZ4HusVezs5IlZQnUQ-Kw_SLUd8R0c";
+  var URL="https://trvnxggqzlhqdhoyiliy.supabase.co";
+  var KEY="sb_publishable_UiVRBLbMIAy-1GZqVY35Zw_uEp-W_GJ";
   var state={client:null,user:null,ready:false,promise:null};
 
   function waitForSDK(){
@@ -19,13 +19,13 @@
 
   function client(){
     if(!state.client){
-      state.client=w.__animeciaAuthClient||(w.__animeciaAuthClient=w.supabase.createClient(URL,KEY,{
+      state.client=w.__anixiaAuthClient||(w.__anixiaAuthClient=w.supabase.createClient(URL,KEY,{
         auth:{
           persistSession:true,
           autoRefreshToken:true,
           detectSessionInUrl:true,
           storage:window.sessionStorage,
-          storageKey:"animecia-auth-session"
+          storageKey:"anixia-auth-session"
         }
       }));
     }
