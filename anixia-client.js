@@ -475,11 +475,16 @@
     const fallback = '<span class="anixia-poster-fallback" aria-label="タイトル画像未登録"><span class="anixia-poster-brand">ANIXIA</span><strong class="anixia-poster-title">' + safeAlt + '</strong><small class="anixia-poster-caption">TITLE ARCHIVE</small></span>';
     const sourceUrl = String(credit?.source_url || "");
     const attribution = String(credit?.attribution || "");
+    const license = String(credit?.license || "");
+    const licenseUrl = String(credit?.license_url || "");
     if (!safeUrl || !sourceUrl.startsWith("https://") || !attribution) return fallback;
     const safeSrc = safeUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
-    const creditText = [attribution, credit?.license].filter(Boolean).join(" · ");
-    const creditLink = '<a class="anixia-poster-credit" href="' + escapeHtml(sourceUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(creditText) + '</a>';
-    return '<img data-anixia-poster src="' + safeSrc + '" alt="' + safeAlt + '" loading="lazy" decoding="async">' + fallback.replace('aria-label="タイトル画像未登録"', 'hidden aria-label="画像を表示できません"') + creditLink;
+    const sourceLink = '<a class="anixia-poster-credit" href="' + escapeHtml(sourceUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(attribution) + '</a>';
+    const licenseMarkup = licenseUrl.startsWith("https://creativecommons.org/")
+      ? '<a class="anixia-poster-license" href="' + escapeHtml(licenseUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(license || "ライセンス") + '</a>'
+      : '<span class="anixia-poster-license">' + escapeHtml(license) + '</span>';
+    const creditLine = '<span class="anixia-poster-credit-line">' + sourceLink + (license ? ' · ' + licenseMarkup : '') + '</span>';
+    return '<img data-anixia-poster src="' + safeSrc + '" alt="' + safeAlt + '" loading="lazy" decoding="async">' + fallback.replace('aria-label="タイトル画像未登録"', 'hidden aria-label="画像を表示できません"') + creditLine;
   }
 
   document.addEventListener("load", event => {
