@@ -10,7 +10,8 @@
     try{
       const genres=await ANIXIA.getGenres();
       $("genre-options").innerHTML=genres.length?genres.map(g=>`<label class="diag-genre"><input type="checkbox" name="genre" value="${g.id}"><span>${esc(en()?(g.name&&!hasJapanese(g.name)?g.name:"Genre name unavailable"):(g.name_ja||g.name))}</span></label>`).join(""):'<p class="diag-state">ジャンルデータを準備しています。</p>';
-    }catch(e){console.error(e);$("genre-options").innerHTML='<p class="diag-state">ジャンルを読み込めませんでした。</p>';}
+    }catch(e){console.error(e);$("genre-options").innerHTML='<div class="diag-state"><p>ジャンルを読み込めませんでした。</p><button type="button" id="diagnosis-genre-retry">再試行</button></div>';
+      $("diagnosis-genre-retry")?.addEventListener("click", init, { once: true });}
   }
   $("diagnosis-form").addEventListener("submit",async e=>{
     e.preventDefault();
