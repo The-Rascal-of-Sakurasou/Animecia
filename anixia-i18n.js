@@ -408,3 +408,5 @@
 /* Cache revision 6: page-specific heading translations. */
 
 /* Cache revision 7: community, messaging and profile translations. */
+
+/* Cache revision 8: retry-safe all-page retrofit. */
