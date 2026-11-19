@@ -3305,3 +3305,62 @@ a{ text-underline-offset:3px }
  .anixia-global-header nav a{font-size:11px!important;padding:7px 8px!important}
  .anixia-global-header .anixia-header-actions{margin-left:auto!important}
 }
+
+
+/* ANIXIA accessibility correction: consistent green identity + readable controls */
+:root{
+  --anixia-green:#087a45;
+  --anixia-green-dark:#145438;
+  --anixia-green-soft:#edf7f1;
+}
+html,body{color-scheme:light}
+header.site-header,.site-header,.anixia-global-header{
+  background:#f7fbf8!important;
+  background-color:#f7fbf8!important;
+  color:var(--anixia-green-dark)!important;
+  border-bottom:1px solid #dcebe1!important;
+  box-shadow:0 2px 12px rgba(16,65,39,.08)!important;
+}
+.site-header .anixia-logo,.anixia-global-header .anixia-logo,
+.site-header .brand,.site-header .logo{
+  color:var(--anixia-green-dark)!important;
+  text-shadow:none!important;
+}
+.site-header .anixia-logo .anixia-logo-xia,
+.anixia-global-header .anixia-logo .anixia-logo-xia{
+  color:var(--anixia-green)!important;
+}
+.site-header .nav-links a,.site-header nav a,.site-header .main-nav a,
+.site-header .site-nav a,.site-header .nav-actions a{
+  color:#405b4b!important;
+}
+.site-header .nav-links a:hover,.site-header nav a:hover,
+.site-header .main-nav a:hover,.site-header .site-nav a:hover{
+  color:var(--anixia-green-dark)!important;
+  background:#e8f3ec!important;
+}
+.site-header .nav-btn,.site-header .header-actions button,
+.site-header .header-actions a{
+  background:#fff!important;color:var(--anixia-green-dark)!important;
+  border-color:#cbded1!important;
+}
+.site-header .nav-btn.primary,.site-header .header-actions .primary{
+  background:var(--anixia-green)!important;color:#fff!important;border-color:var(--anixia-green)!important;
+}
+input,select,textarea,
+.field input,.field select,.field textarea,
+select option,select optgroup{
+  color:#202a24!important;
+  background-color:#fff!important;
+  color-scheme:light!important;
+}
+select{
+  appearance:auto!important;
+  -webkit-appearance:menulist!important;
+}
+select option,select optgroup{
+  color:#202a24!important;background:#fff!important;
+}
+input::placeholder,textarea::placeholder{color:#7b8780!important;opacity:1}
+input[type="checkbox"],input[type="radio"]{accent-color:var(--anixia-green)!important}
+:focus-visible{outline-color:var(--anixia-green)!important}
