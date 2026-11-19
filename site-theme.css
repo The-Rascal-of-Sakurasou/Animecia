@@ -4377,3 +4377,25 @@ main :where(.card,.panel,.feature-card,.content-card,.info-card,.stat-card,.serv
 main :where(.card,.panel,.feature-card,.content-card,.info-card,.stat-card,.service-card,.quiz-card,.rank-card,.anime-card,.work-card,.genre-card,.season-card,.result-card,.recommend-card,.recommendation-card,.profile-card,.setting-card,.auth-panel,.admin-panel,.admin-warning,.admin-code,.modal-content,[class*="-card"],[class*="-panel"],[class*="-tile"],[class*="-widget"],[class*="-box"],[class*="-surface"]) :where(*){color:#000000!important}
 main :where(button,.button,.btn,[type="submit"],[type="button"],a[class*="button"],a[class*="btn"]){color:#FFFFFF!important}
 main :where(input,select,textarea){background:#FFFFFF!important;color:#000000!important;border-color:#E7ECE9!important}
+
+
+/* Final typography and control colors: white shared header/footer, black page text, JT-green buttons. */
+header.site-header,header.anixia-global-header,.anixia-global-header,footer.anixia-global-footer{
+  background:#000000!important;background-color:#000000!important;color:#FFFFFF!important;
+}
+header.site-header :where(*),header.anixia-global-header :where(*),footer.anixia-global-footer :where(*){color:#FFFFFF!important}
+header.site-header .anixia-logo,header.anixia-global-header .anixia-logo,footer.anixia-global-footer .anixia-footer-logo{
+  color:#03AF6A!important;
+}
+header.site-header .anixia-logo .anixia-logo-xia,header.anixia-global-header .anixia-logo .anixia-logo-xia,footer.anixia-global-footer .anixia-footer-logo .anixia-logo-xia{
+  color:#1DA1F2!important;
+}
+header.site-header .anixia-header-actions .anixia-header-button,header.anixia-global-header .anixia-header-actions .anixia-header-button,footer.anixia-global-footer .anixia-admin-login{
+  background:#03AF6A!important;border:1px solid #03AF6A!important;color:#FFFFFF!important;
+}
+header.site-header .anixia-header-actions .anixia-header-button:hover,header.anixia-global-header .anixia-header-actions .anixia-header-button:hover,footer.anixia-global-footer .anixia-admin-login:hover{
+  background:#028F56!important;border-color:#028F56!important;color:#FFFFFF!important;
+}
+body,body :where(h1,h2,h3,h4,h5,h6,p,li,dt,dd,label,legend,summary,th,td,span,strong,b,small){color:#000000}
+main :where(button,.button,.btn,[type="submit"],[type="button"],a[class*="button"],a[class*="btn"]){background:#03AF6A!important;border-color:#03AF6A!important;color:#FFFFFF!important}
+main :where(button:hover,.button:hover,.btn:hover,[type="submit"]:hover,[type="button"]:hover,a[class*="button"]:hover, a[class*="btn"]:hover){background:#028F56!important;border-color:#028F56!important;color:#FFFFFF!important}
