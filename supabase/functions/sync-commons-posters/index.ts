@@ -89,7 +89,7 @@ async function searchImage(work: any) {
             const license = licenseInfo(info?.extmetadata || {});
             const logoFile = /logo|ロゴ/i.test(fileName);
             const validShape = logoFile
-              ? width >= 200 && height >= 80 && width / height >= 1.1 && width / height <= 6
+              ? width >= 200 && height >= 80 && width / height >= 0.5 && width / height <= 6
               : width >= 200 && height >= 280 && width / height >= 0.38 && width / height <= 0.9;
             if (info?.thumburl && info?.descriptionurl &&
                 String(info.thumburl).startsWith("https://upload.wikimedia.org/") &&
@@ -183,7 +183,7 @@ async function searchImage(work: any) {
               if (!logoFile && !posterFile) return null;
               const width = Number(info.width || 0), height = Number(info.height || 0);
               const validShape = logoFile
-                ? width >= 200 && height >= 80 && width / height >= 1.1 && width / height <= 6
+                ? width >= 200 && height >= 80 && width / height >= 0.5 && width / height <= 6
                 : width >= 200 && height >= 280 && width / height >= 0.38 && width / height <= 0.9;
               const license = licenseInfo(info.extmetadata || {});
               if (!validShape || !license) return null;
@@ -210,7 +210,7 @@ async function searchImage(work: any) {
   console.log("poster-debug:fallthrough-search",JSON.stringify({qid}));
   const candidates = [...new Set([work.title_ja, work.title, work.title_kana, ...extraTitles].filter((v: unknown) => String(v || "").trim().length >= 3))].slice(0, 6);
   for (const query of candidates) {
-    const searchTerms = [query, query + " poster", query + " key visual", query + " cover"];
+    const searchTerms = [query + " logo", query + " poster", query + " key visual", query + " cover", query];
     for (const searchTerm of searchTerms) {
     const params = new URLSearchParams({
       action: "query", format: "json", formatversion: "2",
@@ -242,13 +242,13 @@ async function searchImage(work: any) {
       if (!contains) return null;
       const width = Number(info.width || 0), height = Number(info.height || 0);
       const validShape = logoFile
-        ? width >= 200 && height >= 80 && width / height >= 1.1 && width / height <= 6
+        ? width >= 200 && height >= 80 && width / height >= 0.5 && width / height <= 6
         : width >= 200 && height >= 280 && width / height >= 0.38 && width / height <= 0.9;
       if (!validShape) return null;
       const license = licenseInfo(info.extmetadata || {});
       if (!license) return null;
       const yearMatch = work.release_year && String(page.title).includes(String(work.release_year));
-      return { page, info, license, score: (exact ? 100 : 90) + (yearMatch ? 10 : 0) };
+      return { page, info, license, score: (exact ? 100 : 90) + (yearMatch ? 10 : 0) + (logoFile ? 20 : 0) + (posterFile && !logoFile ? 10 : 0) };
     }).filter(Boolean).sort((a: any, b: any) => b.score - a.score);
     if (ranked.length && (!ranked[1] || ranked[0].score > ranked[1].score)) {
       const best = ranked[0];
