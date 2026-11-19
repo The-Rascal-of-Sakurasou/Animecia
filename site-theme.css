@@ -2948,3 +2948,29 @@ body:has(#message) main h1{font-size:25px!important;font-weight:950!important}
  .messenger .composer{flex-wrap:wrap!important}
  body:has(#message) main{width:calc(100% - 28px)!important;padding:22px!important}
 }
+
+
+/* AQW-inspired interaction layer: crisp blue states for quiz and diagnosis flows */
+.quiz-page .quiz-hero,.play-page .play-head,.diag-page .diag-hero{
+  background:
+    radial-gradient(ellipse at 88% 0%,rgba(75,128,190,.24),transparent 36%),
+    linear-gradient(125deg,#10233b 0%,#1d3e66 66%,#28558a 100%)!important;
+}
+.quiz-page .quiz-grid>*{border-top:3px solid #315b9a!important}
+.quiz-page .quiz-grid>*:hover{border-color:#91a9cb!important}
+.quiz-page :where(.tag,.quiz-tag){background:#edf3fb!important;color:#315b9a!important}
+.quiz-page :where(button,.btn,.primary),.play-page :where(button,.btn,.primary),
+.diag-page .diag-submit{
+  background:#315b9a!important;border-color:#315b9a!important;color:#fff!important;
+}
+.quiz-page :where(button,.btn,.primary):hover,.play-page :where(button,.btn,.primary):hover,
+.diag-page .diag-submit:hover{background:#254879!important;border-color:#254879!important}
+.play-page .question-card{border-top:3px solid #315b9a!important}
+.play-page .question-card :where(label,.option,.answer-option):hover,
+.diag-page .diag-genres label:has(input:checked){
+  border-color:#9eb3d0!important;background:#edf3fb!important;color:#234b7c!important;
+}
+.play-page .play-message,.play-page .result-card{border-color:#cbd8e8!important}
+.diag-page .diag-panel{border-top:3px solid #315b9a!important}
+.diag-page .diag-genres label{cursor:pointer}
+.diag-page .diag-genres input{accent-color:#315b9a}
