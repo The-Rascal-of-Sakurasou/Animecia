@@ -4121,3 +4121,94 @@ main :where(.hero,[class$="-hero"],[class*="-hero-"]) :where(p,small,label,.desc
 main :where(.hero,[class$="-hero"],[class*="-hero-"]) :where(a:not([class*="button"]):not([class*="btn"])){
   color:var(--anixia-brand)!important;
 }
+
+
+/* ANIXIA unified design system — final cross-page layer */
+:root{
+  color-scheme:light!important;
+  --anixia-brand:#03AF6A!important;
+  --anixia-brand-hover:#02965B!important;
+  --anixia-logo-blue:#1DA1F2!important;
+  --anixia-page:#F7F9F8!important;
+  --anixia-surface:#FFFFFF!important;
+  --anixia-text:#171C19!important;
+  --anixia-muted:#68736D!important;
+  --anixia-border:#E3EAE6!important;
+  --anixia-content-width:1200px!important;
+  --anixia-radius:10px!important;
+}
+html,body{min-height:100%;background:#F7F9F8!important;background-image:none!important;color:#171C19!important}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Noto Sans JP","Yu Gothic",Meiryo,sans-serif!important;font-size:14px!important;line-height:1.65!important}
+main{
+  width:min(1200px,calc(100% - 40px))!important;max-width:1200px!important;
+  margin:0 auto!important;padding:30px 0 64px!important;
+  background:transparent!important;color:#171C19!important;
+}
+main :where(h1,h2,h3,h4,h5,h6){color:#171C19!important;text-shadow:none!important;letter-spacing:-.02em!important}
+main :where(p,small,label,.description,.subtitle,.muted,.hint,.help-text,.meta,.sub){color:#68736D!important}
+main :where(a:not([class*="button"]):not([class*="btn"])){color:#03AF6A!important;text-decoration-color:rgba(3,175,106,.3)!important}
+main :where(a:hover:not([class*="button"]):not([class*="btn"])){color:#02965B!important}
+main :where(.hero,[class*="-hero"],[class*="-hero-"],.page-header,.page-title,.discover-hero,.rank-hero,.season-hero,.quiz-hero,.entity-hero,.entity-detail-hero,.anixia-mypage-hero){
+  background:#fff!important;background-image:none!important;color:#171C19!important;
+  border:1px solid #E3EAE6!important;border-radius:10px!important;box-shadow:none!important;
+}
+main :where(.hero,[class*="-hero"],[class*="-hero-"],.page-header,.page-title,.discover-hero,.rank-hero,.season-hero,.quiz-hero,.entity-hero,.entity-detail-hero,.anixia-mypage-hero) :where(h1,h2,h3,h4,strong,b,small){
+  color:#171C19!important;
+}
+main :where(.hero,[class*="-hero"],[class*="-hero-"],.page-header,.page-title,.discover-hero,.rank-hero,.season-hero,.quiz-hero,.entity-hero,.entity-detail-hero,.anixia-mypage-hero) :where(p,.description,.subtitle){
+  color:#68736D!important;
+}
+main :where(.panel,.card,.box,.surface,.filter-panel,.filter-area,.search-panel,.search-box,.form-panel,.content-panel,.detail-panel,.profile-card,.quiz-card,.rank-row,.review-item,.list-item,.discover-genre,.discover-card,.season-card,.entity-card,.entity-panel,.entity-work,.anixia-mypage-panel,.anixia-library-card,.post,.composer,[class*="-card"],[class*="-panel"],[class*="-item"]){
+  background:#fff!important;background-image:none!important;color:#171C19!important;
+  border:1px solid #E3EAE6!important;border-radius:10px!important;box-shadow:none!important;
+}
+main :where(.panel,.card,.box,.surface,.filter-panel,.filter-area,.search-panel,.search-box,.form-panel,.content-panel,.detail-panel,.profile-card,.quiz-card,.rank-row,.review-item,.list-item,.discover-genre,.discover-card,.season-card,.entity-card,.entity-panel,.entity-work,.anixia-mypage-panel,.anixia-library-card,.post,.composer,[class*="-card"],[class*="-panel"],[class*="-item"]) :where(h1,h2,h3,h4,strong,b){color:#171C19!important}
+main :where(.panel,.card,.box,.surface,.filter-panel,.filter-area,.search-panel,.search-box,.form-panel,.content-panel,.detail-panel,.profile-card,.quiz-card,.rank-row,.review-item,.list-item,.discover-genre,.discover-card,.season-card,.entity-card,.entity-panel,.entity-work,.anixia-mypage-panel,.anixia-library-card,.post,.composer,[class*="-card"],[class*="-panel"],[class*="-item"]) :where(p,small,label,.muted,.description,.hint,.meta){color:#68736D!important}
+main :where(hr,.divider,.section-divider){border-color:#E3EAE6!important}
+main :where(button,.button,.btn,[type="submit"],[type="button"],.nav-btn){
+  min-height:38px;border-radius:8px!important;border:1px solid #03AF6A!important;
+  background:#03AF6A!important;color:#fff!important;box-shadow:none!important;
+  font:inherit!important;font-weight:650!important;
+}
+main :where(button:hover,.button:hover,.btn:hover,[type="submit"]:hover,[type="button"]:hover,.nav-btn:hover){
+  background:#02965B!important;border-color:#02965B!important;color:#fff!important;
+}
+main :where(button.secondary,.secondary,.btn-secondary,.button-secondary,[data-variant="secondary"]){
+  background:#fff!important;color:#171C19!important;border-color:#E3EAE6!important;
+}
+main :where(input:not([type=checkbox]):not([type=radio]),select,textarea){
+  min-height:40px;max-width:100%;background:#fff!important;color:#171C19!important;
+  border:1px solid #DCE4DF!important;border-radius:8px!important;box-shadow:none!important;
+}
+main :where(input::placeholder,textarea::placeholder){color:#89938D!important}
+main :where(input:focus,select:focus,textarea:focus){border-color:#03AF6A!important;outline:2px solid rgba(3,175,106,.13)!important}
+main :where(table){width:100%;border-collapse:collapse;background:#fff;color:#171C19}
+main :where(th,td){padding:11px 13px;border-bottom:1px solid #E3EAE6;text-align:left}
+main :where(th){font-weight:700;background:#F4F7F5}
+main :where(.discover-genres,.discover-grid,.rank-list,.season-grid,.quiz-grid,.entity-grid,.anixia-service-grid,.anixia-feature-links,.anixia-work-grid,.anixia-results-grid,.anixia-skeleton-grid){
+  gap:14px!important;align-items:stretch!important;
+}
+main :where(.discover-grid,.season-grid,.anixia-work-grid,.anixia-results-grid,.anixia-skeleton-grid){grid-template-columns:repeat(5,minmax(0,1fr))!important}
+main :where(.discover-genres,.entity-grid,.anixia-service-grid){grid-template-columns:repeat(4,minmax(0,1fr))!important}
+main :where(.quiz-grid){grid-template-columns:repeat(3,minmax(0,1fr))!important}
+main :where(.rank-row,.entity-work){transform:none!important}
+main :where(img){max-width:100%}
+main :where(pre,code,.table-wrap,.table-container,.overflow-x-auto){max-width:100%;overflow-x:auto}
+main :where(:focus-visible){scroll-margin:90px}
+@media(max-width:1050px){
+  main :where(.discover-grid,.season-grid,.anixia-work-grid,.anixia-results-grid,.anixia-skeleton-grid){grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  main :where(.discover-genres,.entity-grid,.anixia-service-grid,.quiz-grid){grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:760px){
+  main{width:calc(100% - 28px)!important;padding:22px 0 48px!important}
+  main :where(.discover-grid,.season-grid,.anixia-work-grid,.anixia-results-grid,.anixia-skeleton-grid,.discover-genres,.entity-grid,.anixia-service-grid,.quiz-grid){grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important}
+  main :where(.rank-row){grid-template-columns:30px 58px minmax(0,1fr)!important;gap:9px!important}
+  main :where(.rank-row img){width:58px!important}
+  main :where(.anixia-detail-hero){grid-template-columns:120px minmax(0,1fr)!important}
+  main :where(.anixia-detail-grid){grid-template-columns:1fr!important}
+}
+@media(max-width:430px){
+  main :where(.discover-genres,.entity-grid,.anixia-service-grid,.quiz-grid){grid-template-columns:1fr!important}
+  main :where(.anixia-detail-hero){grid-template-columns:1fr!important}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
