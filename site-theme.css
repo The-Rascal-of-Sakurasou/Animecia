@@ -2974,3 +2974,78 @@ body:has(#message) main h1{font-size:25px!important;font-weight:950!important}
 .diag-page .diag-panel{border-top:3px solid #315b9a!important}
 .diag-page .diag-genres label{cursor:pointer}
 .diag-page .diag-genres input{accent-color:#315b9a}
+
+/* ANIXIA responsive overflow guard — shared across all pages */
+html,body{
+  width:100%;
+  max-width:100%;
+  overflow-x:clip;
+}
+body{
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+*,*::before,*::after{min-width:0}
+:where(main,section,article,aside,header,footer,nav,.container,.page-shell,.page-container,.anixia-shell){
+  max-width:100%;
+}
+:where(.grid,.cards,.anime-grid,.genre-grid,.recommendation-grid,.content-layout,.rank-layout,.discovery,.features,.quick,.quick-actions){
+  min-width:0;
+}
+:where(.grid,.cards,.anime-grid,.genre-grid,.recommendation-grid,.content-layout,.rank-layout,.discovery,.features,.quick,.quick-actions)>*{
+  min-width:0;
+  max-width:100%;
+}
+:where(p,h1,h2,h3,h4,h5,h6,a,button,label,dt,dd,li,small,strong,span){
+  overflow-wrap:anywhere;
+}
+:where(input,select,textarea,button){
+  box-sizing:border-box;
+  max-width:100%;
+}
+:where(input,select,textarea){width:100%}
+:where(img,video,iframe,svg,canvas){
+  max-width:100%;
+}
+:where(.anime-card-image,.anixia-poster,.poster,.cover,.thumb){
+  min-width:0;
+  max-width:100%;
+  overflow:hidden;
+}
+:where(.anime-card-image,.anixia-poster,.poster,.cover) img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+:where(table){max-width:100%}
+:where(pre,code){max-width:100%;overflow-wrap:anywhere}
+:where(.section-head,.section-heading,.page-intro,.panel-head,.result-header){
+  min-width:0;
+  flex-wrap:wrap;
+}
+@media(max-width:760px){
+  main{width:100%;max-width:100%;padding-left:12px!important;padding-right:12px!important}
+  :where(.grid,.cards,.anime-grid,.genre-grid,.recommendation-grid,.quick,.quick-actions){
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  :where(.content-layout,.rank-layout,.discovery,.features){
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  :where(.hero-inner,.home-hero,.home-v4 .hero-inner){
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  :where(.section-head,.section-heading,.page-intro,.panel-head,.result-header){
+    align-items:flex-start;
+    flex-wrap:wrap;
+  }
+}
+@media(max-width:380px){
+  main{padding-left:9px!important;padding-right:9px!important}
+  :where(.grid,.cards,.anime-grid,.genre-grid,.recommendation-grid){
+    gap:7px!important;
+  }
+  :where(.anime-card-body,.card-body){padding:8px!important}
+  :where(.anime-card-title){font-size:11px!important}
+}
+
