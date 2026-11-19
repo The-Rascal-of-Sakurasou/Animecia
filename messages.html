@@ -38,10 +38,10 @@ async function loadThreads(){
   if(r.error)throw r.error;
   const members=r.data||[],ids=members.map(x=>x.thread_id);
   if(!ids.length){list.innerHTML='<div class="empty">まだ会話はありません。<br>上の検索からユーザーを選択してください。</div>';return}
-  const tr=await sb.from("message_threads").select("id,title,is_group,created_at").in("id",ids).order("created_at",{ascending:false});
+  const tr=await sb.from("message_threads").select("id,title,is_group,created_at,updated_at").in("id",ids).order("updated_at",{ascending:false});
   if(tr.error)throw tr.error;
   let latestMap=new Map();
-  try{const lr=await sb.from("thread_messages").select("id,thread_id,sender_id,body,attachment_url,created_at").in("thread_id",ids).order("created_at",{ascending:false}).limit(Math.min(500,ids.length*20));if(!lr.error)(lr.data||[]).forEach(x=>{if(!latestMap.has(x.thread_id))latestMap.set(x.thread_id,x)})}catch(e){console.warn("最新メッセージ取得をスキップ",e)}
+  try{const lr=await sb.from("thread_messages").select("id,thread_id,sender_id,body,attachment_url,attachment_path,created_at").in("thread_id",ids).order("created_at",{ascending:false}).limit(Math.min(500,ids.length*20));if(!lr.error)(lr.data||[]).forEach(x=>{if(!latestMap.has(x.thread_id))latestMap.set(x.thread_id,x)})}catch(e){console.warn("最新メッセージ取得をスキップ",e)}
   const html=[];
   for(const t of tr.data||[]){
    let ms=[],map=new Map();
