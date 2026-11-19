@@ -3,8 +3,9 @@
   const el=document.getElementById("rank-list"),note=document.getElementById("rank-note");
   let metric="rating";
   const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const name=a=>a.title_ja||a.title_kana||a.title||"タイトル未登録";
-  const fmt=v=>({tv:"TV",movie:"劇場版",ova:"OVA",ona:"ONA",special:"特別編",web:"Web",other:"その他"}[v]||v||"形式未登録");
+  const en=()=>localStorage.getItem("anixia-language")==="en";
+  const name=a=>en()?(a.title||"Title unavailable"):(a.title_ja||a.title_kana||a.title||"タイトル未登録");
+  const fmt=v=>({tv:"TV",movie:en()?"Movie":"劇場版",ova:"OVA",ona:"ONA",special:en()?"Special":"特別編",web:"Web",other:en()?"Other":"その他"}[v]||v||(en()?"Format unavailable":"形式未登録"));
   async function load(){
     el.innerHTML='<p class="rank-state">ランキングを更新しています…</p>';
     note.textContent=metric==="rating"?"評価5件以上の作品を対象に、平均点の高い順で表示します。":metric==="popular"?"登録された視聴者数の多い順です。":metric==="reviews"?"登録されたレビュー数の多い順です。":"放送年の新しい順です。";
