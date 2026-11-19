@@ -104,7 +104,7 @@
         .anixia-footer-logo{display:inline-flex;color:#03af6a!important;text-decoration:none!important;font:850 27px/1 Inter,"Segoe UI",Arial,sans-serif;letter-spacing:-1.9px}
         .anixia-footer-logo .anixia-logo-xia{display:inline;position:relative;margin:0;padding:0;color:#1DA1F2!important;background:transparent;border:0;border-radius:0;font:inherit;letter-spacing:inherit;line-height:inherit;text-shadow:none;transform:none}
         .anixia-footer-description{margin:10px 0 0!important;color:#a8a8a8!important;font-size:12px!important}
-        .anixia-footer-nav{display:flex;flex-wrap:wrap;gap:9px 22px;padding:20px 0;border-top:1px solid rgba(255,255,255,.09);border-bottom:1px solid rgba(255,255,255,.09)}
+        .anixia-footer-nav{display:flex;flex-wrap:wrap;gap:9px 22px;padding:20px 0;border:0}
         .anixia-footer-nav a{color:#e6e6e6!important;text-decoration:none!important;font-size:12px!important;font-weight:650!important;transition:color .15s ease}
         .anixia-footer-nav a:hover{color:#03af6a!important}
         .anixia-footer-bottom{display:flex;justify-content:space-between;gap:12px;padding-top:16px;color:#a8a8a8;font-size:10px;letter-spacing:.04em}
