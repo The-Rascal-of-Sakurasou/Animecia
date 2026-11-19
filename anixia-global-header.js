@@ -32,6 +32,15 @@
       const style = document.createElement("style");
       style.id = "anixia-global-header-style";
       style.textContent = `
+
+        .site-header,.anixia-global-header{display:block!important;width:100%!important;text-align:left!important}
+        .site-header .header-inner,.site-header .container,.site-header .container.nav,.anixia-global-header .header-inner,.anixia-global-header .container,.anixia-global-header .container.nav,.anixia-global-header .wrap{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:20px!important;margin:0 auto!important;text-align:left!important}
+        .site-header nav,.anixia-global-header nav,.main-nav,.site-nav,.nav-links{justify-content:flex-start!important;margin:0!important;text-align:left!important}
+        .site-header .header-actions,.site-header .nav-actions,.site-header .userbar,.anixia-global-header .header-actions,.anixia-global-header .nav-actions,.anixia-global-header .userbar{margin-left:0!important;justify-content:flex-start!important}
+        footer.anixia-global-footer,.anixia-footer-inner{ text-align:left!important }
+        .anixia-footer-inner{margin:0 auto!important}
+        .anixia-footer-main,.anixia-footer-nav,.anixia-footer-bottom{justify-content:flex-start!important;align-items:flex-start!important;text-align:left!important}
+
         header,.site-header,.anixia-global-header,.global-header,.main-header,.site-navbar{
           background:#111!important;background-color:#111!important;color:#fff!important;border-bottom:1px solid #292929!important;box-shadow:0 2px 12px rgba(0,0,0,.16)!important;box-sizing:border-box;
         }
