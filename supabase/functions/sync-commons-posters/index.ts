@@ -246,8 +246,16 @@ async function searchImage(work: any) {
         : width >= 200 && height >= 280 && width / height >= 0.38 && width / height <= 0.9;
       if (!validShape) return null;
       const license = licenseInfo(info.extmetadata || {});
-      if (!license) return null;
       const yearMatch = work.release_year && String(page.title).includes(String(work.release_year));
+      if (fileName.includes(target) || description.includes(target)) {
+        console.log("poster-debug:matched-candidate", JSON.stringify({
+          query, title: page.title, width, height, ratio: Number((width / Math.max(height, 1)).toFixed(3)),
+          logoFile, posterContext, validShape, licenseShort: cleanHtml(info.extmetadata?.LicenseShortName?.value),
+          licenseUrl: cleanHtml(info.extmetadata?.LicenseUrl?.value), attribution: license?.attribution || null,
+          accepted: Boolean(validShape && license)
+        }));
+      }
+      if (!license) return null;
       return { page, info, license, score: (exact ? 100 : 90) + (yearMatch ? 10 : 0) + (logoFile ? 20 : 0) + (posterFile && !logoFile ? 10 : 0) };
     }).filter(Boolean).sort((a: any, b: any) => b.score - a.score);
     if (ranked.length && (!ranked[1] || ranked[0].score > ranked[1].score)) {
