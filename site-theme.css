@@ -3289,3 +3289,19 @@ a{ text-underline-offset:3px }
  .anixia-results-grid,.season-grid,.discover-grid,.diag-results{grid-template-columns:repeat(2,minmax(0,1fr))!important}
  .anixia-page-hero,.entity-hero,.rank-hero,.season-hero,.compare-hero,.discover-hero,.quiz-hero,.diag-hero{padding:18px!important}
 }
+
+/* Shared navigation for generated detail, genre, and utility pages */
+.anixia-global-header{position:sticky!important;top:0!important;z-index:1000!important;width:100%!important;background:rgba(255,255,255,.97)!important;border-bottom:1px solid #e2ebe6!important;box-shadow:0 2px 12px rgba(18,48,32,.045)!important}
+.anixia-global-header-inner{width:min(1320px,100%)!important;min-height:66px!important;margin:auto!important;padding:8px 22px!important;display:flex!important;align-items:center!important;gap:22px!important}
+.anixia-global-header .anixia-logo{font-size:25px!important;font-weight:950!important;letter-spacing:-.06em!important;text-decoration:none!important;white-space:nowrap!important;color:#008a52!important}
+.anixia-global-header .anixia-logo-xia{color:#42b8e8!important}
+.anixia-global-header nav{display:flex!important;align-items:center!important;gap:5px!important;flex:1!important;min-width:0!important;overflow-x:auto!important;scrollbar-width:none!important}
+.anixia-global-header nav a{padding:8px 10px!important;border-radius:8px!important;color:#263b30!important;font-size:12px!important;font-weight:700!important;text-decoration:none!important;white-space:nowrap!important}
+.anixia-global-header nav a:hover{background:#eaf6f0!important;color:#008a52!important}
+.anixia-global-header .anixia-header-actions{display:flex!important;align-items:center!important;margin-left:auto!important}
+@media(max-width:760px){
+ .anixia-global-header-inner{gap:10px!important;flex-wrap:wrap!important;padding:8px 12px!important}
+ .anixia-global-header nav{order:3!important;flex-basis:100%!important;width:100%!important}
+ .anixia-global-header nav a{font-size:11px!important;padding:7px 8px!important}
+ .anixia-global-header .anixia-header-actions{margin-left:auto!important}
+}
