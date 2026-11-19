@@ -4467,3 +4467,36 @@ body{overscroll-behavior-y:none!important;}
 .diag-submit{background:#03AF6A!important;color:#fff!important;border:1px solid #03AF6A!important;border-radius:8px!important}
 .diag-card{background:#fff!important;border:1px solid #E7ECE9!important}
 .diag-state{background:#fff!important;border:1px dashed #D9E2DD!important}
+
+
+/* Final cross-page correction: all feature introduction and description panels use the shared pale surface. */
+body main [class*="hero"],
+body main [class*="intro"],
+body main [class*="description-panel"]{
+  background:#F7F9F8!important;
+  background-color:#F7F9F8!important;
+  background-image:none!important;
+  color:#000000!important;
+  border-color:#E7ECE9!important;
+  box-shadow:none!important;
+}
+body main [class*="hero"] :where(*),
+body main [class*="intro"] :where(*),
+body main [class*="description-panel"] :where(*){
+  color:#000000!important;
+}
+body main [class*="hero"] :where(a,button),
+body main [class*="intro"] :where(a,button),
+body main [class*="description-panel"] :where(a,button){
+  color:#FFFFFF!important;
+}
+body main [class*="-panel"]{
+  background:#F7F9F8!important;
+  background-color:#F7F9F8!important;
+  background-image:none!important;
+  color:#000000!important;
+  border-color:#E7ECE9!important;
+  box-shadow:none!important;
+}
+body main [class*="-panel"] :where(*){color:#000000!important;}
+body main [class*="-panel"] :where(button,.button,.btn,[type="submit"],[type="button"],a[class*="button"],a[class*="btn"]){color:#FFFFFF!important;}
