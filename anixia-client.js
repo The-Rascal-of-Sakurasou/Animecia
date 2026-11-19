@@ -24,6 +24,26 @@
 
   const safeTerm = value => String(value || "").trim().replace(/[%,()]/g, " ").replace(/\s+/g, " ").slice(0, 80);
 
+  async function attachEnglishTitles(rows) {
+    const items = Array.isArray(rows) ? rows : [];
+    const ids = [...new Set(items.map(row => row?.id).filter(Boolean))];
+    if (!ids.length) return items;
+    const result = await getClient().from("anime_titles")
+      .select("anime_id,title,is_primary")
+      .in("anime_id", ids)
+      .eq("language_code", "en")
+      .eq("title_type", "english")
+      .order("is_primary", { ascending: false })
+      .limit(500);
+    if (result.error) {
+      console.warn("English title aliases unavailable", result.error);
+      return items;
+    }
+    const byId = new Map();
+    for (const row of result.data || []) if (!byId.has(row.anime_id)) byId.set(row.anime_id, row.title);
+    return items.map(row => ({ ...row, title_en: byId.get(row.id) || row.title_en || null }));
+  }
+
   async function listAnime(options = {}) {
     const db = getClient();
     const limit = Math.min(Math.max(Number(options.limit) || 24, 1), 50);
@@ -43,7 +63,7 @@
       p_character_query: safeTerm(options.characterQuery) || null
     });
     if (result.error) throw result.error;
-    let data = result.data || [];
+    let data = await attachEnglishTitles(result.data || []);
     const imageIds = data.filter(work => work.poster_url).map(work => work.id);
     if (imageIds.length) {
       const creditResult = await db.rpc("get_public_poster_credits", { p_anime_ids: imageIds });
@@ -72,7 +92,10 @@
   async function getAnime(id) {
     const result = await getClient().rpc("get_public_anime_detail", { p_anime_id: id });
     if (result.error) throw result.error;
-    return result.data || null;
+    if (!result.data) return null;
+    const related = await attachEnglishTitles(result.data.related_works || []);
+    const [work] = await attachEnglishTitles([{ ...result.data, related_works: related }]);
+    return work;
   }
 
   async function getGenres() {
