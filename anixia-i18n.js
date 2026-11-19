@@ -11,7 +11,7 @@
     "作品詳細":"Anime Details","人物詳細":"People Details","ジャンルから探す":"Browse by Genre","作品を探す":"Find Anime","アニメ作品を探す":"Find Anime",
     "アニメ作品検索":"Anime Search","アニメ作品比較":"Compare Anime","作品比較":"Compare Anime","作品一覧":"All Anime","詳細検索":"Advanced Search",
     "検索":"Search","検索する":"Search","クリア":"Clear","リセット":"Reset","絞り込む":"Filter","絞り込み":"Filters","並び替え":"Sort",
-    "人気の作品":"Popular Anime","最近追加された作品":"Recently Added","放送中":"Currently Airing","放送予定":"Upcoming",
+    "人気の作品":"Popular Anime","放送中":"Currently Airing","放送予定":"Upcoming",
     "すべて":"All","すべて表示":"View All","もっと見る":"See More","続きを読む":"Read More","戻る":"Back","閉じる":"Close","保存":"Save","更新":"Update",
     "送信":"Submit","投稿":"Post","削除":"Delete","編集":"Edit","キャンセル":"Cancel","確認":"Confirm","次へ":"Next","前へ":"Previous",
     "メールアドレス":"Email Address","パスワード":"Password","パスワードを忘れた場合":"Forgot password?","表示名":"Display Name","ユーザー名":"Username",
@@ -73,7 +73,7 @@
     "新しくアカウントを作成":"Create a new account","アカウントを作成":"Create Account",
     "ユーザーの投稿・交流を見る":"Explore community posts and discussions","ユーザーの感想を読む":"Read user reviews",
     "気になるジャンルから作品を絞り込む":"Filter anime by genre","ジャンルやテーマから作品を発見":"Discover anime by genre and theme",
-    "多くのユーザーに視聴されている作品":"Popular titles among users","データベースに追加・更新された作品":"Recently added or updated titles"
+    "多くのユーザーに視聴されている作品":"Popular titles among users"
   };
   Object.assign(ja, {
     "アニメを探す":"Find Anime","作品比較":"Compare Anime","ジャンル":"Genre","メモ":"Notes","投稿する":"Create Post","写真を追加":"Add Photo","最大4枚・各10MB以下":"Up to 4 images, 10 MB each","フォロー中":"Following","ブックマーク":"Bookmarks","読み込み中…":"Loading…","もっと読み込む":"Load More","ユーザーを探す":"Find Users","投稿、返信、いいね、リポスト、ブックマークでアニメの感想を共有できます。":"Share your thoughts on anime with posts, replies, likes, reposts and bookmarks.",
