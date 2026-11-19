@@ -164,8 +164,9 @@ Deno.serve(async (req: Request) => {
         continue;
       }
       const d = media.startDate || {};
-      const releasedOn = Number.isInteger(Number(d.year)) && Number.isInteger(Number(d.month)) &&
-        Number.isInteger(Number(d.day)) && Number(d.month) >= 1 && Number(d.month) <= 12 &&
+      const releasedOn = d.year != null && d.month != null && d.day != null &&
+        Number.isInteger(Number(d.year)) && Number.isInteger(Number(d.month)) &&
+        Number.isInteger(Number(d.day)) && Number(d.year) >= 1900 && Number(d.month) >= 1 && Number(d.month) <= 12 &&
         Number(d.day) >= 1 && Number(d.day) <= 31
         ? String(d.year).padStart(4, "0") + "-" + String(d.month).padStart(2, "0") + "-" + String(d.day).padStart(2, "0")
         : null;
