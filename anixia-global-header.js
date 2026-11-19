@@ -70,7 +70,7 @@
     const classify = (el) => {
       const id = (el.id || "").toLowerCase();
       const href = (el.getAttribute("href") || "").toLowerCase();
-      const label = (el.textContent || "").replace(/\\s+/g, "").toLowerCase();
+      const label = (el.textContent || "").replace(/\s+/g, "").toLowerCase();
       if (id === "language-toggle" || el.classList.contains("anixia-language")) return "language";
       if (id === "home-logout" || /ログアウト|log out|sign out/.test(label)) return "logout";
       if (id === "mypage-link" || /mypage/.test(href) || /マイページ|my page/.test(label)) return "mypage";
