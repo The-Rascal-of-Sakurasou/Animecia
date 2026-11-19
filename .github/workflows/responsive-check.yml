@@ -11,6 +11,8 @@ on:
       - "performance.js"
       - "anixia-global-header.js"
       - "*.html"
+      - "*.js"
+      - "supabase/migrations/**"
       - "anime/**/index.html"
       - "genre/**/index.html"
       - ".github/workflows/responsive-check.yml"
