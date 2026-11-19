@@ -18,7 +18,7 @@
 .admin-warning{border-left:3px solid #f2a51a;padding:10px 12px;background:#241d12;color:#d8c39d;font-size:11px;line-height:1.7}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="anixia-client.js?v=anime-id-map-20261118"></script><script src="anixia-admin.js?v=mal-id-duplicate-review-20261118" defer></script>
+<script src="anixia-client.js?v=anime-id-map-20261118"></script><script src="anixia-admin.js?v=season-metadata-backfill-20261119" defer></script>
 <link rel="preconnect" href="https://trvnxggqzlhqdhoyiliy.supabase.co" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
@@ -46,6 +46,19 @@
   <p><a href="https://www.wikidata.org/wiki/Wikidata:Licensing" target="_blank" rel="noopener noreferrer">Wikidataのライセンス</a> · <a href="https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual/ja" target="_blank" rel="noopener noreferrer">Query Serviceの利用上の注意</a></p>
 </section>
 \n
+<section id="season-metadata-sync-panel" class="admin-panel">
+  <h2>放送クール情報の一括補完（AniList）</h2>
+  <p>MyAnimeList IDで作品を照合し、AniListの公式APIが返すseason・seasonYear・startDateを取得します。作品名検索ではなく外部IDで一致させるため、別作品への誤紐付けを避けます。</p>
+  <p class="admin-warning">TV・短編TV・ONAの公開作品のみ対象です。映画・OVAはクール分類に含めません。まずプレビューで照合結果を確認し、その後に同期してください。外部IDがない作品やAniListにクール情報がない作品は変更しません。</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button id="season-metadata-preview-button" class="admin-button" type="button">照合結果をプレビュー</button>
+    <button id="season-metadata-sync-button" class="admin-button" type="button">確認済みクール情報を同期</button>
+  </div>
+  <p id="season-metadata-message" class="admin-message" aria-live="polite"></p>
+  <pre id="season-metadata-preview" class="admin-message" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
+  <p><a href="https://docs.anilist.co/reference/object/media" target="_blank" rel="noopener noreferrer">AniList APIの作品情報仕様</a> · <a href="https://docs.anilist.co/guide/rate-limiting" target="_blank" rel="noopener noreferrer">API利用制限</a></p>
+</section>
+
 <section id="wikidata-episode-sync-panel" class="admin-panel">
   <h2>Wikidataエピソード自動収録</h2>
   <p>公開済みのWikidata作品を対象に、エピソード名・話数表記・公開日を照合して取得します。取得したエピソードは必ず非公開で登録し、審査後に個別公開します。</p>
