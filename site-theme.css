@@ -3565,3 +3565,75 @@ a:hover{color:var(--anixia-brand-hover)!important}
 /* Keep the global footer quiet and free of decorative separators */
 .anixia-footer-nav{border:0!important}
 .anixia-footer-bottom{border:0!important}
+
+
+/* Poster presentation: show only the artwork, without overlays or captions. */
+.anixia-poster,
+.anixia-result-poster,
+.anixia-detail-poster-frame,
+.anime-card-image,
+.home-v4 .cards > .card .poster,
+#season-grid .card .cover,
+#new-grid .card .cover,
+#grid.grid > .card .cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.anixia-poster img,
+.anixia-poster img[data-anixia-poster],
+.anixia-result-poster img,
+.anixia-detail-poster,
+.anime-card-image img,
+.home-v4 .cards > .card .poster img,
+#season-grid .card .cover img,
+#new-grid .card .cover img,
+#grid.grid > .card .cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  object-fit: contain !important;
+  object-position: center center;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.anixia-poster::after,
+.anixia-result-poster::after,
+.anixia-detail-poster-frame::after,
+.anime-card-image::after,
+.home-v4 .cards > .card .poster::after,
+#season-grid .card .cover::after,
+#new-grid .card .cover::after,
+#grid.grid > .card .cover::after {
+  content: none !important;
+  display: none !important;
+}
+.anixia-poster:hover img,
+.anixia-result-card:hover .anixia-result-poster img,
+.anime-card:hover .anime-card-image img,
+.home-v4 .cards > .card:hover .poster img,
+#season-grid .card:hover .cover img,
+#new-grid .card:hover .cover img,
+#grid.grid > .card:hover .cover img {
+  transform: none !important;
+}
+.anixia-poster-credit-line,
+.anixia-detail-source {
+  display: none !important;
+}
+.anixia-poster-fallback,
+#poster-fallback {
+  display: none !important;
+}
