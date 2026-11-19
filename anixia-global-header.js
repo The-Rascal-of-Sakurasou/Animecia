@@ -86,7 +86,7 @@
           <a href="/anixia/terms.html">利用規約</a>
           <a href="/anixia/privacy.html">プライバシー</a>
         </nav>
-        <div class="anixia-footer-bottom"><span>© ANIXIA</span><span>Anime Database & Community</span></div>
+        <div class="anixia-footer-bottom"><span>© ANIXIA</span></div>
       </div>`;
     if (!existing) document.body.appendChild(footer);
 
