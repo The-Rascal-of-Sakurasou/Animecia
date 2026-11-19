@@ -66,6 +66,7 @@
       document.body.prepend(header);
     }
     header.className = "site-header anixia-global-header";
+    if (header.parentElement !== document.documentElement) document.documentElement.insertBefore(header, document.body);
     header.style.setProperty("position", "fixed", "important");
     header.style.setProperty("top", "0", "important");
     header.style.setProperty("left", "0", "important");
