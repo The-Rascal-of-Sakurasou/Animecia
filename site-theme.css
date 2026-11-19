@@ -4212,3 +4212,32 @@ main :where(:focus-visible){scroll-margin:90px}
   main :where(.anixia-detail-hero){grid-template-columns:1fr!important}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+
+/* Shared page frame and authentication layouts */
+main > :where([class$="-page"],[class$="-detail"],.anixia-mypage,.admin-page){
+  width:100%!important;max-width:1120px!important;margin:0 auto!important;
+}
+main:has(#login-form),main:has(#signup-form),main:has(#forgot-form),main:has(#form),main:has(a[href="signup.html"]){
+  width:min(480px,calc(100% - 28px))!important;max-width:480px!important;
+  margin:42px auto!important;padding:28px!important;background:#fff!important;
+  border:1px solid #E3EAE6!important;border-radius:10px!important;box-shadow:none!important;
+}
+main:has(#login-form) .auth-panel,main:has(#signup-form) .auth-panel,main:has(#forgot-form) .panel,
+main:has(#form),main:has(a[href="signup.html"]){
+  background:#fff!important;color:#171C19!important;border:1px solid #E3EAE6!important;
+  border-radius:10px!important;box-shadow:none!important;
+}
+main :where(.auth-panel,.admin-panel,.admin-warning,.admin-code){
+  background:#fff!important;background-image:none!important;color:#171C19!important;
+  border:1px solid #E3EAE6!important;border-radius:10px!important;box-shadow:none!important;
+}
+main :where(.auth-panel,.admin-panel) :where(h1,h2,h3,strong,b,label){color:#171C19!important}
+main :where(.auth-panel,.admin-panel) :where(p,small,.message,.admin-message){color:#68736D!important}
+main :where(.auth-panel a,.links a){color:#03AF6A!important}
+body:has(#login-form),body:has(#signup-form),body:has(#forgot-form),body:has(#form),body:has(a[href="signup.html"]){background:#F7F9F8!important}
+@media(max-width:760px){
+  main:has(#login-form),main:has(#signup-form),main:has(#forgot-form),main:has(#form),main:has(a[href="signup.html"]){
+    width:calc(100% - 28px)!important;margin:24px auto!important;padding:20px!important;
+  }
+}
