@@ -2349,3 +2349,26 @@ button,a,.photo-btn,.tab,.secondary-btn,.admin-button{
   .anixia-service-grid{grid-template-columns:minmax(0,1fr)}
   .anixia-service-card{min-height:0}
 }
+
+
+/* Homepage loading skeletons: preserve the poster-grid geometry while data loads. */
+.anixia-skeleton-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.anixia-skeleton-card{min-width:0;display:block}
+.anixia-skeleton-poster,.anixia-skeleton-line,.anixia-skeleton-pill{
+  position:relative;overflow:hidden;background:#e9edf2;border-radius:8px
+}
+.anixia-skeleton-poster{width:100%;aspect-ratio:2/3;border-radius:10px}
+.anixia-skeleton-line{height:11px;margin-top:10px;width:88%}
+.anixia-skeleton-line.short{width:55%;height:9px;margin-top:7px}
+.anixia-skeleton-poster:after,.anixia-skeleton-line:after,.anixia-skeleton-pill:after{
+  content:"";position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.68),transparent);
+  animation:anixia-shimmer 1.35s infinite
+}
+.anixia-skeleton-pill{display:inline-block;width:84px;height:34px;margin:0 7px 8px 0;border-radius:999px}
+@keyframes anixia-shimmer{100%{transform:translateX(100%)}}
+@media(max-width:760px){.anixia-skeleton-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}}
+@media(max-width:430px){.anixia-skeleton-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}}
+@media(prefers-reduced-motion:reduce){
+  .anixia-skeleton-poster:after,.anixia-skeleton-line:after,.anixia-skeleton-pill:after{animation:none}
+}
