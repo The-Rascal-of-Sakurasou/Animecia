@@ -26,7 +26,9 @@
 <link rel="stylesheet" href="site-theme.css?v=anixia-design-v4-20261119">
 <style id="anixia-home-account-link-style">
   .anixia-header-actions #account-link{display:inline-flex!important;align-items:center;justify-content:center;min-height:36px;padding:0 14px;border:1px solid #03AF6A;border-radius:7px;background:#03AF6A;color:#07130e!important;text-decoration:none!important;font-size:12px;font-weight:800;white-space:nowrap}
-  .anixia-header-actions #account-link:hover{background:#07965d;border-color:#07965d}
+  .anixia-header-actions #account-link:hover,.anixia-header-actions #mypage-link:hover,.anixia-header-actions #home-logout:hover{background:#07965d;border-color:#07965d}
+  .anixia-header-actions #mypage-link[hidden],.anixia-header-actions #home-logout[hidden]{display:none!important}
+  .anixia-header-actions #home-logout{cursor:pointer;font-family:inherit}
   @media(max-width:760px){.anixia-header-actions #account-link{min-height:34px;padding:0 11px}}
 </style>
 </head>
@@ -46,6 +48,8 @@
     <div class="anixia-header-actions">
       <button class="anixia-language" id="language-toggle" type="button" aria-label="Switch language">EN</button>
       <a class="anixia-account" id="account-link" href="login.html" data-i18n="login">ログイン</a>
+      <a class="anixia-account" id="mypage-link" href="mypage.html" hidden>マイページ</a>
+      <button class="anixia-account" id="home-logout" type="button" hidden>ログアウト</button>
     </div>
   </div>
 </header>
