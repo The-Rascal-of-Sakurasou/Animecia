@@ -1,6 +1,6 @@
 (() => {
   const HOME = "/anixia/";
-  const LOGO_HTML = 'AN<span class="anixia-logo-xia">XIA</span>';
+  const LOGO_HTML = 'ANI<span class="anixia-logo-xia">XIA</span>';
 
   const install = () => {
     let header = document.querySelector("header.site-header, .site-header");
@@ -70,7 +70,7 @@
     footer.innerHTML = `
       <div class="anixia-footer-inner">
         <div class="anixia-footer-main">
-          <a class="anixia-footer-logo" href="/anixia/" aria-label="ANIXIA ホーム">AN<span class="anixia-logo-xia">XIA</span></a>
+          <a class="anixia-footer-logo" href="/anixia/" aria-label="ANIXIA ホーム">ANI<span class="anixia-logo-xia">XIA</span></a>
           <p class="anixia-footer-description">アニメを探す、記録する、語り合う。</p>
         </div>
         <nav class="anixia-footer-nav" aria-label="フッターナビゲーション">
