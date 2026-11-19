@@ -1,24 +1,27 @@
 (() => {
   "use strict";
   const $ = id => document.getElementById(id);
+  const isEnglish=()=>localStorage.getItem("anixia-language")==="en";
+  const nameOf=row=>isEnglish()?(row?.name_en||row?.name||row?.name_ja||"Name unavailable"):(row?.name_ja||row?.name||"名称未登録");
+  const label=(ja,en)=>isEnglish()?en:ja;
   const params = new URLSearchParams(location.search);
   const type = params.get("type");
   const id = params.get("id");
   const types = {
-    person:{table:"people",title:"PERSON PROFILE",name:r=>r.name_ja||"日本語表記未登録",subtitle:r=>r.person_type||"人物・スタッフ"},
-    character:{table:"characters",title:"CHARACTER PROFILE",name:r=>r.name_ja||"日本語表記未登録",subtitle:()=>"キャラクター"},
-    studio:{table:"studios",title:"STUDIO PROFILE",name:r=>r.name_ja||"日本語表記未登録",subtitle:()=>"アニメ制作会社"}
+    person:{table:"people",title:"PERSON PROFILE",name:nameOf,subtitle:r=>r.person_type||label("人物・スタッフ","Person / Staff")},
+    character:{table:"characters",title:"CHARACTER PROFILE",name:nameOf,subtitle:()=>label("キャラクター","Character")},
+    studio:{table:"studios",title:"STUDIO PROFILE",name:nameOf,subtitle:()=>label("アニメ制作会社","Animation Studio")}
   };
   const esc = value => String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const roleName = role => ({voice_actor:"声優",director:"監督",screenwriter:"脚本",producer:"プロデューサー",composer:"作曲",series_composition:"シリーズ構成",character_design:"キャラクターデザイン",original_creator:"原作"}[role]||role||"スタッフ");
+  const roleName = role => ({voice_actor:label("声優","Voice Actor"),director:label("監督","Director"),screenwriter:label("脚本","Screenwriter"),producer:label("プロデューサー","Producer"),composer:label("作曲","Composer"),series_composition:label("シリーズ構成","Series Composition"),character_design:label("キャラクターデザイン","Character Design"),original_creator:label("原作","Original Creator")}[role]||role||label("スタッフ","Staff"));
   function infoRow(label,value) { return value ? "<dt>"+esc(label)+"</dt><dd>"+esc(value)+"</dd>" : ""; }
   function renderWorks(works, roles) {
     const roleMap = new Map();
     (roles||[]).forEach(row=>{const arr=roleMap.get(row.anime_id)||[];arr.push(row);roleMap.set(row.anime_id,arr);});
     $("entity-works").innerHTML = works.length ? works.map(work=>{
       const roleText=(roleMap.get(work.id)||[]).map(r=>roleName(r.role)).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join("・");
-      const title=work.title_ja||work.title_kana||work.title||"タイトル未設定";
-      const meta=[work.release_year,({tv:"TV",movie:"劇場版",ova:"OVA",ona:"ONA",special:"特別編",web:"Web"}[work.format]||work.format)].filter(Boolean).join(" · ");
+      const title=isEnglish()?(work.title||work.title_ja||"Title unavailable"):(work.title_ja||work.title_kana||work.title||"タイトル未設定");
+      const meta=[work.release_year,({tv:"TV",movie:label("劇場版","Movie"),ova:"OVA",ona:"ONA",special:label("特別編","Special"),web:"Web"}[work.format]||work.format)].filter(Boolean).join(" · ");
       return '<a class="entity-work" href="anime-detail.html?id='+encodeURIComponent(work.id)+'"><span><b>'+esc(title)+'</b><small>'+esc(meta)+'</small></span>'+(roleText?'<span class="entity-role">'+esc(roleText)+'</span>':'')+'</a>';
     }).join("") : '<div class="entity-empty">関連する公開作品はまだ登録されていません。</div>';
   }
@@ -33,7 +36,7 @@
     const result=await db.from(spec.table).select("*").eq("id",id).maybeSingle();
     if(result.error)throw result.error;
     if(!result.data)throw new Error("該当するデータが見つかりません。");
-    const entity=result.data, name=spec.name(entity)||"名称未登録";
+    const entity=result.data, name=spec.name(entity)||label("名称未登録","Name unavailable");
     $("entity-name").textContent=name;
     $("entity-avatar").textContent=Array.from(name)[0]||"A";
     $("entity-kicker").textContent=spec.title;
@@ -51,7 +54,7 @@
         if(chars.error)throw chars.error;
         $("entity-related").innerHTML=(chars.data||[]).length?(chars.data||[]).map(c=>'<a class="entity-work" href="entity-detail.html?type=character&id='+encodeURIComponent(c.id)+'"><b>'+esc(c.name_ja||"日本語表記未登録")+'</b><small>担当キャラクター</small></a>').join(""):'<div class="entity-empty">キャラクター情報はまだありません。</div>';
       }else $("entity-related").innerHTML='<div class="entity-empty">担当キャラクター情報はまだありません。</div>';
-      $("entity-info").innerHTML=infoRow("読み仮名",entity.name_kana)+infoRow("英語名",entity.name_en)+infoRow("別名",entity.nickname)+infoRow("誕生日",entity.birthday)+infoRow("区分",entity.person_type)+infoRow("公式サイト",entity.official_url)+infoRow("Wikipedia",entity.wikipedia_url);
+      $("entity-info").innerHTML=isEnglish()?infoRow("Reading",entity.name_kana)+infoRow("Alternative Name",entity.nickname_en||entity.nickname)+infoRow("Birthday",entity.birthday)+infoRow("Type",entity.person_type)+infoRow("Official Website",entity.official_url)+infoRow("Wikipedia",entity.wikipedia_url):infoRow("読み仮名",entity.name_kana)+infoRow("英語名",entity.name_en)+infoRow("別名",entity.nickname)+infoRow("誕生日",entity.birthday)+infoRow("区分",entity.person_type)+infoRow("公式サイト",entity.official_url)+infoRow("Wikipedia",entity.wikipedia_url);
       $("works-heading").textContent="参加作品・担当作品";
       $("related-heading").textContent="担当キャラクター";
     }else if(type==="character"){
@@ -67,7 +70,7 @@
         if(people.error)throw people.error;
         $("entity-related").innerHTML=(people.data||[]).length?people.data.map(person=>'<a class="entity-work" href="entity-detail.html?type=person&id='+encodeURIComponent(person.id)+'"><b>'+esc(person.name_ja||"日本語表記未登録")+'</b><small>'+esc(roleName(person.person_type))+'</small></a>').join(""):'<div class="entity-empty">担当スタッフ情報はまだありません。</div>';
       }else $("entity-related").innerHTML='<div class="entity-empty">担当声優・スタッフ情報はまだありません。</div>';
-      $("entity-info").innerHTML=infoRow("読み仮名",entity.name_kana)+infoRow("英語名",entity.name_en)+infoRow("別名",entity.nickname)+infoRow("説明",entity.description);
+      $("entity-info").innerHTML=isEnglish()?infoRow("Reading",entity.name_kana)+infoRow("Alternative Name",entity.nickname_en||entity.nickname)+infoRow("Description",entity.description_en||entity.description):infoRow("読み仮名",entity.name_kana)+infoRow("英語名",entity.name_en)+infoRow("別名",entity.nickname)+infoRow("説明",entity.description);
       $("works-heading").textContent="登場作品";
       $("related-heading").textContent="担当声優・スタッフ";
     }else{
@@ -78,7 +81,7 @@
       const productionRoles=studioLinks.data||[];
       renderWorks(works,productionRoles.map(row=>({anime_id:row.anime_id,role:row.production_role})));
       $("entity-related").innerHTML='<div class="entity-empty">制作会社に関する追加情報は順次収録します。</div>';
-      $("entity-info").innerHTML=infoRow("読み仮名",entity.name_kana)+infoRow("英語名",entity.name_en)+infoRow("公式サイト",entity.website_url)+infoRow("Wikipedia",entity.wikipedia_url);
+      $("entity-info").innerHTML=isEnglish()?infoRow("Reading",entity.name_kana)+infoRow("Official Website",entity.website_url)+infoRow("Wikipedia",entity.wikipedia_url):infoRow("読み仮名",entity.name_kana)+infoRow("英語名",entity.name_en)+infoRow("公式サイト",entity.website_url)+infoRow("Wikipedia",entity.wikipedia_url);
       $("works-heading").textContent="制作作品";
       $("related-heading").textContent="関連情報";
     }
