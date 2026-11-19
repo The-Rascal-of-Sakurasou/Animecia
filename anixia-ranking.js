@@ -15,7 +15,7 @@
       el.innerHTML=rows.length?rows.map((a,i)=>{
         const score=metric==="rating"?Number(a.average_score).toFixed(2)+" / 10 · "+a.rating_count+(en()?" ratings":"件"):metric==="popular"?(a.watchers_count||0).toLocaleString(en()?"en-US":"ja-JP")+(en()?" members":"人"):metric==="reviews"?(a.reviews_count||0).toLocaleString(en()?"en-US":"ja-JP")+(en()?" reviews":"件"):a.release_year||(en()?"Year unavailable":"年未登録");
         return `<a class="rank-row" href="anime-detail.html?id=${encodeURIComponent(a.id)}"><span class="rank-no">${i+1}</span><div class="anixia-poster anixia-rank-poster">${ANIXIA.posterMarkup(a.poster_url,name(a),a.poster_credit)}</div><span><span class="rank-title">${esc(name(a))}</span><span class="rank-meta">${esc([a.release_year,fmt(a.format)].filter(Boolean).join(" · "))}</span></span><span class="rank-score">${esc(score)}</span></a>`;
-      }).join(""):'<p class="rank-state">'+(metric==="rating"?"平均評価は5件以上の評価が集まった作品から表示します。": "ランキング対象の作品データがまだ登録されていません。")+'</p>';
+      }).join(""):'<p class="rank-state">'+(en()?(metric==="rating"?"No titles have at least five ratings yet.":"There are no titles for this ranking yet."):(metric==="rating"?"平均評価は5件以上の評価が集まった作品から表示します。":"ランキング対象の作品データがまだ登録されていません。"))+'</p>';
     }catch(e){console.error(e);el.innerHTML='<div class="rank-state">'+(en()?"Could not load the ranking. Please try again.":"ランキングを取得できませんでした。時間をおいて再度お試しください。")+`<p><button type="button" id="rank-retry">${en()?"Retry":"再試行"}</button></p></div>`;document.getElementById("rank-retry")?.addEventListener("click",load,{once:true});}
     document.querySelectorAll("[data-metric]").forEach(b=>b.classList.toggle("active",b.dataset.metric===metric));
   }
