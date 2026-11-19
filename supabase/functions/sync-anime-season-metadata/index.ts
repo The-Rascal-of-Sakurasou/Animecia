@@ -130,7 +130,6 @@ Deno.serve(async (req: Request) => {
     const idsResult = await admin.from("anime_external_ids")
       .select("anime_id,external_id")
       .eq("source", "myanimelist")
-      .in("anime_id", animeRows.map((row: any) => String(row.id)))
       .limit(5000);
     if (idsResult.error) throw idsResult.error;
 
