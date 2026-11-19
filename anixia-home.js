@@ -8,7 +8,8 @@
     en: {loading:"Loading…", empty:"No titles are available yet.", failed:"Could not load titles. Please try again later.", year:"Year unknown", genresEmpty:"No genres are available yet.", genresFailed:"Could not load genres.", login:"Log in", mypage:"My Library"}
   };
   const t = () => messages[language()] || messages.ja;
-  const title = (work) => language() === "en" ? (work.title_en || work.title_romaji || work.title_ja || work.title || "Untitled") : (work.title_ja || work.title_kana || work.title || "タイトル未設定");
+  const hasJapanese = value => /[\\u3040-\\u30ff\\u3400-\\u9fff]/u.test(String(value||""));
+  const title = (work) => language() === "en" ? (work.title_en || work.title_romaji || (work.title && !hasJapanese(work.title) ? work.title : "English title unavailable")) : (work.title_ja || work.title_kana || work.title || "タイトル未設定");
   const year = (work) => work.release_year ? String(work.release_year) : t().year;
   const card = (work) => `
     <a class="anixia-work-card" href="anime-detail.html?id=${encodeURIComponent(work.id)}">
@@ -47,7 +48,7 @@
     try {
       const genres = await ANIXIA.getGenres();
       $("genre-links").innerHTML = genres.length
-        ? genres.slice(0, 12).map(g => `<a href="anime.html?genre=${encodeURIComponent(g.id)}">${esc(language() === "en" ? (g.name_en || g.name_ja || g.name) : (g.name_ja || g.name))}</a>`).join("")
+        ? genres.slice(0, 12).map(g => `<a href="anime.html?genre=${encodeURIComponent(g.id)}">${esc(language() === "en" ? (g.name_en || g.name) : (g.name_ja || g.name))}</a>`).join("")
         : `<p class="anixia-state">${esc(t().genresEmpty)}</p>`;
     } catch (error) {
       console.error(error);
