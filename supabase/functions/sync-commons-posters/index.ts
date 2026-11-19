@@ -89,10 +89,9 @@ async function searchImage(work: any) {
             const info = page?.imageinfo?.[0];
             const width = Number(info?.width || 0), height = Number(info?.height || 0);
             const license = licenseInfo(info?.extmetadata || {});
-            const logoFile = /logo|ロゴ/i.test(fileName);
-            const validShape = logoFile
-              ? width >= 200 && height >= 80 && width / height >= 0.5 && width / height <= 6
-              : width >= 200 && height >= 280 && width / height >= 0.38 && width / height <= 0.9;
+            const isLogo = /logo|ロゴ/i.test(fileName);
+            const validShape = !isLogo && width >= 200 && height >= 280 &&
+              width / height >= 0.38 && width / height <= 0.9;
             if (info?.thumburl && info?.descriptionurl && String(info?.mime || "").startsWith("image/") &&
                 String(info.thumburl).startsWith("https://upload.wikimedia.org/") &&
                 validShape && license) {
@@ -124,39 +123,6 @@ async function searchImage(work: any) {
             franchiseClaims = franchisePayload?.entities?.[franchiseId]?.claims || null;
           }
         }
-        const logoFileName =
-          entityPayload?.entities?.[qid]?.claims?.P154?.[0]?.mainsnak?.datavalue?.value ||
-          franchiseClaims?.P154?.[0]?.mainsnak?.datavalue?.value;
-        if (typeof logoFileName === "string" && logoFileName.trim()) {
-          const logoParams = new URLSearchParams({
-            action: "query", format: "json", formatversion: "2",
-            titles: "File:" + logoFileName, prop: "imageinfo",
-            iiprop: "url|size|extmetadata", iiurlwidth: "600", origin: "*"
-          });
-          const logoResponse = await fetch("https://commons.wikimedia.org/w/api.php?" + logoParams, {
-            headers: { "User-Agent": "ANIXIA/1.0 (https://the-rascal-of-sakurasou.github.io/anixia/; public anime database)" }
-          });
-          if (logoResponse.ok) {
-            const logoPayload = await logoResponse.json();
-            const logoPage = (logoPayload?.query?.pages || [])[0];
-            const logoInfo = logoPage?.imageinfo?.[0];
-            const width = Number(logoInfo?.width || 0), height = Number(logoInfo?.height || 0);
-            const license = licenseInfo(logoInfo?.extmetadata || {});
-            if (logoInfo?.thumburl && logoInfo?.descriptionurl && String(logoInfo?.mime || "").startsWith("image/") &&
-                String(logoInfo.thumburl).startsWith("https://upload.wikimedia.org/") &&
-                width >= 200 && height >= 80 && width / height >= 0.5 &&
-                width / height <= 6 && license) {
-              return {
-                url: logoInfo.thumburl,
-                id: logoPage.title,
-                page: logoInfo.descriptionurl,
-                attribution: license.attribution,
-                license: license.short,
-                licenseUrl: license.url
-              };
-            }
-          }
-        }
         const commonsCategory =
           entityPayload?.entities?.[qid]?.claims?.P373?.[0]?.mainsnak?.datavalue?.value ||
           franchiseClaims?.P373?.[0]?.mainsnak?.datavalue?.value;
@@ -177,19 +143,17 @@ async function searchImage(work: any) {
               const info = page.imageinfo?.[0];
               if (!info?.thumburl || !info?.descriptionurl || !String(info?.mime || "").startsWith("image/") || !String(info.thumburl).startsWith("https://upload.wikimedia.org/")) return null;
               const fileName = String(page.title || "").replace(/^File:/i, "");
-              const logoFile = /logo|ロゴ/i.test(fileName);
               const posterFile = /poster|key[ -]?visual|cover|ポスター|キービジュアル|表紙/i.test(fileName);
               const workHasVariantTerm = /\b(movie|film|ova|ona|special)\b/i.test(String(work.title_ja || "") + " " + String(work.title || ""));
               const candidateHasVariantTerm = /\b(movie|film|ova|ona|special)\b/i.test(fileName);
               if (candidateHasVariantTerm && !workHasVariantTerm) return null;
-              if (!logoFile && !posterFile) return null;
+              if (!posterFile) return null;
               const width = Number(info.width || 0), height = Number(info.height || 0);
-              const validShape = logoFile
-                ? width >= 200 && height >= 80 && width / height >= 0.5 && width / height <= 6
-                : width >= 200 && height >= 280 && width / height >= 0.38 && width / height <= 0.9;
+              const validShape = width >= 200 && height >= 280 &&
+                width / height >= 0.38 && width / height <= 0.9;
               const license = licenseInfo(info.extmetadata || {});
               if (!validShape || !license) return null;
-              return { page, info, license, score: (posterFile ? 100 : 90) + (logoFile ? 5 : 0) };
+              return { page, info, license, score: 100 };
             }).filter(Boolean).sort((a: any, b: any) => b.score - a.score);
             if (categoryMatches.length) {
               const best = categoryMatches[0];
@@ -211,7 +175,7 @@ async function searchImage(work: any) {
   }
   const candidates = [...new Set([work.title_ja, work.title, work.title_kana, ...extraTitles].filter((v: unknown) => String(v || "").trim().length >= 3))].slice(0, 6);
   for (const query of candidates) {
-    const searchTerms = [query + " logo", query + " poster", query + " key visual", query + " cover", query];
+    const searchTerms = [query + " poster", query + " key visual", query + " cover", query];
     for (const searchTerm of searchTerms) {
     const params = new URLSearchParams({
       action: "query", format: "json", formatversion: "2",
@@ -238,23 +202,20 @@ async function searchImage(work: any) {
       const workHasVariantTerm = /\b(movie|film|ova|ona|special)\b/i.test(workText);
       const candidateHasVariantTerm = /\b(movie|film|ova|ona|special)\b/i.test(rawFileName + " " + rawDescription);
       if (candidateHasVariantTerm && !workHasVariantTerm) return null;
-      const logoFile = /logo|ロゴ/i.test(rawFileName + " " + rawDescription) ||
-        (/\.svg$/i.test(String(page.title || "")) && fileName === target);
+      const isLogo = /logo|ロゴ/i.test(rawFileName + " " + rawDescription);
       const posterFile = /poster|key[ -]?visual|cover|dvd|blu[ -]?ray|promotional|artwork|ポスター|キービジュアル|表紙/i.test(rawFileName + " " + rawDescription);
-      const posterContext = logoFile || posterFile;
-      if (!posterContext) return null;
+      if (isLogo || !posterFile) return null;
       const exact = fileName === target || description === target;
       const contains = fileName.includes(target) || description.includes(target);
       if (!contains) return null;
       const width = Number(info.width || 0), height = Number(info.height || 0);
-      const validShape = logoFile
-        ? width >= 200 && height >= 80 && width / height >= 0.5 && width / height <= 6
-        : width >= 200 && height >= 280 && width / height >= 0.38 && width / height <= 0.9;
+      const validShape = width >= 200 && height >= 280 &&
+        width / height >= 0.38 && width / height <= 0.9;
       if (!validShape) return null;
       const license = licenseInfo(info.extmetadata || {});
       const yearMatch = work.release_year && String(page.title).includes(String(work.release_year));
       if (!license) return null;
-      return { page, info, license, score: (exact ? 100 : 90) + (yearMatch ? 10 : 0) + (logoFile ? 20 : 0) + (posterFile ? 10 : 0) };
+      return { page, info, license, score: (exact ? 100 : 90) + (yearMatch ? 10 : 0) + 10 };
     }).filter(Boolean).sort((a: any, b: any) => b.score - a.score);
     if (ranked.length && (!ranked[1] || ranked[0].score > ranked[1].score)) {
       const best = ranked[0];
