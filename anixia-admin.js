@@ -271,6 +271,9 @@
         '<p class="admin-message">総数 '+esc(String(s.total_works))+' / 公開 '+esc(String(s.published_works))+' / 未公開 '+esc(String(s.unpublished_works))+
         '<br>画像欠損 '+esc(String(s.published_missing_poster))+' / あらすじ欠損 '+esc(String(s.published_missing_synopsis))+
         '<br>公式URL欠損 '+esc(String(s.published_missing_official_url))+' / 制作会社欠損 '+esc(String(s.published_missing_studio))+
+        '<br>ジャンル欠損 '+esc(String(s.published_missing_genre??0))+' / TVクール欠損 '+esc(String(s.published_tv_missing_season??0))+
+        '<br>作品読み仮名欠損 '+esc(String(s.published_missing_title_kana??0))+
+        '<br>人物日本語名欠損 '+esc(String(s.people_missing_japanese_name??0))+' / キャラクター日本語名欠損 '+esc(String(s.characters_missing_japanese_name??0))+
         '<br>重複タイトルグループ '+esc(String(s.duplicate_title_groups))+'</p></article>').join(""):'<p class="admin-message">監視履歴がありません。</p>';
       const missingHtml=missing.length?missing.map(a=>
         '<article style="padding:10px;border:1px solid #30435f;border-radius:8px;margin:7px 0;background:#0b1423">'+
