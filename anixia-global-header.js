@@ -207,7 +207,7 @@
         <div class="anixia-footer-bottom">© ANIXIA</div>
         <a class="anixia-admin-login" href="${ROOT}admin-login.html" aria-label="管理者ログイン">管理者ログイン</a>
       </div>`;
-    if (!existing) document.body.appendChild(footer);
+    document.body.appendChild(footer);
   }
 
   function init() {
