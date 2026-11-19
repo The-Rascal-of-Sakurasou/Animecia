@@ -14,7 +14,7 @@ const cleanHtml = (value: unknown) => String(value ?? "").replace(/<[^>]*>/g, " 
 function licenseInfo(meta: Record<string, any>) {
   const short = cleanHtml(meta?.LicenseShortName?.value);
   const rawUrl = cleanHtml(meta?.LicenseUrl?.value);
-  const url = rawUrl.startsWith("//") ? "https:" + rawUrl : rawUrl;
+  const url = rawUrl.startsWith("//") ? "https:" + rawUrl : rawUrl.replace(/^http:\/\/creativecommons\.org\//i, "https://creativecommons.org/");
   const artist = cleanHtml(meta?.Artist?.value || meta?.Author?.value);
   const credit = cleanHtml(meta?.Credit?.value || meta?.Attribution?.value);
   const normalized = short.toLowerCase();
@@ -23,8 +23,8 @@ function licenseInfo(meta: Record<string, any>) {
   const cc0 = /^(?:cc0(?:\s|$)|cc zero)$/i.test(short) && /creativecommons\.org\/publicdomain\/zero\//.test(licenseUrl);
   const publicDomain = /^(public domain|pd|public domain mark)$/i.test(short) &&
     (/creativecommons\.org\/publicdomain\/mark\//.test(licenseUrl) || (!licenseUrl && copyrighted === "false"));
-  const ccBy = /^cc by(?:\s|$)/i.test(short) && /creativecommons\.org\/licenses\/by\/\d+(?:\.\d+)?\//.test(licenseUrl);
-  const ccBySa = /^cc by-sa(?:\s|$)/i.test(short) && /creativecommons\.org\/licenses\/by-sa\/\d+(?:\.\d+)?\//.test(licenseUrl);
+  const ccBy = /^cc by(?:\s|$)/i.test(short) && /creativecommons\.org\/licenses\/by\/\d+(?:\.\d+)?(?:\/|$)/.test(licenseUrl);
+  const ccBySa = /^cc by-sa(?:\s|$)/i.test(short) && /creativecommons\.org\/licenses\/by-sa\/\d+(?:\.\d+)?(?:\/|$)/.test(licenseUrl);
   const allowed = cc0 || publicDomain || ccBy || ccBySa;
   const effectiveLicenseUrl = url || (publicDomain && copyrighted === "false"
     ? "https://commons.wikimedia.org/wiki/Commons:Licensing" : "");
@@ -264,7 +264,7 @@ async function searchImage(work: any) {
         }));
       }
       if (!license) return null;
-      return { page, info, license, score: (exact ? 100 : 90) + (yearMatch ? 10 : 0) + (logoFile ? 20 : 0) + (posterFile && !logoFile ? 10 : 0) };
+      return { page, info, license, score: (exact ? 100 : 90) + (yearMatch ? 10 : 0) + (logoFile ? 20 : 0) + (!logoFile ? 10 : 0) };
     }).filter(Boolean).sort((a: any, b: any) => b.score - a.score);
     if (ranked.length && (!ranked[1] || ranked[0].score > ranked[1].score)) {
       const best = ranked[0];
