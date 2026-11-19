@@ -33,6 +33,7 @@
       <a href="anime.html" data-i18n="nav_database">作品データベース</a>
       <a href="season.html" data-i18n="nav_season">今期アニメ</a>
       <a href="ranking.html" data-i18n="nav_ranking">ランキング</a>
+      <a href="quiz.html" data-i18n="nav_quiz">クイズ</a>
       <a href="recommendations.html" data-i18n="nav_discover">おすすめ診断</a>
       <a href="community.html" data-i18n="nav_community">コミュニティ</a>
     </nav>
@@ -66,6 +67,26 @@
     <a href="ranking.html" class="anixia-feature-link"><span class="feature-index">02</span><span><strong data-i18n="feature_ranking">ランキング</strong><small data-i18n="feature_ranking_sub">人気・評価から探す</small></span><span class="feature-arrow">→</span></a>
     <a href="mypage.html" class="anixia-feature-link"><span class="feature-index">03</span><span><strong data-i18n="feature_library">マイライブラリ</strong><small data-i18n="feature_library_sub">視聴状況・お気に入りを管理</small></span><span class="feature-arrow">→</span></a>
     <a href="recommendations.html" class="anixia-feature-link"><span class="feature-index">04</span><span><strong data-i18n="feature_discover">おすすめ診断</strong><small data-i18n="feature_discover_sub">好みから作品を見つける</small></span><span class="feature-arrow">→</span></a>
+  </section>
+
+  <section class="anixia-section anixia-service-section" aria-labelledby="service-hub-title">
+    <div class="anixia-section-heading">
+      <div>
+        <span class="anixia-eyebrow" data-i18n="hub_label">EXPLORE ANIXIA</span>
+        <h2 id="service-hub-title" data-i18n="hub_title">ANIXIAの機能</h2>
+        <p data-i18n="hub_sub">作品を探す、記録する、知識を深める。すべての機能へ。</p>
+      </div>
+    </div>
+    <div class="anixia-service-grid">
+      <a class="anixia-service-card" href="anime.html"><span class="anixia-service-index">01</span><strong data-i18n="hub_database">作品データベース</strong><small data-i18n="hub_database_sub">作品情報・詳細検索・関連作品</small><span class="anixia-service-arrow" aria-hidden="true">→</span></a>
+      <a class="anixia-service-card" href="season.html"><span class="anixia-service-index">02</span><strong data-i18n="hub_season">今期アニメ</strong><small data-i18n="hub_season_sub">放送中・放送予定の作品を探す</small><span class="anixia-service-arrow" aria-hidden="true">→</span></a>
+      <a class="anixia-service-card" href="ranking.html"><span class="anixia-service-index">03</span><strong data-i18n="hub_ranking">ランキング</strong><small data-i18n="hub_ranking_sub">人気・評価から作品を発見</small><span class="anixia-service-arrow" aria-hidden="true">→</span></a>
+      <a class="anixia-service-card" href="recommendations.html"><span class="anixia-service-index">04</span><strong data-i18n="hub_recommend">おすすめ診断</strong><small data-i18n="hub_recommend_sub">好みに合う作品を見つける</small><span class="anixia-service-arrow" aria-hidden="true">→</span></a>
+      <a class="anixia-service-card" href="quiz.html"><span class="anixia-service-index">05</span><strong data-i18n="hub_quiz">アニメクイズ</strong><small data-i18n="hub_quiz_sub">作品知識に挑戦する</small><span class="anixia-service-arrow" aria-hidden="true">→</span></a>
+      <a class="anixia-service-card" href="mypage.html"><span class="anixia-service-index">06</span><strong data-i18n="hub_library">マイライブラリ</strong><small data-i18n="hub_library_sub">視聴状況・お気に入りを管理</small><span class="anixia-service-arrow" aria-hidden="true">→</span></a>
+      <a class="anixia-service-card" href="community.html"><span class="anixia-service-index">07</span><strong data-i18n="hub_community">コミュニティ</strong><small data-i18n="hub_community_sub">ユーザーの投稿・交流を見る</small><span class="anixia-service-arrow" aria-hidden="true">→</span></a>
+      <a class="anixia-service-card" href="discover.html"><span class="anixia-service-index">08</span><strong data-i18n="hub_genres">ジャンルから探す</strong><small data-i18n="hub_genres_sub">ジャンルやテーマから作品を発見</small><span class="anixia-service-arrow" aria-hidden="true">→</span></a>
+    </div>
   </section>
 
   <section class="anixia-section">
@@ -115,16 +136,18 @@
 (() => {
   const translations = {
     ja: {
-      nav_database:"作品データベース",nav_season:"今期アニメ",nav_ranking:"ランキング",nav_discover:"おすすめ診断",nav_community:"コミュニティ",login:"ログイン",data_sources:"データ出典",
+      nav_database:"作品データベース",nav_season:"今期アニメ",nav_ranking:"ランキング",nav_quiz:"クイズ",nav_discover:"おすすめ診断",nav_community:"コミュニティ",login:"ログイン",data_sources:"データ出典",
       database_label:"ANIME DATABASE",search_heading:"アニメ作品を探す",search_label:"作品・人物・キャラクター・制作会社などを検索",search_button:"検索",catalog_count:"作品を収録",advanced_search:"詳細検索 →",
       feature_database:"作品データベース",feature_database_sub:"作品情報・ジャンル・制作会社",feature_ranking:"ランキング",feature_ranking_sub:"人気・評価から探す",feature_library:"マイライブラリ",feature_library_sub:"視聴状況・お気に入りを管理",feature_discover:"おすすめ診断",feature_discover_sub:"好みから作品を見つける",
+      hub_label:"EXPLORE ANIXIA",hub_title:"ANIXIAの機能",hub_sub:"作品を探す、記録する、知識を深める。すべての機能へ。",hub_database:"作品データベース",hub_database_sub:"作品情報・詳細検索・関連作品",hub_season:"今期アニメ",hub_season_sub:"放送中・放送予定の作品を探す",hub_ranking:"ランキング",hub_ranking_sub:"人気・評価から作品を発見",hub_recommend:"おすすめ診断",hub_recommend_sub:"好みに合う作品を見つける",hub_quiz:"アニメクイズ",hub_quiz_sub:"作品知識に挑戦する",hub_library:"マイライブラリ",hub_library_sub:"視聴状況・お気に入りを管理",hub_community:"コミュニティ",hub_community_sub:"ユーザーの投稿・交流を見る",hub_genres:"ジャンルから探す",hub_genres_sub:"ジャンルやテーマから作品を発見",
       popular_label:"POPULAR",popular_title:"人気の作品",popular_sub:"多くのユーザーに視聴されている作品",view_ranking:"ランキングを見る →",recent_label:"RECENTLY ADDED",recent_title:"最近追加された作品",recent_sub:"データベースに追加・更新された作品",view_database:"作品一覧 →",
       genres_label:"BROWSE BY GENRE",genres_title:"ジャンルから探す",genres_sub:"気になるジャンルから作品を絞り込む",view_genres:"すべてのジャンル →",season_title:"今期アニメ",season_sub:"放送中・放送予定の作品",community_title:"コミュニティ",community_sub:"ユーザーの投稿を見る"
     },
     en: {
-      nav_database:"Anime Database",nav_season:"Seasonal Anime",nav_ranking:"ランキング",nav_discover:"Recommendations",nav_community:"Community",login:"Log in",data_sources:"Data sources",
+      nav_database:"Anime Database",nav_season:"Seasonal Anime",nav_ranking:"ランキング",nav_quiz:"Quiz",nav_discover:"Recommendations",nav_community:"Community",login:"Log in",data_sources:"Data sources",
       database_label:"ANIME DATABASE",search_heading:"Find anime",search_label:"Search anime titles",search_button:"Search",catalog_count:"titles in catalog",advanced_search:"Advanced search →",
       feature_database:"Anime Database",feature_database_sub:"Titles, genres and studios",feature_ranking:"Rankings",feature_ranking_sub:"Browse by popularity and score",feature_library:"My Library",feature_library_sub:"Track your watchlist and favorites",feature_discover:"Recommendations",feature_discover_sub:"Find titles based on your taste",
+      hub_label:"EXPLORE ANIXIA",hub_title:"Explore ANIXIA",hub_sub:"Discover titles, track your anime, and test your knowledge.",hub_database:"Anime Database",hub_database_sub:"Title information, advanced search and related works",hub_season:"Seasonal Anime",hub_season_sub:"Browse airing and upcoming titles",hub_ranking:"Rankings",hub_ranking_sub:"Discover titles by popularity and score",hub_recommend:"Recommendations",hub_recommend_sub:"Find anime that match your preferences",hub_quiz:"Anime Quiz",hub_quiz_sub:"Test your anime knowledge",hub_library:"My Library",hub_library_sub:"Manage watch status and favorites",hub_community:"Community",hub_community_sub:"Explore posts and community activity",hub_genres:"Browse by Genre",hub_genres_sub:"Discover titles by genre and theme",
       popular_label:"POPULAR",popular_title:"Popular anime",popular_sub:"Titles watched by the community",view_ranking:"View rankings →",recent_label:"RECENTLY ADDED",recent_title:"Recently added",recent_sub:"New and updated database entries",view_database:"Browse all titles →",
       genres_label:"BROWSE BY GENRE",genres_title:"Browse by genre",genres_sub:"Explore titles by genre",view_genres:"All genres →",season_title:"Seasonal anime",season_sub:"Currently airing and upcoming titles",community_title:"Community",community_sub:"Browse community posts"
     }
