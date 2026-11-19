@@ -3999,3 +3999,89 @@ main :where(.anixia-skeleton-card){min-width:0!important;border-radius:10px!impo
   main :where(.anixia-detail-poster-wrap){max-width:160px!important}
   main :where(.anixia-detail-meta){flex-wrap:wrap!important}
 }
+
+
+/* Final cross-page normalization: one ANIXIA design system */
+:root{
+  color-scheme:light;
+  --anixia-brand:#03AF6A;
+  --anixia-brand-hover:#02965B;
+  --anixia-logo-blue:#1DA1F2;
+  --anixia-page:#F7F9F8;
+  --anixia-surface:#FFFFFF;
+  --anixia-text:#171C19;
+  --anixia-muted:#68736D;
+  --anixia-border:#E3EAE6;
+  --anixia-content-width:1200px;
+  --anixia-radius:10px;
+}
+html,body{background:var(--anixia-page)!important;background-image:none!important;color:var(--anixia-text)!important}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Noto Sans JP","Yu Gothic",Meiryo,sans-serif!important;font-size:14px!important;line-height:1.65!important}
+main,[role="main"],.main-content,.page-content{color:var(--anixia-text)!important}
+main{max-width:var(--anixia-content-width)!important;margin-left:auto!important;margin-right:auto!important}
+main :where(h1,h2,h3,h4,h5,h6,.title,.heading){color:var(--anixia-text)!important;text-shadow:none!important}
+main :where(p,small,.description,.subtitle,.muted,.hint,.help-text,.meta,.sub){color:var(--anixia-muted)!important}
+main :where(a:not([class*="button"]):not([class*="btn"])){color:var(--anixia-brand)!important;text-decoration-color:rgba(3,175,106,.35)}
+main :where(a:hover:not([class*="button"]):not([class*="btn"])){color:var(--anixia-brand-hover)!important}
+main :where(button,.button,.btn,[type="submit"],[type="button"]){
+  min-height:38px;border-radius:8px!important;border:1px solid var(--anixia-brand)!important;
+  background:var(--anixia-brand)!important;color:#fff!important;box-shadow:none!important;
+  font:inherit;font-weight:650;transition:background-color .15s ease,border-color .15s ease;
+}
+main :where(button:hover,.button:hover,.btn:hover,[type="submit"]:hover,[type="button"]:hover){
+  background:var(--anixia-brand-hover)!important;border-color:var(--anixia-brand-hover)!important;color:#fff!important;
+}
+main :where(button.secondary,.secondary,.btn-secondary,.button-secondary,[data-variant="secondary"]){
+  background:#fff!important;color:var(--anixia-text)!important;border-color:var(--anixia-border)!important;
+}
+main :where(input:not([type=checkbox]):not([type=radio]),select,textarea){
+  min-height:40px;background:#fff!important;color:var(--anixia-text)!important;
+  border:1px solid #DCE4DF!important;border-radius:8px!important;box-shadow:none!important;
+}
+main :where(input::placeholder,textarea::placeholder){color:#89938D!important}
+main :where(input:focus,select:focus,textarea:focus){border-color:var(--anixia-brand)!important;outline:2px solid rgba(3,175,106,.13)!important}
+main :where(.card,.panel,.box,.surface,.hero,.page-hero,.filter-panel,.filter-area,.search-panel,.search-box,.form-panel,.content-panel,.detail-panel,.profile-card,.quiz-card,.rank-row,.review-item,.list-item,[class$="-card"],[class$="-panel"]){
+  background:#fff!important;background-image:none!important;color:var(--anixia-text)!important;
+  border:1px solid var(--anixia-border)!important;border-radius:var(--anixia-radius)!important;
+  box-shadow:none!important;
+}
+main :where(.card,.panel,.box,.surface,.hero,.page-hero,.filter-panel,.filter-area,.search-panel,.search-box,.form-panel,.content-panel,.detail-panel,.profile-card,.quiz-card,[class$="-card"],[class$="-panel"]) :where(h1,h2,h3,h4,strong,b){color:var(--anixia-text)!important}
+main :where(.card,.panel,.box,.surface,.hero,.page-hero,.filter-panel,.filter-area,.search-panel,.search-box,.form-panel,.content-panel,.detail-panel,.profile-card,.quiz-card,[class$="-card"],[class$="-panel"]) :where(p,small,label,.muted,.description,.hint,.meta){color:var(--anixia-muted)!important}
+main :where(hr,.divider,.section-divider){border-color:var(--anixia-border)!important}
+main :where(table){width:100%;border-collapse:collapse;background:#fff;color:var(--anixia-text)}
+main :where(th,td){padding:11px 13px;border-bottom:1px solid var(--anixia-border);text-align:left}
+main :where(th){font-weight:700;background:#F4F7F5}
+main :where(img){max-width:100%}
+html body header,html body .site-header,html body .anixia-global-header{
+  width:100%!important;background:#111!important;background-color:#111!important;background-image:none!important;
+  color:#fff!important;border:0!important;border-bottom:1px solid #292929!important;box-shadow:none!important;text-align:left!important;
+}
+html body header :where(.header-inner,.container,.container.nav,.anixia-shell,.wrap,.nav-inner,.navbar-inner,.wrap.head){
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  gap:18px!important;width:min(var(--anixia-content-width),100%)!important;min-height:66px!important;
+  margin:0 auto!important;padding:0 22px!important;background:transparent!important;text-align:left!important;
+}
+html body header :where(nav,.main-nav,.site-nav,.nav-links,.header-nav){
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  flex:0 1 auto!important;min-width:0!important;margin:0!important;text-align:left!important;
+}
+html body header :where(nav a,.nav-links a,.main-nav a,.site-nav a,.header-nav a){color:#fff!important;text-decoration:none!important}
+html body header :where(nav a:hover,.nav-links a:hover,.main-nav a:hover,.site-nav a:hover,.header-nav a:hover){color:var(--anixia-brand)!important}
+html body header .anixia-logo,html body header .brand,html body header .logo{color:var(--anixia-brand)!important}
+html body header .anixia-logo .anixia-logo-xia,html body header .brand .anixia-logo-xia,html body header .logo .anixia-logo-xia{color:var(--anixia-logo-blue)!important}
+html body header :where(.header-actions,.nav-actions,.userbar){margin-left:0!important;justify-content:flex-start!important}
+html body footer,html body footer.anixia-global-footer{
+  width:100%!important;background:#111!important;background-color:#111!important;background-image:none!important;
+  color:#ddd!important;border:0!important;border-top:1px solid #292929!important;box-shadow:none!important;text-align:left!important;
+}
+html body footer :where(a){color:#e6e6e6!important;text-decoration:none!important}
+html body footer :where(a:hover){color:var(--anixia-brand)!important}
+html body footer .anixia-footer-inner{width:min(var(--anixia-content-width),100%)!important;margin:0 auto!important}
+html body footer :where(.anixia-footer-main,.anixia-footer-nav,.anixia-footer-bottom){justify-content:flex-start!important;align-items:flex-start!important;text-align:left!important}
+@media(max-width:760px){
+  html body header :where(.header-inner,.container,.container.nav,.anixia-shell,.wrap,.nav-inner,.navbar-inner,.wrap.head){min-height:58px!important;padding:0 14px!important;gap:12px!important;flex-wrap:wrap!important}
+  html body header :where(nav,.main-nav,.site-nav,.nav-links,.header-nav){flex-wrap:wrap!important;gap:8px 12px!important}
+  main{width:calc(100% - 28px)!important}
+  main :where(.grid,.cards,.card-grid,[class$="-grid"]){min-width:0}
+}
+@media(prefers-reduced-motion:reduce){main :where(button,.button,.btn){transition:none!important}}
