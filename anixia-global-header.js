@@ -30,10 +30,12 @@
       .anixia-global-nav{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:2px!important;flex:0 1 auto!important;min-width:0!important;overflow-x:auto!important;scrollbar-width:none!important}
       .anixia-global-nav::-webkit-scrollbar{display:none!important}
       .anixia-global-nav a{display:inline-flex!important;align-items:center!important;min-height:36px!important;padding:7px 8px!important;border-radius:5px!important;color:#fff!important;background:transparent!important;text-decoration:none!important;font-size:12px!important;font-weight:650!important;white-space:nowrap!important}
-      .anixia-global-nav a,.anixia-global-nav a:visited,.anixia-global-nav a:hover,.anixia-global-nav a:focus,.anixia-global-nav a[aria-current="page"]{color:#FFFFFF!important;opacity:1!important;background:transparent!important}\n      .anixia-global-nav a:hover,.anixia-global-nav a[aria-current="page"]{background:rgba(255,255,255,.07)!important}
+      .anixia-global-nav a,.anixia-global-nav a:visited,.anixia-global-nav a:hover,.anixia-global-nav a:focus,.anixia-global-nav a[aria-current="page"]{color:#FFFFFF!important;opacity:1!important;background:transparent!important}
+      .anixia-global-nav a:hover,.anixia-global-nav a[aria-current="page"]{background:rgba(255,255,255,.07)!important}
       .anixia-header-actions{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:7px!important;flex:0 0 auto!important;margin:0!important}
       .anixia-header-actions .anixia-header-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:36px!important;padding:0 12px!important;border:1px solid #03AF6A!important;border-radius:6px!important;background:#03AF6A!important;color:#fff!important;text-decoration:none!important;font-family:inherit!important;font-size:12px!important;font-weight:750!important;white-space:nowrap!important;cursor:pointer!important}
-      .anixia-header-actions .anixia-header-button:hover{background:#028f56!important;border-color:#028f56!important;color:#FFFFFF!important}\n      .anixia-header-actions #account-link,.anixia-header-actions #account-link:visited,.anixia-header-actions #account-link:hover{color:#FFFFFF!important}
+      .anixia-header-actions .anixia-header-button:hover{background:#028f56!important;border-color:#028f56!important;color:#FFFFFF!important}
+      .anixia-header-actions #account-link,.anixia-header-actions #account-link:visited,.anixia-header-actions #account-link:hover{color:#FFFFFF!important}
       .anixia-header-actions [hidden]{display:none!important}
       footer.anixia-global-footer{display:block!important;width:100%!important;margin:64px 0 0!important;padding:0!important;background:#000!important;color:#fff!important;border:0!important;border-top:1px solid #222!important;box-shadow:none!important}
       .anixia-footer-inner{width:100%!important;max-width:1200px!important;margin:0!important;padding:28px 18px 18px!important;box-sizing:border-box!important;text-align:left!important}
@@ -71,21 +73,18 @@
   }
 
   function installHeader() {
-    const headerCandidates = Array.from(document.querySelectorAll("body > header, body > .site-header, body > .container.nav"));
-    let header = headerCandidates.shift() || null;
-    headerCandidates.forEach(duplicate => duplicate.remove());
-    if (!header) {
-      header = document.createElement("header");
-      document.body.prepend(header);
-    }
+    // Remove every page-specific header before creating the single shared header.
+    document.querySelectorAll("header.site-header, header.anixia-global-header").forEach(node => node.remove());
+    const header = document.createElement("header");
     header.className = "site-header anixia-global-header";
-    if (header.parentElement !== document.documentElement) document.documentElement.insertBefore(header, document.body);
+    header.setAttribute("role", "banner");
     header.style.setProperty("position", "fixed", "important");
-    header.style.setProperty("top", "0", "important");
-    header.style.setProperty("left", "0", "important");
-    header.style.setProperty("right", "0", "important");
-    header.style.setProperty("z-index", "99999", "important");
+    header.style.setProperty("top", "0px", "important");
+    header.style.setProperty("left", "0px", "important");
+    header.style.setProperty("right", "0px", "important");
+    header.style.setProperty("z-index", "2147483647", "important");
     header.style.setProperty("width", "100%", "important");
+    header.style.setProperty("transform", "none", "important");
     header.style.setProperty("background", "#000000", "important");
     header.style.setProperty("background-color", "#000000", "important");
     header.style.setProperty("color", "#FFFFFF", "important");
@@ -103,15 +102,16 @@
           <a class="anixia-header-button" id="mypage-link" href="${ROOT}mypage.html">マイページ</a>
         </div>
       </div>`;
-    const mypageButtons = header.querySelectorAll("#mypage-link");
-    mypageButtons.forEach((button, index) => { if (index > 0) button.remove(); });
-    header.querySelectorAll(".anixia-global-nav a").forEach(a => { a.style.setProperty("color", "#FFFFFF", "important"); a.style.setProperty("opacity", "1", "important"); });
+    header.querySelectorAll(".anixia-global-nav a").forEach(a => {
+      a.style.setProperty("color", "#FFFFFF", "important");
+      a.style.setProperty("opacity", "1", "important");
+    });
     header.querySelectorAll(".anixia-header-actions .anixia-header-button").forEach(a => a.style.setProperty("color", "#FFFFFF", "important"));
     const logo = header.querySelector(".anixia-logo");
     if (logo) logo.style.setProperty("color", "#03AF6A", "important");
     const logoAccent = header.querySelector(".anixia-logo-xia");
     if (logoAccent) logoAccent.style.setProperty("color", "#1DA1F2", "important");
-    const current = location.pathname.replace(/^.*\/anixia\//, "");
+    const current = location.pathname.replace(/^.*\\/anixia\\//, "");
     header.querySelectorAll(".anixia-global-nav a").forEach(a => {
       const path = a.getAttribute("href").replace(ROOT, "");
       if (path === current || (!path && !current)) a.setAttribute("aria-current", "page");
@@ -123,20 +123,15 @@
       if (window.ANIXIA_SET_LANGUAGE) window.ANIXIA_SET_LANGUAGE(next);
       else { localStorage.setItem("anixia-language", next); location.reload(); }
     });
-    const pinHeader = () => {
-      if (header.parentElement !== document.documentElement) document.documentElement.insertBefore(header, document.body);
-      header.style.setProperty("position", "fixed", "important");
-      header.style.setProperty("top", "0px", "important");
-      header.style.setProperty("left", "0px", "important");
-      header.style.setProperty("right", "0px", "important");
-      header.style.setProperty("z-index", "2147483647", "important");
-      header.style.setProperty("transform", "none", "important");
-      document.body.style.setProperty("padding-top", `${header.offsetHeight}px`, "important");
+
+    // Keep the fixed header in the body; never reparent it during scrolling.
+    document.body.prepend(header);
+    const updateHeaderSpace = () => {
+      document.body.style.setProperty("padding-top", header.offsetHeight + "px", "important");
     };
-    pinHeader();
-    window.addEventListener("scroll", pinHeader, {passive:true});
-    window.addEventListener("resize", pinHeader, {passive:true});
-    if (window.ResizeObserver) new ResizeObserver(pinHeader).observe(header);
+    updateHeaderSpace();
+    if (window.ResizeObserver) new ResizeObserver(updateHeaderSpace).observe(header);
+    window.addEventListener("resize", updateHeaderSpace, {passive:true});
     setupAuth(header);
   }
 
