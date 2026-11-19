@@ -42,7 +42,7 @@ function mapRow(b:any){
  if(!/^Q\d+$/.test(qid)||!title||!year||year<1963)return null;
  const format=formats[cls]||"other";
  const publishable=Boolean(titleJa)&&["tv","movie","ova","ona","web","special"].includes(format);
- return {source:"wikidata",source_id:qid,title,title_ja:titleJa,format,release_year:year,country_code:"JP",episode_count:Number.isInteger(episodes)&&episodes>0?episodes:null,episodes_count:Number.isInteger(episodes)&&episodes>0?episodes:null,is_published:false,source_synced_at:new Date().toISOString()};
+ return {source:"wikidata",source_id:qid,title,title_ja:titleJa,format,release_year:year,country_code:"JP",episode_count:Number.isInteger(episodes)&&episodes>0?episodes:null,episodes_count:Number.isInteger(episodes)&&episodes>0?episodes:null,is_published:publishable,source_synced_at:new Date().toISOString()};
 }
 async function digestHex(value:string){
  const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value));
@@ -158,14 +158,14 @@ Deno.serve(async(req:Request)=>{
    const found=ids.length?await db.from("anime").select("source_id,is_published").eq("source","wikidata").in("source_id",ids):{data:[],error:null};
    if(found.error)throw found.error;
    const existing=new Map((found.data||[]).map((x:any)=>[String(x.source_id),Boolean(x.is_published)]));
-   return json({mode,offset,recordsSeen:bindings.length,candidates:rows.map(x=>({sourceId:x.source_id,title:x.title,titleJa:x.title_ja,format:x.format,releaseYear:x.release_year,episodeCount:x.episode_count,alreadyImported:existing.has(x.source_id),alreadyPublished:existing.get(x.source_id)===true,wikidataUrl:"https://www.wikidata.org/wiki/"+x.source_id}))});
+   return json({mode,offset,recordsSeen:bindings.length,candidates:rows.map(x=>({sourceId:x.source_id,title:x.title,titleJa:x.title_ja,format:x.format,releaseYear:x.release_year,episodeCount:x.episode_count,autoPublishEligible:x.is_published,alreadyImported:existing.has(x.source_id),alreadyPublished:existing.get(x.source_id)===true,wikidataUrl:"https://www.wikidata.org/wiki/"+x.source_id}))});
   }
   const run=await db.from("catalog_sync_runs").insert({source:"wikidata",status:"running",pages_requested:0,records_seen:0,records_inserted_or_updated:0}).select("id").single();
   if(run.error)throw run.error;
   try{
    const saved=rows.length?await db.from("anime").upsert(rows,{onConflict:"source,source_id",ignoreDuplicates:true}).select("id"):{data:[],error:null};
    if(saved.error)throw saved.error;
-   // New historical catalog candidates remain unpublished until administrator review.
+   // Publish only high-confidence candidates with a Japanese title and a supported anime format; keep incomplete records private.
    if(rows.length){
     const sourceIds=rows.map(row=>row.source_id);
     const imported=await db.from("anime").select("id,source_id").eq("source","wikidata").in("source_id",sourceIds);
@@ -191,7 +191,7 @@ Deno.serve(async(req:Request)=>{
    const inserted=saved.data?.length||0;
    const finish=await db.from("catalog_sync_runs").update({finished_at:now,status:"succeeded",pages_requested:1,records_seen:bindings.length,records_inserted_or_updated:inserted}).eq("id",run.data.id);
    if(finish.error)throw finish.error;
-   return json({status:"completed",offset,nextOffset:next,recordsSeen:bindings.length,validCandidates:rows.length,recordsInsertedOrUpdated:inserted,linkedMyAnimeListIds:typeof malIdsLinked==="number"?malIdsLinked:0,sweepRestarted:next===0});
+   return json({status:"completed",offset,nextOffset:next,recordsSeen:bindings.length,validCandidates:rows.length,autoPublishEligible:rows.filter(row=>row.is_published).length,heldForMissingJapaneseTitleOrUnsupportedFormat:rows.filter(row=>!row.is_published).length,recordsInsertedOrUpdated:inserted,linkedMyAnimeListIds:typeof malIdsLinked==="number"?malIdsLinked:0,sweepRestarted:next===0});
   }catch(error){
    await db.from("catalog_sync_runs").update({finished_at:new Date().toISOString(),status:"failed",pages_requested:1,records_seen:bindings.length,error_message:JSON.stringify(error).slice(0,1000)}).eq("id",run.data.id);
    throw error;
