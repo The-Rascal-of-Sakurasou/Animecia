@@ -4424,3 +4424,9 @@ header.site-header,header.anixia-global-header{position:fixed!important;top:0!im
 header.anixia-global-header .anixia-global-nav a,header.anixia-global-header .anixia-global-nav a:visited,header.anixia-global-header .anixia-global-nav a:hover,header.anixia-global-header .anixia-global-nav a:focus,header.anixia-global-header .anixia-global-nav a[aria-current="page"]{color:#FFFFFF!important;opacity:1!important}
 header.anixia-global-header .anixia-header-actions #account-link,header.anixia-global-header .anixia-header-actions #account-link:visited,header.anixia-global-header .anixia-header-actions #account-link:hover,header.anixia-global-header .anixia-header-actions .anixia-header-button{color:#FFFFFF!important}
 footer.anixia-global-footer .anixia-admin-login,footer.anixia-global-footer .anixia-admin-login:visited,footer.anixia-global-footer .anixia-admin-login:hover,footer.anixia-global-footer .anixia-admin-login:focus,footer.anixia-global-footer .anixia-admin-login:active{background:#000000!important;background-color:#000000!important;color:#000000!important;border-color:#000000!important;box-shadow:none!important;outline:none!important;opacity:1!important}
+
+
+/* Keep the footer as the final page boundary and suppress overscroll beyond it. */
+html,body{overscroll-behavior-y:none!important;}
+body{padding-bottom:0!important;margin-bottom:0!important;}
+footer.anixia-global-footer{display:block!important;position:relative!important;inset:auto!important;margin-bottom:0!important;}
