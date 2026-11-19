@@ -187,7 +187,7 @@
   async function getMyDashboard(userId) {
     const db = getClient();
     const [profile, favorites, watchEntries, ratings, achievements, reviews] = await Promise.all([
-      db.from("profiles").select("id,username,display_name,avatar_url,bio,is_public").eq("id", userId).maybeSingle(),
+      db.from("profiles").select("id,username,display_name,avatar_url,bio,is_public,show_posts,show_favorites,show_anime_follows,show_watch_status,show_ratings,show_reviews,show_user_follows,show_ranking").eq("id", userId).maybeSingle(),
       db.from("favorites").select("anime_id,created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(50),
       db.from("watch_entries").select("anime_id,status,episodes_watched,updated_at").eq("user_id", userId).order("updated_at", { ascending: false }).limit(100),
       db.from("ratings").select("anime_id,score,updated_at").eq("user_id", userId).order("updated_at", { ascending: false }).limit(50),
@@ -256,9 +256,19 @@
     const allowed = {
       username: String(values.username || "").trim().slice(0, 30) || null,
       display_name: String(values.display_name || "").trim().slice(0, 50) || null,
-      bio: String(values.bio || "").trim().slice(0, 300) || null
+      bio: String(values.bio || "").trim().slice(0, 300) || null,
+      is_public: values.is_public !== false,
+      show_posts: values.show_posts !== false,
+      show_favorites: values.show_favorites !== false,
+      show_anime_follows: values.show_anime_follows !== false,
+      show_watch_status: values.show_watch_status !== false,
+      show_ratings: values.show_ratings !== false,
+      show_reviews: values.show_reviews !== false,
+      show_user_follows: values.show_user_follows !== false,
+      show_ranking: values.show_ranking !== false
     };
-    const result = await getClient().from("profiles").update(allowed).eq("id", userId).select("id,username,display_name,bio").single();
+    const result = await getClient().from("profiles").update(allowed).eq("id", userId)
+      .select("id,username,display_name,bio,is_public,show_posts,show_favorites,show_anime_follows,show_watch_status,show_ratings,show_reviews,show_user_follows,show_ranking").single();
     if (result.error) throw result.error;
     return result.data;
   }
