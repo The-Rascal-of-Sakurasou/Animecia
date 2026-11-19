@@ -4,7 +4,8 @@
   let metric="rating";
   const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const en=()=>localStorage.getItem("anixia-language")==="en";
-  const name=a=>en()?(a.title||"Title unavailable"):(a.title_ja||a.title_kana||a.title||"タイトル未登録");
+  const hasJapanese=v=>/[\\u3040-\\u30ff\\u3400-\\u9fff]/u.test(String(v||""));
+  const name=a=>en()?(a.title_en||(a.title&&!hasJapanese(a.title)?a.title:"English title unavailable")):(a.title_ja||a.title_kana||a.title||"タイトル未登録");
   const fmt=v=>({tv:"TV",movie:en()?"Movie":"劇場版",ova:"OVA",ona:"ONA",special:en()?"Special":"特別編",web:"Web",other:en()?"Other":"その他"}[v]||v||(en()?"Format unavailable":"形式未登録"));
   async function load(){
     el.innerHTML='<p class="rank-state">ランキングを更新しています…</p>';
