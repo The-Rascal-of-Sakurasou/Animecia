@@ -3561,3 +3561,7 @@ a:hover{color:var(--anixia-brand-hover)!important}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
+
+/* Keep the global footer quiet and free of decorative separators */
+.anixia-footer-nav{border:0!important}
+.anixia-footer-bottom{border:0!important}
