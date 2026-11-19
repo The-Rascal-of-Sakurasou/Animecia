@@ -8,7 +8,7 @@
   const name=a=>en()?(a.title_en||(a.title&&!hasJapanese(a.title)?a.title:"English title unavailable")):(a.title_ja||a.title_kana||a.title||"タイトル未登録");
   const fmt=v=>({tv:"TV",movie:en()?"Movie":"劇場版",ova:"OVA",ona:"ONA",special:en()?"Special":"特別編",web:"Web",other:en()?"Other":"その他"}[v]||v||(en()?"Format unavailable":"形式未登録"));
   async function load(){
-    el.innerHTML='<p class="rank-state">ランキングを更新しています…</p>';
+    el.innerHTML=`<p class="rank-state">${en()?"Updating ranking…":"ランキングを更新しています…"}</p>`;
     note.textContent=en()?(metric==="rating"?"Sorted by average score; titles need at least five ratings.":metric==="popular"?"Sorted by number of users tracking each title.":metric==="reviews"?"Sorted by published review count.":"Sorted by release year, newest first."):(metric==="rating"?"評価5件以上の作品を対象に、平均点の高い順で表示します。":metric==="popular"?"登録された視聴者数の多い順です。":metric==="reviews"?"登録されたレビュー数の多い順です。":"放送年の新しい順です。");
     try{
       const rows=await ANIXIA.getRankings(metric,50);
