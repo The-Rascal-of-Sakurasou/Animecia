@@ -4559,3 +4559,265 @@ textarea::placeholder{
 
 /* Final shared canvas color: pure white on every page. */
 html,body{background:#FFFFFF!important;background-color:#FFFFFF!important;}
+
+
+/* =========================================================
+   ANIXIA shared frame — authoritative header/footer rules
+   Applies to the actual shared markup used by all feature pages.
+   ========================================================= */
+:root{
+  --anixia-frame-black:#000000;
+  --anixia-frame-white:#FFFFFF;
+  --anixia-jt:#03AF6A;
+  --anixia-twitter:#1DA1F2;
+}
+
+/* Fixed shared header */
+html body > header.site-header,
+html body header.site-header,
+html body > header:not([class]){
+  position:fixed!important;
+  inset:0 0 auto 0!important;
+  z-index:2147483000!important;
+  width:100%!important;
+  max-width:none!important;
+  min-height:66px!important;
+  height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  background:#000000!important;
+  background-color:#000000!important;
+  background-image:none!important;
+  color:#FFFFFF!important;
+  border:0!important;
+  border-bottom:1px solid #222222!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  transform:none!important;
+}
+html body > header.site-header *,
+html body header.site-header *,
+html body > header:not([class]) *{
+  color:#FFFFFF!important;
+}
+html body header.site-header .anixia-logo,
+html body header.site-header .brand,
+html body header.site-header .logo,
+html body > header:not([class]) .anixia-logo{
+  color:#03AF6A!important;
+  background:none!important;
+  -webkit-text-fill-color:initial!important;
+  text-decoration:none!important;
+  font-weight:900!important;
+  white-space:nowrap!important;
+}
+html body header.site-header .anixia-logo .anixia-logo-xia,
+html body header.site-header .brand .anixia-logo-xia,
+html body > header:not([class]) .anixia-logo .anixia-logo-xia{
+  color:#1DA1F2!important;
+}
+html body header.site-header .header-inner,
+html body header.site-header .anixia-shell,
+html body > header:not([class]) > div{
+  width:min(1320px,100%)!important;
+  max-width:1320px!important;
+  min-height:66px!important;
+  margin:0 auto!important;
+  padding:10px 22px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:20px!important;
+  box-sizing:border-box!important;
+  background:transparent!important;
+}
+html body header.site-header .anixia-main-nav,
+html body header.site-header nav,
+html body > header:not([class]) nav{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  flex:1 1 auto!important;
+  min-width:0!important;
+  gap:5px!important;
+  margin:0!important;
+  padding:0!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  white-space:nowrap!important;
+  scrollbar-width:none!important;
+}
+html body header.site-header .anixia-main-nav::-webkit-scrollbar,
+html body header.site-header nav::-webkit-scrollbar{display:none!important}
+html body header.site-header .anixia-main-nav a,
+html body header.site-header nav a,
+html body > header:not([class]) nav a{
+  flex:0 0 auto!important;
+  color:#FFFFFF!important;
+  background:transparent!important;
+  border:0!important;
+  text-decoration:none!important;
+  white-space:nowrap!important;
+}
+html body header.site-header .anixia-header-actions,
+html body header.site-header .userbar,
+html body header.site-header .header-actions{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  flex:0 0 auto!important;
+  gap:8px!important;
+  margin:0 0 0 auto!important;
+}
+html body header.site-header .anixia-header-actions .anixia-language,
+html body header.site-header .anixia-header-actions .anixia-account,
+html body header.site-header .anixia-header-actions button,
+html body header.site-header .anixia-header-actions a{
+  min-height:36px!important;
+  color:#FFFFFF!important;
+  border-radius:7px!important;
+  white-space:nowrap!important;
+}
+html body header.site-header .anixia-header-actions .anixia-language{
+  background:#111111!important;
+  border:1px solid #444444!important;
+}
+html body header.site-header .anixia-header-actions .anixia-account{
+  background:#03AF6A!important;
+  border:1px solid #03AF6A!important;
+}
+html body header.site-header .anixia-header-actions [hidden]{display:none!important}
+
+/* Reserve space for the fixed header without changing page content. */
+html body:has(> header.site-header),
+html body:has(> header:not([class])){padding-top:66px!important}
+
+/* Shared footer */
+html body > footer,
+html body footer.anixia-footer,
+html body footer.site-footer,
+html body footer.anixia-global-footer{
+  display:block!important;
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  background:#000000!important;
+  background-color:#000000!important;
+  background-image:none!important;
+  color:#FFFFFF!important;
+  border:0!important;
+  border-top:1px solid #222222!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+html body > footer *,
+html body footer.anixia-footer *,
+html body footer.site-footer *,
+html body footer.anixia-global-footer *{color:#FFFFFF!important}
+html body footer .anixia-footer-inner,
+html body footer .site-footer-inner{
+  width:min(1320px,100%)!important;
+  max-width:1320px!important;
+  margin:0 auto!important;
+  padding:22px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:22px!important;
+  text-align:left!important;
+  background:transparent!important;
+}
+html body footer .anixia-logo,
+html body footer .footer-brand,
+html body footer .brand,
+html body footer .logo{
+  color:#03AF6A!important;
+  background:none!important;
+  -webkit-text-fill-color:initial!important;
+  text-decoration:none!important;
+  font-weight:900!important;
+}
+html body footer .anixia-logo .anixia-logo-xia,
+html body footer .footer-brand .anixia-logo-xia{
+  color:#1DA1F2!important;
+}
+html body footer .anixia-footer-links,
+html body footer .footer-links{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  flex-wrap:wrap!important;
+  gap:10px 18px!important;
+  margin:0!important;
+  text-align:left!important;
+}
+html body footer a{color:#FFFFFF!important;text-decoration:none!important}
+html body footer a:hover{color:#FFFFFF!important;opacity:.8!important}
+
+/* Admin entry intentionally remains black on black. */
+html body footer .anixia-admin-login,
+html body footer .anixia-admin-login:link,
+html body footer .anixia-admin-login:visited,
+html body footer .anixia-admin-login:hover,
+html body footer .anixia-admin-login:focus,
+html body footer .anixia-admin-login:active{
+  color:#000000!important;
+  background:#000000!important;
+  background-color:#000000!important;
+  border-color:#000000!important;
+  box-shadow:none!important;
+  outline:none!important;
+}
+
+/* Mobile and tablet: keep every header control on a separate, non-overlapping row. */
+@media(max-width:900px){
+  html body header.site-header .header-inner,
+  html body header.site-header .anixia-shell,
+  html body > header:not([class]) > div{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    grid-template-rows:auto auto!important;
+    gap:8px 12px!important;
+    min-height:0!important;
+    padding:9px 14px!important;
+  }
+  html body header.site-header .anixia-logo,
+  html body > header:not([class]) .anixia-logo{grid-column:1!important;grid-row:1!important}
+  html body header.site-header .anixia-header-actions{grid-column:2!important;grid-row:1!important;margin:0!important;gap:5px!important}
+  html body header.site-header .anixia-main-nav,
+  html body header.site-header nav,
+  html body > header:not([class]) nav{
+    grid-column:1/-1!important;
+    grid-row:2!important;
+    width:100%!important;
+    min-width:0!important;
+    overflow-x:auto!important;
+    padding-bottom:2px!important;
+  }
+  html body:has(> header.site-header),
+  html body:has(> header:not([class])){padding-top:106px!important}
+  html body footer .anixia-footer-inner,
+  html body footer .site-footer-inner{
+    flex-direction:column!important;
+    align-items:flex-start!important;
+    gap:12px!important;
+    padding:20px 14px!important;
+  }
+  html body footer .anixia-footer-links,
+  html body footer .footer-links{justify-content:flex-start!important}
+}
+@media(max-width:430px){
+  html body header.site-header .anixia-header-actions .anixia-account,
+  html body header.site-header .anixia-header-actions .anixia-language{
+    min-height:32px!important;
+    padding:0 8px!important;
+    font-size:11px!important;
+  }
+  html body header.site-header .anixia-main-nav a,
+  html body header.site-header nav a,
+  html body > header:not([class]) nav a{padding:6px 8px!important;font-size:11px!important}
+}
