@@ -29,7 +29,7 @@
     const year = Number($("season-year").value);
     const season = $("season-name").value;
     $("season-title").textContent = year + "年 " + names[season] + "アニメ";
-    $("season-grid").innerHTML = '<p class="season-state">作品情報を読み込んでいます…</p>';
+    $("season-grid").innerHTML = en() ? '<p class="season-state">Loading anime…</p>' : '<p class="season-state">作品情報を読み込んでいます…</p>';
     try {
       const works = [];
       let offset = 0;
@@ -46,10 +46,10 @@
 
       $("season-grid").innerHTML = works.length
         ? works.map(a => `<a class="season-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}"><div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url, (en() ? a.title : (a.title_ja || a.title_kana || a.title)) || "", a.poster_credit)}</div><div class="season-card-copy"><b>${esc((en() ? a.title : (a.title_ja || a.title_kana || a.title)) || (en() ? "Title unavailable" : "タイトル未登録"))}</b><small>${esc(a.format || (en() ? "Format unavailable" : "形式未登録"))}</small></div></a>`).join("")
-        : '<p class="season-state">このシーズンの公開作品データはまだありません。</p>';
+        : (en() ? '<p class="season-state">No published anime are available for this season yet.</p>' : '<p class="season-state">このシーズンの公開作品データはまだありません。</p>');
     } catch (e) {
       console.error(e);
-      $("season-grid").innerHTML = '<p class="season-state">作品情報を取得できませんでした。</p>';
+      $("season-grid").innerHTML = en() ? '<p class="season-state">Could not load anime.</p>' : '<p class="season-state">作品情報を取得できませんでした。</p>';
     }
   }
 
