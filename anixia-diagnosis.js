@@ -9,7 +9,7 @@
     const year=$("year");for(let y=new Date().getFullYear();y>=1960;y--)year.add(new Option(String(y),String(y)));
     try{
       const genres=await ANIXIA.getGenres();
-      $("genre-options").innerHTML=genres.length?genres.map(g=>`<label class="diag-genre"><input type="checkbox" name="genre" value="${g.id}"><span>${esc(en()?(g.name||"Name unavailable"):(g.name_ja||g.name))}</span></label>`).join(""):'<p class="diag-state">ジャンルデータを準備しています。</p>';
+      $("genre-options").innerHTML=genres.length?genres.map(g=>`<label class="diag-genre"><input type="checkbox" name="genre" value="${g.id}"><span>${esc(en()?(g.name&&!hasJapanese(g.name)?g.name:"Genre name unavailable"):(g.name_ja||g.name))}</span></label>`).join(""):'<p class="diag-state">ジャンルデータを準備しています。</p>';
     }catch(e){console.error(e);$("genre-options").innerHTML='<p class="diag-state">ジャンルを読み込めませんでした。</p>';}
   }
   $("diagnosis-form").addEventListener("submit",async e=>{
