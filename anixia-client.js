@@ -129,7 +129,7 @@
     if (!uniqueIds.length) return [];
     const result = await getClient().rpc("get_public_anime_by_ids", { p_anime_ids: uniqueIds });
     if (result.error) throw result.error;
-    return result.data || [];
+    return attachEnglishTitles(result.data || []);
   }
 
   async function getUser() {
