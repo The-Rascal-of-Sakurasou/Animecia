@@ -2,7 +2,7 @@
   "use strict";
   const $=id=>document.getElementById(id);
   const isEnglish=()=>localStorage.getItem("anixia-language")==="en";
-  const hasJapanese=value=>/[\\u3040-\\u30ff\\u3400-\\u9fff]/u.test(String(value||""));
+  const hasJapanese=value=>/[\u3040-\u30ff\u3400-\u9fff]/u.test(String(value||""));
   const value=(row,ja,en,fallback)=>isEnglish()?(row?.[en]||row?.name_en||(row?.[en==="name"?"name":en]&&!hasJapanese(row[en])?row[en]:null)||fallback):(row?.[ja]||fallback);
   const label=(ja,en)=>isEnglish()?en:ja;
   const englishTitle=row=>row?.title_en||(row?.title&&!hasJapanese(row.title)?row.title:"English title unavailable");
