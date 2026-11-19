@@ -20,7 +20,7 @@
   if(sharedStyleScript&&!document.querySelector('link[data-anixia-unified-theme]')){
     const theme=document.createElement('link');
     theme.rel='stylesheet';
-    theme.href=new URL('site-theme.css?v=anixia-unified-all-pages-20261119b',sharedStyleScript.src).href;
+    theme.href=new URL('site-theme.css?v=anixia-unified-all-pages-20261119c',sharedStyleScript.src).href;
     theme.dataset.anixiaUnifiedTheme='true';
     document.head.appendChild(theme);
   }
