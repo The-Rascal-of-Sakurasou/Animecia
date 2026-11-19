@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
 const ORIGIN = "https://the-rascal-of-sakurasou.github.io";
 const HEADERS = {
   "Access-Control-Allow-Origin": ORIGIN,
-  "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
+  "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info, x-anixia-cron-token",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Content-Type": "application/json; charset=utf-8",
   "Vary": "Origin"
@@ -11,6 +11,17 @@ const HEADERS = {
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: HEADERS });
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function digestHex(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return [...new Uint8Array(digest)].map(v => v.toString(16).padStart(2, "0")).join("");
+}
+function sameToken(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
 
 const SEASONS: Record<string, string> = {
   WINTER: "winter",
@@ -77,17 +88,28 @@ Deno.serve(async (req: Request) => {
 
   try {
     const auth = req.headers.get("Authorization") || "";
-    if (!auth.startsWith("Bearer ")) return json({ error: "Admin login is required." }, 401);
-    const userClient = createClient(url, anon, {
-      auth: { persistSession: false, autoRefreshToken: false },
-      global: { headers: { Authorization: auth } }
-    });
-    const user = await userClient.auth.getUser();
-    if (user.error || !user.data.user) return json({ error: "Login could not be verified." }, 401);
-    const adminCheck = await userClient.rpc("is_anixia_admin");
-    if (adminCheck.error || adminCheck.data !== true) return json({ error: "ANIXIA admin permission is required." }, 403);
-
+    const cronToken = req.headers.get("x-anixia-cron-token") || "";
     const admin = createClient(url, service, { auth: { persistSession: false, autoRefreshToken: false } });
+    let authorized = false;
+    if (cronToken) {
+      const stored = await admin.from("catalog_sync_secrets").select("secret_hash").eq("id", 1).maybeSingle();
+      if (stored.error) throw stored.error;
+      authorized = Boolean(stored.data?.secret_hash) && sameToken(
+        await digestHex(cronToken), String(stored.data.secret_hash).trim()
+      );
+    }
+    if (!authorized) {
+      if (!auth.startsWith("Bearer ")) return json({ error: "Admin login or a valid sync token is required." }, 401);
+      const userClient = createClient(url, anon, {
+        auth: { persistSession: false, autoRefreshToken: false },
+        global: { headers: { Authorization: auth } }
+      });
+      const user = await userClient.auth.getUser();
+      if (user.error || !user.data.user) return json({ error: "Login could not be verified." }, 401);
+      const adminCheck = await userClient.rpc("is_anixia_admin");
+      if (adminCheck.error || adminCheck.data !== true) return json({ error: "ANIXIA admin permission is required." }, 403);
+      authorized = true;
+    }
     const source = await admin.from("catalog_sources")
       .select("rights_review_status,is_enabled").eq("code", "anilist").single();
     if (source.error) throw source.error;
