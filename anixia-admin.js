@@ -58,7 +58,7 @@
             posterStatus="作品は公開しました。画像の自動照合は未完了です。";
           }
           await loadPendingAnime();
-          alert("作品を公開しました。\\n"+posterStatus);
+          alert("作品を公開しました。\n"+posterStatus);
         }catch(e){
           console.error(e);
           button.disabled=false;
