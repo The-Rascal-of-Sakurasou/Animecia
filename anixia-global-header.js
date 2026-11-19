@@ -122,4 +122,12 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", installFooter, { once:true });
   else installFooter();
+  const brandFix = document.createElement("style");
+  brandFix.id = "anixia-brand-final-rules";
+  brandFix.textContent = `
+    .site-header .anixia-logo,.anixia-global-header .anixia-logo,.anixia-footer-logo{color:#03AF6A!important;text-decoration:none!important}
+    .site-header .anixia-logo .anixia-logo-xia,.anixia-global-header .anixia-logo .anixia-logo-xia,.anixia-footer-logo .anixia-logo-xia{color:#1DA1F2!important}
+    .site-header .anixia-logo .anixia-logo-xia::after,.anixia-global-header .anixia-logo .anixia-logo-xia::after,.anixia-footer-logo .anixia-logo-xia::after{content:none!important;display:none!important;background:none!important;border:0!important}
+  `;
+  document.head.appendChild(brandFix);
 })();
