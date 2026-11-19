@@ -4914,3 +4914,31 @@ html body footer .copyright{margin:0 auto 0 22px!important;text-align:left!impor
   }
   html body footer .copyright{margin:0!important}
 }
+
+
+/* Legacy unclassed-header navigation placement on narrow screens. */
+@media(max-width:900px){
+  html body header.site-header .wrap.head,
+  html body > header:not([class]) .wrap.head{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:auto auto!important;
+    gap:8px!important;
+    min-height:0!important;
+    padding:9px 14px!important;
+  }
+  html body header.site-header .wrap.head > .logo,
+  html body > header:not([class]) .wrap.head > .logo{
+    grid-column:1!important;
+    grid-row:1!important;
+    justify-self:start!important;
+  }
+  html body header.site-header .wrap.head > nav,
+  html body > header:not([class]) .wrap.head > nav{
+    grid-column:1!important;
+    grid-row:2!important;
+    width:100%!important;
+    min-width:0!important;
+    overflow-x:auto!important;
+  }
+}
