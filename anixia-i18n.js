@@ -16,7 +16,7 @@
     "送信":"Submit","投稿":"Post","削除":"Delete","編集":"Edit","キャンセル":"Cancel","確認":"Confirm","次へ":"Next","前へ":"Previous",
     "メールアドレス":"Email Address","パスワード":"Password","パスワードを忘れた場合":"Forgot password?","表示名":"Display Name","ユーザー名":"Username",
     "作品名":"Title","ジャンル":"Genre","放送年":"Year","放送時期":"Season","形式":"Format","制作会社":"Studio","評価":"Score","レビュー":"Reviews",
-    "あらすじ":"Synopsis","基本情報":"Information","関連作品":"Related Anime","キャラクター":"Characters","声優":"Voice Actors","スタッフ":"Staff",
+    "あらすじ":"Synopsis","基本情報":"Information","アニメ作品情報":"Anime Information","ANIXIA / アニメ作品情報":"ANIXIA / Anime Information","作品データベースに戻る":"Back to Anime Database","作品ページへ":"View Anime Page","評価・レビュー":"Scores & Reviews","作品を評価":"Rate this Anime","レビューを書く":"Write a Review","視聴記録":"Watch History","視聴記録を追加":"Add to Watchlist","関連する作品":"Related Anime","放送開始日":"Start Date","放送終了日":"End Date","放送局":"Broadcaster","話数":"Episodes","制作":"Production","原作":"Original Work","監督":"Director","シリーズ構成":"Series Composition","音楽":"Music","主題歌":"Theme Songs","キャスト":"Cast","スタッフ・キャスト":"Staff & Cast","作品データ":"Anime Data","作品情報を確認":"View Anime Information","関連作品":"Related Anime","キャラクター":"Characters","声優":"Voice Actors","スタッフ":"Staff",
     "作品情報":"Anime Information","放送情報":"Broadcast Information","公式サイト":"Official Website","データ出典":"Data Sources",
     "視聴状況":"Watch Status","視聴履歴":"Watch History","お気に入り":"Favorites","視聴中":"Watching","視聴予定":"Plan to Watch","視聴済み":"Completed","一時停止":"On Hold","視聴断念":"Dropped",
     "ユーザーを検索":"Search Users","ユーザー検索":"User Search","プロフィール":"Profile","メッセージ":"Messages","通知":"Notifications",
@@ -76,6 +76,13 @@
     } else {
       location.reload();
     }
+  };
+  const ensureHeader = () => {
+    if (document.querySelector("header,.site-header")) return;
+    const header = document.createElement("header");
+    header.className = "anixia-global-header";
+    header.innerHTML = '<div class="anixia-global-header-inner"><a class="anixia-logo" href="/anixia/" aria-label="ANIXIA home">ANI<span class="anixia-logo-xia">XIA</span></a><nav aria-label="Main navigation"><a href="/anixia/">ホーム</a><a href="/anixia/anime.html">作品データベース</a><a href="/anixia/season.html">今期アニメ</a><a href="/anixia/ranking.html">ランキング</a><a href="/anixia/entities.html">人物・団体</a><a href="/anixia/community.html">コミュニティ</a></nav><div class="anixia-header-actions"></div></div>';
+    document.body.prepend(header);
   };
   const makeControl = () => {
     let btn = document.getElementById("language-toggle");
