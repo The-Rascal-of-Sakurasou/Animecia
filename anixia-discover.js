@@ -5,6 +5,7 @@
   const en = () => window.ANIXIA_LANG?.() === "en";
   const hasJapanese = value => /[\u3040-\u30ff\u3400-\u9fff]/u.test(String(value||""));
   const title = a => en() ? (a.title_en || (a.title && !hasJapanese(a.title) ? a.title : "English title unavailable")) : (a.title_ja || a.title_kana || a.title || "タイトル未登録");
+  const genreTitle = g => en() ? (g.name && !hasJapanese(g.name) ? g.name : "Genre name unavailable") : (g.name_ja || g.name || "ジャンル名未登録");
   const format = v => ({tv:"TV",movie:en()?"Movie":"劇場版",ova:"OVA",ona:"ONA",special:en()?"Special":"特別編",web:"Web"}[v] || v || "");
   async function works(id, sort) {
     try {
