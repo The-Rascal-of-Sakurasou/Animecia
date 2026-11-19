@@ -4500,3 +4500,58 @@ body main [class*="-panel"]{
 }
 body main [class*="-panel"] :where(*){color:#000000!important;}
 body main [class*="-panel"] :where(button,.button,.btn,[type="submit"],[type="button"],a[class*="button"],a[class*="btn"]){color:#FFFFFF!important;}
+
+
+/* Search inputs and autocomplete: consistent white surface with black text. */
+.anixia-field input,
+.anixia-field select,
+.anixia-field textarea,
+.anixia-filter-panel input,
+.anixia-filter-panel select,
+.anixia-filter-panel textarea,
+input.anixia-search-input,
+input[type="search"],
+input[type="text"],
+input[type="email"],
+input[type="url"],
+input[type="number"],
+textarea,
+select{
+  background:#FFFFFF!important;
+  background-color:#FFFFFF!important;
+  color:#000000!important;
+  -webkit-text-fill-color:#000000!important;
+  border-color:#D9E2DD!important;
+}
+input::placeholder,
+textarea::placeholder{
+  color:#6B7280!important;
+  -webkit-text-fill-color:#6B7280!important;
+  opacity:1!important;
+}
+.anixia-suggest{
+  background:#FFFFFF!important;
+  background-color:#FFFFFF!important;
+  color:#000000!important;
+  border:1px solid #D9E2DD!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.14)!important;
+}
+.anixia-suggest-item{
+  background:#FFFFFF!important;
+  color:#000000!important;
+}
+.anixia-suggest-item:hover,
+.anixia-suggest-item:focus-visible{
+  background:#F2F7F4!important;
+  color:#000000!important;
+}
+.anixia-suggest-copy strong,
+.anixia-suggest-copy small,
+.anixia-suggest-type,
+.anixia-suggest-empty{
+  color:#000000!important;
+}
+.anixia-suggest-type{
+  background:#FFFFFF!important;
+  border:1px solid #D9E2DD!important;
+}
