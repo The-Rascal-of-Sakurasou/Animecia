@@ -1,4 +1,4 @@
-/* ANIXIA: ログイン状態をホーム画面のアカウント導線へ反映 */
+/* ANIXIA: ホームヘッダーのログイン・マイページ・ログアウト */
 (function () {
   "use strict";
   function boot() {
@@ -7,16 +7,37 @@
       return;
     }
     const client = ANIXIA.getClient();
-    const links = Array.from(document.querySelectorAll("#account-link, #auth-link, #footer-login-link"));
-    if (!links.length) return;
+    const loginLink = document.getElementById("account-link");
+    const mypageLink = document.getElementById("mypage-link");
+    const logoutButton = document.getElementById("home-logout");
+    const legacyLinks = Array.from(document.querySelectorAll("#auth-link, #footer-login-link"));
 
     function render(user) {
       const loggedIn = !!(user && !user.is_anonymous && (user.email_confirmed_at || user.confirmed_at));
-      links.forEach(link => {
+      if (loginLink) loginLink.hidden = loggedIn;
+      if (mypageLink) mypageLink.hidden = !loggedIn;
+      if (logoutButton) logoutButton.hidden = !loggedIn;
+      legacyLinks.forEach(link => {
         link.textContent = loggedIn ? "マイページ" : "ログイン";
         link.href = loggedIn ? "mypage.html" : "login.html";
-        link.classList.toggle("primary", !loggedIn);
         link.setAttribute("aria-label", loggedIn ? "マイページ" : "ログイン");
+      });
+    }
+
+    if (logoutButton) {
+      logoutButton.addEventListener("click", async () => {
+        logoutButton.disabled = true;
+        logoutButton.textContent = "ログアウト中…";
+        try {
+          const { error } = await client.auth.signOut();
+          if (error) throw error;
+          window.location.href = "index.html";
+        } catch (error) {
+          console.error("ANIXIA logout failed", error);
+          logoutButton.disabled = false;
+          logoutButton.textContent = "ログアウト";
+          window.alert("ログアウトできませんでした。時間をおいて再度お試しください。");
+        }
       });
     }
 
