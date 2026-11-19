@@ -480,7 +480,7 @@
     if (!safeUrl || !sourceUrl.startsWith("https://") || !attribution) return fallback;
     const safeSrc = safeUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
     const sourceLink = '<a class="anixia-poster-credit" href="' + escapeHtml(sourceUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(attribution) + '</a>';
-    const licenseMarkup = licenseUrl.startsWith("https://creativecommons.org/")
+    const licenseMarkup = /^https:\/\/(?:creativecommons\.org|commons\.wikimedia\.org)\//i.test(licenseUrl)
       ? '<a class="anixia-poster-license" href="' + escapeHtml(licenseUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(license || "ライセンス") + '</a>'
       : '<span class="anixia-poster-license">' + escapeHtml(license) + '</span>';
     const creditLine = '<span class="anixia-poster-credit-line">' + sourceLink + (license ? ' · ' + licenseMarkup : '') + '</span>';
