@@ -107,8 +107,7 @@ async function searchImage(work: any) {
           }
         }
 
-        // Follow the Wikidata media-franchise link for a logo image (P154)
-        // and Commons category (P373), while preferring exact item metadata.
+        // Follow the Wikidata media-franchise link for its Commons category (P373).
         const franchiseId = entityPayload?.entities?.[qid]?.claims?.P8345?.[0]?.mainsnak?.datavalue?.value?.id;
         let franchiseClaims: any = null;
         if (franchiseId) {
