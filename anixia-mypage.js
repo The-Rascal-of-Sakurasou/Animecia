@@ -52,7 +52,8 @@
       renderTab();
     }catch(e){
       console.error(e);
-      $("mypage-loading").textContent="マイページを読み込めませんでした。時間をおいて再度お試しください。";
+      $("mypage-loading").innerHTML='マイページを読み込めませんでした。時間をおいて再度お試しください。 <button type="button" id="mypage-retry">再試行</button>';
+      $("mypage-retry")?.addEventListener("click", init, { once: true });
     }
   }
   document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{activeTab=b.dataset.tab;renderTab();}));
