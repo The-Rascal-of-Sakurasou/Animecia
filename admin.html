@@ -132,7 +132,18 @@
   <div id="entity-duplicate-candidates"><p class="admin-message">重複候補を読み込んでいます…</p></div>
 </section>
 
+
+<section id="admin-name-audit" class="admin-panel" hidden>
+  <h2>人物・キャラクター等の名称総合検査</h2>
+  <p>人物・声優・スタッフ、キャラクター、制作会社、制作組織の名称と読み仮名を全件検査します。ひらがな表記、英字表記、日本語名・読み仮名の欠落などを確認候補として抽出します。</p>
+  <p class="admin-warning">ひらがな表記が正式名称の人物・キャラクター・制作会社も存在します。自動で漢字へ変換したり、レコードを削除したりしません。公式プロフィール・公式クレジット等の根拠を確認してから修正してください。</p>
+  <button id="name-audit-run" class="admin-button" type="button">全件を再検査</button>
+  <p id="name-audit-status" class="admin-message" aria-live="polite">名称検査を準備しています…</p>
+  <div id="name-audit-results"></div>
+</section>
+
 </main>
+<script src="anixia-name-audit.js?v=20261119-r1" defer></script>
 <script src="anixia-i18n.js?v=20261119-r8" defer></script>
 </body>
 </html>
