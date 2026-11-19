@@ -21,7 +21,6 @@
         <small>${esc([year(work), work.format || ""].filter(Boolean).join(" · "))}</small>
       </div>
     </a>`;
-  const showState = (id, message) => { const el = $(id); if (el) el.innerHTML = `<p class="anixia-state">${esc(message)}</p>`; };
   const showRetryState = (id, message, retry) => {
     const el = $(id);
     if (!el) return;
@@ -44,16 +43,25 @@
       const genres = await ANIXIA.getGenres();
       $("genre-links").innerHTML = genres.length
         ? genres.slice(0, 12).map(g => `<a href="anime.html?genre=${encodeURIComponent(g.id)}">${esc(language() === "en" ? (g.name_en || (g.name && !hasJapanese(g.name) ? g.name : "Genre name unavailable")) : (g.name_ja || g.name))}</a>`).join("")
-        : `<p class="anixia-state">${esc(t().genresEmpty)}</p>`;    await loadGenres();
-$("genre-links").innerHTML = genres.length
-            ? genres.slice(0, 12).map(g => `<a href="anime.html?genre=${encodeURIComponent(g.id)}">${esc(language() === "en" ? (g.name_en || (g.name && !hasJapanese(g.name) ? g.name : "Genre name unavailable")) : (g.name_ja || g.name))}</a>`).join("")
-            : `<p class="anixia-state">${esc(t().genresEmpty)}</p>`;
-        } catch (error) {
-          console.error(error);
-          showRetryState("genre-links", t().genresFailed, () => $("genre-links").querySelector(".anixia-retry-button")?.click());
-        }
-      });
+        : `<p class="anixia-state">${esc(t().genresEmpty)}</p>`;
+    } catch (error) {
+      console.error(error);
+      showRetryState("genre-links", t().genresFailed, loadGenres);
     }
+  }
+  async function init() {
+    try {
+      const count = await ANIXIA.getCatalogCount();
+      $("catalog-count").textContent = count.toLocaleString(language() === "ja" ? "ja-JP" : "en-US");
+    } catch (error) {
+      console.error(error);
+      $("catalog-count").textContent = "—";
+    }
+    await Promise.all([
+      loadSection("popular-works", { sort: "popular", limit: 5 }),
+      loadSection("new-works", { sort: "newest", limit: 5 })
+    ]);
+    await loadGenres();
     try {
       const user = await ANIXIA.getUser();
       $("account-link").textContent = user ? t().mypage : t().login;
