@@ -60,7 +60,9 @@
   }
 
   function installHeader() {
-    let header = document.querySelector("header.site-header, header.anixia-global-header, .site-header");
+    const headerCandidates = Array.from(document.querySelectorAll("header.site-header, header.anixia-global-header, .site-header"));
+    let header = headerCandidates.shift() || null;
+    headerCandidates.forEach(duplicate => duplicate.remove());
     if (!header) {
       header = document.createElement("header");
       document.body.prepend(header);
@@ -90,6 +92,8 @@
           <a class="anixia-header-button" id="mypage-link" href="${ROOT}mypage.html">マイページ</a>
         </div>
       </div>`;
+    const mypageButtons = header.querySelectorAll("#mypage-link");
+    mypageButtons.forEach((button, index) => { if (index > 0) button.remove(); });
     header.querySelectorAll(".anixia-global-nav a").forEach(a => { a.style.setProperty("color", "#FFFFFF", "important"); a.style.setProperty("opacity", "1", "important"); });
     header.querySelectorAll(".anixia-header-actions .anixia-header-button").forEach(a => a.style.setProperty("color", "#FFFFFF", "important"));
     const logo = header.querySelector(".anixia-logo");
@@ -108,10 +112,20 @@
       if (window.ANIXIA_SET_LANGUAGE) window.ANIXIA_SET_LANGUAGE(next);
       else { localStorage.setItem("anixia-language", next); location.reload(); }
     });
-    const syncHeaderSpace = () => { document.body.style.paddingTop = `${header.offsetHeight}px`; };
-    syncHeaderSpace();
-    if (window.ResizeObserver) new ResizeObserver(syncHeaderSpace).observe(header);
-    else window.addEventListener("resize", syncHeaderSpace);
+    const pinHeader = () => {
+      if (header.parentElement !== document.documentElement) document.documentElement.insertBefore(header, document.body);
+      header.style.setProperty("position", "fixed", "important");
+      header.style.setProperty("top", "0px", "important");
+      header.style.setProperty("left", "0px", "important");
+      header.style.setProperty("right", "0px", "important");
+      header.style.setProperty("z-index", "2147483647", "important");
+      header.style.setProperty("transform", "none", "important");
+      document.body.style.setProperty("padding-top", `${header.offsetHeight}px`, "important");
+    };
+    pinHeader();
+    window.addEventListener("scroll", pinHeader, {passive:true});
+    window.addEventListener("resize", pinHeader, {passive:true});
+    if (window.ResizeObserver) new ResizeObserver(pinHeader).observe(header);
     setupAuth(header);
   }
 
