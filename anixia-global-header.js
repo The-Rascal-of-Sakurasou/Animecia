@@ -21,17 +21,17 @@
     const style = document.createElement("style");
     style.id = "anixia-global-header-style";
     style.textContent = `
-      .site-header,.anixia-global-header{position:sticky!important;top:0!important;z-index:9999!important;width:100%!important;background:#000!important;color:#fff!important;border:0!important;border-bottom:1px solid #222!important;box-shadow:none!important}
+      .site-header,.anixia-global-header{position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:9999!important;width:100%!important;background:#000!important;color:#fff!important;border:0!important;border-bottom:1px solid #222!important;box-shadow:none!important}
       .anixia-global-header-inner{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:16px!important;width:100%!important;max-width:1500px!important;min-height:68px!important;margin:0!important;padding:8px 18px!important;box-sizing:border-box!important;text-align:left!important}
       .anixia-global-header .anixia-logo{display:inline-flex!important;flex:0 0 auto!important;color:#03AF6A!important;text-decoration:none!important;font:850 25px/1 Inter,"Segoe UI",Arial,sans-serif!important;letter-spacing:-1.7px!important;white-space:nowrap!important}
       .anixia-global-header .anixia-logo-xia{color:#1DA1F2!important}
       .anixia-global-nav{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:2px!important;flex:0 1 auto!important;min-width:0!important;overflow-x:auto!important;scrollbar-width:none!important}
       .anixia-global-nav::-webkit-scrollbar{display:none!important}
       .anixia-global-nav a{display:inline-flex!important;align-items:center!important;min-height:36px!important;padding:7px 8px!important;border-radius:5px!important;color:#fff!important;background:transparent!important;text-decoration:none!important;font-size:12px!important;font-weight:650!important;white-space:nowrap!important}
-      .anixia-global-nav a:hover,.anixia-global-nav a[aria-current="page"]{color:#fff!important;background:rgba(255,255,255,.07)!important}
+      .anixia-global-nav a,.anixia-global-nav a:visited,.anixia-global-nav a:hover,.anixia-global-nav a:focus,.anixia-global-nav a[aria-current="page"]{color:#FFFFFF!important;opacity:1!important;background:transparent!important}\n      .anixia-global-nav a:hover,.anixia-global-nav a[aria-current="page"]{background:rgba(255,255,255,.07)!important}
       .anixia-header-actions{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:7px!important;flex:0 0 auto!important;margin:0!important}
       .anixia-header-actions .anixia-header-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:36px!important;padding:0 12px!important;border:1px solid #03AF6A!important;border-radius:6px!important;background:#03AF6A!important;color:#fff!important;text-decoration:none!important;font-family:inherit!important;font-size:12px!important;font-weight:750!important;white-space:nowrap!important;cursor:pointer!important}
-      .anixia-header-actions .anixia-header-button:hover{background:#028f56!important;border-color:#028f56!important}
+      .anixia-header-actions .anixia-header-button:hover{background:#028f56!important;border-color:#028f56!important;color:#FFFFFF!important}\n      .anixia-header-actions #account-link,.anixia-header-actions #account-link:visited,.anixia-header-actions #account-link:hover{color:#FFFFFF!important}
       .anixia-header-actions [hidden]{display:none!important}
       footer.anixia-global-footer{display:block!important;width:100%!important;margin:64px 0 0!important;padding:0!important;background:#000!important;color:#fff!important;border:0!important;border-top:1px solid #222!important;box-shadow:none!important}
       .anixia-footer-inner{width:100%!important;max-width:1200px!important;margin:0!important;padding:28px 18px 18px!important;box-sizing:border-box!important;text-align:left!important}
@@ -43,7 +43,7 @@
       .anixia-footer-nav a:hover{color:#fff!important}
       .anixia-footer-bottom{display:flex!important;justify-content:flex-start!important;padding-top:12px!important;border-top:1px solid #222!important;color:#fff!important;font-size:10px!important}
       .anixia-admin-login{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:36px!important;margin-top:10px!important;padding:0 12px!important;border:1px solid #000!important;border-radius:6px!important;color:#000!important;background:#000!important;font-size:12px!important;font-weight:750!important;text-decoration:none!important;opacity:1!important;cursor:pointer!important}
-      .anixia-admin-login,.anixia-admin-login:hover,.anixia-admin-login:focus,.anixia-admin-login:active{color:#000!important;background:#000!important;border-color:#000!important;outline:none!important;box-shadow:none!important}
+      .anixia-admin-login,.anixia-admin-login:visited,.anixia-admin-login:hover,.anixia-admin-login:focus,.anixia-admin-login:active{color:#000!important;background:#000!important;background-color:#000!important;border-color:#000!important;outline:none!important;box-shadow:none!important;opacity:1!important}
       @media(max-width:900px){
         .anixia-global-header-inner{flex-wrap:wrap!important;gap:8px 12px!important;padding:9px 14px!important}
         .anixia-global-nav{order:3!important;flex:1 1 100%!important;width:100%!important}
@@ -92,7 +92,7 @@
       if (window.ANIXIA_SET_LANGUAGE) window.ANIXIA_SET_LANGUAGE(next);
       else { localStorage.setItem("anixia-language", next); location.reload(); }
     });
-    setupAuth(header);
+    const syncHeaderSpace = () => { document.body.style.paddingTop = `${header.offsetHeight}px`; };\n    syncHeaderSpace();\n    if (window.ResizeObserver) new ResizeObserver(syncHeaderSpace).observe(header);\n    else window.addEventListener("resize", syncHeaderSpace);\n    setupAuth(header);
   }
 
   function loadScript(src, marker) {
