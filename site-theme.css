@@ -3813,3 +3813,30 @@ body .entity-card :is(h2,h3,p,small,span),
 body .anixia-library-card :is(h2,h3,p,small,span){
   color:#171C19!important;
 }
+
+
+/* Final global header rule: black header on every page and viewport. */
+html body header,
+html body .site-header,
+html body .anixia-global-header,
+html body .global-header,
+html body .main-header,
+html body .site-navbar{
+  background:#111!important;
+  background-color:#111!important;
+  background-image:none!important;
+  color:#fff!important;
+  border-color:#292929!important;
+  box-shadow:none!important;
+}
+html body header :where(.header-inner,.container,.container.nav,.anixia-shell,.wrap,.nav-inner,.navbar-inner){
+  background:transparent!important;
+  background-color:transparent!important;
+  color:#fff!important;
+}
+html body header :where(nav,a:not(.anixia-logo),button,.nav-link,.menu-toggle){
+  color:#fff!important;
+}
+html body header :where(a:hover,.nav-link:hover){color:#03AF6A!important}
+html body header .anixia-logo{color:#03AF6A!important}
+html body header .anixia-logo .anixia-logo-xia{color:#1DA1F2!important}
