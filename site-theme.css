@@ -4408,3 +4408,12 @@ footer.anixia-global-footer .anixia-admin-login:focus{
   color:#000000!important;background:#000000!important;border-color:#000000!important;
   box-shadow:none!important;outline:none!important;
 }
+
+
+/* Final requested rules: admin entry stays black-on-black; shared header/footer labels are white. */
+header.anixia-global-header :where(*),footer.anixia-global-footer :where(*){color:#FFFFFF!important}
+header.anixia-global-header .anixia-logo{color:#03AF6A!important}
+header.anixia-global-header .anixia-logo .anixia-logo-xia,footer.anixia-global-footer .anixia-footer-logo .anixia-logo-xia{color:#1DA1F2!important}
+footer.anixia-global-footer .anixia-footer-logo{color:#03AF6A!important}
+footer.anixia-global-footer .anixia-admin-login,footer.anixia-global-footer .anixia-admin-login:hover,footer.anixia-global-footer .anixia-admin-login:focus,footer.anixia-global-footer .anixia-admin-login:active{color:#000000!important;background:#000000!important;border-color:#000000!important;outline:none!important;box-shadow:none!important}
+body :not(header):not(footer) :where(h1,h2,h3,h4,h5,h6,p,li,dt,dd,label,legend,summary,th,td,span,strong,b,small){color:#000000}
