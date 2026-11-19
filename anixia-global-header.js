@@ -85,6 +85,7 @@
         <nav class="anixia-footer-nav" aria-label="フッターナビゲーション">
           <a href="/anixia/">ホーム</a>
           <a href="/anixia/anime.html">作品データベース</a>
+          <a href="/anixia/entities.html">人物・団体</a>
           <a href="/anixia/season.html">今期アニメ</a>
           <a href="/anixia/ranking.html">ランキング</a>
           <a href="/anixia/recommendations.html">おすすめ診断</a>
