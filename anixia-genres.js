@@ -3,7 +3,8 @@
   const $ = id => document.getElementById(id);
   const esc = value => String(value ?? "").replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
   const en = () => window.ANIXIA_LANG?.() === "en";
-  const genreName = genre => en() ? (genre.name || "Name unavailable") : (genre.name_ja || genre.name || "名称未設定");
+  const hasJapanese=value=>/[\u3040-\u30ff\u3400-\u9fff]/u.test(String(value||""));
+  const genreName = genre => en() ? (genre.name && !hasJapanese(genre.name) ? genre.name : "Genre name unavailable") : (genre.name_ja || genre.name || "名称未設定");
   let genres = [];
   function render() {
     const locale = en() ? "en" : "ja";
