@@ -74,7 +74,7 @@
 
   function installHeader() {
     // Remove every page-specific header before creating the single shared header.
-    document.querySelectorAll("header.site-header, header.anixia-global-header").forEach(node => node.remove());
+    document.querySelectorAll("header").forEach(node => node.remove());
     const header = document.createElement("header");
     header.className = "site-header anixia-global-header";
     header.setAttribute("role", "banner");
