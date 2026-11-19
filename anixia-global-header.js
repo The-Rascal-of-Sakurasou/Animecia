@@ -82,6 +82,8 @@
 
 
   const installFooter = () => {
+    // Authentication pages keep a single brand mark in the shared header; no footer logo.
+    if (document.querySelector("#login-form, #signup-form, #forgot-password-form") || /\/(login|signup|forgot-password)\.html$/.test(location.pathname)) return;
     const existing = document.querySelector("footer");
     const footer = existing || document.createElement("footer");
     footer.className = "anixia-global-footer";
