@@ -13,7 +13,7 @@
     return String(value || "")
       .normalize("NFKC")
       .toLocaleLowerCase("ja-JP")
-      .replace(/[\\s・･,，.．…「」『』（）()【】［］\\[\\]＿_‐‑–—]+/gu, "");
+      .replace(/[\s・･,，.．…「」『』（）()【】＿_‐‑–—]+/gu, "");
   }
 
   function deduplicateSuggestions(items) {
