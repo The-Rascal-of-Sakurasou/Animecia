@@ -564,6 +564,48 @@
   }
   $("wikidata-mal-id-sync-button").addEventListener("click",runWikidataMalIdSync);
 
+  async function runSeasonMetadataSync(mode){
+    const button=mode==="preview"?$("season-metadata-preview-button"):$("season-metadata-sync-button");
+    button.disabled=true;
+    $("season-metadata-message").textContent=mode==="preview"
+      ?"AniListの外部ID照合とクール情報を確認しています（保存はしません）…"
+      :"プレビュー対象のクール情報をデータベースへ反映しています…";
+    $("season-metadata-preview").textContent="";
+    try{
+      const {data,error}=await ANIXIA.getClient().functions.invoke("sync-anime-season-metadata",{body:{mode}});
+      if(error)throw new Error(data?.error||error.message||"クール情報の同期に失敗しました。");
+      if(data?.error)throw new Error(data.error);
+      $("season-metadata-message").textContent=[
+        mode==="preview"?"プレビュー完了":"同期完了",
+        "対象のTV・配信作品: "+(data.publishedSeasonalWorks??0),
+        "MyAnimeList ID登録数: "+(data.malIdsFound??0),
+        "AniList照合成功: "+(data.aniListMatches??0),
+        "クール情報の有効候補: "+(data.candidates??0),
+        "更新件数: "+(data.updated??0),
+        "ID重複: "+(data.duplicateMalIds??0),
+        "未照合: "+(data.unmatched??0),
+        "クール情報なし: "+(data.invalidSeason??0),
+        "形式不一致: "+(data.formatMismatch??0)
+      ].join("\n");
+      $("season-metadata-preview").textContent=(data.items||[]).map(item=>[
+        item.title,
+        "MAL ID: "+item.malId+" / 形式: "+item.format+"（AniList: "+item.anilistFormat+"）",
+        "クール: "+item.seasonYear+"年"+({winter:"冬",spring:"春",summer:"夏",autumn:"秋"}[item.season]||item.season),
+        "初回公開日: "+(item.releasedOn||"未登録"),
+        "既存クール: "+(item.alreadyClassified?"あり":"なし"),
+        "状態: "+(item.changed?"更新対象":"変更なし")
+      ].join("\n")).join("\n\n");
+    }catch(e){
+      console.error(e);
+      $("season-metadata-message").textContent="処理に失敗しました: "+(e.message||"管理者権限・API状態を確認してください。");
+    }finally{button.disabled=false;}
+  }
+  $("season-metadata-preview-button").addEventListener("click",()=>runSeasonMetadataSync("preview"));
+  $("season-metadata-sync-button").addEventListener("click",()=>{
+    if(!window.confirm("プレビューで作品名・MAL ID・クール情報を確認しましたか？確認済みのAniList情報だけを公開作品へ反映します。"))return;
+    runSeasonMetadataSync("sync");
+  });
+
   async function runWikidataEpisodeSync(mode){
     const button=mode==="preview"?$("wikidata-episode-preview-button"):$("wikidata-episode-sync-button");
     button.disabled=true;
