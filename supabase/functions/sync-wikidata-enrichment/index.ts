@@ -45,6 +45,11 @@ function label(entity: AnyRecord, lang: "ja" | "en"): string | null {
   const value = entity?.labels?.[lang]?.value;
   return typeof value === "string" && value.trim() ? value.trim().slice(0, 500) : null;
 }
+function japaneseLabel(entity: AnyRecord): string | null {
+  const primary = label(entity, "ja");
+  if (primary) return primary;
+  return aliases(entity, "ja").find(value => /[\u3040-\u30ff\u3400-\u9fff]/u.test(value)) || null;
+}
 function aliases(entity: AnyRecord, lang: "ja" | "en"): string[] {
   const values = entity?.aliases?.[lang];
   if (!Array.isArray(values)) return [];
@@ -109,7 +114,6 @@ async function fetchEntities(ids: string[]): Promise<Map<string, AnyRecord>> {
       ids: chunk.join("|"),
       props: "labels|aliases|claims",
       languages: "ja|en",
-      languagefallback: "1",
       format: "json",
       origin: "*"
     });
@@ -183,6 +187,34 @@ async function ensureEntityRows(
       onConflict: "source,external_id", ignoreDuplicates: true
     });
     if (savedExternal.error) throw savedExternal.error;
+  }
+
+  // Correct legacy "Japanese" labels that were actually English/romaji fallbacks.
+  const mappedIds = [...new Set(ids.map(externalId => map.get(externalId)).filter(Boolean))];
+  if (mappedIds.length) {
+    const current = await db.from(table).select("id,name_ja").in("id", mappedIds);
+    if (current.error) throw current.error;
+    const currentById = new Map((current.data || []).map((row: AnyRecord) => [String(row.id), row]));
+    const entitiesByExternalId = new Map(entities.map(entity => [String(entity.id), entity]));
+    const repairs: { id: string; name_ja: string | null }[] = [];
+    for (const externalId of ids) {
+      const entityId = map.get(externalId);
+      if (!entityId) continue;
+      const existing = currentById.get(entityId);
+      const currentName = String(existing?.name_ja || "");
+      if (/[\u3040-\u30ff\u3400-\u9fff]/u.test(currentName)) continue;
+      const entity = entitiesByExternalId.get(externalId);
+      if (!entity) continue;
+      repairs.push({ id: entityId, name_ja: japaneseLabel(entity) });
+    }
+    for (let start = 0; start < repairs.length; start += 10) {
+      const batch = repairs.slice(start, start + 10);
+      const results = await Promise.all(batch.map(row =>
+        db.from(table).update({ name_ja: row.name_ja }).eq("id", row.id)
+      ));
+      const failed = results.find(result => result.error);
+      if (failed?.error) throw failed.error;
+    }
   }
   return map;
 }
@@ -401,13 +433,13 @@ Deno.serve(async (req: Request) => {
         const studioMap = await ensureEntityRows(db, "studios", "studio_external_ids", "studio_id",
           studioEntities, e => ({
             name: label(e, "en") || label(e, "ja"),
-            name_ja: label(e, "ja"), name_en: label(e, "en"),
+            name_ja: japaneseLabel(e), name_en: label(e, "en"),
             wikipedia_url: WIKIDATA + e.id
           }));
         const organizationMap = await ensureEntityRows(db, "organizations", "organization_external_ids", "organization_id",
           organizationEntities, e => ({
             name: label(e, "en") || label(e, "ja"),
-            name_ja: label(e, "ja"), name_en: label(e, "en"),
+            name_ja: japaneseLabel(e), name_en: label(e, "en"),
             wikipedia_url: WIKIDATA + e.id
           }));
         counts.studios = studioEntities.length;
@@ -455,7 +487,7 @@ Deno.serve(async (req: Request) => {
         const peopleMap = await ensureEntityRows(db, "people", "people_external_ids", "person_id",
           peopleEntities, e => ({
             name: label(e, "en") || label(e, "ja"),
-            name_ja: label(e, "ja"), name_en: label(e, "en"),
+            name_ja: japaneseLabel(e), name_en: label(e, "en"),
             wikipedia_url: WIKIDATA + e.id
           }));
         const characterRows = [...characterEntities.entries()].map(([id, entity]) => {
@@ -465,7 +497,7 @@ Deno.serve(async (req: Request) => {
         const characterMap = await ensureEntityRows(db, "characters", "character_external_ids", "character_id",
           characterRows, e => ({
             name: label(e, "en") || label(e, "ja"),
-            name_ja: label(e, "ja"), name_en: label(e, "en")
+            name_ja: japaneseLabel(e), name_en: label(e, "en")
           }));
         counts.characters = characterMap.size;
         
@@ -579,7 +611,7 @@ Deno.serve(async (req: Request) => {
         const genreEntities = [...genreById.values()];
         const genreRows = genreEntities.map(e => ({
           name: label(e, "en") || label(e, "ja"),
-          name_ja: label(e, "ja")
+          name_ja: japaneseLabel(e)
         })).filter(r => r.name);
         if (genreRows.length) {
           const saved = await db.from("genres").upsert(genreRows, { onConflict: "name", ignoreDuplicates: true });
