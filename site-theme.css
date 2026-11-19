@@ -3364,3 +3364,35 @@ select option,select optgroup{
 input::placeholder,textarea::placeholder{color:#7b8780!important;opacity:1}
 input[type="checkbox"],input[type="radio"]{accent-color:var(--anixia-green)!important}
 :focus-visible{outline-color:var(--anixia-green)!important}
+
+
+/* ANIXIA: unified black header and footer */
+:where(header.site-header,.site-header,.anixia-global-header,.global-header,.main-header,.site-navbar){
+  background:#111!important;background-color:#111!important;color:#fff!important;
+  border-color:#292929!important;box-shadow:0 2px 12px rgba(0,0,0,.16)!important;
+}
+:where(header.site-header,.site-header,.anixia-global-header,.global-header,.main-header,.site-navbar) a{
+  color:#f4f4f4!important;
+}
+:where(header.site-header,.site-header,.anixia-global-header,.global-header,.main-header,.site-navbar) a:hover{
+  color:#03af6a!important;background:#252525!important;
+}
+:where(.site-header .anixia-logo,.anixia-global-header .anixia-logo,.anixia-footer-logo){
+  color:#03af6a!important;
+}
+:where(.site-header .anixia-logo .anixia-logo-xia,.anixia-global-header .anixia-logo .anixia-logo-xia,.anixia-footer-logo .anixia-logo-xia){
+  color:#42b8e8!important;
+}
+:where(.anixia-footer,footer,.anixia-global-footer){
+  background:#111!important;background-color:#111!important;color:#d6d6d6!important;
+  border-color:#292929!important;box-shadow:none!important;
+}
+:where(.anixia-footer-nav a,.anixia-footer-links a,.footer-links a){
+  color:#e6e6e6!important;
+}
+:where(.anixia-footer-nav a:hover,.anixia-footer-links a:hover,.footer-links a:hover){
+  color:#03af6a!important;
+}
+:where(.anixia-footer-description,.anixia-footer-bottom){
+  color:#a8a8a8!important;
+}
