@@ -54,7 +54,7 @@ jobs:
 
           const failures = [];
           function localTarget(value, sourceFile) {
-            if (!value || value.startsWith('#') || /^(?:[a-z]+:|\/\/)/i.test(value)) return null;
+            if (!value || value.startsWith('#') || /^(?:mailto:|tel:|javascript:|data:|blob:|ftp:|\/\/)/i.test(value)) return null;
             let url;
             try {
               url = new URL(value, 'https://the-rascal-of-sakurasou.github.io/anixia/' + sourceFile);
