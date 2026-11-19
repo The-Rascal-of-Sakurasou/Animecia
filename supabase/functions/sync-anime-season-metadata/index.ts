@@ -215,7 +215,7 @@ Deno.serve(async (req: Request) => {
       unmatched, invalidSeason, formatMismatch, pagesRequested,
       items: candidates.slice(0, 100).map(({ patch, ...item }: any) => item)
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Season metadata sync failed:", error);
     return json({ error: String(error?.message || error).slice(0, 500) }, 500);
   }
