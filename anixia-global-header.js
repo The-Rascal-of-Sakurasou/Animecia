@@ -1,6 +1,6 @@
 (() => {
   const HOME = "/anixia/";
-  const LOGO_HTML = 'ANI<span>X</span>IA';
+  const LOGO_HTML = 'ANI<span class="anixia-logo-x">X</span>IA';
 
   const install = () => {
     let header = document.querySelector("header.site-header, .site-header");
@@ -33,31 +33,22 @@
       style.id = "anixia-global-header-style";
       style.textContent = `
         header,.site-header,.anixia-global-header,.global-header,.main-header,.site-navbar{
-          background:linear-gradient(105deg,#080B12 0%,#0D121C 58%,#111A27 100%)!important;
-          background-color:#0B0F16!important;color:#F4F8FF!important;
-          border-bottom:1px solid rgba(85,200,255,.18)!important;
-          box-shadow:0 8px 28px rgba(0,0,0,.24)!important;box-sizing:border-box;
+          background:#fff!important;background-color:#fff!important;color:#26332c!important;border-bottom:1px solid #e1ebe4!important;box-shadow:0 1px 5px rgba(25,55,38,.045)!important;box-sizing:border-box;
         }
         .site-header,.anixia-global-header{position:sticky;top:0;z-index:9999;min-height:68px;}
         .site-header .anixia-logo,.anixia-global-header .anixia-logo{
           display:inline-flex;align-items:center;flex:none;
-          color:#F4F8FF!important;text-decoration:none!important;
-          font-family:Inter,"Segoe UI",Arial,sans-serif;
-          font-size:27px;font-weight:850;letter-spacing:-1.9px;line-height:1;
-          text-shadow:0 1px 16px rgba(85,200,255,.08);
+          color:#26332c!important;text-decoration:none!important;font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:27px;font-weight:850;letter-spacing:-1.9px;line-height:1;text-shadow:none;
           transition:opacity .18s ease,transform .18s ease;
         }
         .site-header .anixia-logo span,.anixia-global-header .anixia-logo span{
-          display:inline-block;color:#55C8FF!important;
-          font-weight:950;
-          text-shadow:0 0 12px rgba(85,200,255,.5),0 0 26px rgba(85,200,255,.2);
-          transform:skewX(-8deg);
+          display:inline-grid;place-items:center;width:1.12em;height:1.12em;margin:0 .035em;color:#fff!important;background:#03AF6A;border-radius:4px;font-weight:950;text-shadow:none;transform:skewX(-8deg);
         }
         .site-header .anixia-logo:hover,.anixia-global-header .anixia-logo:hover{
           opacity:.88;transform:translateY(-1px);
         }
         .site-header .anixia-logo:focus-visible,.anixia-global-header .anixia-logo:focus-visible{
-          outline:2px solid #8BDEFF;outline-offset:6px;border-radius:3px;
+          outline:2px solid #03AF6A;outline-offset:6px;border-radius:3px;
         }
         @media(max-width:650px){
           .site-header,.anixia-global-header{min-height:60px}
@@ -106,19 +97,17 @@
         footer.anixia-global-footer{
           display:block!important;position:relative!important;inset:auto!important;
           width:100%!important;margin:64px 0 0!important;padding:0!important;
-          background:linear-gradient(110deg,#080B12 0%,#0D121C 58%,#111A27 100%)!important;
-          color:#D6DCE6!important;border:0!important;border-top:1px solid rgba(85,200,255,.22)!important;
-          box-shadow:0 -12px 32px rgba(0,0,0,.08)!important;
+          background:#f5faf7!important;color:#65736b!important;border:0!important;border-top:1px solid #e1ebe4!important;box-shadow:none!important;
         }
         .anixia-footer-inner{width:min(1320px,100%);margin:0 auto;padding:38px 22px 20px}
         .anixia-footer-main{margin-bottom:24px}
-        .anixia-footer-logo{display:inline-flex;color:#F4F8FF!important;text-decoration:none!important;font:850 27px/1 Inter,"Segoe UI",Arial,sans-serif;letter-spacing:-1.9px}
-        .anixia-footer-logo span{color:#55C8FF!important;font-weight:950;text-shadow:0 0 12px rgba(85,200,255,.42);transform:skewX(-8deg)}
-        .anixia-footer-description{margin:10px 0 0!important;color:#8F9BAC!important;font-size:12px!important}
+        .anixia-footer-logo{display:inline-flex;color:#26332c!important;text-decoration:none!important;font:850 27px/1 Inter,"Segoe UI",Arial,sans-serif;letter-spacing:-1.9px}
+        .anixia-footer-logo span{display:inline-grid;place-items:center;width:1.12em;height:1.12em;margin:0 .035em;color:#fff!important;background:#03AF6A;border-radius:4px;font-weight:950;text-shadow:none;transform:skewX(-8deg)}
+        .anixia-footer-description{margin:10px 0 0!important;color:#718078!important;font-size:12px!important}
         .anixia-footer-nav{display:flex;flex-wrap:wrap;gap:9px 22px;padding:20px 0;border-top:1px solid rgba(255,255,255,.09);border-bottom:1px solid rgba(255,255,255,.09)}
-        .anixia-footer-nav a{color:#B9C3D1!important;text-decoration:none!important;font-size:12px!important;font-weight:650!important;transition:color .15s ease}
-        .anixia-footer-nav a:hover{color:#55C8FF!important}
-        .anixia-footer-bottom{display:flex;justify-content:space-between;gap:12px;padding-top:16px;color:#748195;font-size:10px;letter-spacing:.04em}
+        .anixia-footer-nav a{color:#526159!important;text-decoration:none!important;font-size:12px!important;font-weight:650!important;transition:color .15s ease}
+        .anixia-footer-nav a:hover{color:#078653!important}
+        .anixia-footer-bottom{display:flex;justify-content:space-between;gap:12px;padding-top:16px;color:#718078;font-size:10px;letter-spacing:.04em}
         @media(max-width:600px){.anixia-footer-inner{padding:30px 16px 18px}.anixia-footer-nav{gap:12px 16px}.anixia-footer-bottom{flex-direction:column;gap:5px}}
         @media(prefers-reduced-motion:reduce){.anixia-footer-nav a{transition:none}}
       `;
