@@ -146,6 +146,22 @@ Deno.serve(async (req: Request) => {
     const body = await req.json().catch(() => ({}));
     const mode = body?.mode === "preview" ? "preview" : "sync";
     const anime = await loadPublishedAnime(db);
+    const publishedIds = new Set(anime.map(work => text(work.id)));
+    const aliasesResult = await db.from("anime_titles")
+      .select("anime_id,title")
+      .eq("language_code", "ja")
+      .in("title_type", ["main", "short", "synonym"])
+      .range(0, 4999);
+    if (aliasesResult.error) throw aliasesResult.error;
+    const aliasesByAnime = new Map<string, string[]>();
+    for (const row of aliasesResult.data || []) {
+      const animeId = text(row.anime_id);
+      const alias = text(row.title);
+      if (!publishedIds.has(animeId) || !alias) continue;
+      const values = aliasesByAnime.get(animeId) || [];
+      values.push(alias);
+      aliasesByAnime.set(animeId, values);
+    }
     const list = await fetchTitles({ TID: "*", Fields: "TID,Title,LastUpdate" });
     const sourceIndex = new Map<string, number[]>();
     for (const item of list) {
@@ -161,7 +177,11 @@ Deno.serve(async (req: Request) => {
     let ambiguousSourceTitles = 0;
     let ambiguousAnimeTitles = 0;
     for (const work of anime) {
-      const keys = [...new Set([normalize(work.title_ja), normalize(work.title)].filter(Boolean))];
+      const keys = [...new Set([
+        normalize(work.title_ja),
+        normalize(work.title),
+        ...(aliasesByAnime.get(text(work.id)) || []).map(normalize)
+      ].filter(Boolean))];
       const matched = new Set<number>();
       for (const key of keys) {
         const tids = sourceIndex.get(key) || [];
@@ -203,6 +223,7 @@ Deno.serve(async (req: Request) => {
       return json({
         status: "preview",
         publishedAnime: anime.length,
+        japaneseAliasesLoaded: [...aliasesByAnime.values()].reduce((sum, values) => sum + values.length, 0),
         syoboiTitles: list.length,
         safeExactMatches: safeMatches.length,
         ambiguousSourceTitles,
