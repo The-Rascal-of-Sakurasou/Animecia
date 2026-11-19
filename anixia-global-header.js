@@ -95,7 +95,24 @@
     setupAuth(header);
   }
 
-  function setupAuth(header) {
+  function loadScript(src, marker) {
+    return new Promise((resolve,reject) => {
+      const existing = document.querySelector(`script[${marker}]`);
+      if (existing?.dataset.loaded === "true") return resolve();
+      const script = existing || document.createElement("script");
+      if (!existing) {
+        script.src = src;
+        script.async = true;
+        script.setAttribute(marker, "");
+        document.head.appendChild(script);
+      }
+      script.addEventListener("load", () => { script.dataset.loaded = "true"; resolve(); }, {once:true});
+      script.addEventListener("error", reject, {once:true});
+      if (existing && (window.supabase || window.ANIXIA)) resolve();
+    });
+  }
+
+  async function setupAuth(header) {
     const login = header.querySelector("#account-link");
     const logout = header.querySelector("#home-logout");
     const render = user => {
@@ -103,40 +120,35 @@
       login.hidden = signedIn;
       logout.hidden = !signedIn;
     };
-    const connect = () => {
-      if (!window.ANIXIA || typeof window.ANIXIA.getClient !== "function") return false;
-      try {
-        const client = window.ANIXIA.getClient();
-        if (!client?.auth) return false;
-        client.auth.getUser().then(({data,error}) => {
-          if (error) throw error;
-          render(data?.user || null);
-        }).catch(() => render(null));
-        client.auth.onAuthStateChange((_event,session) => render(session?.user || null));
-        logout.addEventListener("click", async () => {
-          logout.disabled = true;
-          logout.textContent = "ログアウト中…";
-          try {
-            const {error} = await client.auth.signOut();
-            if (error) throw error;
-            location.href = ROOT;
-          } catch (error) {
-            console.error("ANIXIA logout failed",error);
-            logout.disabled = false;
-            logout.textContent = "ログアウト";
-            alert("ログアウトできませんでした。時間をおいて再度お試しください。");
-          }
-        });
-        return true;
-      } catch (_) { return false; }
-    };
-    if (!connect()) {
-      let attempts = 0;
-      const retry = () => {
-        if (connect() || ++attempts >= 40) return;
-        setTimeout(retry,100);
-      };
-      setTimeout(retry,100);
+    try {
+      if (!window.supabase) {
+        await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2", "data-anixia-supabase-sdk");
+      }
+      if (!window.ANIXIA || typeof window.ANIXIA.getClient !== "function") {
+        await loadScript(ROOT + "anixia-client.js", "data-anixia-auth-client");
+      }
+      const client = window.ANIXIA.getClient();
+      const {data,error} = await client.auth.getUser();
+      if (error) throw error;
+      render(data?.user || null);
+      client.auth.onAuthStateChange((_event,session) => render(session?.user || null));
+      logout.addEventListener("click", async () => {
+        logout.disabled = true;
+        logout.textContent = "ログアウト中…";
+        try {
+          const {error:signOutError} = await client.auth.signOut();
+          if (signOutError) throw signOutError;
+          location.href = ROOT;
+        } catch (error) {
+          console.error("ANIXIA logout failed",error);
+          logout.disabled = false;
+          logout.textContent = "ログアウト";
+          alert("ログアウトできませんでした。時間をおいて再度お試しください。");
+        }
+      });
+    } catch (error) {
+      console.warn("ANIXIA authentication status unavailable",error);
+      render(null);
     }
   }
 
