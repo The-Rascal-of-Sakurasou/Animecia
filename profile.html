@@ -165,12 +165,12 @@ async function loadTab(tab){
    const {data,error}=await query;if(error)throw error;
    const rows=data||[],map=await getAnime(rows.map(x=>x.anime_id));
    const labels={
-    favorites:()=>"お気に入り",
-    plan_to_watch:()=>"視聴予定",
-    watching:x=>"視聴中"+(x.episodes_watched!=null?" ・ "+x.episodes_watched+"話":""),
-    completed:()=>"視聴完了",
-    ratings:x=>"評価 "+x.score+"/10",
-    ranking:(x,i)=>"高評価順 "+(i+1)+"位 ・ "+x.score+"/10"
+    favorites:()=>isEnglish()?"Favorites":"お気に入り",
+    plan_to_watch:()=>isEnglish()?"Plan to Watch":"視聴予定",
+    watching:x=>isEnglish()?"Watching"+(x.episodes_watched!=null?" · "+x.episodes_watched+" eps":""):"視聴中"+(x.episodes_watched!=null?" ・ "+x.episodes_watched+"話":""),
+    completed:()=>isEnglish()?"Completed":"視聴完了",
+    ratings:x=>isEnglish()?"Rated "+x.score+"/10":"評価 "+x.score+"/10",
+    ranking:(x,i)=>isEnglish()?"Top-rated #"+(i+1)+" · "+x.score+"/10":"高評価順 "+(i+1)+"位 ・ "+x.score+"/10"
    };
    if(tab==="ranking"){
     el.innerHTML=rows.map((x,i)=>{const a=map.get(x.anime_id);if(!a)return "";return '<a class="list-item" href="anime-detail.html?id='+encodeURIComponent(a.id)+'"><div style="width:34px;text-align:center;font-weight:900;color:#03AF6A">'+(i+1)+'</div>'+imageMarkup(a.poster_url,titleOf(a))+'<div class="grow"><div class="title">'+esc(titleOf(a))+'</div><div class="meta">'+esc(labels.ranking(x,i))+'</div></div></a>'}).join("")||'<div class="empty">評価済みの作品はありません。</div>';
