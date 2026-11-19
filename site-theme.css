@@ -4101,3 +4101,23 @@ main :where(.badge,.tag,.chip,.status-badge,.label-chip){
 main :where(.table-wrap,.table-container,.overflow-x-auto){max-width:100%;overflow-x:auto}
 main :where(pre,code){max-width:100%;overflow-x:auto}
 main :where(:focus-visible){scroll-margin:90px}
+
+
+/* Normalize page-specific hero blocks to the same clean surface. */
+main :where(.hero,[class$="-hero"],[class*="-hero-"]){
+  background:#fff!important;
+  background-image:none!important;
+  color:var(--anixia-text)!important;
+  border:1px solid var(--anixia-border)!important;
+  border-radius:var(--anixia-radius)!important;
+  box-shadow:none!important;
+}
+main :where(.hero,[class$="-hero"],[class*="-hero-"]) :where(h1,h2,h3,h4,h5,h6,strong,b){
+  color:var(--anixia-text)!important;
+}
+main :where(.hero,[class$="-hero"],[class*="-hero-"]) :where(p,small,label,.description,.subtitle,.muted,.hint,.help-text,.meta){
+  color:var(--anixia-muted)!important;
+}
+main :where(.hero,[class$="-hero"],[class*="-hero-"]) :where(a:not([class*="button"]):not([class*="btn"])){
+  color:var(--anixia-brand)!important;
+}
