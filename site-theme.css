@@ -3728,3 +3728,88 @@ main,[role="main"]{
 @media(max-width:700px){
   :where(.layout,.rank-layout,.messenger){max-width:100%!important}
 }
+
+
+/* High-specificity overrides for legacy page-local themes */
+body .anixia-page-hero,
+body .anixia-filter-panel,
+body .anixia-result-card,
+body .entity-hero,
+body .entity-detail-hero,
+body .entity-search,
+body .entity-card,
+body .anixia-mypage-hero,
+body .anixia-mypage-panel,
+body .anixia-detail-hero,
+body .anixia-detail-panel,
+body .anixia-detail-info,
+body .anixia-filter-area,
+body .memo-hero,
+body .admin-panel,
+body .auth-panel,
+body .diag-hero,
+body .rank-hero,
+body .season-hero,
+body .discover-hero,
+body .quiz-hero,
+body .compare-hero{
+  background:#fff!important;
+  background-image:none!important;
+  color:#171C19!important;
+  border-color:#E7ECE9!important;
+  box-shadow:none!important;
+}
+body .anixia-page-hero :is(h1,h2,h3,p,small,span),
+body .entity-hero :is(h1,h2,h3,p,small,span),
+body .entity-detail-hero :is(h1,h2,h3,p,small,span),
+body .anixia-detail-hero :is(h1,h2,h3,p,small,span),
+body .anixia-mypage-hero :is(h1,h2,h3,p,small,span),
+body .memo-hero :is(h1,h2,h3,p,small,span),
+body .admin-panel :is(h1,h2,h3,p,small,span),
+body .auth-panel :is(h1,h2,h3,p,small,span){
+  color:#171C19!important;
+  text-shadow:none!important;
+}
+body .anixia-field input,
+body .anixia-field select,
+body .anixia-profile-field input,
+body .anixia-profile-field textarea,
+body .admin-field input,
+body .admin-field select,
+body .entity-search input,
+body .anixia-filter-panel input,
+body .anixia-filter-panel select,
+body .auth-panel input,
+body .auth-panel select,
+body .auth-panel textarea{
+  background:#fff!important;
+  color:#171C19!important;
+  border-color:#DCE4DF!important;
+  -webkit-text-fill-color:#171C19!important;
+}
+body .anixia-filter-actions button,
+body .entity-tabs button[aria-selected="true"],
+body .entity-search button,
+body .anixia-profile-form button,
+body .admin-button,
+body .anixia-pagination button,
+body .entity-pagination button,
+body .auth-panel button,
+body .anixia-mypage-tabs button.active{
+  background:#03AF6A!important;
+  border-color:#03AF6A!important;
+  color:#fff!important;
+}
+body .anixia-result-card,
+body .entity-card,
+body .anixia-library-card,
+body .anixia-mypage-panel,
+body .anixia-detail-panel,
+body .anixia-filter-panel{
+  border-radius:12px!important;
+}
+body .anixia-result-card :is(h2,h3,p,small,span),
+body .entity-card :is(h2,h3,p,small,span),
+body .anixia-library-card :is(h2,h3,p,small,span){
+  color:#171C19!important;
+}
