@@ -43,7 +43,8 @@
     const byId = new Map();
     for (const row of result.data || []) {
       const title = String(row.title || "").trim();
-      if (!title || /[\\u3040-\\u30ff\\u3400-\\u9fff]/u.test(title)) continue;
+      const hasJapanese = [...title].some(char => { const code = char.codePointAt(0); return (code >= 0x3040 && code <= 0x30ff) || (code >= 0x3400 && code <= 0x9fff); });
+      if (!title || hasJapanese) continue;
       if (!byId.has(row.anime_id)) byId.set(row.anime_id, title);
     }
     return items.map(row => ({ ...row, title_en: byId.get(row.id) || row.title_en || null }));
