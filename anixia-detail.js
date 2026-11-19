@@ -3,7 +3,7 @@
   const $=id=>document.getElementById(id);
   const isEnglish=()=>localStorage.getItem("anixia-language")==="en";
   const hasJapanese=value=>/[\u3040-\u30ff\u3400-\u9fff]/u.test(String(value||""));
-  const value=(row,ja,en,fallback)=>isEnglish()?(row?.[en]||row?.name_en||(row?.[en==="name"?"name":en]&&!hasJapanese(row[en])?row[en]:null)||fallback):(row?.[ja]||fallback);
+  const value=(row,ja,en,fallback)=>isEnglish()?((row?.[en]&&!hasJapanese(row[en])?row[en]:null)||(row?.name_en&&!hasJapanese(row.name_en)?row.name_en:null)||fallback):(row?.[ja]||fallback);
   const label=(ja,en)=>isEnglish()?en:ja;
   const englishTitle=row=>row?.title_en||(row?.title&&!hasJapanese(row.title)?row.title:"English title unavailable");
   const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -83,7 +83,7 @@
     }
     const studioNames=(a.studios||[]).map(s=>value(s,"name_ja","name",isEnglish()?"Name unavailable":"日本語表記未登録")).filter(Boolean);
     const statusMap={finished_airing:label("放送終了","Finished Airing"),currently_airing:label("放送中","Currently Airing"),not_yet_aired:label("放送前","Not Yet Aired"),upcoming:label("放送予定","Upcoming"),cancelled:label("中止","Cancelled")};
-    const info=isEnglish()?[["Format",fmt(a.format)],["Release Year",a.release_year||"Not available"],["Season",season||"Not available"],["Episodes",a.episode_count||a.episodes_count||"Not available"],["Status",statusMap[a.status]||a.status||"Not available"],["Studios",studioNames.join(", ")||(a.studio?(a.studio.name_en||a.studio.name||"Name unavailable"):"Not available")]]:[["形式",fmt(a.format)],["放送年",a.release_year||"未登録"],["シーズン",season||"未登録"],["話数",a.episode_count||a.episodes_count||"未登録"],["放送状況",statusMap[a.status]||a.status||"未登録"],["制作会社",studioNames.join("・")||(a.studio?(a.studio.name_ja||"日本語表記未登録"):"未登録")]];
+    const info=isEnglish()?[["Format",fmt(a.format)],["Release Year",a.release_year||"Not available"],["Season",season||"Not available"],["Episodes",a.episode_count||a.episodes_count||"Not available"],["Status",statusMap[a.status]||a.status||"Not available"],["Studios",studioNames.join(", ")||(a.studio?(a.studio.name_en||(a.studio.name&&!hasJapanese(a.studio.name)?a.studio.name:"Name unavailable")):"Not available")]]:[["形式",fmt(a.format)],["放送年",a.release_year||"未登録"],["シーズン",season||"未登録"],["話数",a.episode_count||a.episodes_count||"未登録"],["放送状況",statusMap[a.status]||a.status||"未登録"],["制作会社",studioNames.join("・")||(a.studio?(a.studio.name_ja||"日本語表記未登録"):"未登録")]];
     if(a.official_url)info.push([label("公式サイト","Official Website"),'<a href="'+esc(a.official_url)+'" target="_blank" rel="noopener noreferrer">'+label("公式サイトを開く","Open Official Website")+'</a>']);
     $("info").innerHTML=info.map(([k,v])=>'<dt>'+esc(k)+'</dt><dd>'+((typeof v==="string"&&v.startsWith("<a "))?v:esc(v))+'</dd>').join("");
     const characterItems=a.characters||[];
