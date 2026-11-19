@@ -1,5 +1,9 @@
 name: Responsive layout smoke test
 
+concurrency:
+  group: anixia-site-validation
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
   push:
