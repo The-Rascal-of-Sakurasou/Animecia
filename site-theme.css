@@ -4430,3 +4430,9 @@ footer.anixia-global-footer .anixia-admin-login,footer.anixia-global-footer .ani
 html,body{overscroll-behavior-y:none!important;}
 body{padding-bottom:0!important;margin-bottom:0!important;}
 footer.anixia-global-footer{display:block!important;position:relative!important;inset:auto!important;margin-bottom:0!important;}
+
+
+/* Prevent scrolling past the document's top edge above the fixed header. */
+html,body{overscroll-behavior:none!important;overscroll-behavior-y:none!important;}
+html{scroll-padding-top:0!important;}
+body{overscroll-behavior-y:none!important;}
