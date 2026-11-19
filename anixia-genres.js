@@ -12,7 +12,7 @@
   function render() {
     const query = $("q").value.trim().toLocaleLowerCase(en()?"en":"ja");
     const filtered = genres.filter(genre =>
-      genreName(genre).toLocaleLowerCase("ja").includes(query)
+      genreName(genre).toLocaleLowerCase(en()?"en":"ja").includes(query)
     );
     $("count").textContent = filtered.length + (en()?" genres":"ジャンル");
 
@@ -23,8 +23,8 @@
 
     $("grid").innerHTML = filtered.map(genre =>
       '<a class="genre" href="anime.html?genre=' + encodeURIComponent(genre.id) + '">' +
-        '<div class="genre-name">' + esc(genreName(genre)) + '</div>' +
-        '<div class="genre-count">${en()?"Browse anime in this genre":"このジャンルの作品を見る"}</div>' +
+        '<div class="genre-name">' + esc(genreName(genre)) + `</div>` +
+        '<div class="genre-count">${en()?"Browse anime in this genre":"このジャンルの作品を見る"}</div>` +
       '</a>'
     ).join("") || '<div class="empty">${en()?"No matching genres found.":"該当するジャンルがありません。"}</div>';
   }
