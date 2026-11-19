@@ -13,7 +13,7 @@
     try{
       const result=await ANIXIA.listAnime({query,limit:20});
       hits=result.data;
-      $("compare-hits").innerHTML=hits.length?hits.map(a=>`<div class="compare-hit"><img src="${a.poster_url?esc(a.poster_url):""}" alt=""><label><input type="checkbox" value="${a.id}"><span>${esc(name(a))}<small>${esc([a.release_year,a.format].filter(Boolean).join(" · "))}</small></span></label></div>`).join(""):'<p class="compare-state">該当する作品はありません。</p>';
+      $("compare-hits").innerHTML=hits.length?hits.map(a=>`<div class="compare-hit"><div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url,name(a),a.poster_credit)}</div><label><input type="checkbox" value="${a.id}"><span>${esc(name(a))}<small>${esc([a.release_year,a.format].filter(Boolean).join(" · "))}</small></span></label></div>`).join(""):'<p class="compare-state">該当する作品はありません。</p>';
       document.querySelectorAll('#compare-hits input[type="checkbox"]').forEach(x=>x.addEventListener("change",()=>{
         const selected=[...document.querySelectorAll('#compare-hits input:checked')];
         if(selected.length>3){x.checked=false;return;}
