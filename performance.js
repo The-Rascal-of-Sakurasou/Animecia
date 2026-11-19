@@ -19,7 +19,7 @@
   const performanceScript=Array.from(document.scripts).find(s=>s.src.includes('performance.js'));
   if(performanceScript&&!document.querySelector('script[data-anixia-global-header]')){
     const loader=document.createElement('script');
-    loader.src=new URL('anixia-global-header.js',performanceScript.src).href;
+    loader.src=new URL('anixia-global-header.js?v=anixia-no-tagline-20261119',performanceScript.src).href;
     loader.defer=true;
     loader.dataset.anixiaGlobalHeader='true';
     document.head.appendChild(loader);
