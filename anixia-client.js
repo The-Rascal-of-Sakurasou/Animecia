@@ -481,7 +481,7 @@
       p_limit: 30
     });
     if (result.error) throw result.error;
-    return result.data || [];
+    return attachEnglishTitles(result.data || []);
   }
   
 
