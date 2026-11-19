@@ -4241,3 +4241,21 @@ body:has(#login-form),body:has(#signup-form),body:has(#forgot-form),body:has(#fo
     width:calc(100% - 28px)!important;margin:24px auto!important;padding:20px!important;
   }
 }
+
+
+/* Final component alignment */
+main :where(a.button,a.btn,a.nav-btn,a[class*="button"],a[class*="btn"],.quiz-card a,.admin-button){
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  min-height:38px!important;padding:0 14px!important;border:1px solid #03AF6A!important;
+  border-radius:8px!important;background:#03AF6A!important;color:#fff!important;
+  text-decoration:none!important;font-size:13px!important;font-weight:650!important;
+  box-shadow:none!important;
+}
+main :where(a.button:hover,a.btn:hover,a.nav-btn:hover,a[class*="button"]:hover,a[class*="btn"]:hover,.quiz-card a:hover,.admin-button:hover){
+  background:#02965B!important;border-color:#02965B!important;color:#fff!important;
+}
+main > :where(section,article){margin-block:0 22px}
+main :where(.section,.anixia-section,.discover-section){margin-block:28px!important}
+main :where(.section-heading,.section-head,.discover-head,.anixia-section-heading){margin-bottom:14px!important}
+main :where(.admin-warning){background:#FFF8E8!important;border:1px solid #F2D9A8!important;color:#735B2B!important}
+main :where(.admin-code){background:#F4F7F5!important;color:#35423B!important}
