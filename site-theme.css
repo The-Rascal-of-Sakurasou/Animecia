@@ -3396,3 +3396,19 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--anixia-green)!impo
 :where(.anixia-footer-description,.anixia-footer-bottom){
   color:#a8a8a8!important;
 }
+
+
+/* Final form and logo rules */
+:where(input:not([type="checkbox"]):not([type="radio]),select,textarea){
+  background:#fff!important;background-color:#fff!important;
+  color:#111!important;-webkit-text-fill-color:#111!important;color-scheme:light!important;
+}
+:where(select option,select optgroup){background:#fff!important;color:#111!important}
+:where(input::placeholder,textarea::placeholder){color:#666!important;-webkit-text-fill-color:#666!important;opacity:1!important}
+:where(.site-header .anixia-logo,.anixia-global-header .anixia-logo,.anixia-footer-logo){
+  color:#03AF6A!important;text-decoration:none!important;
+}
+:where(.site-header .anixia-logo .anixia-logo-xia,.anixia-global-header .anixia-logo .anixia-logo-xia,.anixia-footer-logo .anixia-logo-xia){color:#1DA1F2!important}
+:where(.site-header .anixia-logo .anixia-logo-xia,.anixia-global-header .anixia-logo .anixia-logo-xia,.anixia-footer-logo .anixia-logo-xia)::after{
+  content:none!important;display:none!important;background:none!important;border:0!important;
+}
