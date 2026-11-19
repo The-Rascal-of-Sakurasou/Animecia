@@ -4259,3 +4259,30 @@ main :where(.section,.anixia-section,.discover-section){margin-block:28px!import
 main :where(.section-heading,.section-head,.discover-head,.anixia-section-heading){margin-bottom:14px!important}
 main :where(.admin-warning){background:#FFF8E8!important;border:1px solid #F2D9A8!important;color:#735B2B!important}
 main :where(.admin-code){background:#F4F7F5!important;color:#35423B!important}
+
+
+/* Final header lock: one black shared header and white navigation labels on every page. */
+header,header.site-header,header.anixia-global-header,.site-header,.anixia-global-header,.global-header,.main-header,.site-navbar{
+  background:#111!important;background-color:#111!important;color:#fff!important;border:0!important;border-bottom:1px solid #292929!important;
+  box-shadow:none!important;backdrop-filter:none!important;
+}
+header :where(nav a,.main-nav a,.site-nav a,.nav-links a,.anixia-global-nav a){
+  color:#fff!important;background:transparent!important;text-decoration:none!important;
+}
+header :where(nav a:hover,.main-nav a:hover,.site-nav a:hover,.nav-links a:hover,.anixia-global-nav a:hover){
+  color:#03AF6A!important;background:rgba(255,255,255,.07)!important;
+}
+header :where(.anixia-logo,.brand,.logo){color:#03AF6A!important}
+header :where(.anixia-logo .anixia-logo-xia){color:#1DA1F2!important}
+header :where(.anixia-header-actions,.nav-actions,.header-actions,.userbar){display:flex!important;align-items:center!important;gap:8px!important;flex:none!important}
+header .anixia-header-actions .anixia-language{background:#222!important;color:#fff!important;border:1px solid #555!important}
+header .anixia-header-actions .anixia-account{background:#03AF6A!important;color:#fff!important;border:1px solid #03AF6A!important}
+header .anixia-header-actions [hidden]{display:none!important}
+@media(max-width:760px){
+  header.site-header,header.anixia-global-header,.site-header,.anixia-global-header{height:auto!important;min-height:58px!important}
+  header .anixia-global-header-inner,header .header-inner,header .container,header .container.nav,header .wrap{
+    min-height:58px!important;flex-wrap:wrap!important;gap:9px!important;padding:9px 14px!important;
+  }
+  header .anixia-global-nav{order:3!important;flex:0 0 100%!important;width:100%!important}
+  header .anixia-header-actions{margin-left:auto!important}
+}
