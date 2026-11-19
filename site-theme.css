@@ -4306,3 +4306,10 @@ footer a:hover,.anixia-footer a:hover,.site-footer a:hover,.global-footer a:hove
 .anixia-logo .anixia-logo-xia,header .anixia-logo .anixia-logo-xia,footer .anixia-logo .anixia-logo-xia,.anixia-footer .anixia-logo .anixia-logo-xia{
   color:var(--anixia-twitter)!important;
 }
+
+/* Wordmark fallback for pages whose HTML uses a plain-text ANIXIA brand */
+header .brand,header .logo,footer .brand,footer .logo,.anixia-footer .anixia-logo:not(:has(.anixia-logo-xia)){
+  color:transparent!important;
+  background:linear-gradient(90deg,#03AF6A 0%,#03AF6A 49%,#1DA1F2 51%,#1DA1F2 100%);
+  -webkit-background-clip:text;background-clip:text;
+}
