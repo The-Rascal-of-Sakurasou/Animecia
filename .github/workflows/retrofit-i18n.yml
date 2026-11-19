@@ -40,15 +40,15 @@ jobs:
               tag = f'<script src="{relative_script}?v=20261119" defer></script>'
               if "anixia-i18n.js" not in text:
                   if re.search(r"</body>", text, flags=re.I):
-                      text = re.sub(r"</body>", tag + "\\n</body>", text, count=1, flags=re.I)
+                      text = re.sub(r"</body>", tag + "\n</body>", text, count=1, flags=re.I)
                   else:
-                      text += "\\n" + tag + "\\n"
-              text = re.sub(r'(site-theme\\.css\\?v=)[^"\\']+', r'\\g<1>anixia-design-v3-20261119', text)
+                      text += "\n" + tag + "\n"
+              text = re.sub(r'(site-theme\.css\?v=)[^"\']+', r'\g<1>anixia-design-v3-20261119', text)
               if text != path.read_text(encoding="utf-8"):
                   path.write_text(text, encoding="utf-8")
                   changed.append(rel)
           print(f"Updated {len(changed)} HTML files")
-          print("\\n".join(changed[:30]))
+          print("\n".join(changed[:30]))
           PY
 
       - name: Commit generated page updates
