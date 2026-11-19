@@ -90,6 +90,12 @@
           <a class="anixia-header-button" id="mypage-link" href="${ROOT}mypage.html">マイページ</a>
         </div>
       </div>`;
+    header.querySelectorAll(".anixia-global-nav a").forEach(a => { a.style.setProperty("color", "#FFFFFF", "important"); a.style.setProperty("opacity", "1", "important"); });
+    header.querySelectorAll(".anixia-header-actions .anixia-header-button").forEach(a => a.style.setProperty("color", "#FFFFFF", "important"));
+    const logo = header.querySelector(".anixia-logo");
+    if (logo) logo.style.setProperty("color", "#03AF6A", "important");
+    const logoAccent = header.querySelector(".anixia-logo-xia");
+    if (logoAccent) logoAccent.style.setProperty("color", "#1DA1F2", "important");
     const current = location.pathname.replace(/^.*\/anixia\//, "");
     header.querySelectorAll(".anixia-global-nav a").forEach(a => {
       const path = a.getAttribute("href").replace(ROOT, "");
