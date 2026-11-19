@@ -9,12 +9,12 @@
     studios: { title: "制作会社", table: "studios", fields: "id,name,name_ja,name_kana,name_en,website_url", order: "name_ja", detail: "studio" }
   };
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const label = row => row.name_ja || row.name || row.name_en || "名称未登録";
+  const label = row => row.name_ja || "日本語表記未登録";
   const initials = row => Array.from(label(row).trim())[0] || "A";
   const kindLabel = value => ({voice_actor:"声優",director:"監督",screenwriter:"脚本",producer:"プロデューサー",composer:"作曲家"}[value] || "人物・スタッフ");
   function card(row) {
     const c = config[state.kind];
-    const subtitle = state.kind === "people" ? kindLabel(row.person_type) : state.kind === "characters" ? (row.name_en || row.nickname || "キャラクター") : (row.name_en || "アニメ制作会社");
+    const subtitle = state.kind === "people" ? kindLabel(row.person_type) : state.kind === "characters" ? "キャラクター" : "アニメ制作会社";
     return '<a class="entity-card" href="entity-detail.html?type='+c.detail+'&id='+encodeURIComponent(row.id)+'"><span class="entity-avatar" aria-hidden="true">'+esc(initials(row))+'</span><span class="entity-card-copy"><b>'+esc(label(row))+'</b><small>'+esc(subtitle)+'</small></span></a>';
   }
   async function load() {
