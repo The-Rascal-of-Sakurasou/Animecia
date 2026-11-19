@@ -470,21 +470,12 @@
 
   function posterMarkup(url, alt = "", credit = null) {
     const safeUrl = String(url || "").trim();
-    const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-    const safeAlt = escapeHtml(alt);
-    const fallback = '<span class="anixia-poster-fallback" aria-label="タイトル画像未登録"><span class="anixia-poster-brand">ANIXIA</span><strong class="anixia-poster-title">' + safeAlt + '</strong><small class="anixia-poster-caption">TITLE ARCHIVE</small></span>';
     const sourceUrl = String(credit?.source_url || "");
     const attribution = String(credit?.attribution || "");
-    const license = String(credit?.license || "");
-    const licenseUrl = String(credit?.license_url || "");
-    if (!safeUrl || !sourceUrl.startsWith("https://") || !attribution) return fallback;
+    if (!safeUrl || !sourceUrl.startsWith("https://") || !attribution) return "";
+    const safeAlt = String(alt ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
     const safeSrc = safeUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
-    const sourceLink = '<a class="anixia-poster-credit" href="' + escapeHtml(sourceUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(attribution) + '</a>';
-    const licenseMarkup = /^https:\/\/(?:creativecommons\.org|commons\.wikimedia\.org)\//i.test(licenseUrl)
-      ? '<a class="anixia-poster-license" href="' + escapeHtml(licenseUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(license || "ライセンス") + '</a>'
-      : '<span class="anixia-poster-license">' + escapeHtml(license) + '</span>';
-    const creditLine = '<span class="anixia-poster-credit-line">' + sourceLink + (license ? ' · ' + licenseMarkup : '') + '</span>';
-    return '<img data-anixia-poster src="' + safeSrc + '" alt="' + safeAlt + '" loading="lazy" decoding="async">' + fallback.replace('aria-label="タイトル画像未登録"', 'hidden aria-label="画像を表示できません"') + creditLine;
+    return '<img data-anixia-poster src="' + safeSrc + '" alt="' + safeAlt + '" loading="lazy" decoding="async">';
   }
 
   document.addEventListener("load", event => {
