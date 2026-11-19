@@ -8,6 +8,8 @@ on:
       - "site-theme.css"
       - "anixia-i18n.js"
       - "sw.js"
+      - "performance.js"
+      - "anixia-global-header.js"
       - "*.html"
       - "anime/**/index.html"
       - "genre/**/index.html"
@@ -29,6 +31,74 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Audit every published HTML file and local page link
+        run: |
+          node --input-type=module <<'NODE'
+          import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs';
+          import { resolve, relative, sep } from 'node:path';
+
+          const root = process.cwd();
+          const ignored = new Set(['googlec7373bcce91aea2b.html']);
+          const files = [];
+          function walk(dir) {
+            for (const entry of readdirSync(dir, { withFileTypes: true })) {
+              if (entry.name === '.git' || entry.name === 'node_modules') continue;
+              const full = resolve(dir, entry.name);
+              if (entry.isDirectory()) walk(full);
+              else if (entry.isFile() && entry.name.endsWith('.html')) {
+                files.push(relative(root, full).split(sep).join('/'));
+              }
+            }
+          }
+          walk(root);
+
+          const failures = [];
+          function localTarget(value, sourceFile) {
+            if (!value || value.startsWith('#') || /^(?:[a-z]+:|\/\/)/i.test(value)) return null;
+            let url;
+            try {
+              url = new URL(value, 'https://the-rascal-of-sakurasou.github.io/anixia/' + sourceFile);
+            } catch {
+              return null;
+            }
+            if (url.origin !== 'https://the-rascal-of-sakurasou.github.io') return null;
+            let pathname = decodeURIComponent(url.pathname);
+            if (pathname === '/anixia' || pathname === '/anixia/') pathname = '/anixia/index.html';
+            if (!pathname.startsWith('/anixia/')) return null;
+            let rel = pathname.slice('/anixia/'.length);
+            if (!rel || rel.endsWith('/')) rel += 'index.html';
+            let target = resolve(root, rel);
+            if (!target.startsWith(root + sep) && target !== root) return null;
+            if (existsSync(target) && statSync(target).isDirectory()) target = resolve(target, 'index.html');
+            return { target, rel };
+          }
+
+          for (const file of files) {
+            if (ignored.has(file)) continue;
+            const html = readFileSync(resolve(root, file), 'utf8');
+            if (!/name=["']viewport["']/i.test(html)) failures.push(file + ': missing viewport meta');
+            if (!/anixia-i18n\.js/i.test(html)) failures.push(file + ': missing shared language script');
+            if (!/(?:site-theme\.css|performance\.js|anixia-global-header\.js)/i.test(html)) failures.push(file + ': missing shared design loader');
+
+            for (const match of html.matchAll(/(?:href|src)=["']([^"']+)["']/gi)) {
+              const value = match[1];
+              if (!/\.html(?:[?#]|$)|\.(?:js|css)(?:[?#]|$)/i.test(value)) continue;
+              const resolved = localTarget(value, file);
+              if (resolved && !existsSync(resolved.target)) {
+                failures.push(file + ': missing local target ' + value + ' -> ' + resolved.rel);
+              }
+            }
+          }
+
+          console.log('Audited ' + files.length + ' HTML files (including generated anime and genre pages).');
+          if (failures.length) {
+            console.error('HTML source audit failures (' + failures.length + '):');
+            console.error(failures.slice(0, 150).join('\n'));
+            if (failures.length > 150) console.error('... and ' + (failures.length - 150) + ' more');
+            process.exit(1);
+          }
+          console.log('All page templates, responsive metadata, language scripts and local HTML/JS/CSS targets passed.');
+          NODE
       - name: Install Playwright
         run: |
           npm init -y
@@ -45,9 +115,17 @@ jobs:
 
           const base = process.env.BASE_URL;
           const pages = [
-            '', 'discover.html', 'ranking.html', 'anime-detail.html',
-            'community.html', 'messages.html', 'profile.html',
-            'admin.html', 'quiz-play.html', 'genres.html'
+            '',
+            'anime.html', 'anime-detail.html', 'discover.html', 'season.html',
+            'ranking.html', 'recommendations.html', 'compare.html',
+            'entities.html', 'entity-detail.html', 'genres.html',
+            'community.html', 'messages.html', 'profile.html', 'mypage.html',
+            'memo.html', 'user-search.html',
+            'quiz.html', 'quiz-play.html',
+            'login.html', 'signup.html', 'forgot-password.html', 'reset-password.html',
+            'auth-callback.html', 'verify-email.html',
+            'privacy.html', 'terms.html', 'data-sources.html',
+            'admin.html', 'admin-candidates.html', 'admin-dashboard.html', 'admin-login.html'
           ];
           // Add a deterministic sample of generated work and genre pages.
           function collectIndexPages(root) {
