@@ -4085,3 +4085,19 @@ html body footer :where(.anixia-footer-main,.anixia-footer-nav,.anixia-footer-bo
   main :where(.grid,.cards,.card-grid,[class$="-grid"]){min-width:0}
 }
 @media(prefers-reduced-motion:reduce){main :where(button,.button,.btn){transition:none!important}}
+
+
+/* Preserve action meaning while keeping button geometry consistent. */
+main :where(button.danger,.button.danger,.btn-danger,.button-danger,.delete-button,[data-variant="danger"],[class*="danger"]){
+  background:#C83D3D!important;border-color:#C83D3D!important;color:#fff!important;
+}
+main :where(button.danger:hover,.button.danger:hover,.btn-danger:hover,.button-danger:hover,.delete-button:hover,[data-variant="danger"]:hover,[class*="danger"]:hover){
+  background:#A92F2F!important;border-color:#A92F2F!important;color:#fff!important;
+}
+main :where(.badge,.tag,.chip,.status-badge,.label-chip){
+  display:inline-flex;align-items:center;gap:5px;max-width:100%;
+  border-radius:999px;padding:3px 9px;font-size:12px;line-height:1.5;
+}
+main :where(.table-wrap,.table-container,.overflow-x-auto){max-width:100%;overflow-x:auto}
+main :where(pre,code){max-width:100%;overflow-x:auto}
+main :where(:focus-visible){scroll-margin:90px}
