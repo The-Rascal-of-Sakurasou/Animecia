@@ -1,7 +1,8 @@
 (() => {
   "use strict";
   const $ = id => document.getElementById(id);
-  const names = { winter: "冬", spring: "春", summer: "夏", autumn: "秋" };
+  const en=()=>localStorage.getItem("anixia-language")==="en";
+  const names = { winter: en()?"Winter":"冬", spring: en()?"Spring":"春", summer: en()?"Summer":"夏", autumn: en()?"Autumn":"秋" };
   const seasonFromMonth = month => month <= 3 ? "winter" : month <= 6 ? "spring" : month <= 9 ? "summer" : "autumn";
   const tokyoNow = () => {
     const parts = new Intl.DateTimeFormat("en-CA", {
@@ -44,7 +45,7 @@
       } while (true);
 
       $("season-grid").innerHTML = works.length
-        ? works.map(a => `<a class="season-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}"><div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url, a.title_ja || a.title_kana || a.title || "", a.poster_credit)}</div><div class="season-card-copy"><b>${esc(a.title_ja || a.title_kana || a.title || "タイトル未登録")}</b><small>${esc(a.format || "形式未登録")}</small></div></a>`).join("")
+        ? works.map(a => `<a class="season-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}"><div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url, (en() ? a.title : (a.title_ja || a.title_kana || a.title)) || "", a.poster_credit)}</div><div class="season-card-copy"><b>${esc((en() ? a.title : (a.title_ja || a.title_kana || a.title)) || (en() ? "Title unavailable" : "タイトル未登録"))}</b><small>${esc(a.format || (en() ? "Format unavailable" : "形式未登録"))}</small></div></a>`).join("")
         : '<p class="season-state">このシーズンの公開作品データはまだありません。</p>';
     } catch (e) {
       console.error(e);
