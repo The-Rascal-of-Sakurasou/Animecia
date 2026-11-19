@@ -2,12 +2,14 @@
   "use strict";
   const $=id=>document.getElementById(id);
   const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const name=a=>a.title_ja||a.title_kana||a.title||"タイトル未登録";
+  const en=()=>localStorage.getItem("anixia-language")==="en";
+  const hasJapanese=v=>/[\\u3040-\\u30ff\\u3400-\\u9fff]/u.test(String(v||""));
+  const name=a=>en()?(a.title_en||(a.title&&!hasJapanese(a.title)?a.title:"English title unavailable")):(a.title_ja||a.title_kana||a.title||"タイトル未登録");
   async function init(){
     const year=$("year");for(let y=new Date().getFullYear();y>=1960;y--)year.add(new Option(String(y),String(y)));
     try{
       const genres=await ANIXIA.getGenres();
-      $("genre-options").innerHTML=genres.length?genres.map(g=>`<label class="diag-genre"><input type="checkbox" name="genre" value="${g.id}"><span>${esc(g.name_ja||g.name)}</span></label>`).join(""):'<p class="diag-state">ジャンルデータを準備しています。</p>';
+      $("genre-options").innerHTML=genres.length?genres.map(g=>`<label class="diag-genre"><input type="checkbox" name="genre" value="${g.id}"><span>${esc(en()?(g.name||"Name unavailable"):(g.name_ja||g.name))}</span></label>`).join(""):'<p class="diag-state">ジャンルデータを準備しています。</p>';
     }catch(e){console.error(e);$("genre-options").innerHTML='<p class="diag-state">ジャンルを読み込めませんでした。</p>';}
   }
   $("diagnosis-form").addEventListener("submit",async e=>{
