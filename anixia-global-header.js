@@ -66,6 +66,15 @@
       document.body.prepend(header);
     }
     header.className = "site-header anixia-global-header";
+    header.style.setProperty("position", "fixed", "important");
+    header.style.setProperty("top", "0", "important");
+    header.style.setProperty("left", "0", "important");
+    header.style.setProperty("right", "0", "important");
+    header.style.setProperty("z-index", "99999", "important");
+    header.style.setProperty("width", "100%", "important");
+    header.style.setProperty("background", "#000000", "important");
+    header.style.setProperty("background-color", "#000000", "important");
+    header.style.setProperty("color", "#FFFFFF", "important");
     header.innerHTML = `
       <div class="anixia-global-header-inner">
         <a class="anixia-logo" href="${ROOT}" aria-label="ANIXIA ホーム">ANI<span class="anixia-logo-xia">XIA</span></a>
@@ -160,6 +169,10 @@
     const existing = document.querySelector("footer");
     const footer = existing || document.createElement("footer");
     footer.className = "anixia-global-footer";
+    footer.style.setProperty("background", "#000000", "important");
+    footer.style.setProperty("background-color", "#000000", "important");
+    footer.style.setProperty("color", "#FFFFFF", "important");
+    footer.style.setProperty("width", "100%", "important");
     footer.innerHTML = `
       <div class="anixia-footer-inner">
         <div class="anixia-footer-main"><a class="anixia-footer-logo" href="${ROOT}" aria-label="ANIXIA ホーム">ANI<span class="anixia-logo-xia">XIA</span></a></div>
