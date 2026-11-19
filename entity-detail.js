@@ -3,7 +3,7 @@
   const $ = id => document.getElementById(id);
   const isEnglish=()=>localStorage.getItem("anixia-language")==="en";
   const nameOf=row=>isEnglish()?(row?.name_en||(row?.name&&!hasJapanese(row.name)?row.name:"Name unavailable")):(row?.name_ja||row?.name||"名称未登録");
-  const hasJapanese=value=>/[\\u3040-\\u30ff\\u3400-\\u9fff]/u.test(String(value||""));
+  const hasJapanese=value=>/[\u3040-\u30ff\u3400-\u9fff]/u.test(String(value||""));
   const animeTitle=work=>isEnglish()?(work?.title_en||(work?.title&&!hasJapanese(work.title)?work.title:"English title unavailable")):(work?.title_ja||work?.title_kana||work?.title||"タイトル未設定");
   const label=(ja,en)=>isEnglish()?en:ja;
   const params = new URLSearchParams(location.search);
