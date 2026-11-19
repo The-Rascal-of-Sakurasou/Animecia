@@ -96,6 +96,14 @@
       language.className = "anixia-language";
       language.textContent = "EN";
       language.setAttribute("aria-label", "Switch language");
+      language.addEventListener("click", () => {
+        try {
+          const key = "anixia-language";
+          const next = localStorage.getItem(key) === "en" ? "ja" : "en";
+          localStorage.setItem(key, next);
+          location.reload();
+        } catch (_) {}
+      });
       actions.appendChild(language);
     }
     if (!chosen.mypage) {
