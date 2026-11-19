@@ -4399,3 +4399,12 @@ header.site-header .anixia-header-actions .anixia-header-button:hover,header.ani
 body,body :where(h1,h2,h3,h4,h5,h6,p,li,dt,dd,label,legend,summary,th,td,span,strong,b,small){color:#000000}
 main :where(button,.button,.btn,[type="submit"],[type="button"],a[class*="button"],a[class*="btn"]){background:#03AF6A!important;border-color:#03AF6A!important;color:#FFFFFF!important}
 main :where(button:hover,.button:hover,.btn:hover,[type="submit"]:hover,[type="button"]:hover,a[class*="button"]:hover, a[class*="btn"]:hover){background:#028F56!important;border-color:#028F56!important;color:#FFFFFF!important}
+
+
+/* Admin login intentionally remains visually hidden: black text on black background. */
+footer.anixia-global-footer .anixia-admin-login,
+footer.anixia-global-footer .anixia-admin-login:hover,
+footer.anixia-global-footer .anixia-admin-login:focus{
+  color:#000000!important;background:#000000!important;border-color:#000000!important;
+  box-shadow:none!important;outline:none!important;
+}
