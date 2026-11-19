@@ -70,10 +70,12 @@
     }
     const posterSource=$("poster-source");
     const posterCredit=a.poster_credit||{};
-    if(posterCredit.source_url && posterCredit.license_url){
-      const sourceName=posterCredit.source==="wikimedia_commons"?"Wikimedia Commons":"画像出典";
+    if(posterCredit.source_url){
+      const sourceName=posterCredit.source==="anilist"?"AniList":posterCredit.source==="wikimedia_commons"?"Wikimedia Commons":"画像出典";
+      const licenseText=posterCredit.license?" · "+esc(posterCredit.license):"";
+      const licenseLink=posterCredit.license_url?' · <a href="'+esc(posterCredit.license_url)+'" target="_blank" rel="noopener noreferrer">ライセンス情報</a>':"";
       posterSource.hidden=false;
-      posterSource.innerHTML='画像出典：<a href="'+esc(posterCredit.source_url)+'" target="_blank" rel="noopener noreferrer">'+sourceName+'</a> · '+esc(posterCredit.attribution||"作者情報なし")+' · <a href="'+esc(posterCredit.license_url)+'" target="_blank" rel="noopener noreferrer">'+esc(posterCredit.license||"ライセンス")+'</a>';
+      posterSource.innerHTML='画像出典：<a href="'+esc(posterCredit.source_url)+'" target="_blank" rel="noopener noreferrer">'+sourceName+'</a> · '+esc(posterCredit.attribution||"提供元：AniList")+licenseText+licenseLink;
     }else{
       posterSource.hidden=true;
       posterSource.textContent="";
