@@ -27,7 +27,7 @@
     work=a;
     const name=isEnglish()?englishTitle(a):(a.title_ja||a.title_kana||a.title);
     document.title=isEnglish()?name+" | Anime Details & Watchlist | ANIXIA":name+"｜作品情報・視聴記録｜ANIXIA";
-    const synopsis=isEnglish()?(a.synopsis_en||"English synopsis is not available yet."):(a.synopsis||"あらすじ情報はまだ登録されていません。");
+    const synopsis=isEnglish()?(a.synopsis_en||a.description_en||"English synopsis is not available yet."):(a.synopsis||"あらすじ情報はまだ登録されていません。");
     const desc=(synopsis||name).slice(0,150);
     document.querySelector('meta[name="description"]').content=desc;
     $("poster").alt=isEnglish()?name+" poster":name+"のポスター";
@@ -64,7 +64,10 @@
     $("synopsis").textContent=synopsis;
     const synopsisSource=$("synopsis-source");
     const synopsisCredit=a.synopsis_credit||{};
-    if(synopsisCredit.source_url && synopsisCredit.license_url){
+    if(isEnglish() && !a.synopsis_en && a.description_en && a.source_id){
+      synopsisSource.hidden=false;
+      synopsisSource.innerHTML='Short description from <a href="https://www.wikidata.org/wiki/'+encodeURIComponent(a.source_id)+'" target="_blank" rel="noopener noreferrer">Wikidata</a>.';
+    }else if(synopsisCredit.source_url && synopsisCredit.license_url){
       const sourceTitle=synopsisCredit.source_title||(isEnglish()?"Source":"出典");
       const articleUrl=esc(synopsisCredit.source_url);
       const revisionUrl=esc(synopsisCredit.revision_url||synopsisCredit.source_url);
