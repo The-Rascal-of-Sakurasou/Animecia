@@ -168,6 +168,48 @@
     "ANIXIAが今回取り込んだのは、作品名・別名・放送開始日・話数・公式サイトURL・Wikidata識別子などの構造化情報です。Wikidata由来の画像・ポスター・バナー・あらすじ本文は取り込んでいません。":"The data imported by ANIXIA consists of structured fields such as titles, alternate titles, premiere dates, episode counts, official website URLs and Wikidata identifiers. Images, posters, banners and synopsis text from Wikidata were not imported."
   });
 
+  /* Page-specific headings and controls */
+  Object.assign(ja, {
+    "アニメランキング":"Anime Rankings",
+    "作品情報":"Anime Information",
+    "タグ・テーマ":"Tags & Themes",
+    "シリーズ":"Series",
+    "関連作品":"Related Anime",
+    "エピソード":"Episodes",
+    "制作団体":"Production Organizations",
+    "キャラクター":"Characters",
+    "スタッフ":"Staff",
+    "レビュー":"Reviews",
+    "レビューを投稿":"Write a Review",
+    "新しい作品と出会う":"Discover Something New",
+    "最近の作品":"Recently Added",
+    "ジャンルから探す。":"Browse by Genre",
+    "ANIXIA管理画面":"ANIXIA Admin",
+    "管理者権限がありません":"Administrator Access Required",
+    "Annict作品データ同期":"Sync Annict Anime Data",
+    "Wikidata自動作品収録":"Automatic Wikidata Anime Import",
+    "Wikidataエピソード自動収録":"Automatic Wikidata Episode Import",
+    "作品詳細データの同期":"Sync Anime Details",
+    "作品画像の同期（Wikimedia Commons）":"Sync Anime Images (Wikimedia Commons)",
+    "レビュー審査":"Review Moderation",
+    "カタログ品質監視":"Catalog Quality Monitoring",
+    "作品候補の審査":"Review Anime Candidates",
+    "エピソード審査":"Episode Review",
+    "作品メタデータ編集":"Edit Anime Metadata",
+    "関連作品を登録":"Add Related Anime",
+    "データ品質管理":"Data Quality Management",
+    "作品の重複候補":"Potential Duplicate Anime",
+    "メッセージ":"Messages",
+    "会話を選択してください":"Select a conversation",
+    "会話を選択すると、ここにメッセージが表示されます。":"Select a conversation to view messages here.",
+    "ホーム":"Home",
+    "作品データベース":"Anime Database",
+    "今期アニメ":"Seasonal Anime",
+    "ランキング":"Rankings",
+    "人物・団体":"People & Studios",
+    "コミュニティ":"Community"
+  });
+
   const titles = {
     "ANIXIA — アニメデータベース":"ANIXIA — Anime Database",
     "アニメ作品検索｜ANIXIA":"Anime Database | ANIXIA","アニメランキング｜ANIXIA":"Anime Rankings | ANIXIA",
