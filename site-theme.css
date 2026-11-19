@@ -3412,3 +3412,152 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--anixia-green)!impo
 :where(.site-header .anixia-logo .anixia-logo-xia,.anixia-global-header .anixia-logo .anixia-logo-xia,.anixia-footer-logo .anixia-logo-xia)::after{
   content:none!important;display:none!important;background:none!important;border:0!important;
 }
+
+
+/* =========================================================
+   ANIXIA — Unified Minimal Design System
+   Shared by the portal, database, generated work pages and forms.
+   ========================================================= */
+:root{
+  --anixia-brand:#03AF6A;
+  --anixia-brand-hover:#008F56;
+  --anixia-logo-blue:#1DA1F2;
+  --anixia-ink:#171C19;
+  --anixia-muted:#68736D;
+  --anixia-page:#F7F9F8;
+  --anixia-surface:#FFFFFF;
+  --anixia-border:#E7ECE9;
+  --anixia-radius:12px;
+  --anixia-content-width:1200px;
+}
+html,body{
+  background:var(--anixia-page)!important;
+  color:var(--anixia-ink)!important;
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Noto Sans JP","Yu Gothic",Meiryo,sans-serif!important;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+body{line-height:1.7!important}
+main,[role="main"],.anixia-page,.entity-page,.season-page,.rank-page,.discover-page,.quiz-page,.diag-page{
+  width:min(var(--anixia-content-width),calc(100% - 40px))!important;
+  max-width:var(--anixia-content-width)!important;
+  margin-left:auto!important;margin-right:auto!important;
+}
+main{padding-top:32px!important;padding-bottom:64px!important}
+h1,h2,h3,h4{color:var(--anixia-ink)!important;letter-spacing:-.025em!important;line-height:1.35!important}
+h1{font-size:clamp(26px,3.2vw,38px)!important;font-weight:760!important}
+h2{font-size:clamp(19px,2vw,25px)!important;font-weight:720!important}
+h3{font-size:17px!important;font-weight:680!important}
+p,.description,.muted,.hint,.section-desc{color:var(--anixia-muted)!important}
+a{ text-decoration-thickness:1px;text-underline-offset:3px }
+a:hover{color:var(--anixia-brand-hover)!important}
+:where(.panel,.card,.profile-card,.list-item,.review-item,.feature-card,.genre-card,.recommendation-card,
+       .auth-panel,.anixia-search-panel,.anixia-feature-link,.anixia-service-card,.anixia-section,
+       .anixia-filter-panel,.entity-panel,.anixia-detail-panel,.anixia-mypage-panel,.quiz-card,
+       .diag-panel,.rank-row,.season-card,.discover-genre,.discover-card,.question-card,.result-card){
+  background:var(--anixia-surface)!important;
+  color:var(--anixia-ink)!important;
+  border:1px solid var(--anixia-border)!important;
+  border-radius:var(--anixia-radius)!important;
+  box-shadow:none!important;
+}
+:where(.card,.panel,.profile-card,.feature-card,.genre-card,.recommendation-card,
+       .anixia-service-card,.anixia-feature-link,.anixia-result-card,.entity-card){
+  transition:border-color .16s ease,background-color .16s ease!important;
+}
+:where(.card,.panel,.profile-card,.feature-card,.genre-card,.recommendation-card,
+       .anixia-service-card,.anixia-feature-link,.anixia-result-card,.entity-card):hover{
+  border-color:#C9DCD1!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+:where(.section-head,.section-header,.result-header,.panel-head){
+  border-color:var(--anixia-border)!important;
+  box-shadow:none!important;
+}
+:where(.quick a,.discover-card,.feature-card,.anixia-feature-link,.anixia-service-card)::before,
+:where(.quick a,.discover-card,.feature-card,.anixia-feature-link,.anixia-service-card)::after{
+  content:none!important;display:none!important;
+}
+:where(button,.btn,.primary,.search-submit,.search-button,.action-button.primary,
+       .anixia-search-form button,.anixia-filter-actions button,.entity-search button,
+       .compare-action,.diag-submit,.auth-panel button,.play-actions button){
+  background:var(--anixia-brand)!important;
+  border:1px solid var(--anixia-brand)!important;
+  border-radius:9px!important;
+  color:#fff!important;
+  box-shadow:none!important;
+  font-weight:650!important;
+  text-shadow:none!important;
+}
+:where(button,.btn,.primary,.search-submit,.search-button):hover{
+  background:var(--anixia-brand-hover)!important;
+  border-color:var(--anixia-brand-hover)!important;
+  transform:none!important;
+}
+:where(input:not([type="checkbox"]):not([type="radio"]),select,textarea){
+  min-height:42px!important;
+  background:#fff!important;background-color:#fff!important;
+  color:#111!important;-webkit-text-fill-color:#111!important;
+  border:1px solid #DCE4DF!important;border-radius:8px!important;
+  box-shadow:none!important;color-scheme:light!important;
+}
+:where(input::placeholder,textarea::placeholder){color:#7B8580!important;-webkit-text-fill-color:#7B8580!important;opacity:1!important}
+:where(input,select,textarea):focus{
+  border-color:var(--anixia-brand)!important;
+  outline:2px solid rgba(3,175,106,.12)!important;
+  outline-offset:1px!important;box-shadow:none!important;
+}
+:where(select option,select optgroup){background:#fff!important;color:#111!important}
+:where(input[type="checkbox"],input[type="radio"]){accent-color:var(--anixia-brand)!important}
+:where(header.site-header,.site-header,.anixia-global-header,.global-header,.main-header,.site-navbar){
+  min-height:64px!important;height:auto!important;
+  background:#111!important;background-color:#111!important;color:#fff!important;
+  border:0!important;border-bottom:0!important;box-shadow:none!important;
+  backdrop-filter:none!important;
+}
+:where(header.site-header,.site-header,.anixia-global-header,.global-header,.main-header,.site-navbar) a{
+  color:#F3F5F4!important;text-decoration:none!important;
+}
+:where(header.site-header,.site-header,.anixia-global-header,.global-header,.main-header,.site-navbar) a:hover{
+  color:var(--anixia-brand)!important;background:transparent!important;
+}
+:where(.site-header .anixia-logo,.anixia-global-header .anixia-logo,.anixia-footer-logo){
+  color:#03AF6A!important;text-decoration:none!important;
+}
+:where(.site-header .anixia-logo .anixia-logo-xia,.anixia-global-header .anixia-logo .anixia-logo-xia,.anixia-footer-logo .anixia-logo-xia){
+  color:#1DA1F2!important;
+}
+:where(.site-header .anixia-logo .anixia-logo-xia,.anixia-global-header .anixia-logo .anixia-logo-xia,.anixia-footer-logo .anixia-logo-xia)::after{
+  content:none!important;display:none!important;background:none!important;border:0!important;
+}
+:where(.anixia-footer,footer,.anixia-global-footer){
+  background:#111!important;background-color:#111!important;color:#D6DAD8!important;
+  border:0!important;box-shadow:none!important;
+}
+:where(.anixia-footer-nav a,.anixia-footer-links a,.footer-links a){color:#E8ECEA!important}
+:where(.anixia-footer-nav a:hover,.anixia-footer-links a:hover,.footer-links a:hover){color:var(--anixia-brand)!important}
+:where(.anixia-footer-description,.anixia-footer-bottom){color:#A9B0AC!important}
+:where(.hero,.page-header,.anixia-page-hero,.entity-hero,.anixia-detail-hero,.rank-hero,.season-hero,
+       .compare-hero,.discover-hero,.quiz-hero,.diag-hero,.anixia-mypage-hero){
+  background:#fff!important;color:var(--anixia-ink)!important;
+  border:1px solid var(--anixia-border)!important;border-radius:14px!important;
+  box-shadow:none!important;
+}
+:where(.hero h1,.page-header h1,.anixia-page-hero h1,.entity-hero h1,.rank-hero h1,.season-hero h1,
+       .compare-hero h1,.discover-hero h1,.quiz-hero h1,.diag-hero h1){color:var(--anixia-ink)!important}
+:where(.hero p,.page-header p,.anixia-page-hero p,.entity-hero p,.rank-hero p,.season-hero p,
+       .compare-hero p,.discover-hero p,.quiz-hero p,.diag-hero p){color:var(--anixia-muted)!important}
+:where(.badge,.pill,.chip,.tag){box-shadow:none!important}
+:where(.quick a,.main-nav a,.site-nav a,.nav-links a){text-decoration:none!important}
+:where(.main-nav a:hover,.site-nav a:hover,.nav-links a:hover){background:transparent!important}
+:where(hr,.divider,.section-divider){border-color:var(--anixia-border)!important}
+@media(max-width:700px){
+  main,[role="main"],.anixia-page,.entity-page,.season-page,.rank-page,.discover-page,.quiz-page,.diag-page{
+    width:calc(100% - 28px)!important;
+  }
+  main{padding-top:22px!important;padding-bottom:48px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
