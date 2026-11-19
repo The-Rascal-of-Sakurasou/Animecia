@@ -78,20 +78,20 @@
       posterSource.hidden=true;
       posterSource.textContent="";
     }
-    const studioNames=(a.studios||[]).map(s=>s.name_ja||s.name).filter(Boolean);
-    const info=[["形式",fmt(a.format)],["放送年",a.release_year||"未登録"],["シーズン",a.season||"未登録"],["話数",a.episode_count||a.episodes_count||"未登録"],["放送状況",a.status||"未登録"],["制作会社",studioNames.join("・")||(a.studio?(a.studio.name_ja||a.studio.name):"未登録")]];
+    const studioNames=(a.studios||[]).map(s=>s.name_ja||"日本語表記未登録").filter(Boolean);
+    const info=[["形式",fmt(a.format)],["放送年",a.release_year||"未登録"],["シーズン",a.season||"未登録"],["話数",a.episode_count||a.episodes_count||"未登録"],["放送状況",a.status||"未登録"],["制作会社",studioNames.join("・")||(a.studio?(a.studio.name_ja||"日本語表記未登録"):"未登録")]];
     if(a.official_url)info.push(["公式サイト",'<a href="'+esc(a.official_url)+'" target="_blank" rel="noopener noreferrer">公式サイトを開く</a>']);
     $("info").innerHTML=info.map(([k,v])=>'<dt>'+esc(k)+'</dt><dd>'+((typeof v==="string"&&v.startsWith("<a "))?v:esc(v))+'</dd>').join("");
     const characterItems=a.characters||[];
     $("characters").innerHTML=characterItems.length?characterItems.map(character=>{
-      const characterName=character.name_ja||character.name||"名称未登録";
+      const characterName=character.name_ja||"日本語表記未登録";
       const characterLink=character.id?'<a href="entity-detail.html?type=character&id='+encodeURIComponent(character.id)+'">'+esc(characterName)+'</a>':esc(characterName);
-      const voiceActors=(character.voice_actors||[]).map(person=>person.id?'<a href="entity-detail.html?type=person&id='+encodeURIComponent(person.id)+'">'+esc(person.name_ja||person.name)+'</a>':esc(person.name_ja||person.name)).join("、");
+      const voiceActors=(character.voice_actors||[]).map(person=>person.id?'<a href="entity-detail.html?type=person&id='+encodeURIComponent(person.id)+'">'+esc(person.name_ja||"日本語表記未登録")+'</a>':esc(person.name_ja||"日本語表記未登録")).join("、");
       return '<span>'+characterLink+(character.role?' · '+esc(characterRoleLabel(character.role)):"")+(voiceActors?' · CV：'+voiceActors:"")+'</span>';
     }).join(""):'<span class="anixia-empty">キャラクターはまだ登録されていません。</span>';
     const staffItems=a.staff||[];
     $("staff").innerHTML=staffItems.length?staffItems.map(person=>{
-      const personName=person.name_ja||person.name||"名称未登録";
+      const personName=person.name_ja||"日本語表記未登録"||"名称未登録";
       const link=person.id?'<a href="entity-detail.html?type=person&id='+encodeURIComponent(person.id)+'">'+esc(personName)+'</a>':esc(personName);
       return '<span>'+link+(person.role?' · '+esc(roleLabel(person.role)):"")+'</span>';
     }).join(""):'<span class="anixia-empty">スタッフはまだ登録されていません。</span>';
