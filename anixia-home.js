@@ -39,29 +39,13 @@
       showRetryState(id, t().failed, () => loadSection(id, options));
     }
   }
-  async function init() {
-    try {
-      const count = await ANIXIA.getCatalogCount();
-      $("catalog-count").textContent = count.toLocaleString(language() === "ja" ? "ja-JP" : "en-US");
-    } catch (error) {
-      console.error(error);
-      $("catalog-count").textContent = "—";
-    }
-    await Promise.all([
-      loadSection("popular-works", { sort: "popular", limit: 5 }),
-      loadSection("new-works", { sort: "newest", limit: 5 })
-    ]);
+  async function loadGenres() {
     try {
       const genres = await ANIXIA.getGenres();
       $("genre-links").innerHTML = genres.length
         ? genres.slice(0, 12).map(g => `<a href="anime.html?genre=${encodeURIComponent(g.id)}">${esc(language() === "en" ? (g.name_en || (g.name && !hasJapanese(g.name) ? g.name : "Genre name unavailable")) : (g.name_ja || g.name))}</a>`).join("")
-        : `<p class="anixia-state">${esc(t().genresEmpty)}</p>`;
-    } catch (error) {
-      console.error(error);
-      showRetryState("genre-links", t().genresFailed, async () => {
-        try {
-          const genres = await ANIXIA.getGenres();
-          $("genre-links").innerHTML = genres.length
+        : `<p class="anixia-state">${esc(t().genresEmpty)}</p>`;    await loadGenres();
+$("genre-links").innerHTML = genres.length
             ? genres.slice(0, 12).map(g => `<a href="anime.html?genre=${encodeURIComponent(g.id)}">${esc(language() === "en" ? (g.name_en || (g.name && !hasJapanese(g.name) ? g.name : "Genre name unavailable")) : (g.name_ja || g.name))}</a>`).join("")
             : `<p class="anixia-state">${esc(t().genresEmpty)}</p>`;
         } catch (error) {
