@@ -3003,7 +3003,7 @@ body{
   box-sizing:border-box;
   max-width:100%;
 }
-:where(input,select,textarea){width:100%}
+:where(input:not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=button]):not([type=reset]),select,textarea){width:100%}
 :where(img,video,iframe,svg,canvas){
   max-width:100%;
 }
