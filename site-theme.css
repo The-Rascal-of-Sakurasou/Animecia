@@ -4328,3 +4328,40 @@ body{
 main{
   background:transparent!important;background-color:transparent!important;background-image:none!important;
 }
+
+
+/* Unified content surfaces: subtle off-white cards on a white page */
+:root{
+  --anixia-surface:#F7F9F8;
+  --anixia-surface-border:#E7ECE9;
+  --anixia-text:#171C19;
+}
+main :where(
+  .card,.panel,.feature-card,.content-card,.info-card,.stat-card,.service-card,
+  .quiz-card,.rank-card,.anime-card,.work-card,.genre-card,.season-card,
+  .result-card,.recommend-card,.recommendation-card,.profile-card,.setting-card,
+  .auth-panel,.admin-panel,.admin-warning,.admin-code,.modal-content,
+  [class*="-card"],[class*="-panel"],[class*="-tile"],[class*="-widget"],
+  [class*="-box"],[class*="-surface"]
+){
+  background-color:var(--anixia-surface)!important;
+  background-image:none!important;
+  color:var(--anixia-text)!important;
+  border-color:var(--anixia-surface-border)!important;
+  box-shadow:none!important;
+}
+main :where(
+  .card,.panel,.feature-card,.content-card,.info-card,.stat-card,.service-card,
+  .quiz-card,.rank-card,.anime-card,.work-card,.genre-card,.season-card,
+  .result-card,.recommend-card,.recommendation-card,.profile-card,.setting-card,
+  .auth-panel,.admin-panel,.admin-warning,.admin-code,.modal-content,
+  [class*="-card"],[class*="-panel"],[class*="-tile"],[class*="-widget"],
+  [class*="-box"],[class*="-surface"]
+) :where(h1,h2,h3,h4,h5,h6,p,span,strong,b,label,small,li,dt,dd){
+  color:var(--anixia-text)!important;
+}
+main :where(input,select,textarea){
+  background:#fff!important;
+  color:var(--anixia-text)!important;
+  border-color:var(--anixia-surface-border)!important;
+}
