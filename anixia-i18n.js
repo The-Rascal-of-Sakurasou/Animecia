@@ -106,6 +106,38 @@
     "回答を送信して採点":"Submit answers","アカウントを作成すると、そのままANIXIAにログインします。メール認証コードの入力は必要ありません。":"Creating an account will sign you in to ANIXIA. No email verification code is required.",
     "パスワード（8文字以上）":"Password (8+ characters)","パスワード（確認）":"Confirm password","ログインはこちら":"Log in here"
   });
+  Object.assign(ja, {
+    "ANIME DATABASE":"ANIME DATABASE","アニメ作品を探す":"Find Anime","タイトルやジャンル、放送時期などを組み合わせて、気になる作品を検索できます。":"Search anime by title, genre, season and more.",
+    "放送年とクールから、対象シーズンの作品を探せます。":"Browse anime by year and season.",
+    "作品の評価や利用状況から、注目されているアニメを探せます。":"Explore anime based on ratings and activity.",
+    "声優やスタッフ、作品に登場するキャラクター、アニメ制作会社を横断して探せます。":"Search across voice actors, staff, characters and animation studios.",
+    "ANIME RANKING":"ANIME RANKING","SEASONAL ANIME":"SEASONAL ANIME","ANIME PEOPLE & ENTITIES":"ANIME PEOPLE & ENTITIES",
+    "作品・人物・キャラクター・制作会社・組織":"Anime, people, characters, studios and organizations",
+    "作品情報を読み込んでいます…":"Loading anime information…","ランキングを読み込んでいます…":"Loading rankings…",
+    "投稿する":"Create Post","写真を追加":"Add Photos","最大4枚・各10MB以下":"Up to 4 images, 10 MB each","0 / 4000":"0 / 4000",
+    "フォロー中":"Following","ブックマーク":"Bookmarks","読み込み中…":"Loading…","もっと読み込む":"Load More",
+    "ユーザーを探す":"Find Users","投稿、返信、いいね、リポスト、ブックマークでアニメの感想を共有できます。":"Share your thoughts on anime through posts, replies, likes, reposts and bookmarks.",
+    "1対1":"Direct","グループ":"Group","‹ 会話を選択してください":"‹ Select a conversation",
+    "会話を選択すると、ここにメッセージが表示されます。":"Select a conversation to view messages here.",
+    "ログインが必要です。":"Login required.","メッセージ":"Messages","送信":"Send",
+    "ユーザー検索":"User Search","ユーザー名や表示名からANIXIAユーザーを探せます。":"Find ANIXIA users by username or display name.",
+    "検索したいユーザー名や表示名を入力してください。":"Enter a username or display name to search.",
+    "検索したいユーザー名や表示名を入力":"Enter a username or display name",
+    "データ出典・利用条件":"Data Sources & Terms","TRANSPARENCY":"TRANSPARENCY",
+    "ANIXIAは、作品情報の出典と利用条件を確認し、出典ごとに利用可能な情報だけを取り扱います。":"ANIXIA reviews the sources and usage terms for anime information and uses only data permitted by each source.",
+    "Wikidata":"Wikidata","初期作品データに、Wikidataの構造化データを使用しています。Wikidataの構造化データはCC0で提供されています。出典表示は必須ではありませんが、データの出所としてWikidataを記載することが推奨されています。":"The initial anime dataset uses structured data from Wikidata. Wikidata's structured data is provided under CC0. Attribution is not required, but identifying Wikidata as the data source is recommended.",
+    "最終更新日：2026年9月26日":"Last updated: September 26, 2026",
+    "プライバシーポリシー":"Privacy Policy","利用規約":"Terms of Service","お問い合わせ":"Contact",
+    "ホームへ戻る":"Back to Home","← ホームへ戻る":"← Back to Home",
+    "ANIXIA アニメをもっと探しやすく、もっと楽しめる。":"ANIXIA — Discover anime more easily and enjoy it more.",
+    "アニメをもっと探しやすく、もっと楽しめる。":"Discover anime more easily and enjoy it more.",
+    "検索条件を設定してください。":"Set your search filters.","条件をクリア":"Clear filters","検索する":"Search",
+    "年":"Year","クール":"Season","冬":"Winter","春":"Spring","夏":"Summer","秋":"Fall",
+    "すべて":"All","TV":"TV","劇場版":"Movie","OVA":"OVA","ONA":"ONA","特別編":"Special","Web":"Web","その他":"Other",
+    "作品情報を読み込んでいます…":"Loading anime information…","データを読み込んでいます…":"Loading data…",
+    "前へ":"Previous","次へ":"Next","1ページ目":"Page 1",
+    "ホーム":"Home","作品データベース":"Anime Database","今期アニメ":"Seasonal Anime","ランキング":"Rankings","人物・団体":"People & Studios","コミュニティ":"Community"
+  });
   const titles = {
     "ANIXIA — アニメデータベース":"ANIXIA — Anime Database",
     "アニメ作品検索｜ANIXIA":"Anime Database | ANIXIA","アニメランキング｜ANIXIA":"Anime Rankings | ANIXIA",
@@ -217,4 +249,4 @@
 
 /* Shared bilingual UI cache revision 2. */
 
-/* Cache revision 3: syntax-validated. */
+/* Cache revision 4: expanded core-page translations. */
