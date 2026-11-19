@@ -329,7 +329,7 @@ Wikidataから取得した17件を個別に確認し、15件を公開、2件を�
 同期実装：
 - Supabase Edge Function：`sync-syoboi-titles`。
 - 作品一覧は `Command=TitleLookup&TID=*&Fields=TID,Title,LastUpdate` で取得し、詳細は一致したTIDのみ最大100件ずつ取得する。
-- タイトルはUnicode NFKC正規化と空白除去後の完全一致で照合する。しょぼいカレンダー側のタイトルが重複する場合、ANIXIA側の複数作品が同じTIDに一致する場合、または1作品が複数TIDに一致する場合は登録しない。
+- 作品の正式タイトルに加え、`anime_titles` に登録済みの日本語 `main` / `short` / `synonym` 別名も照合キーに使う。Unicode NFKC正規化と空白除去後の完全一致に限定する。しょぼいカレンダー側のタイトルが重複する場合、ANIXIA側の複数作品が同じTIDに一致する場合、または1作品が複数TIDに一致する場合は登録しない。
 - 既存の `syobocal_tid` と `title_kana` は上書きしない。読み仮名は日本語文字を含む `TitleYomi` があり、ANIXIA側が空欄の場合だけ登録する。
 - `ShortTitle` は `anime_titles` の `short`、`TitleEN` は `english` として追加する。作品の主タイトルと同じもの、既存別名と重複するものは追加しない。
 - 同期対象は公開済み作品だけ。新規作品の自動収録・公開確定には使用しない。
