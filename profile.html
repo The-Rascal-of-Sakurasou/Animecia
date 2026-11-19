@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>プロフィール | ANIXIA</title>
 <meta id="meta-description" name="description" content="ANIXIAユーザーのプロフィール。">\n<meta name="robots" content="noindex,nofollow">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="anime-data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="anixia-client.js"></script>
 <style>
 main{max-width:1100px;margin:0 auto;padding:28px 16px 70px}
 .profile-card,.panel{background:#fff;border:1px solid #e3e6ea;border-radius:16px;box-shadow:0 8px 26px rgba(17,24,39,.05)}
@@ -17,98 +17,201 @@ main{max-width:1100px;margin:0 auto;padding:28px 16px 70px}
 </style>
 
 <script src="performance.js" defer></script>
-<link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co">
+<link rel="preconnect" href="https://trvnxggqzlhqdhoyiliy.supabase.co">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<script src="auth-core.js" defer></script>
+<script src="auth-core.js"></script>
 <link rel="stylesheet" href="site-theme.css?v=anixia-design-v4-20261119">
 </head>
 <body>
 <header><div class="wrap head"><a class="logo" href="index.html">ANIXIA</a><nav>
 <a href="index.html">ホーム</a><a href="discover.html">探す</a>
-<a href="season.html">今期</a><a href="recommendations.html">おすすめ</a><a href="community.html">コミュニティ</a><a href="compare.html">作品比較</a><a href="mypage.html">ユーザー検索</a><a href="mypage.html">マイページ</a>
+<a href="season.html">今期</a><a href="recommendations.html">おすすめ</a><a href="community.html">コミュニティ</a><a href="compare.html">作品比較</a><a href="user-search.html">ユーザー検索</a><a href="mypage.html">マイページ</a>
 </nav></div></header>
 <main><div id="app" class="loading">読み込み中…</div></main>
 <script>
-const SUPABASE_URL="https://bhgdjuwlxvbaeraaivmh.supabase.co";
-const SUPABASE_KEY="sb_publishable_-rZ4HusVezs5IlZQnUQ-Kw_SLUd8R0c";
-const supabaseClient=ANIXIAAuth.client();
+"use strict";
+const supabaseClient=ANIXIA.getClient();
 const profileId=new URLSearchParams(location.search).get("id");
-const mediaUrl=(url,stamp)=>{if(!url)return "";try{const u=new URL(url,location.href);if(stamp)u.searchParams.set("v",String(new Date(stamp).getTime()));return u.href}catch(_){return url}};
+const app=document.getElementById("app");
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const titleOf=a=>ANIXIAData.title(a);
-const imageMarkup=(url,alt)=>url?'<img class="thumb" src="'+esc(url)+'" alt="'+esc(alt)+'" loading="lazy" decoding="async" fetchpriority="high">':'<div class="thumb" style="display:grid;place-items:center;color:#888">画像なし</div>';
-const getAnime=async ids=>{const u=[...new Set((ids||[]).map(Number).filter(Number.isInteger))],m=new Map();for(let i=0;i<u.length;i+=500){const {data}=await supabaseClient.from("animecia_public_anime").select("id,title,title_japanese,title_native,title_user_preferred,title_romaji,title_english,english_title,cover_image,format,season,season_year,status").in("id",u.slice(i,i+500));(data||[]).forEach(a=>m.set(Number(a.id),a));}return m;};
+const hasJapanese=v=>/[\u3040-\u30ff\u3400-\u9fff]/u.test(String(v||""));
+const isEnglish=()=>localStorage.getItem("anixia-language")==="en";
+const titleOf=a=>isEnglish()?(a.title_en||(a.title&&!hasJapanese(a.title)?a.title:"English title unavailable")):(a.title_ja||a.title_kana||a.title||"タイトル未設定");
+const mediaUrl=(url,stamp)=>{if(!url)return "";try{const u=new URL(url,location.href);if(stamp)u.searchParams.set("v",String(new Date(stamp).getTime()));return u.href}catch(_){return url}};
+const imageMarkup=(url,alt)=>url?'<img class="thumb" src="'+esc(mediaUrl(url))+'" alt="'+esc(alt)+'" loading="lazy" decoding="async">':'<div class="thumb" style="display:grid;place-items:center;color:#888">画像なし</div>';
+async function getAnime(ids){
+ const unique=[...new Set((ids||[]).filter(Boolean))],rows=[];
+ for(let i=0;i<unique.length;i+=100)rows.push(...await ANIXIA.getPublicAnimeByIds(unique.slice(i,i+100)));
+ return new Map(rows.map(a=>[a.id,a]));
+}
 let profile=null,visibility={},currentUser=null,tabs=[];
-function renderHeader(followStats,reviewCount,isSelf){
+function renderHeader(stats,reviewCount,isSelf){
  const name=profile.display_name||profile.username||"ANIXIAユーザー";
- const ax=Math.min(100,Math.max(0,Number(profile.avatar_position_x??50))),ay=Math.min(100,Math.max(0,Number(profile.avatar_position_y??50))),az=Math.min(220,Math.max(100,Number(profile.avatar_zoom??100)));
- const avatar=profile.avatar_url?'<img class="profile-avatar" style="object-position:'+ax+'% '+ay+'%;transform:scale('+(az/100)+')" src="'+esc(mediaUrl(profile.avatar_url,profile.updated_at))+'" alt="'+esc(name)+'" decoding="async" loading="lazy">':'<div class="profile-avatar profile-avatar-fallback">'+esc(name.slice(0,1))+'</div>';
- const actions=isSelf?'<a class="btn" href="mypage.html">プロフィールを編集</a>':'<button id="follow-button" class="btn" type="button">'+(followStats.is_following?"フォロー中":"フォロー")+'</button><a class="btn secondary" href="messages.html?user='+encodeURIComponent(profileId)+'">メッセージ</a>';
- const reviewStat=visibility.reviews!==false?'<span class="profile-stat"><strong>'+esc(reviewCount||0)+'</strong>レビュー</span>':"";
- const follows=visibility.user_follows!==false?'<div class="profile-stats">'+reviewStat+'<button id="followers-link" class="profile-stat"><strong>'+esc(followStats.followers_count||0)+'</strong>フォロワー</button><button id="following-link" class="profile-stat"><strong>'+esc(followStats.following_count||0)+'</strong>フォロー中</button></div>':(reviewStat?'<div class="profile-stats">'+reviewStat+'</div>':"");
- return '<section class="profile-card"><div id="profile-cover" class="profile-cover" style="background-image:"></div><div class="profile-main"><div class="profile-avatar-wrap">'+avatar+'</div><div class="profile-actions">'+actions+'</div><h1 class="profile-name">'+esc(name)+'</h1><div class="profile-handle">'+(profile.username?"@"+esc(String(profile.username).replace(/^@/,"")):"@ユーザー名未設定")+'</div><div class="profile-bio">'+esc(profile.bio||"自己紹介はまだありません。")+'</div>'+follows+'</div></section>';
+ const x=Math.min(100,Math.max(0,Number(profile.avatar_position_x??50)));
+ const y=Math.min(100,Math.max(0,Number(profile.avatar_position_y??50)));
+ const z=Math.min(220,Math.max(100,Number(profile.avatar_zoom??100)));
+ const avatar=profile.avatar_url
+  ?'<img class="profile-avatar" style="object-position:'+x+'% '+y+'%;transform:scale('+(z/100)+')" src="'+esc(mediaUrl(profile.avatar_url,profile.updated_at))+'" alt="'+esc(name)+'" loading="lazy">'
+  :'<div class="profile-avatar profile-avatar-fallback">'+esc(name.slice(0,1))+'</div>';
+ const actions=isSelf
+  ?'<a class="btn" href="mypage.html">プロフィールを編集</a>'
+  :'<button id="follow-button" class="btn" type="button">'+(stats.is_following?"フォロー中":"フォロー")+'</button><a class="btn secondary" href="messages.html?user='+encodeURIComponent(profileId)+'">メッセージ</a>';
+ const reviewStat=visibility.reviews?'<span class="profile-stat"><strong>'+esc(reviewCount||0)+'</strong>レビュー</span>':"";
+ const follows=visibility.user_follows
+  ?'<div class="profile-stats">'+reviewStat+'<button id="followers-link" class="profile-stat" type="button"><strong>'+esc(stats.followers_count||0)+'</strong>フォロワー</button><button id="following-link" class="profile-stat" type="button"><strong>'+esc(stats.following_count||0)+'</strong>フォロー中</button></div>'
+  :(reviewStat?'<div class="profile-stats">'+reviewStat+'</div>':"");
+ return '<section class="profile-card"><div id="profile-cover" class="profile-cover"></div><div class="profile-main"><div class="profile-avatar-wrap">'+avatar+'</div><div class="profile-actions">'+actions+'</div><h1 class="profile-name">'+esc(name)+'</h1><div class="profile-handle">'+(profile.username?"@"+esc(String(profile.username).replace(/^@/,"")):"@ユーザー名未設定")+'</div><div class="profile-bio">'+esc(profile.bio||"自己紹介はまだありません。")+'</div>'+follows+'</div></section>';
 }
 function makeTabs(){
  const defs=[
-  ["posts","投稿","show_posts"],["favorites","お気に入り","show_favorites"],["follows","作品フォロー","show_anime_follows"],
-  ["watching","視聴中","show_watch_status"],["completed","視聴完了","show_watch_status"],["want_to_watch","視聴予定","show_watch_status"], ["ratings","評価","show_ratings"],["reviews","レビュー","show_reviews"],["ranking","個人ランキング","show_ranking"],
-  ["user_following","フォロー","show_user_follows"],["user_followers","フォロワー","show_user_follows"]
+  ["posts","投稿","posts"],
+  ["favorites","お気に入り","favorites"],
+  ["plan_to_watch","視聴予定","anime_follows"],
+  ["watching","視聴中","watch_status"],
+  ["completed","視聴完了","watch_status"],
+  ["ratings","評価","ratings"],
+  ["ranking","高評価順","ranking"],
+  ["reviews","レビュー","reviews"],
+  ["user_following","フォロー","user_follows"],
+  ["user_followers","フォロワー","user_follows"]
  ];
- return defs.filter(x=>visibility[x[2]]!==false);
+ return defs.filter(x=>visibility[x[2]]);
 }
 async function renderContent(){
- const {data:followData}=await supabaseClient.rpc("get_profile_follow_stats",{p_profile_id:profileId});
- const followStats=followData?.[0]||{followers_count:0,following_count:0,is_following:false};
+ const {data:statsData}=await supabaseClient.rpc("get_profile_follow_stats",{p_profile_id:profileId});
+ const stats=statsData?.[0]||{followers_count:0,following_count:0,is_following:false};
  const {count:reviewCount}=await supabaseClient.from("reviews").select("id",{count:"exact",head:true}).eq("user_id",profileId);
- const user=await supabaseClient.auth.getUser();currentUser=user.data?.user||null;
+ const auth=await supabaseClient.auth.getUser();currentUser=auth.data?.user||null;
  const isSelf=currentUser?.id===profileId;
- document.getElementById("app").innerHTML=renderHeader(followStats,reviewCount||0,isSelf)+'<section class="panel"><div id="tabs" class="tabs">'+makeTabs().map((x,i)=>'<button class="tab'+(i===0?" active":"")+'" data-tab="'+x[0]+'" type="button">'+x[1]+'</button>').join("")+'</div><div id="list" class="list"></div></section>';
+ app.innerHTML=renderHeader(stats,reviewCount||0,isSelf)+'<section class="panel"><div id="tabs" class="tabs">'+makeTabs().map((x,i)=>'<button class="tab'+(i===0?" active":"")+'" data-tab="'+x[0]+'" type="button">'+x[1]+'</button>').join("")+'</div><div id="list" class="list"></div></section>';
  tabs=makeTabs().map(x=>x[0]);
- document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");loadTab(b.dataset.tab);}));
- if(visibility.user_follows!==false){
-  document.getElementById("followers-link")?.addEventListener("click",()=>activateTab("user_followers"));
-  document.getElementById("following-link")?.addEventListener("click",()=>activateTab("user_following"));
- }
+ document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>activateTab(b.dataset.tab)));
+ document.getElementById("followers-link")?.addEventListener("click",()=>activateTab("user_followers"));
+ document.getElementById("following-link")?.addEventListener("click",()=>activateTab("user_following"));
  await setupFollow(isSelf);
- const cover=document.getElementById("profile-cover");if(cover&&profile.background_url){const bx=Math.min(100,Math.max(0,Number(profile.background_position_x??50))),by=Math.min(100,Math.max(0,Number(profile.background_position_y??50))),bz=Math.min(180,Math.max(100,Number(profile.background_zoom??100)));cover.style.backgroundImage="url(\""+mediaUrl(profile.background_url,profile.updated_at).replace(/\"/g,"%22")+"\")";cover.style.backgroundPosition=bx+"% "+by+"%";cover.style.backgroundSize=bz+"% auto";}
- if(tabs.length)await loadTab(tabs[0]);else document.getElementById("list").innerHTML='<div class="empty">公開されている項目はありません。</div>';
+ const cover=document.getElementById("profile-cover");
+ if(cover&&profile.background_url){
+  const bx=Math.min(100,Math.max(0,Number(profile.background_position_x??50)));
+  const by=Math.min(100,Math.max(0,Number(profile.background_position_y??50)));
+  const bz=Math.min(180,Math.max(100,Number(profile.background_zoom??100)));
+  cover.style.backgroundImage='url("'+mediaUrl(profile.background_url,profile.updated_at).replace(/"/g,"%22")+'")';
+  cover.style.backgroundPosition=bx+"% "+by+"%";cover.style.backgroundSize=bz+"% auto";
+ }
+ if(tabs.length)await loadTab(tabs[0]);
+ else document.getElementById("list").innerHTML='<div class="empty">公開されている項目はありません。</div>';
 }
-function activateTab(name){if(!tabs.includes(name))return;const b=document.querySelector('.tab[data-tab="'+name+'"]');if(b)b.click();}
+function activateTab(name){
+ if(!tabs.includes(name))return;
+ document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===name));
+ loadTab(name);
+}
 async function setupFollow(isSelf){
  const b=document.getElementById("follow-button");if(!b||isSelf)return;
- const {data}=await supabaseClient.auth.getUser(),u=data?.user;
- if(!u||!u.email_confirmed_at){b.textContent="ログインしてフォロー";b.onclick=()=>location.href="login.html?redirect="+encodeURIComponent(location.href);return;}
- b.onclick=async()=>{b.disabled=true;const {data,error}=await supabaseClient.rpc("toggle_user_follow",{p_following_id:profileId});if(error){b.disabled=false;return;}const r=data?.[0];b.textContent=r?.is_following?"フォロー中":"フォロー";const s=await supabaseClient.rpc("get_profile_follow_stats",{p_profile_id:profileId});const x=s.data?.[0];if(x){const f=document.querySelector("#followers-link strong");if(f)f.textContent=String(x.followers_count||0);}b.disabled=false;};
+ if(!currentUser||!(currentUser.email_confirmed_at||currentUser.confirmed_at)){
+  b.textContent="ログインしてフォロー";
+  b.onclick=()=>location.href="login.html?redirect="+encodeURIComponent(location.href);
+  return;
+ }
+ b.onclick=async()=>{
+  b.disabled=true;
+  try{
+   const {data,error}=await supabaseClient.rpc("toggle_user_follow",{p_following_id:profileId});
+   if(error)throw error;
+   b.textContent=data?.[0]?.is_following?"フォロー中":"フォロー";
+   const s=await supabaseClient.rpc("get_profile_follow_stats",{p_profile_id:profileId});
+   const x=s.data?.[0];
+   if(x){const el=document.querySelector("#followers-link strong");if(el)el.textContent=String(x.followers_count||0);}
+  }catch(e){console.error("フォロー更新エラー",e);alert("フォローを更新できませんでした。")}
+  finally{b.disabled=false}
+ };
 }
 function renderAnimeRows(rows,map,label){
- const list=document.getElementById("list");list.innerHTML=(rows||[]).map(x=>{const a=map.get(Number(x.anime_id));if(!a)return"";return '<a class="list-item" href="anime-detail.html?id='+a.id+'">'+imageMarkup(a.cover_image,titleOf(a))+'<div class="grow"><div class="title">'+esc(titleOf(a))+'</div><div class="meta"><span class="pill">'+esc(label(x))+'</span></div></div></a>';}).join("")||'<div class="empty">公開されている作品はありません。</div>';
+ const el=document.getElementById("list");
+ el.innerHTML=(rows||[]).map(x=>{
+  const a=map.get(x.anime_id);if(!a)return "";
+  return '<a class="list-item" href="anime-detail.html?id='+encodeURIComponent(a.id)+'">'+imageMarkup(a.poster_url,titleOf(a))+'<div class="grow"><div class="title">'+esc(titleOf(a))+'</div><div class="meta"><span class="pill">'+esc(label(x))+'</span></div></div></a>';
+ }).join("")||'<div class="empty">公開されている作品はありません。</div>';
+}
+async function renderUsers(ids){
+ const el=document.getElementById("list");
+ if(!ids.length){el.innerHTML='<div class="empty">ユーザーはいません。</div>';return}
+ const {data,error}=await supabaseClient.from("profiles").select("id,username,display_name,avatar_url,bio,updated_at").in("id",ids);
+ if(error)throw error;
+ const map=new Map((data||[]).map(p=>[p.id,p]));
+ el.innerHTML=ids.map(id=>{
+  const p=map.get(id);if(!p)return "";
+  const name=p.display_name||p.username||"ANIXIAユーザー";
+  const avatar=p.avatar_url?'<img class="thumb" src="'+esc(mediaUrl(p.avatar_url,p.updated_at))+'" alt="" loading="lazy">':'<div class="thumb" style="display:grid;place-items:center">'+esc(name.slice(0,1))+'</div>';
+  return '<a class="list-item" href="profile.html?id='+encodeURIComponent(id)+'">'+avatar+'<div class="grow"><div class="title">'+esc(name)+'</div><div class="meta">'+(p.username?"@"+esc(p.username):"")+'</div></div></a>';
+ }).join("")||'<div class="empty">公開されているユーザーはいません。</div>';
 }
 async function loadTab(tab){
  const el=document.getElementById("list");el.innerHTML='<div class="loading">読み込み中…</div>';
  try{
   if(tab==="posts"){
-   const {data,error}=await supabaseClient.from("social_posts").select("id,author_id,body,attachment_url,attachment_type,reply_to_id,quote_post_id,created_at").eq("author_id",profileId).is("deleted_at",null).is("reply_to_id",null).order("created_at",{ascending:false}).limit(100);if(error)throw error;
-   el.innerHTML=(data||[]).map(x=>'<article class="review-item"><div class="sub">投稿 ・ '+esc(new Date(x.created_at).toLocaleString("ja-JP"))+'</div><div style="margin-top:8px;white-space:pre-wrap;line-height:1.7">'+esc(x.body||"")+(x.attachment_url?'<img src="'+esc(x.attachment_url)+'" alt="投稿された写真" loading="lazy" style="display:block;max-width:min(100%,420px);max-height:360px;object-fit:contain;border-radius:12px;margin-top:9px;background:#f3f4f6" decoding="async">' : "")+'</div><div style="margin-top:9px"><a class="btn secondary" href="community.html?post='+encodeURIComponent(x.id)+'">投稿を開く</a></div></article>').join("")||'<div class="empty">公開されている投稿はありません。</div>';return;
+   const {data,error}=await supabaseClient.from("social_posts").select("id,author_id,body,attachment_url,created_at").eq("author_id",profileId).is("deleted_at",null).is("reply_to_id",null).order("created_at",{ascending:false}).limit(100);
+   if(error)throw error;
+   const ids=(data||[]).map(x=>x.id),media=new Map();
+   if(ids.length){const mr=await supabaseClient.from("social_post_media").select("post_id,public_url,sort_order").in("post_id",ids).order("sort_order",{ascending:true});if(!mr.error)(mr.data||[]).forEach(x=>{if(!media.has(x.post_id))media.set(x.post_id,[]);media.get(x.post_id).push(x.public_url)})}
+   el.innerHTML=(data||[]).map(x=>'<article class="review-item"><div class="sub">投稿 ・ '+esc(new Date(x.created_at).toLocaleString("ja-JP"))+'</div><div style="margin-top:8px;white-space:pre-wrap;line-height:1.7">'+esc(x.body||"")+'</div>'+((media.get(x.id)||[]).length?'<div class="post-media-grid">'+media.get(x.id).map(u=>'<img src="'+esc(u)+'" alt="投稿された写真" loading="lazy" decoding="async">').join("")+'</div>':x.attachment_url?'<img src="'+esc(x.attachment_url)+'" alt="投稿された写真" loading="lazy" style="display:block;max-width:min(100%,420px);max-height:360px;object-fit:contain;border-radius:12px;margin-top:9px">':"")+'<div style="margin-top:9px"><a class="btn secondary" href="community.html?post='+encodeURIComponent(x.id)+'">投稿を開く</a></div></article>').join("")||'<div class="empty">公開されている投稿はありません。</div>';
+   return;
   }
-  if(tab==="favorites"){const {data,error}=await supabaseClient.from("favorites").select("anime_id,created_at").eq("user_id",profileId).order("created_at",{ascending:false});if(error)throw error;renderAnimeRows(data,await getAnime((data||[]).map(x=>x.anime_id)),()=> "お気に入り");return;}
-  if(tab==="follows"){const {data,error}=await supabaseClient.from("user_anime_follows").select("anime_id,created_at").eq("user_id",profileId).order("created_at",{ascending:false});if(error)throw error;renderAnimeRows(data,await getAnime((data||[]).map(x=>x.anime_id),),()=> "作品フォロー");return;}
-  if(["watching","completed","want_to_watch"].includes(tab)){const {data,error}=await supabaseClient.from("user_anime_status").select("anime_id,status,progress,updated_at").eq("user_id",profileId).eq("status",tab).order("updated_at",{ascending:false});if(error)throw error;const labels={watching:"視聴中",completed:"視聴完了",want_to_watch:"視聴予定"};renderAnimeRows(data,await getAnime((data||[]).map(x=>x.anime_id)),x=>labels[x.status]+(x.progress!=null?" ・ "+x.progress+"話":""));return;}
-  if(tab==="ratings"){const {data,error}=await supabaseClient.from("user_ratings").select("anime_id,rating,updated_at").eq("user_id",profileId).order("updated_at",{ascending:false});if(error)throw error;renderAnimeRows(data,await getAnime((data||[]).map(x=>x.anime_id)),x=>"★ "+x.rating+"/10");return;}
-
-  if(tab==="ranking"){const {data,error}=await supabaseClient.from("user_anime_rankings").select("anime_id,rank,updated_at").eq("user_id",profileId).order("rank",{ascending:true});if(error)throw error;const rows=data||[],map=await getAnime(rows.map(x=>x.anime_id));el.innerHTML=rows.map((x,i)=>{const a=map.get(Number(x.anime_id));if(!a)return"";return '<a class="list-item" href="anime-detail.html?id='+a.id+'"><div style="width:34px;text-align:center;font-weight:900;color:#e87900">'+(i+1)+'</div>'+imageMarkup(a.cover_image,titleOf(a))+'<div class="grow"><div class="title">'+esc(titleOf(a))+'</div><div class="sub">個人ランキング '+(i+1)+'位</div></div></a>';}).join("")||'<div class="empty">公開されている個人ランキングはありません。</div>';return;}
-  if(tab==="reviews"){const {data,error}=await supabaseClient.from("reviews").select("id,anime_id,title,content,rating,spoiler,likes_count,created_at,updated_at").eq("user_id",profileId).order("created_at",{ascending:false}).limit(100);if(error)throw error;const map=await getAnime((data||[]).map(x=>x.anime_id));el.innerHTML=(data||[]).map(x=>{const a=map.get(Number(x.anime_id));if(!a)return"";return '<article class="review-item"><a class="title" href="anime-detail.html?id='+a.id+'">'+esc(titleOf(a))+'</a><div class="sub">'+esc(x.title||"レビュー")+(x.rating!=null?" ・ ★ "+esc(x.rating)+"/10":"")+(x.spoiler?" ・ ネタバレあり":"")+'</div><div class="meta">'+(x.updated_at?new Date(x.updated_at).toLocaleDateString("ja-JP"):"")+(Number(x.likes_count||0)>0?" ・ いいね "+esc(x.likes_count):"")+'</div><div class="sub" style="margin-top:10px;white-space:pre-wrap;line-height:1.7">'+esc(x.content||"")+'</div></article>';}).join("")||'<div class="empty">公開されているレビューはありません。</div>';return;}
-  if(tab==="user_following"||tab==="user_followers"){const col=tab==="user_followers"?"following_id":"follower_id";const {data,error}=await supabaseClient.from("user_follows").select("follower_id,following_id,created_at").eq(col,profileId).order("created_at",{ascending:false}).limit(100);if(error)throw error;const ids=(data||[]).map(x=>tab==="user_followers"?x.follower_id:x.following_id);const {data:ps}=ids.length?await supabaseClient.from("profiles").select("id,username,display_name,avatar_url,avatar_position_x,avatar_position_y,avatar_zoom,updated_at,bio").in("id",ids):{data:[]};const pm=new Map((ps||[]).map(p=>[p.id,p]));el.innerHTML=ids.map(id=>{const p=pm.get(id);if(!p)return"";const n=p.display_name||p.username||"ANIXIAユーザー";return '<a class="list-item" href="profile.html?id='+encodeURIComponent(id)+'">'+(p.avatar_url?'<img class="avatar-small" src="'+esc(mediaUrl(p.avatar_url,p.updated_at))+'" alt="" decoding="async" loading="lazy">':'<div class="avatar-small" style="display:grid;place-items:center;font-weight:800;color:#888">'+esc(n.slice(0,1))+'</div>')+'<div class="grow"><div class="title">'+esc(n)+'</div><div class="sub">'+(p.username?"@"+esc(String(p.username).replace(/^@/,"")):"ユーザー名未設定")+'</div>'+(p.bio?'<div class="sub">'+esc(p.bio).slice(0,120)+'</div>':"")+'</div></a>';}).join("")||'<div class="empty">ユーザーはいません。</div>';return;}
- }catch(e){console.error("profile tab error",e);el.innerHTML='<div class="error">この項目を取得できませんでした。</div>';}
+  if(tab==="favorites"||tab==="plan_to_watch"||tab==="watching"||tab==="completed"||tab==="ratings"||tab==="ranking"){
+   let query;
+   if(tab==="favorites")query=supabaseClient.from("favorites").select("anime_id,created_at").eq("user_id",profileId).order("created_at",{ascending:false});
+   else if(tab==="ratings"||tab==="ranking")query=supabaseClient.from("ratings").select("anime_id,score,updated_at").eq("user_id",profileId).order(tab==="ranking"?"score":"updated_at",{ascending:false});
+   else query=supabaseClient.from("watch_entries").select("anime_id,status,episodes_watched,updated_at").eq("user_id",profileId).eq("status",tab==="plan_to_watch"?"plan_to_watch":tab).order("updated_at",{ascending:false});
+   const {data,error}=await query;if(error)throw error;
+   const rows=data||[],map=await getAnime(rows.map(x=>x.anime_id));
+   const labels={
+    favorites:()=>"お気に入り",
+    plan_to_watch:()=>"視聴予定",
+    watching:x=>"視聴中"+(x.episodes_watched!=null?" ・ "+x.episodes_watched+"話":""),
+    completed:()=>"視聴完了",
+    ratings:x=>"評価 "+x.score+"/10",
+    ranking:(x,i)=>"高評価順 "+(i+1)+"位 ・ "+x.score+"/10"
+   };
+   if(tab==="ranking"){
+    el.innerHTML=rows.map((x,i)=>{const a=map.get(x.anime_id);if(!a)return "";return '<a class="list-item" href="anime-detail.html?id='+encodeURIComponent(a.id)+'"><div style="width:34px;text-align:center;font-weight:900;color:#03AF6A">'+(i+1)+'</div>'+imageMarkup(a.poster_url,titleOf(a))+'<div class="grow"><div class="title">'+esc(titleOf(a))+'</div><div class="meta">'+esc(labels.ranking(x,i))+'</div></div></a>'}).join("")||'<div class="empty">評価済みの作品はありません。</div>';
+   }else renderAnimeRows(rows,map,labels[tab]);
+   return;
+  }
+  if(tab==="reviews"){
+   const {data,error}=await supabaseClient.from("reviews").select("id,anime_id,title,body,spoiler,is_published,created_at").eq("user_id",profileId).order("created_at",{ascending:false}).limit(100);
+   if(error)throw error;
+   const map=await getAnime((data||[]).map(x=>x.anime_id));
+   el.innerHTML=(data||[]).map(x=>{const a=map.get(x.anime_id);if(!a)return "";return '<article class="review-item"><a class="title" href="anime-detail.html?id='+encodeURIComponent(a.id)+'">'+esc(titleOf(a))+'</a><div class="sub">'+esc(x.title||"レビュー")+(x.spoiler?" ・ ネタバレあり":"")+(x.is_published?"":" ・ 公開審査待ち")+'</div><div class="meta" style="white-space:pre-wrap">'+esc(x.body)+'</div></article>'}).join("")||'<div class="empty">公開されているレビューはありません。</div>';
+   return;
+  }
+  if(tab==="user_following"||tab==="user_followers"){
+   const col=tab==="user_following"?"follower_id":"following_id";
+   const {data,error}=await supabaseClient.from("user_follows").select("follower_id,following_id,created_at").eq(col,profileId).order("created_at",{ascending:false}).limit(100);
+   if(error)throw error;
+   const ids=(data||[]).map(x=>tab==="user_following"?x.following_id:x.follower_id);
+   await renderUsers(ids);return;
+  }
+  el.innerHTML='<div class="empty">表示できる情報はありません。</div>';
+ }catch(e){console.error("プロフィール項目の読み込みエラー",e);el.innerHTML='<div class="error">情報を読み込めませんでした。<br><small>'+esc(e.message||"データ取得エラー")+'</small></div>'}
 }
 async function start(){
- const app=document.getElementById("app");
- if(!profileId){app.innerHTML='<div class="error">プロフィールIDが指定されていません。</div>';return;}
- const {data,error}=await supabaseClient.from("profiles").select("id,username,display_name,avatar_url,background_url,avatar_position_x,avatar_position_y,avatar_zoom,background_position_x,background_position_y,background_zoom,bio,show_posts,show_favorites,show_anime_follows,show_watch_status,show_ratings,show_reviews,show_user_follows,show_ranking,updated_at").eq("id",profileId).maybeSingle();
- if(error||!data){app.innerHTML='<div class="error">プロフィールを取得できませんでした。</div>';return;}
- profile=data;visibility={favorites:data.show_favorites!==false,anime_follows:data.show_anime_follows!==false,watch_status:data.show_watch_status!==false,ratings:data.show_ratings!==false,reviews:data.show_reviews!==false,user_follows:data.show_user_follows!==false,ranking:data.show_ranking!==false,posts:data.show_posts!==false};
- const name=profile.display_name||profile.username||"ANIXIAユーザー";document.title=name+" | ANIXIA";document.getElementById("meta-description").content=name+"のANIXIAプロフィール。";await renderContent();
+ if(!profileId){app.innerHTML='<div class="error">プロフィールIDが指定されていません。</div>';return}
+ try{
+  const {data,error}=await supabaseClient.from("profiles").select("id,username,display_name,avatar_url,bio,is_public,avatar_position_x,avatar_position_y,avatar_zoom,background_url,background_position_x,background_position_y,background_zoom,show_posts,show_favorites,show_anime_follows,show_watch_status,show_ratings,show_reviews,show_user_follows,show_ranking,updated_at").eq("id",profileId).maybeSingle();
+  if(error||!data){app.innerHTML='<div class="error">プロフィールを取得できませんでした。</div>';return}
+  profile=data;
+  visibility={
+   posts:data.show_posts!==false,favorites:data.show_favorites!==false,
+   anime_follows:data.show_anime_follows!==false,watch_status:data.show_watch_status!==false,
+   ratings:data.show_ratings!==false,reviews:data.show_reviews!==false,
+   user_follows:data.show_user_follows!==false,ranking:data.show_ranking!==false
+  };
+  const name=profile.display_name||profile.username||"ANIXIAユーザー";
+  document.title=name+" | ANIXIA";
+  const meta=document.getElementById("meta-description");if(meta)meta.content=name+"のANIXIAプロフィール。";
+  await renderContent();
+ }catch(e){console.error("プロフィール取得エラー",e);app.innerHTML='<div class="error">プロフィールを読み込めませんでした。</div>'}
 }
-start();
+document.addEventListener("DOMContentLoaded",start);
 </script>
 
 <script src="anixia-i18n.js?v=20261119-r8" defer></script>
