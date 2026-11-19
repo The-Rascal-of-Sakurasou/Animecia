@@ -2,9 +2,9 @@
   "use strict";
   const $=id=>document.getElementById(id);
   const isEnglish=()=>localStorage.getItem("anixia-language")==="en";
-  const value=(row,ja,en,fallback)=>isEnglish()?(row?.[en]||row?.name_en||row?.[ja]||fallback):(row?.[ja]||fallback);
-  const label=(ja,en)=>isEnglish()?en:ja;
   const hasJapanese=value=>/[\\u3040-\\u30ff\\u3400-\\u9fff]/u.test(String(value||""));
+  const value=(row,ja,en,fallback)=>isEnglish()?(row?.[en]||row?.name_en||(row?.[en==="name"?"name":en]&&!hasJapanese(row[en])?row[en]:null)||fallback):(row?.[ja]||fallback);
+  const label=(ja,en)=>isEnglish()?en:ja;
   const englishTitle=row=>row?.title_en||(row?.title&&!hasJapanese(row.title)?row.title:"English title unavailable");
   const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const fmt=v=>({tv:"TV",movie:label("劇場版","Movie"),ova:"OVA",ona:"ONA",special:label("特別編","Special"),web:"Web",other:label("その他","Other")}[v]||v||label("未登録","Not available"));
