@@ -10,7 +10,7 @@
 
   function card(a,meta){
     return `<a class="anixia-library-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}">
-      <div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url,title(a))}</div>
+      <div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url,title(a),a.poster_credit)}</div>
       <div><b>${esc(title(a))}</b><small>${esc(meta||[a.release_year,a.format].filter(Boolean).join(" · "))}</small></div>
     </a>`;
   }
