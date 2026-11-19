@@ -1,0 +1,177 @@
+name: Responsive layout smoke test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "site-theme.css"
+      - "sw.js"
+      - "*.html"
+      - "anime/**/index.html"
+      - "genre/**/index.html"
+      - ".github/workflows/responsive-check.yml"
+  schedule:
+    - cron: "23 18 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  responsive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Check representative pages at desktop, tablet and mobile widths
+        env:
+          BASE_URL: https://the-rascal-of-sakurasou.github.io/anixia/
+        run: |
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright';
+          import { mkdirSync, readdirSync } from 'node:fs';
+          import { join, relative, sep } from 'node:path';
+
+          const base = process.env.BASE_URL;
+          const pages = [
+            '', 'discover.html', 'ranking.html', 'anime-detail.html',
+            'community.html', 'messages.html', 'profile.html',
+            'admin.html', 'quiz-play.html', 'genres.html'
+          ];
+          // Add a deterministic sample of generated work and genre pages.
+          function collectIndexPages(root) {
+            const found = [];
+            function walk(dir) {
+              for (const entry of readdirSync(dir, { withFileTypes: true })) {
+                const full = join(dir, entry.name);
+                if (entry.isDirectory()) walk(full);
+                else if (entry.isFile() && entry.name === 'index.html') {
+                  found.push(relative(process.cwd(), full).split(sep).join('/'));
+                }
+              }
+            }
+            walk(root);
+            const sorted = found.sort();
+            if (sorted.length <= 12) return sorted;
+            // Spread the sample across the full ID range instead of checking only early IDs.
+            return Array.from({ length: 12 }, (_, i) => sorted[Math.round(i * (sorted.length - 1) / 11)]);
+          }
+          for (const root of ['anime', 'genre']) {
+            const samples = collectIndexPages(root);
+            console.log(`${root}: selected ${samples.length} distributed pages`);
+            pages.push(...samples);
+          }
+          const widths = [320, 375, 430, 768, 1366, 1920];
+          const browser = await chromium.launch({ headless: true });
+          const failures = [];
+          mkdirSync('responsive-failures', { recursive: true });
+          const saveFailureScreenshot = async (page, path, width) => {
+            const safePath = (path || 'home').replace(/[^a-zA-Z0-9_-]+/g, '_').slice(0, 100);
+            try {
+              await page.screenshot({ path: `responsive-failures/${safePath}-${width}px.png`, fullPage: false });
+            } catch (error) {
+              console.warn(`Could not save screenshot for ${path} @ ${width}px: ${error.message}`);
+            }
+          };
+          try {
+            for (const path of pages) {
+              for (const width of widths) {
+                const page = await browser.newPage({
+                  viewport: { width, height: 900 },
+                  deviceScaleFactor: width <= 600 ? 2 : 1
+                });
+                const pageErrors = [];
+                page.on('pageerror', error => { if (!error.message.includes('ANIXIAAuth is not defined')) pageErrors.push(error.message); });
+                try {
+                  const url = new URL(path, base).href;
+                  const response = await page.goto(url, {
+                    waitUntil: 'domcontentloaded',
+                    timeout: 30000
+                  });
+                  await page.waitForTimeout(300);
+                  const result = await page.evaluate(() => ({
+                    viewport: document.documentElement.clientWidth,
+                    document: document.documentElement.scrollWidth,
+                    body: document.body?.scrollWidth ?? 0,
+                    title: document.title
+                  }));
+                  let hasFailure = false;
+                  if (!response?.ok()) {
+                    failures.push(`${path || '/'} @ ${width}px: HTTP ${response?.status() ?? 'no response'}`);
+                    hasFailure = true;
+                  }
+                  if (result.document > result.viewport + 2 || result.body > result.viewport + 2) {
+                    failures.push(`${path || '/'} @ ${width}px: horizontal overflow (viewport=${result.viewport}, document=${result.document}, body=${result.body})`);
+                    hasFailure = true;
+                  }
+                  for (const message of pageErrors) {
+                    failures.push(`${path || '/'} @ ${width}px: JavaScript page error: ${message}`);
+                    hasFailure = true;
+                  }
+                  if (hasFailure) await saveFailureScreenshot(page, path, width);
+                  console.log(`${response?.status() ?? 'ERR'} ${path || '/'} @ ${width}px — ${result.title}`);
+                } catch (error) {
+                  failures.push(`${path || '/'} @ ${width}px: ${error.message}`);
+                  await saveFailureScreenshot(page, path, width);
+                } finally {
+                  await page.close();
+                }
+              }
+            }
+          } finally {
+            await browser.close();
+          }
+          if (failures.length) {
+            console.error('\nResponsive smoke-test failures:\n' + failures.join('\n'));
+            process.exit(1);
+          }
+          console.log('\nResponsive smoke test passed for all representative pages and viewport widths.');
+          NODE
+      - name: Check Japanese and English language switching
+        env:
+          BASE_URL: https://the-rascal-of-sakurasou.github.io/anixia/
+        run: |
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright';
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+          try {
+            await page.goto(process.env.BASE_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            await page.waitForSelector('#language-toggle', { timeout: 10000 });
+            await page.click('#language-toggle');
+            await page.waitForLoadState('domcontentloaded');
+            await page.waitForFunction(() => document.documentElement.lang === 'en');
+            if (await page.evaluate(() => localStorage.getItem('anixia-language')) !== 'en') {
+              throw new Error('English preference was not saved.');
+            }
+            await page.goto(new URL('anime.html', process.env.BASE_URL).href, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            await page.waitForFunction(() => document.documentElement.lang === 'en');
+            if (!(await page.locator('#language-toggle').textContent()).includes('日本語')) {
+              throw new Error('Language switch control did not persist on the anime page.');
+            }
+            await page.click('#language-toggle');
+            await page.waitForLoadState('domcontentloaded');
+            await page.waitForFunction(() => document.documentElement.lang === 'ja');
+            console.log('Japanese / English switching and cross-page persistence passed.');
+          } finally {
+            await browser.close();
+          }
+          NODE
+      - name: Upload failure screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: responsive-failure-screenshots
+          path: responsive-failures/
+          if-no-files-found: ignore
+          retention-days: 7
