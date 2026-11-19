@@ -360,6 +360,35 @@
     "ジャンル数":"Genres"
   });
 
+  Object.assign(ja, {
+    "参加作品・担当作品":"Credits",
+    "担当キャラクター":"Characters",
+    "登場作品":"Appearances",
+    "担当声優・スタッフ":"Voice Actors & Staff",
+    "制作作品":"Produced Anime",
+    "関連情報":"Related Information",
+    "検索しています…":"Searching…",
+    "検索に失敗しました。":"Search failed.",
+    "比較データを読み込んでいます…":"Loading comparison data…",
+    "比較データを取得できませんでした。":"Could not load comparison data.",
+    "条件に合う作品を探しています…":"Finding anime that match your preferences…",
+    "診断中…":"Finding recommendations…",
+    "診断に失敗しました。時間をおいて再度お試しください。":"Recommendation search failed. Please try again later.",
+    "条件に合う公開作品がありません。条件を広げるか、作品データの登録後にお試しください。":"No published anime match these criteria. Broaden your filters or try again after more catalog data is added.",
+    "診断結果はありません。":"No recommendation results.",
+    "ジャンルデータを準備しています。":"Genre data is being prepared.",
+    "ジャンルを読み込めませんでした。":"Could not load genres.",
+    "データを読み込めませんでした。時間をおいて再読み込みしてください。":"Could not load data. Please reload later.",
+    "該当するデータはありません。別の名前で検索してください。":"No matching entries. Try another name.",
+    "放送終了":"Finished Airing",
+    "放送中":"Currently Airing",
+    "放送前":"Not Yet Aired",
+    "放送予定":"Upcoming",
+    "中止":"Cancelled",
+    "公式サイトを開く":"Open Official Website",
+    "日本語表記未登録":"Japanese name unavailable"
+  });
+
   const titles = {
     "ANIXIA — アニメデータベース":"ANIXIA — Anime Database",
     "アニメ作品検索｜ANIXIA":"Anime Database | ANIXIA","アニメランキング｜ANIXIA":"Anime Rankings | ANIXIA",
