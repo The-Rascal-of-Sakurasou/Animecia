@@ -93,7 +93,7 @@ async function searchImage(work: any) {
             const validShape = logoFile
               ? width >= 200 && height >= 80 && width / height >= 0.5 && width / height <= 6
               : width >= 200 && height >= 280 && width / height >= 0.38 && width / height <= 0.9;
-            if (info?.thumburl && info?.descriptionurl &&
+            if (info?.thumburl && info?.descriptionurl && String(info?.mime || "").startsWith("image/") &&
                 String(info.thumburl).startsWith("https://upload.wikimedia.org/") &&
                 validShape && license) {
               return {
@@ -142,7 +142,7 @@ async function searchImage(work: any) {
             const logoInfo = logoPage?.imageinfo?.[0];
             const width = Number(logoInfo?.width || 0), height = Number(logoInfo?.height || 0);
             const license = licenseInfo(logoInfo?.extmetadata || {});
-            if (logoInfo?.thumburl && logoInfo?.descriptionurl &&
+            if (logoInfo?.thumburl && logoInfo?.descriptionurl && String(logoInfo?.mime || "").startsWith("image/") &&
                 String(logoInfo.thumburl).startsWith("https://upload.wikimedia.org/") &&
                 width >= 200 && height >= 80 && width / height >= 0.5 &&
                 width / height <= 6 && license) {
@@ -175,7 +175,7 @@ async function searchImage(work: any) {
             const categoryPages = Array.isArray(categoryPayload?.query?.pages) ? categoryPayload.query.pages : [];
             const categoryMatches = categoryPages.map((page: any) => {
               const info = page.imageinfo?.[0];
-              if (!info?.thumburl || !info?.descriptionurl || !String(info.thumburl).startsWith("https://upload.wikimedia.org/")) return null;
+              if (!info?.thumburl || !info?.descriptionurl || !String(info?.mime || "").startsWith("image/") || !String(info.thumburl).startsWith("https://upload.wikimedia.org/")) return null;
               const fileName = String(page.title || "").replace(/^File:/i, "");
               const logoFile = /logo|ロゴ/i.test(fileName);
               const posterFile = /poster|key[ -]?visual|cover|ポスター|キービジュアル|表紙/i.test(fileName);
@@ -229,7 +229,7 @@ async function searchImage(work: any) {
     const target = norm(query);
     const ranked = pages.map((page: any) => {
       const info = page.imageinfo?.[0];
-      if (!info?.thumburl || !info?.descriptionurl || !String(info.thumburl).startsWith("https://upload.wikimedia.org/")) return null;
+      if (!info?.thumburl || !info?.descriptionurl || !String(info?.mime || "").startsWith("image/") || !String(info.thumburl).startsWith("https://upload.wikimedia.org/")) return null;
       const rawFileName = String(page.title || "").replace(/^File:/i, "").replace(/\.[a-z0-9]{2,5}$/i, "");
       const rawDescription = cleanHtml(info.extmetadata?.ImageDescription?.value);
       const fileName = norm(rawFileName);
@@ -322,6 +322,7 @@ Deno.serve(async (req: Request) => {
   }
   const buildQuery = (startAt: number) => {
     let query = db.from("anime").select("id,title,title_ja,title_kana,release_year,poster_url,source_id")
+      .eq("is_published", true)
       .order("release_year", { ascending: false, nullsFirst: false })
       .order("id", { ascending: true });
     if (requestedIds.length) query = query.in("id", requestedIds);
