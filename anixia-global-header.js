@@ -77,6 +77,7 @@
           <a class="anixia-header-button" id="account-link" href="${ROOT}login.html">ログイン</a>
           <button class="anixia-header-button" id="home-logout" type="button" hidden>ログアウト</button>
           <button class="anixia-header-button" id="language-toggle" type="button">EN</button>
+          <a class="anixia-header-button" id="home-link" href="${ROOT}">ホーム</a>
           <a class="anixia-header-button" id="mypage-link" href="${ROOT}mypage.html">マイページ</a>
         </div>
       </div>`;
