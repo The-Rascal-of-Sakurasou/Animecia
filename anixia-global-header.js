@@ -92,7 +92,11 @@
       if (window.ANIXIA_SET_LANGUAGE) window.ANIXIA_SET_LANGUAGE(next);
       else { localStorage.setItem("anixia-language", next); location.reload(); }
     });
-    const syncHeaderSpace = () => { document.body.style.paddingTop = `${header.offsetHeight}px`; };\n    syncHeaderSpace();\n    if (window.ResizeObserver) new ResizeObserver(syncHeaderSpace).observe(header);\n    else window.addEventListener("resize", syncHeaderSpace);\n    setupAuth(header);
+    const syncHeaderSpace = () => { document.body.style.paddingTop = `${header.offsetHeight}px`; };
+    syncHeaderSpace();
+    if (window.ResizeObserver) new ResizeObserver(syncHeaderSpace).observe(header);
+    else window.addEventListener("resize", syncHeaderSpace);
+    setupAuth(header);
   }
 
   function loadScript(src, marker) {
