@@ -3220,3 +3220,72 @@ html,body{background:#fff!important;color:#26332c!important}
 .anixia-logo .anixia-logo-xia:after{
  content:"";position:absolute;left:7%;right:4%;bottom:-.13em;height:2px;background:#03AF6A;border-radius:2px;
 }
+
+/* ANIXIA 2026 unified visual system: white / JT green / sky blue */
+:root{
+ --ac-primary:#008a52;--ac-primary-dark:#006b40;--ac-primary-soft:#eaf6f0;
+ --ac-secondary:#42b8e8;--ac-secondary-soft:#eaf7fc;
+ --ac-ink:#18231e;--ac-sub:#5d6c65;--ac-muted:#829088;
+ --ac-line:#e2ebe6;--ac-bg:#f7faf8;--ac-card:#fff;
+ --ac-radius:12px;--ac-shadow:0 3px 14px rgba(20,55,38,.055);
+ --ac-shadow-lg:0 12px 30px rgba(20,55,38,.09);
+}
+html,body{background:#f7faf8!important;color:#18231e!important}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif!important;line-height:1.7!important}
+header,.site-header{height:auto!important;min-height:64px!important;background:rgba(255,255,255,.97)!important;color:#18231e!important;border:0!important;border-bottom:1px solid #e2ebe6!important;box-shadow:0 2px 12px rgba(18,48,32,.045)!important;backdrop-filter:blur(12px)!important}
+header a,.site-header a,.main-nav a,.site-nav a,.nav-links a{color:#263b30!important}
+header a:hover,.site-header a:hover,.main-nav a:hover,.site-nav a:hover,.nav-links a:hover{color:#008a52!important}
+.anixia-logo,.brand,.logo{color:#008a52!important}
+.anixia-logo-xia{color:#42b8e8!important}
+header .anixia-logo{font-size:25px!important;font-weight:950!important;letter-spacing:-.06em!important}
+.anixia-language{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:48px!important;min-height:40px!important;padding:7px 12px!important;border:1px solid #d7e8de!important;border-radius:9px!important;background:#fff!important;color:#007c49!important;font-size:12px!important;font-weight:800!important;cursor:pointer!important}
+.anixia-language:hover{background:#eaf6f0!important;border-color:#008a52!important}
+.anixia-language-fallback{position:fixed;z-index:9999;top:10px;right:12px}
+button,.btn,.primary,.anixia-search-form button,.anixia-filter-actions button,.entity-search button,.compare-action,.diag-submit,.auth-panel button,.play-actions button{background:#008a52!important;border-color:#008a52!important;color:#fff!important}
+button:hover,.btn:hover,.primary:hover{background:#006b40!important}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(66,184,232,.42)!important;outline-offset:1px!important;border-color:#42b8e8!important}
+a{ text-underline-offset:3px }
+.anixia-search-panel,.anixia-feature-link,.anixia-service-card,.anixia-section,.panel,.auth-panel,.anixia-filter-panel,.entity-panel,.anixia-detail-panel,.anixia-mypage-panel,.quiz-card,.diag-panel,.rank-row,.season-card,.discover-genre,.genre,.profile-card{background:#fff!important;border-color:#e2ebe6!important;box-shadow:var(--ac-shadow)!important;color:#18231e!important}
+.anixia-search-panel h1,.anixia-section h2,.anixia-section-heading h2,.anixia-service-card strong,.anixia-feature-link strong,.anixia-detail h1,.anixia-detail-panel h2,.entity-hero h1,.entity-panel h2,.rank-hero h1,.season-hero h1,.discover-hero h1,.quiz-hero h1,.diag-hero h1,.auth-panel h1{color:#18231e!important}
+.anixia-eyebrow,.feature-index,.anixia-service-index,.rank-no,.anixia-detail-kicker,.entity-detail-kicker{color:#008a52!important}
+.anixia-feature-link:hover,.anixia-service-card:hover,.anixia-result-card:hover,.entity-card:hover{border-color:#42b8e8!important}
+.anixia-result-card,.entity-card,.rank-row,.season-card,.discover-card,.diag-card{background:#fff!important;color:#18231e!important;border-color:#e2ebe6!important}
+.anixia-result-card *, .entity-card *, .rank-row *, .season-card *, .discover-card *, .diag-card *{color:inherit}
+.anixia-page-hero,.entity-hero,.anixia-detail-hero,.rank-hero,.season-hero,.compare-hero,.discover-hero,.quiz-hero,.diag-hero,.anixia-mypage-hero{background:linear-gradient(120deg,#edf7f1,#f0f9fc)!important;border:1px solid #dcece3!important}
+.anixia-page-hero h1,.entity-hero h1,.anixia-detail-hero h1,.rank-hero h1,.season-hero h1,.compare-hero h1,.discover-hero h1,.quiz-hero h1,.diag-hero h1,.anixia-mypage-hero h1{color:#18231e!important}
+.anixia-page-hero p,.entity-hero p,.anixia-detail-subtitle,.rank-hero p,.season-hero p,.compare-hero p,.discover-hero p,.quiz-hero p,.diag-hero p,.anixia-mypage-hero p{color:#5d6c65!important}
+.anixia-filter-panel,.entity-search,.anixia-detail-panel,.anixia-mypage-panel,.auth-panel,.diag-panel,.play-head,.question-card,.result-card{background:#fff!important;color:#18231e!important;border-color:#e2ebe6!important}
+.anixia-field label,.entity-info dt,.anixia-profile-field label,.diag-fields label,.field label{color:#52645a!important}
+.anixia-field input,.anixia-field select,.entity-search input,.anixia-profile-field input,.anixia-profile-field textarea,.diag-fields select,.field input,.compare-search input{background:#fff!important;color:#18231e!important;border-color:#d6e3da!important}
+.anixia-detail-synopsis,.anixia-detail-panel h2,.entity-panel h2,.entity-info dd,.entity-work,.rank-title,.quiz-card h2,.diag-panel h2{color:#263b30!important}
+.anixia-detail-meta span,.anixia-detail-tags a{color:#276047!important;border-color:#d5e8dc!important}
+.anixia-footer{background:#f0f6f2!important;border-top:1px solid #e2ebe6!important;color:#52645a!important}
+.anixia-footer a{color:#276047!important}
+@media(max-width:900px){
+ .anixia-main-nav,.main-nav,.site-nav,.nav-links,header nav{gap:4px!important}
+ .anixia-shell,.wrap.head,.header-inner,.container.nav{width:100%!important;max-width:100%!important;padding-left:16px!important;padding-right:16px!important}
+}
+@media(max-width:700px){
+ header,.site-header{position:sticky!important;top:0!important;min-height:58px!important}
+ .wrap.head,.header-inner,.container.nav{min-height:58px!important;gap:8px!important;padding:8px 12px!important;flex-wrap:wrap!important}
+ .anixia-main-nav,.main-nav,.site-nav,.nav-links,header nav{order:3!important;width:100%!important;flex-basis:100%!important;overflow-x:auto!important;white-space:nowrap!important;padding:2px 0 5px!important}
+ .anixia-main-nav a,.main-nav a,.site-nav a,.nav-links a,header nav a{font-size:12px!important;padding:7px 9px!important}
+ .anixia-header-actions{margin-left:auto!important}
+ .anixia-page,.entity-page,.season-page,.rank-page,.discover-page,.quiz-page,.diag-page,.anixia-detail,.anixia-mypage{width:calc(100% - 24px)!important;padding:18px 0 52px!important}
+ .anixia-results-grid,.season-grid,.discover-grid,.diag-results{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .entity-grid,.quiz-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .anixia-filter-grid,.diag-fields{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .anixia-detail-hero{grid-template-columns:minmax(0,1fr)!important;padding:16px!important}
+ .anixia-detail-poster-wrap{width:min(190px,55%)!important;margin:auto!important}
+ .anixia-detail-grid,.anixia-mypage-grid{grid-template-columns:minmax(0,1fr)!important}
+ .rank-row{grid-template-columns:28px 56px minmax(0,1fr)!important;gap:8px!important}
+ .rank-row img{width:56px!important}
+ .anixia-search-form{flex-wrap:wrap!important}
+ .anixia-search-form input{min-width:0!important;flex:1 1 100%!important}
+ .anixia-search-form button{min-height:44px!important;width:100%!important}
+}
+@media(max-width:420px){
+ .anixia-filter-grid,.diag-fields,.entity-grid,.quiz-grid{grid-template-columns:minmax(0,1fr)!important}
+ .anixia-results-grid,.season-grid,.discover-grid,.diag-results{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .anixia-page-hero,.entity-hero,.rank-hero,.season-hero,.compare-hero,.discover-hero,.quiz-hero,.diag-hero{padding:18px!important}
+}
