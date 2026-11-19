@@ -115,10 +115,24 @@
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, {once:true});
   else init();
+  const observer = new MutationObserver(records => {
+    if (lang !== "en") return;
+    for (const record of records) {
+      for (const node of record.addedNodes) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const translated = mapText(node.nodeValue);
+          if (translated !== node.nodeValue) node.nodeValue = translated;
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          translateStatic(node);
+        }
+      }
+    }
+  });
+  observer.observe(document.documentElement, {childList:true,subtree:true});
   window.ANIXIA_LANG = () => lang;
   window.ANIXIA_SET_LANGUAGE = value => {
     if (value !== "ja" && value !== "en") return;
     localStorage.setItem(KEY,value);
     location.reload();
   };
-})();
+})();\n/* Retrofit workflow trigger: global language layer revision 2. */\n
