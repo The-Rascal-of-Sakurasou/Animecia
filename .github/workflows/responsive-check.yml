@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "site-theme.css"
+      - "anixia-i18n.js"
       - "sw.js"
       - "*.html"
       - "anime/**/index.html"
