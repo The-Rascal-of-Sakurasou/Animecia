@@ -75,6 +75,37 @@
     "気になるジャンルから作品を絞り込む":"Filter anime by genre","ジャンルやテーマから作品を発見":"Discover anime by genre and theme",
     "多くのユーザーに視聴されている作品":"Popular titles among users","データベースに追加・更新された作品":"Recently added or updated titles"
   };
+  Object.assign(ja, {
+    "アニメを探す":"Find Anime","作品比較":"Compare Anime","ジャンル":"Genre","メモ":"Notes","投稿する":"Create Post","写真を追加":"Add Photo","最大4枚・各10MB以下":"Up to 4 images, 10 MB each","フォロー中":"Following","ブックマーク":"Bookmarks","読み込み中…":"Loading…","もっと読み込む":"Load More","ユーザーを探す":"Find Users","投稿、返信、いいね、リポスト、ブックマークでアニメの感想を共有できます。":"Share your thoughts on anime with posts, replies, likes, reposts and bookmarks.",
+    "作品を比較する":"Compare Anime","作品を検索して2〜3作品を選ぶと、基本情報を横並びで比較できます。":"Search for and select 2–3 titles to compare their key information side by side.",
+    "作品を検索":"Search Anime","作品名を入力して検索してください。":"Enter an anime title to search.","選択した作品を比較":"Compare Selected Titles","2〜3作品を選択すると比較結果を表示します。":"Select 2–3 titles to see a comparison.",
+    "新しい作品と出会う":"Discover Something New","ジャンルや人気作品から、次に観たいアニメを探しましょう。":"Find your next anime by exploring genres and popular titles.",
+    "詳細検索 →":"Advanced Search →","ランキング →":"Rankings →","作品を読み込んでいます…":"Loading anime…","最近の作品":"Recently Added","すべての作品 →":"All Anime →",
+    "ジャンルから探す。":"Browse by genre.","気分や好みからジャンルを選んで、そのまま作品探索へ。複数ジャンルの組み合わせにも対応しています。":"Choose genres based on your mood and preferences, then explore matching titles. You can combine multiple genres.",
+    "ジャンルを読み込み中…":"Loading genres…",
+    "1対1":"Direct","グループ":"Group","会話を選択してください":"Select a conversation","プロフィール":"Profile",
+    "会話を選択すると、ここにメッセージが表示されます。":"Select a conversation to view messages here.","送信":"Send","ログインが必要です。":"Login required.",
+    "ホームへ戻る":"Back to Home","← ホームへ戻る":"← Back to Home","最終更新日：2026年9月26日":"Last updated: September 26, 2026",
+    "データ出典・利用条件":"Data Sources & Terms","初期作品データ":"Initial Anime Dataset","初期登録作品":"Initially Registered Anime",
+    "プライバシーポリシー":"Privacy Policy","利用規約":"Terms of Service","アニメをもっと探しやすく、もっと楽しめる。":"Discover anime more easily and enjoy it more.",
+    "作品・人物・キャラクター・制作会社・組織":"Anime, people, characters, studios and organizations",
+    "タイトルやジャンル、放送時期などを組み合わせて、気になる作品を検索できます。":"Combine titles, genres and seasons to find anime.",
+    "作品情報を読み込んでいます…":"Loading anime information…","作品を読み込んでいます…":"Loading anime…",
+    "レビュー数":"Review Count","評価":"Rating","人気度":"Popularity","視聴者数":"Viewers",
+    "評価・レビュー":"Scores & Reviews","作品を評価":"Rate this Anime","レビューを書く":"Write a Review",
+    "作品詳細":"Anime Details","作品情報":"Anime Information","タグ・テーマ":"Tags & Themes","シリーズ":"Series",
+    "制作団体":"Production Organizations","キャラクター":"Characters","スタッフ":"Staff","レビューを投稿":"Write a Review",
+    "情報を読み込んでいます…":"Loading information…","基本情報":"Basic Information","関連情報":"Related Information",
+    "ログイン状態を確認しています…":"Checking login status…","ログインが必要です":"Login Required",
+    "アカウント情報を確認しています…":"Checking account information…","プロフィールを保存":"Save Profile","ユーザーID":"User ID","自己紹介":"Bio",
+    "視聴記録やお気に入り、自分の評価をまとめて管理できます。":"Manage your watch history, favorites and ratings.",
+    "ログインが必要です":"Login Required","マイページを利用するにはログインしてください。":"Please log in to use My Page.",
+    "どんな作品を探していますか？":"What kind of anime are you looking for?",
+    "おすすめを診断する":"Get Recommendations","条件を選択して診断してください。":"Choose your preferences to get recommendations.",
+    "作品に関するクイズに挑戦して、知識を試してみましょう。回答の採点はサーバー側で行います。":"Test your anime knowledge with quizzes. Answers are graded on the server.",
+    "回答を送信して採点":"Submit answers","アカウントを作成すると、そのままANIXIAにログインします。メール認証コードの入力は必要ありません。":"Creating an account will sign you in to ANIXIA. No email verification code is required.",
+    "パスワード（8文字以上）":"Password (8+ characters)","パスワード（確認）":"Confirm password","ログインはこちら":"Log in here"
+  });
   const titles = {
     "ANIXIA — アニメデータベース":"ANIXIA — Anime Database",
     "アニメ作品検索｜ANIXIA":"Anime Database | ANIXIA","アニメランキング｜ANIXIA":"Anime Rankings | ANIXIA",
