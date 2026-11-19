@@ -52,6 +52,8 @@
       renderTab();
     }catch(e){
       console.error(e);
+      $("mypage-content").hidden=true;
+      $("mypage-loading").hidden=false;
       $("mypage-loading").innerHTML='マイページを読み込めませんでした。時間をおいて再度お試しください。 <button type="button" id="mypage-retry">再試行</button>';
       $("mypage-retry")?.addEventListener("click", init, { once: true });
     }
