@@ -4286,3 +4286,23 @@ header .anixia-header-actions [hidden]{display:none!important}
   header .anixia-global-nav{order:3!important;flex:0 0 100%!important;width:100%!important}
   header .anixia-header-actions{margin-left:auto!important}
 }
+
+
+/* ANIXIA brand frame — unified across every page */
+:root{--anixia-jt:#03AF6A;--anixia-twitter:#1DA1F2;--anixia-frame:#000}
+header,header.site-header,header.anixia-global-header,.site-header,.anixia-global-header,.global-header,.main-header,.site-navbar{
+  background:#000!important;background-color:#000!important;color:#fff!important;
+  border:0!important;border-bottom:1px solid #222!important;box-shadow:none!important;backdrop-filter:none!important;
+}
+footer,.anixia-footer,.site-footer,.global-footer{
+  background:#000!important;background-color:#000!important;color:#fff!important;
+  border:0!important;border-top:1px solid #222!important;box-shadow:none!important;
+}
+footer a,.anixia-footer a,.site-footer a,.global-footer a{color:#fff!important}
+footer a:hover,.anixia-footer a:hover,.site-footer a:hover,.global-footer a:hover{color:var(--anixia-jt)!important}
+.anixia-logo,header .anixia-logo,footer .anixia-logo,.anixia-footer .anixia-logo{
+  color:var(--anixia-jt)!important;text-decoration:none!important;letter-spacing:-.045em!important;
+}
+.anixia-logo .anixia-logo-xia,header .anixia-logo .anixia-logo-xia,footer .anixia-logo .anixia-logo-xia,.anixia-footer .anixia-logo .anixia-logo-xia{
+  color:var(--anixia-twitter)!important;
+}
