@@ -49,7 +49,7 @@
         .anixia-global-header-inner{flex-wrap:wrap!important;gap:8px 12px!important;padding:9px 14px!important}
         .anixia-global-nav{order:3!important;flex:1 1 100%!important;width:100%!important}
         .anixia-global-nav a{padding:6px 8px!important}
-        .anixia-header-actions{margin-left:auto!important}
+        .anixia-header-actions{margin-left:0!important}
       }
       @media(max-width:420px){
         .anixia-global-header .anixia-logo{font-size:22px!important}
