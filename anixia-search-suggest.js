@@ -9,6 +9,25 @@
     organization: "組織"
   };
 
+  function normalizeSuggestionLabel(value) {
+    return String(value || "")
+      .normalize("NFKC")
+      .toLocaleLowerCase("ja-JP")
+      .replace(/[\\s・･,，.．…「」『』（）()【】［］\\[\\]＿_‐‑–—]+/gu, "");
+  }
+
+  function deduplicateSuggestions(items) {
+    const seen = new Set();
+    return (Array.isArray(items) ? items : []).filter(item => {
+      const label = normalizeSuggestionLabel(item?.label);
+      if (!label) return false;
+      const key = String(item?.suggestion_type || "") + ":" + label;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
   function attach(input, type, submitForm) {
     if (!input || input.dataset.suggestReady === "true") return;
     const host = input.closest(".anixia-field") || input.closest("form");
@@ -120,7 +139,7 @@
       try {
         const items = await window.ANIXIA.suggestCatalog(term, type, 10);
         if (version !== requestVersion) return;
-        render(items);
+        render(deduplicateSuggestions(items));
       } catch (error) {
         if (version === requestVersion) hide();
         console.warn("ANIXIA search suggestions unavailable", error);
