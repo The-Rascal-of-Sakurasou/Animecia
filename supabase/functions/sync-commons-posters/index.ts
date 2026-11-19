@@ -15,23 +15,27 @@ function licenseInfo(meta: Record<string, any>) {
   const short = cleanHtml(meta?.LicenseShortName?.value);
   const rawUrl = cleanHtml(meta?.LicenseUrl?.value);
   const url = rawUrl.startsWith("//") ? "https:" + rawUrl : rawUrl;
-  const artist = cleanHtml(meta?.Artist?.value);
-  const credit = cleanHtml(meta?.Credit?.value);
+  const artist = cleanHtml(meta?.Artist?.value || meta?.Author?.value);
+  const credit = cleanHtml(meta?.Credit?.value || meta?.Attribution?.value);
   const normalized = short.toLowerCase();
   const licenseUrl = url.toLowerCase();
+  const copyrighted = cleanHtml(meta?.Copyrighted?.value).toLowerCase();
   const cc0 = /^(?:cc0(?:\s|$)|cc zero)$/i.test(short) && /creativecommons\.org\/publicdomain\/zero\//.test(licenseUrl);
-  const publicDomain = /^(public domain|pd|public domain mark)$/i.test(short) && /creativecommons\.org\/publicdomain\/mark\//.test(licenseUrl);
+  const publicDomain = /^(public domain|pd|public domain mark)$/i.test(short) &&
+    (/creativecommons\.org\/publicdomain\/mark\//.test(licenseUrl) || (!licenseUrl && copyrighted === "false"));
   const ccBy = /^cc by(?:\s|$)/i.test(short) && /creativecommons\.org\/licenses\/by\/\d+(?:\.\d+)?\//.test(licenseUrl);
   const ccBySa = /^cc by-sa(?:\s|$)/i.test(short) && /creativecommons\.org\/licenses\/by-sa\/\d+(?:\.\d+)?\//.test(licenseUrl);
   const allowed = cc0 || publicDomain || ccBy || ccBySa;
-  if (!allowed || !/^https:\/\/creativecommons\.org\//i.test(url)) return null;
+  const effectiveLicenseUrl = url || (publicDomain && copyrighted === "false"
+    ? "https://commons.wikimedia.org/wiki/Commons:Licensing" : "");
+  if (!allowed || (!/^https:\/\/creativecommons\.org\//i.test(url) && !effectiveLicenseUrl)) return null;
   if (/non.?commercial|by-nc|\bnd\b|by-nd|fair.?use|all.?rights.?reserved/i.test(normalized + " " + licenseUrl)) return null;
   const attribution = artist || credit;
   // CC BY / CC BY-SA require a real creator or credit line; never invent one.
   if ((ccBy || ccBySa) && !attribution) return null;
   return {
     short,
-    url,
+    url: effectiveLicenseUrl,
     artist,
     credit,
     attribution: attribution || "Public domain / CC0"
@@ -251,8 +255,12 @@ async function searchImage(work: any) {
         console.log("poster-debug:matched-candidate", JSON.stringify({
           query, title: page.title, width, height, ratio: Number((width / Math.max(height, 1)).toFixed(3)),
           logoFile, posterContext, validShape, licenseShort: cleanHtml(info.extmetadata?.LicenseShortName?.value),
-          licenseUrl: cleanHtml(info.extmetadata?.LicenseUrl?.value), attribution: license?.attribution || null,
-          accepted: Boolean(validShape && license)
+          licenseUrl: cleanHtml(info.extmetadata?.LicenseUrl?.value),
+          copyrighted: cleanHtml(info.extmetadata?.Copyrighted?.value),
+          metaKeys: Object.keys(info.extmetadata || {}),
+          artistMeta: cleanHtml(info.extmetadata?.Artist?.value || info.extmetadata?.Author?.value),
+          creditMeta: cleanHtml(info.extmetadata?.Credit?.value || info.extmetadata?.Attribution?.value),
+          attribution: license?.attribution || null, accepted: Boolean(validShape && license)
         }));
       }
       if (!license) return null;
