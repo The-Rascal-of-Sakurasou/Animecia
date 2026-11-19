@@ -4,6 +4,8 @@
   const isEnglish=()=>localStorage.getItem("anixia-language")==="en";
   const value=(row,ja,en,fallback)=>isEnglish()?(row?.[en]||row?.name_en||row?.[ja]||fallback):(row?.[ja]||fallback);
   const label=(ja,en)=>isEnglish()?en:ja;
+  const hasJapanese=value=>/[\\u3040-\\u30ff\\u3400-\\u9fff]/u.test(String(value||""));
+  const englishTitle=row=>row?.title_en||(row?.title&&!hasJapanese(row.title)?row.title:"English title unavailable");
   const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const fmt=v=>({tv:"TV",movie:label("劇場版","Movie"),ova:"OVA",ona:"ONA",special:label("特別編","Special"),web:"Web",other:label("その他","Other")}[v]||v||label("未登録","Not available"));
   const statusName=v=>({plan_to_watch:"視聴予定",watching:"視聴中",completed:"視聴済み",on_hold:"中断・保留",dropped:"視聴をやめた"}[v]||v);
@@ -23,7 +25,7 @@
   function setError(message){$("detail-loading").hidden=true;$("detail-error").hidden=false;$("detail-error").textContent=message;}
   function renderWork(a){
     work=a;
-    const name=isEnglish()?(a.title||a.title_ja||a.title_kana):(a.title_ja||a.title_kana||a.title);
+    const name=isEnglish()?englishTitle(a):(a.title_ja||a.title_kana||a.title);
     document.title=isEnglish()?name+" | Anime Details & Watchlist | ANIXIA":name+"｜作品情報・視聴記録｜ANIXIA";
     const synopsis=isEnglish()?(a.synopsis_en||"English synopsis is not available yet."):(a.synopsis||"あらすじ情報はまだ登録されていません。");
     const desc=(synopsis||name).slice(0,150);
@@ -49,7 +51,7 @@
     const related=a.related_works||[];
     $("related-works").innerHTML=related.length?related.map(r=>{
       const direction=r.direction==="incoming"?label("関連元","Related From"):label("関連先","Related To");
-      return '<a href="anime-detail.html?id='+encodeURIComponent(r.id)+'"><span>'+esc(value(r,"title_ja","title",isEnglish()?"Title unavailable":"作品名未登録"))+'</span><small>'+esc(direction+" · "+(relationLabels[r.relation_type]||r.relation_type))+'</small></a>';
+      return '<a href="anime-detail.html?id='+encodeURIComponent(r.id)+'"><span>'+esc((isEnglish()?englishTitle(r):value(r,"title_ja","title","作品名未登録")))+'</span><small>'+esc(direction+" · "+(relationLabels[r.relation_type]||r.relation_type))+'</small></a>';
     }).join(""):'<div class="anixia-empty">関連作品はまだ登録されていません。</div>';
     const episodes=a.episodes||[];
     $("episodes").innerHTML=episodes.length?episodes.map(e=>{
