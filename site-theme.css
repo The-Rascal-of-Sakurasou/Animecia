@@ -3187,3 +3187,20 @@ html,body{background:#fff!important;color:#26332c!important;background-image:non
 :where(.anixia-footer-description,.anixia-footer-bottom){color:#718078!important}
 :where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid rgba(3,175,106,.32)!important;outline-offset:3px!important}
 ::selection{background:#c9ecd7!important;color:#174d38!important}
+
+
+/* ANIXIA brand: JT green with classic X blue */
+:root{--anixia-brand-green:#03AF6A;--anixia-brand-blue:#1DA1F2;--anixia-brand-green-dark:#078653;--anixia-brand-green-soft:#E8F6EE;--anixia-brand-line:#E1EBE4}
+html,body{background:#fff!important;color:#26332c!important}
+:where(.site-header,.anixia-global-header,.anixia-footer,footer){background:#fff!important;color:#26332c!important;border-color:var(--anixia-brand-line)!important;box-shadow:none!important}
+:where(.anixia-logo,.anixia-footer-logo){display:inline-flex!important;align-items:baseline!important;color:var(--anixia-brand-green)!important;font-family:Inter,"Segoe UI",Arial,sans-serif!important;font-weight:850!important;letter-spacing:-.075em!important;line-height:1!important;text-decoration:none!important}
+:where(.anixia-logo .anixia-logo-xia,.anixia-footer-logo .anixia-logo-xia){display:inline!important;position:relative!important;width:auto!important;height:auto!important;margin:0!important;padding:0!important;background:transparent!important;color:var(--anixia-brand-blue)!important;border:0!important;border-radius:0!important;transform:none!important;font:inherit!important;letter-spacing:inherit!important;line-height:inherit!important;text-shadow:none!important}
+:where(.anixia-logo .anixia-logo-xia)::after,:where(.anixia-footer-logo .anixia-logo-xia)::after{content:"";position:absolute;left:7%;right:4%;bottom:-.13em;height:2px;background:var(--anixia-brand-green);border-radius:2px}
+:where(.anixia-logo span:not(.anixia-logo-xia),.anixia-footer-logo span:not(.anixia-logo-xia)){display:inline!important;width:auto!important;height:auto!important;margin:0!important;padding:0!important;background:transparent!important;color:var(--anixia-brand-blue)!important;transform:none!important}
+:where(.anixia-main-nav a,.site-header nav a,.anixia-footer-nav a){color:#526159!important}
+:where(.anixia-main-nav a:hover,.site-header nav a:hover,.anixia-footer-nav a:hover){color:var(--anixia-brand-green-dark)!important;background:#edf7f1!important}
+:where(.anixia-account.primary,.anixia-header-actions .primary,.anixia-search-form button,.primary,.btn.primary,.search-submit,.search-button,.detail-link){background:var(--anixia-brand-green)!important;border-color:var(--anixia-brand-green)!important;color:#fff!important;box-shadow:none!important}
+:where(.anixia-account.primary,.anixia-header-actions .primary,.anixia-search-form button,.primary,.btn.primary,.search-submit,.search-button,.detail-link):hover{background:var(--anixia-brand-green-dark)!important;border-color:var(--anixia-brand-green-dark)!important}
+:where(.anixia-eyebrow,.page-kicker,.eyebrow,.section-link,.more,.feature-index,.anixia-service-index,.rank-score,.score,.score-badge,.anime-score){color:var(--anixia-brand-green-dark)!important}
+:where(input,select,textarea):focus{border-color:var(--anixia-brand-green)!important;box-shadow:0 0 0 3px rgba(3,175,106,.13)!important}
+:where(input[type=checkbox],input[type=radio]){accent-color:var(--anixia-brand-green)!important}
