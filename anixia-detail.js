@@ -69,16 +69,10 @@
       synopsisSource.textContent="";
     }
     const posterSource=$("poster-source");
-    const posterCredit=a.poster_credit||{};
-    if(posterCredit.source_url){
-      const sourceName=posterCredit.source==="anilist"?"AniList":posterCredit.source==="wikimedia_commons"?"Wikimedia Commons":"画像出典";
-      const licenseText=posterCredit.license?" · "+esc(posterCredit.license):"";
-      const licenseLink=posterCredit.license_url?' · <a href="'+esc(posterCredit.license_url)+'" target="_blank" rel="noopener noreferrer">ライセンス情報</a>':"";
-      posterSource.hidden=false;
-      posterSource.innerHTML='画像出典：<a href="'+esc(posterCredit.source_url)+'" target="_blank" rel="noopener noreferrer">'+sourceName+'</a> · '+esc(posterCredit.attribution||"提供元：AniList")+licenseText+licenseLink;
-    }else{
+    if(posterSource){
       posterSource.hidden=true;
       posterSource.textContent="";
+      posterSource.removeAttribute("aria-label");
     }
     const studioNames=(a.studios||[]).map(s=>s.name_ja||"日本語表記未登録").filter(Boolean);
     const info=[["形式",fmt(a.format)],["放送年",a.release_year||"未登録"],["シーズン",a.season||"未登録"],["話数",a.episode_count||a.episodes_count||"未登録"],["放送状況",a.status||"未登録"],["制作会社",studioNames.join("・")||(a.studio?(a.studio.name_ja||"日本語表記未登録"):"未登録")]];
