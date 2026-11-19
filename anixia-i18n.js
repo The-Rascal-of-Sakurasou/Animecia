@@ -406,6 +406,32 @@
     return v === "en" ? "en" : "ja";
   };
   let lang = readLang();
+  Object.assign(ja, {
+    "プロフィールの公開設定":"Profile visibility",
+    "非公開にすると、他のユーザーからプロフィールや公開項目を閲覧できなくなります。":"When private, other users cannot view your profile or its sections.",
+    "プロフィール全体を公開":"Make profile public",
+    "投稿を公開":"Show posts",
+    "お気に入りを公開":"Show favorites",
+    "視聴予定を公開":"Show planned anime",
+    "視聴記録を公開":"Show watch history",
+    "評価を公開":"Show ratings",
+    "レビューを公開":"Show reviews",
+    "フォロー・フォロワーを公開":"Show follows and followers",
+    "高評価順リストを公開":"Show top-rated list",
+    "プロフィールを保存しました。":"Profile saved.",
+    "保存できませんでした。ユーザーIDの重複などを確認してください。":"Could not save. Check whether the username is already taken.",
+    "フォロー":"Follow",
+    "ログインしてフォロー":"Log in to follow",
+    "ANIXIAユーザー":"ANIXIA user",
+    "ユーザー名未設定":"Username not set",
+    "プロフィールを読み込めませんでした。":"Could not load the profile.",
+    "情報を読み込めませんでした。":"Could not load the information.",
+    "公開審査待ち":"Pending publication",
+    "ネタバレあり":"Spoilers",
+    "詳細を見る":"View details",
+    "写真":"Photo"
+  });
+
   const mapText = (value) => {
     if (lang !== "en") return value;
     const trimmed = value.trim();
