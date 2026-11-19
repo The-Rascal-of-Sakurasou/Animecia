@@ -21,6 +21,7 @@ main{max-width:1100px;margin:0 auto;padding:28px 16px 70px}
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <script src="auth-core.js"></script>
 <link rel="stylesheet" href="site-theme.css?v=anixia-design-v4-20261119">
+<link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co">
 </head>
 <body>
 <header><div class="wrap head"><a class="logo" href="index.html">ANIXIA</a><nav>
@@ -38,7 +39,7 @@ const hasJapanese=v=>/[\u3040-\u30ff\u3400-\u9fff]/u.test(String(v||""));
 const isEnglish=()=>localStorage.getItem("anixia-language")==="en";
 const titleOf=a=>isEnglish()?(a.title_en||(a.title&&!hasJapanese(a.title)?a.title:"English title unavailable")):(a.title_ja||a.title_kana||a.title||"タイトル未設定");
 const mediaUrl=(url,stamp)=>{if(!url)return "";try{const u=new URL(url,location.href);if(stamp)u.searchParams.set("v",String(new Date(stamp).getTime()));return u.href}catch(_){return url}};
-const imageMarkup=(url,alt)=>url?'<img class="thumb" src="'+esc(mediaUrl(url))+'" alt="'+esc(alt)+'" loading="lazy" decoding="async">':'<div class="thumb" style="display:grid;place-items:center;color:#888">画像なし</div>';
+const imageMarkup=(url,alt)=>url?'<img class="thumb" src="'+esc(mediaUrl(url))+'" alt="'+esc(alt)+'" loading="lazy" decoding="async" fetchpriority="high">':'<div class="thumb" style="display:grid;place-items:center;color:#888">画像なし</div>';
 async function getAnime(ids){
  const unique=[...new Set((ids||[]).filter(Boolean))],rows=[];
  for(let i=0;i<unique.length;i+=100)rows.push(...await ANIXIA.getPublicAnimeByIds(unique.slice(i,i+100)));
@@ -51,7 +52,7 @@ function renderHeader(stats,reviewCount,isSelf){
  const y=Math.min(100,Math.max(0,Number(profile.avatar_position_y??50)));
  const z=Math.min(220,Math.max(100,Number(profile.avatar_zoom??100)));
  const avatar=profile.avatar_url
-  ?'<img class="profile-avatar" style="object-position:'+x+'% '+y+'%;transform:scale('+(z/100)+')" src="'+esc(mediaUrl(profile.avatar_url,profile.updated_at))+'" alt="'+esc(name)+'" loading="lazy">'
+  ?'<img class="profile-avatar" style="object-position:'+x+'% '+y+'%;transform:scale('+(z/100)+')" src="'+esc(mediaUrl(profile.avatar_url,profile.updated_at))+'" alt="'+esc(name)+'" loading="lazy" decoding="async">'
   :'<div class="profile-avatar profile-avatar-fallback">'+esc(name.slice(0,1))+'</div>';
  const actions=isSelf
   ?'<a class="btn" href="mypage.html">プロフィールを編集</a>'
@@ -141,7 +142,7 @@ async function renderUsers(ids){
  el.innerHTML=ids.map(id=>{
   const p=map.get(id);if(!p)return "";
   const name=p.display_name||p.username||"ANIXIAユーザー";
-  const avatar=p.avatar_url?'<img class="thumb" src="'+esc(mediaUrl(p.avatar_url,p.updated_at))+'" alt="" loading="lazy">':'<div class="thumb" style="display:grid;place-items:center">'+esc(name.slice(0,1))+'</div>';
+  const avatar=p.avatar_url?'<img class="thumb" src="'+esc(mediaUrl(p.avatar_url,p.updated_at))+'" alt="" loading="lazy" decoding="async">':'<div class="thumb" style="display:grid;place-items:center">'+esc(name.slice(0,1))+'</div>';
   return '<a class="list-item" href="profile.html?id='+encodeURIComponent(id)+'">'+avatar+'<div class="grow"><div class="title">'+esc(name)+'</div><div class="meta">'+(p.username?"@"+esc(p.username):"")+'</div></div></a>';
  }).join("")||'<div class="empty">公開されているユーザーはいません。</div>';
 }
@@ -153,7 +154,7 @@ async function loadTab(tab){
    if(error)throw error;
    const ids=(data||[]).map(x=>x.id),media=new Map();
    if(ids.length){const mr=await supabaseClient.from("social_post_media").select("post_id,public_url,sort_order").in("post_id",ids).order("sort_order",{ascending:true});if(!mr.error)(mr.data||[]).forEach(x=>{if(!media.has(x.post_id))media.set(x.post_id,[]);media.get(x.post_id).push(x.public_url)})}
-   el.innerHTML=(data||[]).map(x=>'<article class="review-item"><div class="sub">投稿 ・ '+esc(new Date(x.created_at).toLocaleString("ja-JP"))+'</div><div style="margin-top:8px;white-space:pre-wrap;line-height:1.7">'+esc(x.body||"")+'</div>'+((media.get(x.id)||[]).length?'<div class="post-media-grid">'+media.get(x.id).map(u=>'<img src="'+esc(u)+'" alt="投稿された写真" loading="lazy" decoding="async">').join("")+'</div>':x.attachment_url?'<img src="'+esc(x.attachment_url)+'" alt="投稿された写真" loading="lazy" style="display:block;max-width:min(100%,420px);max-height:360px;object-fit:contain;border-radius:12px;margin-top:9px">':"")+'<div style="margin-top:9px"><a class="btn secondary" href="community.html?post='+encodeURIComponent(x.id)+'">投稿を開く</a></div></article>').join("")||'<div class="empty">公開されている投稿はありません。</div>';
+   el.innerHTML=(data||[]).map(x=>'<article class="review-item"><div class="sub">投稿 ・ '+esc(new Date(x.created_at).toLocaleString("ja-JP"))+'</div><div style="margin-top:8px;white-space:pre-wrap;line-height:1.7">'+esc(x.body||"")+'</div>'+((media.get(x.id)||[]).length?'<div class="post-media-grid">'+media.get(x.id).map(u=>'<img src="'+esc(u)+'" alt="投稿された写真" loading="lazy" decoding="async">').join("")+'</div>':x.attachment_url?'<img src="'+esc(x.attachment_url)+'" alt="投稿された写真" loading="lazy" style="display:block;max-width:min(100%,420px);max-height:360px;object-fit:contain;border-radius:12px;margin-top:9px" decoding="async">':"")+'<div style="margin-top:9px"><a class="btn secondary" href="community.html?post='+encodeURIComponent(x.id)+'">投稿を開く</a></div></article>').join("")||'<div class="empty">公開されている投稿はありません。</div>';
    return;
   }
   if(tab==="favorites"||tab==="plan_to_watch"||tab==="watching"||tab==="completed"||tab==="ratings"||tab==="ranking"){
