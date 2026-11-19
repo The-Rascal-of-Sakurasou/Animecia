@@ -37,14 +37,14 @@ jobs:
                   continue
               text = path.read_text(encoding="utf-8")
               relative_script = Path(__import__("os").path.relpath("anixia-i18n.js", path.parent)).as_posix()
-              tag = f'<script src="{relative_script}?v=20261119-r4" defer></script>'
+              tag = f'<script src="{relative_script}?v=20261119-r5" defer></script>'
               if "anixia-i18n.js" not in text:
                   if re.search(r"</body>", text, flags=re.I):
                       text = re.sub(r"</body>", tag + "\n</body>", text, count=1, flags=re.I)
                   else:
                       text += "\n" + tag + "\n"
               text = re.sub(r'(site-theme\.css\?v=)[^"\']+', r'\g<1>anixia-design-v4-20261119', text)
-              text = re.sub(r'(anixia-i18n\.js\?v=)[^"\']+', r'\g<1>20261119-r4', text)
+              text = re.sub(r'(anixia-i18n\.js\?v=)[^"\']+', r'\g<1>20261119-r5', text)
               if text != path.read_text(encoding="utf-8"):
                   path.write_text(text, encoding="utf-8")
                   changed.append(rel)
