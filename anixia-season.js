@@ -28,7 +28,7 @@
   async function load() {
     const year = Number($("season-year").value);
     const season = $("season-name").value;
-    $("season-title").textContent = year + "年 " + names[season] + "アニメ";
+    $("season-title").textContent = en() ? names[season]+" "+year+" Anime" : year + "年 " + names[season] + "アニメ";
     $("season-grid").innerHTML = en() ? '<p class="season-state">Loading anime…</p>' : '<p class="season-state">作品情報を読み込んでいます…</p>';
     try {
       const works = [];
