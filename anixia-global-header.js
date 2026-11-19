@@ -50,6 +50,15 @@
         .anixia-global-nav a{padding:6px 8px!important}
         .anixia-header-actions{margin-left:0!important}
       }
+      /* Mobile header: stack brand, actions and horizontally scrollable navigation. */
+      @media(max-width:760px){
+        .anixia-global-header-inner{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto auto!important;align-items:center!important;gap:9px!important;width:100%!important;min-height:0!important;padding:10px 14px!important;box-sizing:border-box!important}
+        .anixia-global-header .anixia-logo{grid-row:1!important;justify-self:start!important;font-size:24px!important}
+        .anixia-header-actions{grid-row:2!important;display:flex!important;flex-wrap:nowrap!important;justify-content:space-between!important;align-items:center!important;gap:7px!important;width:100%!important;min-width:0!important;margin:0!important}
+        .anixia-header-actions .anixia-header-button{flex:1 1 0!important;min-width:0!important;min-height:38px!important;padding:0 7px!important;font-size:12px!important;white-space:nowrap!important}
+        .anixia-global-nav{grid-row:3!important;display:flex!important;flex:0 0 auto!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:flex-start!important;gap:5px!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:0 0 2px!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;overscroll-behavior-x:contain!important;-webkit-overflow-scrolling:touch!important}
+        .anixia-global-nav a{flex:0 0 auto!important;display:inline-flex!important;min-width:max-content!important;padding:7px 9px!important;font-size:12px!important;line-height:1.4!important;white-space:nowrap!important}
+      }
       @media(max-width:420px){
         .anixia-global-header .anixia-logo{font-size:22px!important}
         .anixia-header-actions{gap:5px!important}
