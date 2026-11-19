@@ -15,6 +15,7 @@
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true,
+        storage: w.sessionStorage,
         storageKey: "anixia-auth-session"
       }
     });
