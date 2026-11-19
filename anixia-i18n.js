@@ -340,6 +340,26 @@
     "未設定":"Not Set"
   });
 
+  Object.assign(ja, {
+    "ジャンル情報は準備中です。作品データの登録後に表示します。":"Genre information is being prepared and will appear when catalog data is available.",
+    "ジャンルを読み込めませんでした。":"Could not load genres.",
+    "作品データが登録されると、ここに表示されます。":"Anime will appear here once catalog data is available.",
+    "作品を読み込めませんでした。":"Could not load anime.",
+    "ホーム":"Home",
+    "人物・団体":"People & Studios",
+    "レビュー":"Reviews",
+    "データ出典":"Data Sources",
+    "利用規約":"Terms of Service",
+    "プライバシー":"Privacy",
+    "プライバシーポリシー":"Privacy Policy",
+    "ANIXIA ホーム":"ANIXIA Home",
+    "ANIXIA / アニメ作品情報":"ANIXIA / Anime Information",
+    "人物・キャラクター・制作会社一覧へ戻る":"Back to People, Characters & Studios",
+    "ジャンルから探す":"Browse by Genre",
+    "ジャンル":"Genre",
+    "ジャンル数":"Genres"
+  });
+
   const titles = {
     "ANIXIA — アニメデータベース":"ANIXIA — Anime Database",
     "アニメ作品検索｜ANIXIA":"Anime Database | ANIXIA","アニメランキング｜ANIXIA":"Anime Rankings | ANIXIA",
