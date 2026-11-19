@@ -75,6 +75,22 @@ function sameToken(a: string, b: string): boolean {
   return diff === 0;
 }
 
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message.slice(0, 1000);
+  if (error && typeof error === "object") {
+    const value = error as AnyRecord;
+    const parts = [value.message, value.details, value.hint, value.code]
+      .filter((part) => typeof part === "string" && part.trim());
+    if (parts.length) return parts.join(" | ").slice(0, 1000);
+    try {
+      return JSON.stringify(error).slice(0, 1000);
+    } catch {
+      return "Unknown object error";
+    }
+  }
+  return String(error).slice(0, 1000);
+}
+
 async function fetchCharacterLinks(workQids: string[]): Promise<{ characterQid: string; workQid: string }[]> {
   if (!workQids.length) return [];
   const values = workQids.map(id => "wd:" + id).join(" ");
@@ -743,13 +759,13 @@ Deno.serve(async (req: Request) => {
       if (mode === "sync" && run.data?.id) {
         await db.from("catalog_sync_runs").update({
           finished_at: new Date().toISOString(), status: "failed",
-          error_message: String(error).slice(0, 1000)
+          error_message: errorMessage(error)
         }).eq("id", run.data.id);
       }
       throw error;
     }
   } catch (error) {
-    console.error("ANIXIA Wikidata enrichment failed:", error);
+    console.error("ANIXIA Wikidata enrichment failed:", errorMessage(error));
     return json({ error: "Wikidata追加情報の同期に失敗しました。Edge Functionログを確認してください。" }, 500);
   }
 });
