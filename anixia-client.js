@@ -50,6 +50,19 @@
     return items.map(row => ({ ...row, title_en: byId.get(row.id) || row.title_en || null }));
   }
 
+  async function attachPosterCredits(rows) {
+    const items = Array.isArray(rows) ? rows : [];
+    const ids = [...new Set(items.filter(work => work?.poster_url).map(work => work.id).filter(Boolean))];
+    if (!ids.length) return items;
+    const result = await getClient().rpc("get_public_poster_credits", { p_anime_ids: ids });
+    if (result.error) {
+      console.warn("poster credits unavailable; uncredited artwork will stay hidden", result.error);
+      return items;
+    }
+    const credits = new Map((result.data || []).map(item => [item.anime_id, item]));
+    return items.map(work => ({ ...work, poster_credit: credits.get(work.id) || work.poster_credit || null }));
+  }
+
   async function listAnime(options = {}) {
     const db = getClient();
     const limit = Math.min(Math.max(Number(options.limit) || 24, 1), 50);
@@ -69,17 +82,8 @@
       p_character_query: safeTerm(options.characterQuery) || null
     });
     if (result.error) throw result.error;
-    let data = await attachEnglishTitles(result.data || []);
-    const imageIds = data.filter(work => work.poster_url).map(work => work.id);
-    if (imageIds.length) {
-      const creditResult = await db.rpc("get_public_poster_credits", { p_anime_ids: imageIds });
-      if (!creditResult.error) {
-        const credits = new Map((creditResult.data || []).map(item => [item.anime_id, item]));
-        data = data.map(work => ({ ...work, poster_credit: credits.get(work.id) || null }));
-      } else {
-        console.warn("poster credits unavailable; uncredited artwork will stay hidden", creditResult.error);
-      }
-    }
+    const titled = await attachEnglishTitles(result.data || []);
+    const data = await attachPosterCredits(titled);
     return { data, count: Number(data[0]?.total_count || 0) };
   }
 
@@ -135,7 +139,8 @@
     if (!uniqueIds.length) return [];
     const result = await getClient().rpc("get_public_anime_by_ids", { p_anime_ids: uniqueIds });
     if (result.error) throw result.error;
-    return attachEnglishTitles(result.data || []);
+    const titled = await attachEnglishTitles(result.data || []);
+    return attachPosterCredits(titled);
   }
 
   async function getUser() {
@@ -497,7 +502,8 @@
       p_limit: 30
     });
     if (result.error) throw result.error;
-    return attachEnglishTitles(result.data || []);
+    const titled = await attachEnglishTitles(result.data || []);
+    return attachPosterCredits(titled);
   }
   
 
