@@ -233,7 +233,7 @@ async function searchImage(work: any) {
     const target = norm(query);
     const ranked = pages.map((page: any) => {
       const info = page.imageinfo?.[0];
-      if (!info?.thumburl || !info?.descriptionurl || !String(info.thumburl).startsWith("https://upload.wikimedia.org/")) return null;
+      if (!info?.thumburl || !info?.descriptionurl || !String(info?.mime || "").startsWith("image/") || !String(info.thumburl).startsWith("https://upload.wikimedia.org/")) return null;
       const rawFileName = String(page.title || "").replace(/^File:/i, "").replace(/\.[a-z0-9]{2,5}$/i, "");
       const rawDescription = cleanHtml(info.extmetadata?.ImageDescription?.value);
       const fileName = norm(rawFileName);
