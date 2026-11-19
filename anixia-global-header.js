@@ -1,242 +1,170 @@
 (() => {
-  const HOME = "/anixia/";
-  const LOGO_HTML = 'ANI<span class="anixia-logo-xia">XIA</span>';
+  "use strict";
+  const ROOT = "/anixia/";
+  const navItems = [
+    ["ホーム", ""],
+    ["作品データベース", "anime.html"],
+    ["人物・団体", "entities.html"],
+    ["今期アニメ", "season.html"],
+    ["ジャンル", "genres.html"],
+    ["ランキング", "ranking.html"],
+    ["おすすめ診断", "recommendations.html"],
+    ["クイズ", "quiz.html"],
+    ["作品比較", "compare.html"],
+    ["コミュニティ", "community.html"],
+    ["ユーザー検索", "user-search.html"],
+    ["メッセージ", "messages.html"],
+    ["マイライブラリ", "mypage.html"]
+  ];
 
-  // Always load the latest shared stylesheet, including pages without performance.js.
-  if (!document.querySelector('link[data-anixia-unified-theme]')) {
-    const theme = document.createElement("link");
-    theme.rel = "stylesheet";
-    theme.href = new URL("site-theme.css?v=anixia-unified-all-pages-20261119f", document.currentScript?.src || location.href).href;
-    theme.dataset.anixiaUnifiedTheme = "true";
-    document.head.appendChild(theme);
+  function addStyles() {
+    if (document.getElementById("anixia-global-header-style")) return;
+    const style = document.createElement("style");
+    style.id = "anixia-global-header-style";
+    style.textContent = `
+      .site-header,.anixia-global-header{position:sticky!important;top:0!important;z-index:9999!important;width:100%!important;background:#000!important;color:#fff!important;border:0!important;border-bottom:1px solid #222!important;box-shadow:none!important}
+      .anixia-global-header-inner{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:16px!important;width:100%!important;max-width:1500px!important;min-height:68px!important;margin:0!important;padding:8px 18px!important;box-sizing:border-box!important;text-align:left!important}
+      .anixia-global-header .anixia-logo{display:inline-flex!important;flex:0 0 auto!important;color:#03AF6A!important;text-decoration:none!important;font:850 25px/1 Inter,"Segoe UI",Arial,sans-serif!important;letter-spacing:-1.7px!important;white-space:nowrap!important}
+      .anixia-global-header .anixia-logo-xia{color:#1DA1F2!important}
+      .anixia-global-nav{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:2px!important;flex:0 1 auto!important;min-width:0!important;overflow-x:auto!important;scrollbar-width:none!important}
+      .anixia-global-nav::-webkit-scrollbar{display:none!important}
+      .anixia-global-nav a{display:inline-flex!important;align-items:center!important;min-height:36px!important;padding:7px 8px!important;border-radius:5px!important;color:#fff!important;background:transparent!important;text-decoration:none!important;font-size:12px!important;font-weight:650!important;white-space:nowrap!important}
+      .anixia-global-nav a:hover,.anixia-global-nav a[aria-current="page"]{color:#03AF6A!important;background:rgba(255,255,255,.07)!important}
+      .anixia-header-actions{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:7px!important;flex:0 0 auto!important;margin:0!important}
+      .anixia-header-actions .anixia-header-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:36px!important;padding:0 12px!important;border:1px solid #03AF6A!important;border-radius:6px!important;background:#03AF6A!important;color:#fff!important;text-decoration:none!important;font-family:inherit!important;font-size:12px!important;font-weight:750!important;white-space:nowrap!important;cursor:pointer!important}
+      .anixia-header-actions .anixia-header-button:hover{background:#028f56!important;border-color:#028f56!important}
+      .anixia-header-actions [hidden]{display:none!important}
+      footer.anixia-global-footer{display:block!important;width:100%!important;margin:64px 0 0!important;padding:0!important;background:#000!important;color:#fff!important;border:0!important;border-top:1px solid #222!important;box-shadow:none!important}
+      .anixia-footer-inner{width:100%!important;max-width:1200px!important;margin:0!important;padding:28px 18px 18px!important;box-sizing:border-box!important;text-align:left!important}
+      .anixia-footer-main{margin:0 0 18px!important}
+      .anixia-footer-logo{display:inline-flex!important;color:#03AF6A!important;text-decoration:none!important;font:850 24px/1 Inter,"Segoe UI",Arial,sans-serif!important;letter-spacing:-1.7px!important}
+      .anixia-footer-logo .anixia-logo-xia{color:#1DA1F2!important}
+      .anixia-footer-nav{display:flex!important;flex-wrap:wrap!important;justify-content:flex-start!important;gap:9px 18px!important;padding:0 0 16px!important;border:0!important}
+      .anixia-footer-nav a{color:#fff!important;text-decoration:none!important;font-size:12px!important}
+      .anixia-footer-nav a:hover{color:#03AF6A!important}
+      .anixia-footer-bottom{display:flex!important;justify-content:flex-start!important;padding-top:12px!important;border-top:1px solid #222!important;color:#aaa!important;font-size:10px!important}
+      .anixia-admin-login{display:inline-block!important;margin-top:8px!important;color:#000!important;background:#000!important;font-size:10px!important;text-decoration:none!important;opacity:1!important}
+      .anixia-admin-login:hover,.anixia-admin-login:focus{color:#000!important;background:#000!important;outline:1px solid #000!important}
+      @media(max-width:900px){
+        .anixia-global-header-inner{flex-wrap:wrap!important;gap:8px 12px!important;padding:9px 14px!important}
+        .anixia-global-nav{order:3!important;flex:1 1 100%!important;width:100%!important}
+        .anixia-global-nav a{padding:6px 8px!important}
+        .anixia-header-actions{margin-left:auto!important}
+      }
+      @media(max-width:420px){
+        .anixia-global-header .anixia-logo{font-size:22px!important}
+        .anixia-header-actions{gap:5px!important}
+        .anixia-header-actions .anixia-header-button{min-height:33px!important;padding:0 8px!important;font-size:11px!important}
+      }
+    `;
+    document.head.appendChild(style);
   }
 
-  const install = () => {
-    let header = document.querySelector("header.site-header, .site-header");
+  function installHeader() {
+    let header = document.querySelector("header.site-header, header.anixia-global-header, .site-header");
     if (!header) {
       header = document.createElement("header");
-      header.className = "site-header anixia-global-header";
-      document.body.insertBefore(header, document.body.firstChild);
+      document.body.prepend(header);
     }
+    header.className = "site-header anixia-global-header";
+    header.innerHTML = `
+      <div class="anixia-global-header-inner">
+        <a class="anixia-logo" href="${ROOT}" aria-label="ANIXIA ホーム">ANI<span class="anixia-logo-xia">XIA</span></a>
+        <nav class="anixia-global-nav" aria-label="メインナビゲーション">
+          ${navItems.map(([label,path]) => `<a href="${ROOT}${path}">${label}</a>`).join("")}
+        </nav>
+        <div class="anixia-header-actions">
+          <a class="anixia-header-button" id="account-link" href="${ROOT}login.html">ログイン</a>
+          <button class="anixia-header-button" id="home-logout" type="button" hidden>ログアウト</button>
+          <button class="anixia-header-button" id="language-toggle" type="button">EN</button>
+          <a class="anixia-header-button" id="mypage-link" href="${ROOT}mypage.html">マイページ</a>
+        </div>
+      </div>`;
+    const current = location.pathname.replace(/^.*\/anixia\//, "");
+    header.querySelectorAll(".anixia-global-nav a").forEach(a => {
+      const path = a.getAttribute("href").replace(ROOT, "");
+      if (path === current || (!path && !current)) a.setAttribute("aria-current", "page");
+    });
+    const language = header.querySelector("#language-toggle");
+    language.textContent = (localStorage.getItem("anixia-language") || "ja") === "ja" ? "EN" : "日本語";
+    language.addEventListener("click", () => {
+      const next = (localStorage.getItem("anixia-language") || "ja") === "ja" ? "en" : "ja";
+      if (window.ANIXIA_SET_LANGUAGE) window.ANIXIA_SET_LANGUAGE(next);
+      else { localStorage.setItem("anixia-language", next); location.reload(); }
+    });
+    setupAuth(header);
+  }
 
-    let container = header.querySelector(".anixia-global-header-inner, .header-inner, .container.nav, .anixia-shell, .wrap, .container");
-    if (!container) {
-      container = document.createElement("div");
-      container.className = "anixia-global-header-inner";
-      while (header.firstChild) container.appendChild(header.firstChild);
-      header.appendChild(container);
-    }
-
-    let logo = container.querySelector("a.anixia-logo, a.brand, a.logo");
-    if (!logo) {
-      logo = document.createElement("a");
-      logo.className = "anixia-logo";
-      container.insertBefore(logo, container.firstChild);
-    }
-    logo.classList.add("anixia-logo");
-    logo.href = HOME;
-    logo.setAttribute("aria-label", "ANIXIA ホーム");
-    logo.setAttribute("title", "ANIXIA ホーム");
-    logo.innerHTML = LOGO_HTML;
-
-    let nav = container.querySelector("nav");
-    if (!nav) {
-      nav = document.createElement("nav");
-      container.appendChild(nav);
-    }
-    nav.className = "anixia-global-nav";
-    nav.setAttribute("aria-label", "メインナビゲーション");
-    nav.innerHTML = [
-      ["ホーム", "/anixia/"],
-      ["作品データベース", "/anixia/anime.html"],
-      ["人物・団体", "/anixia/entities.html"],
-      ["今期アニメ", "/anixia/season.html"],
-      ["ランキング", "/anixia/ranking.html"],
-      ["おすすめ診断", "/anixia/recommendations.html"],
-      ["クイズ", "/anixia/quiz.html"],
-      ["コミュニティ", "/anixia/community.html"]
-    ].map(([label, href]) => `<a href="${href}">${label}</a>`).join("");
-
-    // Consolidate every existing header control into one shared action area.
-    const actionAreas = Array.from(container.querySelectorAll(".anixia-header-actions, .nav-actions, .header-actions, .userbar"));
-    let actions = actionAreas.shift() || document.createElement("div");
-    if (!actions.isConnected) container.appendChild(actions);
-    actions.className = "anixia-header-actions";
-
-    const controls = Array.from(new Set([
-      ...container.querySelectorAll("#language-toggle,.anixia-language,#account-link,#mypage-link,#home-logout,a,button"),
-      ...(document.getElementById("language-toggle") ? [document.getElementById("language-toggle")] : [])
-    ]));
-    const classify = (el) => {
-      const id = (el.id || "").toLowerCase();
-      const href = (el.getAttribute("href") || "").toLowerCase();
-      const label = (el.textContent || "").replace(/\s+/g, "").toLowerCase();
-      if (id === "language-toggle" || el.classList.contains("anixia-language")) return "language";
-      if (id === "home-logout" || /ログアウト|log out|sign out/.test(label)) return "logout";
-      if (id === "mypage-link" || /mypage/.test(href) || /マイページ|my page/.test(label)) return "mypage";
-      if (id === "account-link" || /login/.test(href) || /ログイン|log in|sign in/.test(label)) return "login";
-      return "";
+  function setupAuth(header) {
+    const login = header.querySelector("#account-link");
+    const logout = header.querySelector("#home-logout");
+    const render = user => {
+      const signedIn = !!(user && !user.is_anonymous);
+      login.hidden = signedIn;
+      logout.hidden = !signedIn;
     };
-    const chosen = {};
-    controls.forEach((el) => {
-      if (!el || !el.isConnected) return;
-      const kind = classify(el);
-      if (!kind) return;
-      if (!chosen[kind]) chosen[kind] = el;
-      else if (el !== chosen[kind]) el.remove();
-    });
-    // Remove obsolete action wrappers after extracting their useful controls.
-    actionAreas.forEach(area => area.remove());
-    Object.values(chosen).forEach(el => actions.appendChild(el));
-
-    if (!chosen.language) {
-      const language = document.createElement("button");
-      language.type = "button";
-      language.id = "language-toggle";
-      language.className = "anixia-language";
-      language.textContent = "EN";
-      language.setAttribute("aria-label", "Switch language");
-      language.addEventListener("click", () => {
-        try {
-          const key = "anixia-language";
-          const next = localStorage.getItem(key) === "en" ? "ja" : "en";
-          localStorage.setItem(key, next);
-          location.reload();
-        } catch (_) {}
-      });
-      actions.appendChild(language);
+    const connect = () => {
+      if (!window.ANIXIA || typeof window.ANIXIA.getClient !== "function") return false;
+      try {
+        const client = window.ANIXIA.getClient();
+        if (!client?.auth) return false;
+        client.auth.getUser().then(({data,error}) => {
+          if (error) throw error;
+          render(data?.user || null);
+        }).catch(() => render(null));
+        client.auth.onAuthStateChange((_event,session) => render(session?.user || null));
+        logout.addEventListener("click", async () => {
+          logout.disabled = true;
+          logout.textContent = "ログアウト中…";
+          try {
+            const {error} = await client.auth.signOut();
+            if (error) throw error;
+            location.href = ROOT;
+          } catch (error) {
+            console.error("ANIXIA logout failed",error);
+            logout.disabled = false;
+            logout.textContent = "ログアウト";
+            alert("ログアウトできませんでした。時間をおいて再度お試しください。");
+          }
+        });
+        return true;
+      } catch (_) { return false; }
+    };
+    if (!connect()) {
+      let attempts = 0;
+      const retry = () => {
+        if (connect() || ++attempts >= 40) return;
+        setTimeout(retry,100);
+      };
+      setTimeout(retry,100);
     }
-    if (!chosen.mypage) {
-      const account = document.createElement("a");
-      account.id = "mypage-link";
-      account.href = "/anixia/mypage.html";
-      account.textContent = "マイページ";
-      actions.appendChild(account);
-    }
-    if (!chosen.login) {
-      const login = document.createElement("a");
-      login.id = "account-link";
-      login.href = "/anixia/login.html";
-      login.textContent = "ログイン";
-      actions.appendChild(login);
-    }
-    actions.querySelectorAll("a,button").forEach((el) => {
-      if (el.id === "language-toggle") el.classList.add("anixia-language");
-      else if (el.id === "account-link" || el.id === "mypage-link" || el.id === "home-logout") el.classList.add("anixia-account");
-    });
+  }
 
-    document.querySelectorAll(".auth-panel > a").forEach((link) => {
-      if (link.textContent.trim().replace(/\\s+/g, "") === "ANIXIA") link.remove();
-    });
-
-    if (!document.getElementById("anixia-global-header-style")) {
-      const style = document.createElement("style");
-      style.id = "anixia-global-header-style";
-      style.textContent = `
-        .site-header,.anixia-global-header{display:block!important;width:100%!important;text-align:left!important}
-        .anixia-global-header-inner,.site-header .header-inner,.site-header .container,.site-header .container.nav,.anixia-global-header .header-inner,.anixia-global-header .container,.anixia-global-header .container.nav,.anixia-global-header .wrap{
-          display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:20px!important;
-          width:min(1200px,100%)!important;min-height:66px!important;margin:0 auto!important;padding:0 22px!important;text-align:left!important;
-        }
-        .site-header nav,.anixia-global-header nav,.main-nav,.site-nav,.nav-links{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;flex:0 1 auto!important;min-width:0!important;margin:0!important;text-align:left!important;overflow-x:auto}
-        .anixia-global-nav{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:4px!important;flex:1 1 auto!important;min-width:0!important;overflow-x:auto!important;scrollbar-width:none!important}.anixia-global-nav::-webkit-scrollbar{display:none!important}.anixia-global-nav a{color:#fff!important;text-decoration:none!important;white-space:nowrap!important;padding:8px 10px!important;border-radius:6px!important;font-size:12px!important;font-weight:650!important}
-        .anixia-global-nav a:hover{color:#03AF6A!important}
-        .anixia-header-actions{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;margin-left:0!important;flex:none!important}.anixia-header-actions a,.anixia-header-actions button{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:36px!important;padding:0 13px!important;border:1px solid #03AF6A!important;border-radius:7px!important;background:#03AF6A!important;color:#fff!important;text-decoration:none!important;font-size:12px!important;font-weight:750!important;white-space:nowrap!important;cursor:pointer!important}
-        .site-header .header-actions,.site-header .nav-actions,.site-header .userbar,.anixia-global-header .header-actions,.anixia-global-header .nav-actions,.anixia-global-header .userbar{margin-left:0!important;justify-content:flex-start!important}
-        footer.anixia-global-footer,.anixia-footer-inner{ text-align:left!important }
-        .anixia-footer-inner{margin:0 auto!important}
-        .anixia-footer-main,.anixia-footer-nav,.anixia-footer-bottom{justify-content:flex-start!important;align-items:flex-start!important;text-align:left!important}
-        header,.site-header,.anixia-global-header,.global-header,.main-header,.site-navbar{
-          background:#111!important;background-color:#111!important;color:#fff!important;border:0!important;border-bottom:1px solid #292929!important;box-shadow:none!important;box-sizing:border-box;
-        }
-        .site-header,.anixia-global-header{position:sticky;top:0;z-index:9999;min-height:68px}
-        .site-header .anixia-logo,.anixia-global-header .anixia-logo{
-          display:inline-flex;align-items:center;flex:none;color:#03AF6A!important;text-decoration:none!important;
-          font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:27px;font-weight:850;letter-spacing:-1.9px;line-height:1;text-shadow:none;
-        }
-        .site-header .anixia-logo .anixia-logo-xia,.anixia-global-header .anixia-logo .anixia-logo-xia{
-          display:inline;position:relative;margin:0;padding:0;color:#1DA1F2!important;background:transparent;border:0;border-radius:0;font:inherit;letter-spacing:inherit;line-height:inherit;text-shadow:none;transform:none;
-        }
-        .site-header .anixia-logo:hover,.anixia-global-header .anixia-logo:hover{opacity:.88}
-        .site-header .anixia-logo:focus-visible,.anixia-global-header .anixia-logo:focus-visible{outline:2px solid #087a45;outline-offset:6px;border-radius:3px}
-        @media(max-width:760px){
-          .anixia-global-header-inner,.site-header .header-inner,.site-header .container,.site-header .container.nav,.anixia-global-header .header-inner,.anixia-global-header .container,.anixia-global-header .container.nav,.anixia-global-header .wrap{min-height:58px!important;padding:8px 14px!important;gap:10px!important;flex-wrap:wrap!important}
-          .anixia-global-nav{flex-wrap:nowrap!important;gap:4px!important;width:100%!important;flex-basis:100%!important}
-          .anixia-global-nav a{padding:6px 7px!important}
-          .site-header .anixia-logo,.anixia-global-header .anixia-logo{font-size:24px}
-        }
-        @media(prefers-reduced-motion:reduce){.site-header .anixia-logo,.anixia-global-header .anixia-logo{transition:none}}
-      `;
-      document.head.appendChild(style);
-    }
-  };
-
-  const installFooter = () => {
-    // Authentication pages keep a single brand mark in the shared header; no footer logo.
-    if (document.querySelector("#login-form, #signup-form, #forgot-password-form") || /\/(login|signup|forgot-password)\.html$/.test(location.pathname)) return;
+  function installFooter() {
     const existing = document.querySelector("footer");
     const footer = existing || document.createElement("footer");
     footer.className = "anixia-global-footer";
     footer.innerHTML = `
       <div class="anixia-footer-inner">
-        <div class="anixia-footer-main">
-          <a class="anixia-footer-logo" href="/anixia/" aria-label="ANIXIA ホーム">ANI<span class="anixia-logo-xia">XIA</span></a>
-          
-        </div>
+        <div class="anixia-footer-main"><a class="anixia-footer-logo" href="${ROOT}" aria-label="ANIXIA ホーム">ANI<span class="anixia-logo-xia">XIA</span></a></div>
         <nav class="anixia-footer-nav" aria-label="フッターナビゲーション">
-          <a href="/anixia/">ホーム</a>
-          <a href="/anixia/anime.html">作品データベース</a>
-          <a href="/anixia/entities.html">人物・団体</a>
-          <a href="/anixia/season.html">今期アニメ</a>
-          <a href="/anixia/ranking.html">ランキング</a>
-          <a href="/anixia/recommendations.html">おすすめ診断</a>
-          <a href="/anixia/community.html">コミュニティ</a>
-          <a href="/anixia/data-sources.html">データ出典</a>
-          <a href="/anixia/terms.html">利用規約</a>
-          <a href="/anixia/privacy.html">プライバシー</a>
+          <a href="${ROOT}data-sources.html">データ出典</a>
+          <a href="${ROOT}terms.html">利用規約</a>
+          <a href="${ROOT}privacy.html">プライバシーポリシー</a>
+          <a href="${ROOT}operator.html">運営情報</a>
+          <a href="https://x.com/anime_love_p" target="_blank" rel="noopener noreferrer">お問い合わせ</a>
         </nav>
-        <div class="anixia-footer-bottom"><span>© ANIXIA</span></div>
+        <div class="anixia-footer-bottom">© ANIXIA</div>
+        <a class="anixia-admin-login" href="${ROOT}admin-login.html" aria-label="管理者ログイン">管理者ログイン</a>
       </div>`;
     if (!existing) document.body.appendChild(footer);
-
-    if (!document.getElementById("anixia-global-footer-style")) {
-      const style = document.createElement("style");
-      style.id = "anixia-global-footer-style";
-      style.textContent = `
-        footer.anixia-global-footer{
-          display:block!important;position:relative!important;inset:auto!important;
-          width:100%!important;margin:64px 0 0!important;padding:0!important;
-          background:#111!important;color:#d6d6d6!important;border:0!important;border-top:1px solid #292929!important;box-shadow:none!important;
-        }
-        .anixia-footer-inner{width:min(1320px,100%);margin:0 auto;padding:38px 22px 20px}
-        .anixia-footer-main{margin-bottom:24px}
-        .anixia-footer-logo{display:inline-flex;color:#03af6a!important;text-decoration:none!important;font:850 27px/1 Inter,"Segoe UI",Arial,sans-serif;letter-spacing:-1.9px}
-        .anixia-footer-logo .anixia-logo-xia{display:inline;position:relative;margin:0;padding:0;color:#1DA1F2!important;background:transparent;border:0;border-radius:0;font:inherit;letter-spacing:inherit;line-height:inherit;text-shadow:none;transform:none}
-        .anixia-footer-description{margin:10px 0 0!important;color:#a8a8a8!important;font-size:12px!important}
-        .anixia-footer-nav{display:flex;flex-wrap:wrap;gap:9px 22px;padding:20px 0;border:0}
-        .anixia-footer-nav a{color:#e6e6e6!important;text-decoration:none!important;font-size:12px!important;font-weight:650!important;transition:color .15s ease}
-        .anixia-footer-nav a:hover{color:#03af6a!important}
-        .anixia-footer-bottom{display:flex;justify-content:space-between;gap:12px;padding-top:16px;color:#a8a8a8;font-size:10px;letter-spacing:.04em}
-        @media(max-width:600px){.anixia-footer-inner{padding:30px 16px 18px}.anixia-footer-nav{gap:12px 16px}.anixia-footer-bottom{flex-direction:column;gap:5px}}
-        @media(prefers-reduced-motion:reduce){.anixia-footer-nav a{transition:none}}
-      `;
-      document.head.appendChild(style);
-    }
-  };
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", install, { once:true });
-  } else {
-    install();
   }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", installFooter, { once:true });
-  else installFooter();
-  const brandFix = document.createElement("style");
-  brandFix.id = "anixia-brand-final-rules";
-  brandFix.textContent = `
-    .site-header .anixia-logo,.anixia-global-header .anixia-logo,.anixia-footer-logo{color:#03AF6A!important;text-decoration:none!important}
-    .site-header .anixia-logo .anixia-logo-xia,.anixia-global-header .anixia-logo .anixia-logo-xia,.anixia-footer-logo .anixia-logo-xia{color:#1DA1F2!important}
-    .site-header .anixia-logo .anixia-logo-xia::after,.anixia-global-header .anixia-logo .anixia-logo-xia::after,.anixia-footer-logo .anixia-logo-xia::after{content:none!important;display:none!important;background:none!important;border:0!important}
-  `;
-  document.head.appendChild(brandFix);\n  document.querySelectorAll("header,.site-header,.anixia-global-header,.global-header,.main-header,.site-navbar").forEach(el => { el.style.setProperty("background","#111","important"); el.style.setProperty("background-color","#111","important"); el.style.setProperty("color","#fff","important"); el.style.setProperty("border-bottom","1px solid #292929","important"); el.style.setProperty("box-shadow","none","important"); });
+
+  function init() {
+    addStyles();
+    installHeader();
+    installFooter();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded",init,{once:true});
+  else init();
 })();
