@@ -216,3 +216,5 @@
 /* Retrofit workflow trigger: global language layer revision 2. */
 
 /* Shared bilingual UI cache revision 2. */
+
+/* Cache revision 3: syntax-validated. */
