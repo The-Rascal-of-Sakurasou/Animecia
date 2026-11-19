@@ -212,5 +212,7 @@
     localStorage.setItem(KEY,value);
     location.reload();
   };
-})();\n/* Retrofit workflow trigger: global language layer revision 2. */\n
+})();
+/* Retrofit workflow trigger: global language layer revision 2. */
+
 /* Shared bilingual UI cache revision 2. */
