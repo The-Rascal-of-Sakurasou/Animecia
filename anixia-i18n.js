@@ -143,3 +143,4 @@
     location.reload();
   };
 })();\n/* Retrofit workflow trigger: global language layer revision 2. */\n
+/* Shared bilingual UI cache revision 2. */
