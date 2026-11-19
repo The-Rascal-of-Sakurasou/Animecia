@@ -9,6 +9,7 @@
 <link rel="canonical" href="https://the-rascal-of-sakurasou.github.io/anixia/data-sources.html">
 <link rel="stylesheet" href="site-theme.css?v=anixia-design-v4-20261119">
 <script src="performance.js" defer></script>
+<link rel="preconnect" href="https://www.themoviedb.org" crossorigin>
 </head>
 <body class="anixia-v2">
 <header class="site-header">
@@ -148,7 +149,7 @@
   <section class="anixia-section">
     <h2>TMDB（作品画像・メタデータ）</h2>
     <p>ANIXIAでは、作品ポスター候補の取得元としてThe Movie Database（TMDB）APIとの連携を準備しています。APIキーの設定と利用条件の確認が完了するまでは、自動取得を有効化しません。</p>
-    <p><a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer"><img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38.svg" alt="The Movie Database (TMDB)" width="112" height="81" loading="lazy" style="display:block;width:112px;height:auto;object-fit:contain"></a></p>
+    <p><a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer"><img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38.svg" alt="The Movie Database (TMDB)" width="112" height="81" loading="lazy" style="display:block;width:112px;height:auto;object-fit:contain" decoding="async" fetchpriority="high"></a></p>
     <p><strong>This product uses the TMDB API but is not endorsed or certified by TMDB.</strong></p>
     <p>TMDB APIは非商用利用の場合、TMDBの出典表示などの条件を満たすことで無料利用できます。ただし、TMDB自身はAPI内の画像の権利を保有しているとは主張していません。TMDBに画像が登録されていることだけを根拠に、公式素材・著作権処理済み素材とは判断しません。作品画像の権利は各権利者に帰属します。</p>
     <p>ANIXIAは作品名と公開年を照合し、曖昧な候補は自動登録しません。画像の出典・TMDB作品ID・帰属表示を記録し、権利関係を確認できない画像は公式画像として表示しません。</p>
