@@ -34,6 +34,7 @@
 .anixia-library-empty{padding:25px;text-align:center;color:#9eacc0;border:1px dashed #354862;border-radius:10px;font-size:12px}
 @media(max-width:850px){.anixia-mypage-grid{grid-template-columns:1fr}.anixia-library-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){.anixia-mypage{width:calc(100% - 22px);padding:20px 0 55px}.anixia-mypage-panel{padding:16px}.anixia-library-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.anixia-visibility-note{font-size:11px;color:#aebbd0;line-height:1.6;margin:0 0 8px}.anixia-visibility-options{display:grid;gap:8px}.anixia-visibility-options label{display:flex;align-items:center;gap:9px;color:#dce5f2;font-size:12px;font-weight:650}.anixia-visibility-options input{width:16px;height:16px;accent-color:#03AF6A;flex:none}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="anixia-client.js"></script>
@@ -42,7 +43,6 @@
 <link rel="preconnect" href="https://trvnxggqzlhqdhoyiliy.supabase.co">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="site-theme.css?v=anixia-design-v4-20261119">
-<link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co">
 </head>
 <body>
 <header class="site-header"><div class="container nav">
@@ -62,6 +62,21 @@
 <div class="anixia-profile-field"><label for="display-name">表示名</label><input id="display-name" maxlength="50"></div>
 <div class="anixia-profile-field"><label for="username">ユーザーID</label><input id="username" maxlength="30" placeholder="英数字など"></div>
 <div class="anixia-profile-field"><label for="bio">自己紹介</label><textarea id="bio" maxlength="300"></textarea></div>
+<div class="anixia-profile-field">
+<label>プロフィールの公開設定</label>
+<p class="anixia-visibility-note">非公開にすると、他のユーザーからプロフィールや公開項目を閲覧できなくなります。</p>
+<div class="anixia-visibility-options">
+<label><input type="checkbox" id="is-public"> プロフィール全体を公開</label>
+<label><input type="checkbox" id="show-posts"> 投稿を公開</label>
+<label><input type="checkbox" id="show-favorites"> お気に入りを公開</label>
+<label><input type="checkbox" id="show-anime-follows"> 視聴予定を公開</label>
+<label><input type="checkbox" id="show-watch-status"> 視聴記録を公開</label>
+<label><input type="checkbox" id="show-ratings"> 評価を公開</label>
+<label><input type="checkbox" id="show-reviews"> レビューを公開</label>
+<label><input type="checkbox" id="show-user-follows"> フォロー・フォロワーを公開</label>
+<label><input type="checkbox" id="show-ranking"> 高評価順リストを公開</label>
+</div>
+</div>
 <button type="submit">プロフィールを保存</button>
 <p id="profile-message" class="anixia-mypage-message" aria-live="polite"></p>
 </form>
