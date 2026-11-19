@@ -48,7 +48,7 @@
     try {
       const genres = await ANIXIA.getGenres();
       $("genre-links").innerHTML = genres.length
-        ? genres.slice(0, 12).map(g => `<a href="anime.html?genre=${encodeURIComponent(g.id)}">${esc(language() === "en" ? (g.name_en || g.name) : (g.name_ja || g.name))}</a>`).join("")
+        ? genres.slice(0, 12).map(g => `<a href="anime.html?genre=${encodeURIComponent(g.id)}">${esc(language() === "en" ? (g.name_en || (g.name && !hasJapanese(g.name) ? g.name : "Genre name unavailable")) : (g.name_ja || g.name))}</a>`).join("")
         : `<p class="anixia-state">${esc(t().genresEmpty)}</p>`;
     } catch (error) {
       console.error(error);
