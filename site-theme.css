@@ -4313,3 +4313,18 @@ header .brand,header .logo,footer .brand,footer .logo,.anixia-footer .anixia-log
   background:linear-gradient(90deg,#03AF6A 0%,#03AF6A 49%,#1DA1F2 51%,#1DA1F2 100%);
   -webkit-background-clip:text;background-clip:text;
 }
+
+
+/* Unified white canvas: all unoccupied page background areas */
+html,body{
+  background:#fff!important;background-color:#fff!important;background-image:none!important;
+}
+body{
+  color:#171C19!important;
+}
+#app,#root,#__next,.app,.site,.site-main,.page-wrapper,.page-container{
+  background-color:transparent!important;background-image:none!important;
+}
+main{
+  background:transparent!important;background-color:transparent!important;background-image:none!important;
+}
