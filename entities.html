@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d18">
+<title>人物・キャラクター・制作会社データベース｜ANIXIA</title>
+<meta name="description" content="ANIXIAの人物・声優・スタッフ・キャラクター・アニメ制作会社データベース。関連するアニメ作品も横断検索できます。">
+<link rel="canonical" href="https://the-rascal-of-sakurasou.github.io/anixia/entities.html">
+<meta property="og:title" content="人物・キャラクター・制作会社データベース｜ANIXIA">
+<meta property="og:description" content="アニメに関わる人物・キャラクター・制作会社を探す。">
+<meta property="og:site_name" content="ANIXIA">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="anixia-client.js"></script>
+<script src="entities.js" defer></script>
+<script src="performance.js" defer></script>
+<link rel="preconnect" href="https://trvnxggqzlhqdhoyiliy.supabase.co">
+<link rel="stylesheet" href="site-theme.css?v=anixia-entity-db-20261119">
+<style>
+.entity-page{width:min(1240px,calc(100% - 36px));margin:auto;padding:32px 0 70px}
+.entity-hero{padding:28px 30px;border:1px solid #293b56;border-radius:17px;background:linear-gradient(135deg,#101c30,#192c46);margin-bottom:18px}
+.entity-hero small{color:#f2b84d;font-size:10px;font-weight:900;letter-spacing:.16em}
+.entity-hero h1{color:#fff;font-size:clamp(27px,4vw,40px);margin:7px 0}
+.entity-hero p{color:#b7c4d6;font-size:13px;margin:0}
+.entity-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.entity-tabs button{border:1px solid #344861;border-radius:9px;padding:11px 16px;background:#111b2b;color:#dce5f2;font-size:12px;font-weight:850}
+.entity-tabs button[aria-selected=true]{background:#f2a51a;border-color:#f2a51a;color:#171b22}
+.entity-search{display:flex;gap:10px;padding:16px;border:1px solid #293b56;border-radius:14px;background:#111b2b}
+.entity-search input{flex:1;min-width:0;border:1px solid #30435f;border-radius:8px;background:#0b1423;color:#f2f5fa;padding:0 13px;min-height:44px}
+.entity-search button{border:0;border-radius:8px;background:#f2a51a;color:#171b22;padding:0 20px;font-weight:900}
+.entity-summary{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:20px 0 12px;color:#e8edf5;font-size:13px}
+.entity-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.entity-card{display:flex;align-items:center;gap:12px;min-width:0;min-height:92px;padding:14px;border:1px solid #293b56;border-radius:12px;background:#111b2b;color:#f2f5fa;text-decoration:none;transition:.18s}
+.entity-card:hover{transform:translateY(-2px);border-color:#f2a51a}
+.entity-avatar{display:grid;place-items:center;flex:none;width:48px;height:48px;border-radius:12px;background:linear-gradient(145deg,#294363,#17243a);color:#f2b84d;font-weight:950;font-size:18px}
+.entity-card-copy{min-width:0}.entity-card-copy b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.entity-card-copy small{display:block;margin-top:4px;color:#9eacc0;font-size:10px;line-height:1.5}
+.entity-empty{grid-column:1/-1;padding:34px 16px;border:1px dashed #354862;border-radius:12px;text-align:center;color:#a3b0c2;font-size:12px}
+.entity-pagination{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:22px}
+.entity-pagination button{border:1px solid #344861;border-radius:8px;padding:9px 15px;background:#17243a;color:#fff;font-weight:800}
+.entity-pagination button:disabled{opacity:.35;cursor:not-allowed}
+.entity-pagination span{font-size:12px;color:#a3b0c2}
+@media(max-width:950px){.entity-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:680px){.entity-page{width:calc(100% - 22px);padding:22px 0 55px}.entity-hero{padding:22px}.entity-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.entity-card{padding:10px;gap:9px;min-height:80px}.entity-avatar{width:40px;height:40px}.entity-search{padding:11px}.entity-search button{padding:0 13px}}
+@media(max-width:390px){.entity-grid{grid-template-columns:1fr}}
+</style>
+<script src="/anixia/anixia-global-header.js?v=20261119-entities" defer></script>
+</head>
+<body>
+<header class="site-header"><div class="container nav"><a class="brand" href="index.html">ANIXIA</a><nav class="nav-links" aria-label="メインメニュー"><a href="index.html">ホーム</a><a href="anime.html">作品検索</a><a href="entities.html" aria-current="page">人物・団体</a><a href="ranking.html">ランキング</a><a href="quiz.html">クイズ</a></nav><div class="nav-actions"><a class="nav-btn primary" href="mypage.html">マイページ</a></div></div></header>
+<main class="entity-page">
+<section class="entity-hero"><small>ANIME PEOPLE & ENTITIES</small><h1>人物・キャラクター・制作会社</h1><p>声優やスタッフ、作品に登場するキャラクター、アニメ制作会社を横断して探せます。</p></section>
+<div class="entity-tabs" role="tablist" aria-label="データベースの種類">
+<button type="button" data-kind="people" role="tab" aria-selected="true">人物・声優・スタッフ</button>
+<button type="button" data-kind="characters" role="tab" aria-selected="false">キャラクター</button>
+<button type="button" data-kind="studios" role="tab" aria-selected="false">制作会社</button>
+</div>
+<form id="entity-search" class="entity-search" role="search"><label class="sr-only" for="entity-query">名前で検索</label><input id="entity-query" type="search" placeholder="名前・読み仮名・英語名で検索…" autocomplete="off"><button type="submit">検索</button></form>
+<div class="entity-summary"><strong id="entity-heading">人物・声優・スタッフ</strong><span id="entity-count" aria-live="polite"></span></div>
+<section id="entity-results" class="entity-grid" aria-live="polite"><p class="entity-empty">データを読み込んでいます…</p></section>
+<nav class="entity-pagination" aria-label="ページ移動"><button id="entity-prev" type="button" disabled>前へ</button><span id="entity-page">1ページ目</span><button id="entity-next" type="button" disabled>次へ</button></nav>
+</main>
+</body></html>

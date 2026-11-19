@@ -84,10 +84,17 @@
     $("info").innerHTML=info.map(([k,v])=>'<dt>'+esc(k)+'</dt><dd>'+((typeof v==="string"&&v.startsWith("<a "))?v:esc(v))+'</dd>').join("");
     const characterItems=a.characters||[];
     $("characters").innerHTML=characterItems.length?characterItems.map(character=>{
-      const voiceActors=(character.voice_actors||[]).map(person=>esc(person.name_ja||person.name)).join("、");
-      return '<span>'+esc(character.name_ja||character.name||"名称未登録")+(character.role?' · '+esc(characterRoleLabel(character.role)):"")+(voiceActors?' · CV：'+voiceActors:"")+'</span>';
+      const characterName=character.name_ja||character.name||"名称未登録";
+      const characterLink=character.id?'<a href="entity-detail.html?type=character&id='+encodeURIComponent(character.id)+'">'+esc(characterName)+'</a>':esc(characterName);
+      const voiceActors=(character.voice_actors||[]).map(person=>person.id?'<a href="entity-detail.html?type=person&id='+encodeURIComponent(person.id)+'">'+esc(person.name_ja||person.name)+'</a>':esc(person.name_ja||person.name)).join("、");
+      return '<span>'+characterLink+(character.role?' · '+esc(characterRoleLabel(character.role)):"")+(voiceActors?' · CV：'+voiceActors:"")+'</span>';
     }).join(""):'<span class="anixia-empty">キャラクターはまだ登録されていません。</span>';
-    $("staff").innerHTML=tagList(a.staff,"スタッフ");
+    const staffItems=a.staff||[];
+    $("staff").innerHTML=staffItems.length?staffItems.map(person=>{
+      const personName=person.name_ja||person.name||"名称未登録";
+      const link=person.id?'<a href="entity-detail.html?type=person&id='+encodeURIComponent(person.id)+'">'+esc(personName)+'</a>':esc(personName);
+      return '<span>'+link+(person.role?' · '+esc(roleLabel(person.role)):"")+'</span>';
+    }).join(""):'<span class="anixia-empty">スタッフはまだ登録されていません。</span>';
     $("reviews").innerHTML=a.reviews.length?a.reviews.map(r=>'<article class="anixia-review"><b>'+esc(r.title||"レビュー")+(r.spoiler?" · ネタバレあり":"")+'</b><p>'+esc(r.body)+'</p></article>').join(""):'<div class="anixia-empty">公開レビューはまだありません。</div>';
     $("detail-loading").hidden=true;$("detail-content").hidden=false;
   }
