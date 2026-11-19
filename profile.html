@@ -205,7 +205,7 @@ async function start(){
    posts:data.show_posts!==false,favorites:data.show_favorites!==false,
    anime_follows:data.show_anime_follows!==false,watch_status:data.show_watch_status!==false,
    ratings:data.show_ratings!==false,reviews:data.show_reviews!==false,
-   user_follows:data.show_user_follows!==false,ranking:data.show_ranking!==false
+   user_follows:data.show_user_follows!==false,ranking:data.show_ranking!==false&&data.show_ratings!==false
   };
   const name=profile.display_name||profile.username||"ANIXIAユーザー";
   document.title=name+" | ANIXIA";
