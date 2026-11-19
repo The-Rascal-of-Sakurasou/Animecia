@@ -8,7 +8,7 @@
   const fmt=v=>({tv:"TV",movie:label("劇場版","Movie"),ova:"OVA",ona:"ONA",special:label("特別編","Special"),web:"Web",other:label("その他","Other")}[v]||v||label("未登録","Not available"));
   const statusName=v=>({plan_to_watch:"視聴予定",watching:"視聴中",completed:"視聴済み",on_hold:"中断・保留",dropped:"視聴をやめた"}[v]||v);
   const roleLabel=v=>({voice_actor:label("声優","Voice Actor"),director:label("監督","Director"),screenwriter:label("脚本","Screenwriter"),series_composition:label("シリーズ構成","Series Composition"),character_design:label("キャラクターデザイン","Character Design"),producer:label("プロデューサー","Producer"),original_creator:label("原作","Original Creator")}[v]||v);
-  const characterRoleLabel=v=>({main:"メインキャラクター",supporting:"サブキャラクター",background:"その他"}[v]||v);
+  const characterRoleLabel=v=>({main:label("メインキャラクター","Main Character"),supporting:label("サブキャラクター","Supporting Character"),background:label("その他","Other")}[v]||v);
   const id=new URLSearchParams(location.search).get("id");
   let work=null,user=null,userState=null;
 
@@ -25,7 +25,7 @@
     work=a;
     const name=isEnglish()?(a.title||a.title_ja||a.title_kana):(a.title_ja||a.title_kana||a.title);
     document.title=isEnglish()?name+" | Anime Details & Watchlist | ANIXIA":name+"｜作品情報・視聴記録｜ANIXIA";
-    const synopsis=isEnglish()?(a.synopsis_en||a.synopsis||"English synopsis is not available yet."):(a.synopsis||"あらすじ情報はまだ登録されていません。");
+    const synopsis=isEnglish()?(a.synopsis_en||"English synopsis is not available yet."):(a.synopsis||"あらすじ情報はまだ登録されていません。");
     const desc=(synopsis||name).slice(0,150);
     document.querySelector('meta[name="description"]').content=desc;
     $("poster").alt=isEnglish()?name+" poster":name+"のポスター";
@@ -45,10 +45,10 @@
     $("tags").innerHTML=tagList(a.tags||[],"タグ");
     $("series").innerHTML=tagList(a.series||[],"シリーズ");
     $("organizations").innerHTML=tagList(a.organizations||[],"制作団体");
-    const relationLabels={sequel:"続編",prequel:"前編",side_story:"外伝",spin_off:"スピンオフ",alternative_version:"別バージョン・リメイク",summary:"総集編",parent_story:"本編・親作品",adaptation:"メディア化・原作関係",other:"その他"};
+    const relationLabels=isEnglish()?{sequel:"Sequel",prequel:"Prequel",side_story:"Side Story",spin_off:"Spin-off",alternative_version:"Alternate Version / Remake",summary:"Compilation",parent_story:"Parent Story",adaptation:"Adaptation",other:"Other"}:{sequel:"続編",prequel:"前編",side_story:"外伝",spin_off:"スピンオフ",alternative_version:"別バージョン・リメイク",summary:"総集編",parent_story:"本編・親作品",adaptation:"メディア化・原作関係",other:"その他"};
     const related=a.related_works||[];
     $("related-works").innerHTML=related.length?related.map(r=>{
-      const direction=r.direction==="incoming"?"関連元":"関連先";
+      const direction=r.direction==="incoming"?label("関連元","Related From"):label("関連先","Related To");
       return '<a href="anime-detail.html?id='+encodeURIComponent(r.id)+'"><span>'+esc(value(r,"title_ja","title",isEnglish()?"Title unavailable":"作品名未登録"))+'</span><small>'+esc(direction+" · "+(relationLabels[r.relation_type]||r.relation_type))+'</small></a>';
     }).join(""):'<div class="anixia-empty">関連作品はまだ登録されていません。</div>';
     const episodes=a.episodes||[];
