@@ -15,11 +15,21 @@
     navigator.serviceWorker.register(sw,{scope:new URL('./',sw).pathname}).catch(()=>{});
   },{once:true});
 
+  // Load the same design system on every page, including admin and utility pages.
+  const sharedStyleScript=Array.from(document.scripts).find(s=>s.src.includes('performance.js'));
+  if(sharedStyleScript&&!document.querySelector('link[data-anixia-unified-theme]')){
+    const theme=document.createElement('link');
+    theme.rel='stylesheet';
+    theme.href=new URL('site-theme.css?v=anixia-all-pages-20261119',sharedStyleScript.src).href;
+    theme.dataset.anixiaUnifiedTheme='true';
+    document.head.appendChild(theme);
+  }
+
   // Shared ANIXIA wordmark is loaded on both root pages and generated SEO pages.
   const performanceScript=Array.from(document.scripts).find(s=>s.src.includes('performance.js'));
   if(performanceScript&&!document.querySelector('script[data-anixia-global-header]')){
     const loader=document.createElement('script');
-    loader.src=new URL('anixia-global-header.js?v=anixia-no-tagline-20261119',performanceScript.src).href;
+    loader.src=new URL('anixia-global-header.js?v=anixia-no-tagline-20261119b',performanceScript.src).href;
     loader.defer=true;
     loader.dataset.anixiaGlobalHeader='true';
     document.head.appendChild(loader);
