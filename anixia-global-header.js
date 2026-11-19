@@ -1,6 +1,6 @@
 (() => {
   const HOME = "/anixia/";
-  const LOGO_HTML = 'ANI<span class="anixia-logo-x">X</span>IA';
+  const LOGO_HTML = 'AN<span class="anixia-logo-xia">XIA</span>';
 
   const install = () => {
     let header = document.querySelector("header.site-header, .site-header");
@@ -41,8 +41,8 @@
           color:#26332c!important;text-decoration:none!important;font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:27px;font-weight:850;letter-spacing:-1.9px;line-height:1;text-shadow:none;
           transition:opacity .18s ease,transform .18s ease;
         }
-        .site-header .anixia-logo span,.anixia-global-header .anixia-logo span{
-          display:inline-grid;place-items:center;width:1.12em;height:1.12em;margin:0 .035em;color:#fff!important;background:#03AF6A;border-radius:4px;font-weight:950;text-shadow:none;transform:skewX(-8deg);
+        .site-header .anixia-logo .anixia-logo-xia,.anixia-global-header .anixia-logo .anixia-logo-xia{
+          display:inline;position:relative;margin:0;padding:0;color:#1DA1F2!important;background:transparent;border:0;border-radius:0;font:inherit;letter-spacing:inherit;line-height:inherit;text-shadow:none;transform:none;
         }
         .site-header .anixia-logo:hover,.anixia-global-header .anixia-logo:hover{
           opacity:.88;transform:translateY(-1px);
@@ -70,7 +70,7 @@
     footer.innerHTML = `
       <div class="anixia-footer-inner">
         <div class="anixia-footer-main">
-          <a class="anixia-footer-logo" href="/anixia/" aria-label="ANIXIA ホーム">ANI<span>X</span>IA</a>
+          <a class="anixia-footer-logo" href="/anixia/" aria-label="ANIXIA ホーム">AN<span class="anixia-logo-xia">XIA</span></a>
           <p class="anixia-footer-description">アニメを探す、記録する、語り合う。</p>
         </div>
         <nav class="anixia-footer-nav" aria-label="フッターナビゲーション">
@@ -102,7 +102,7 @@
         .anixia-footer-inner{width:min(1320px,100%);margin:0 auto;padding:38px 22px 20px}
         .anixia-footer-main{margin-bottom:24px}
         .anixia-footer-logo{display:inline-flex;color:#26332c!important;text-decoration:none!important;font:850 27px/1 Inter,"Segoe UI",Arial,sans-serif;letter-spacing:-1.9px}
-        .anixia-footer-logo span{display:inline-grid;place-items:center;width:1.12em;height:1.12em;margin:0 .035em;color:#fff!important;background:#03AF6A;border-radius:4px;font-weight:950;text-shadow:none;transform:skewX(-8deg)}
+        .anixia-footer-logo .anixia-logo-xia{display:inline;position:relative;margin:0;padding:0;color:#1DA1F2!important;background:transparent;border:0;border-radius:0;font:inherit;letter-spacing:inherit;line-height:inherit;text-shadow:none;transform:none}
         .anixia-footer-description{margin:10px 0 0!important;color:#718078!important;font-size:12px!important}
         .anixia-footer-nav{display:flex;flex-wrap:wrap;gap:9px 22px;padding:20px 0;border-top:1px solid rgba(255,255,255,.09);border-bottom:1px solid rgba(255,255,255,.09)}
         .anixia-footer-nav a{color:#526159!important;text-decoration:none!important;font-size:12px!important;font-weight:650!important;transition:color .15s ease}
