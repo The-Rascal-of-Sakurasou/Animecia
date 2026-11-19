@@ -1,5 +1,7 @@
 (() => {
   "use strict";
+  if (window.__ANIXIA_GLOBAL_HEADER_INSTALLED__) return;
+  window.__ANIXIA_GLOBAL_HEADER_INSTALLED__ = true;
   const ROOT = "/anixia/";
   const navItems = [
     ["作品一覧", "anime.html"],
@@ -69,7 +71,7 @@
   }
 
   function installHeader() {
-    const headerCandidates = Array.from(document.querySelectorAll("header.site-header, header.anixia-global-header, .site-header"));
+    const headerCandidates = Array.from(document.querySelectorAll("body > header, body > .site-header, body > .container.nav"));
     let header = headerCandidates.shift() || null;
     headerCandidates.forEach(duplicate => duplicate.remove());
     if (!header) {
