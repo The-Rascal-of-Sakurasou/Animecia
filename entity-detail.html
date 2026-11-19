@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d18">
+<title>人物・キャラクター・制作会社詳細｜ANIXIA</title>
+<meta name="description" content="ANIXIAの人物・キャラクター・制作会社詳細。関連するアニメ作品やスタッフ情報を確認できます。">
+<link rel="canonical" href="https://the-rascal-of-sakurasou.github.io/anixia/entity-detail.html">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="anixia-client.js"></script>
+<script src="entity-detail.js" defer></script>
+<script src="performance.js" defer></script>
+<link rel="preconnect" href="https://trvnxggqzlhqdhoyiliy.supabase.co">
+<link rel="stylesheet" href="site-theme.css?v=anixia-entity-db-20261119">
+<style>
+.entity-detail{width:min(1120px,calc(100% - 36px));margin:auto;padding:32px 0 70px}
+.entity-detail-hero{display:flex;align-items:center;gap:22px;padding:25px;border:1px solid #293b56;border-radius:17px;background:linear-gradient(135deg,#101c30,#192c46)}
+.entity-detail-avatar{display:grid;place-items:center;flex:none;width:100px;height:100px;border:1px solid #425978;border-radius:20px;background:linear-gradient(145deg,#294363,#17243a);color:#f2b84d;font-size:42px;font-weight:950}
+.entity-detail-kicker{color:#f2b84d;font-size:10px;font-weight:900;letter-spacing:.16em}
+.entity-detail h1{color:#fff;font-size:clamp(26px,4vw,40px);margin:7px 0}
+.entity-detail-sub{color:#b7c4d6;font-size:12px}
+.entity-detail-grid{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:16px;margin-top:18px}
+.entity-panel{padding:20px;border:1px solid #293b56;border-radius:14px;background:#111b2b}
+.entity-panel h2{margin:0 0 14px;color:#fff;font-size:17px}
+.entity-info{display:grid;grid-template-columns:120px 1fr;gap:9px;font-size:12px}
+.entity-info dt{color:#9eacc0}.entity-info dd{margin:0;color:#e7edf6;overflow-wrap:anywhere}
+.entity-works{display:grid;gap:9px}
+.entity-work{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid #354a67;border-radius:9px;color:#e7edf6;text-decoration:none}
+.entity-work:hover{border-color:#f2a51a}
+.entity-work small{display:block;margin-top:4px;color:#9eacc0;font-size:10px}
+.entity-empty{padding:22px;text-align:center;color:#9eacc0;font-size:12px;border:1px dashed #354862;border-radius:10px}
+.entity-role{display:inline-block;margin-left:8px;padding:3px 7px;border-radius:5px;background:#253751;color:#f2c36d;font-size:10px}
+@media(max-width:760px){.entity-detail{width:calc(100% - 22px);padding:22px 0 55px}.entity-detail-hero{padding:17px;gap:14px}.entity-detail-avatar{width:68px;height:68px;border-radius:14px;font-size:30px}.entity-detail-grid{grid-template-columns:1fr}.entity-info{grid-template-columns:100px 1fr}}
+</style>
+<script src="/anixia/anixia-global-header.js?v=20261119-entities" defer></script>
+</head>
+<body>
+<header class="site-header"><div class="container nav"><a class="brand" href="index.html">ANIXIA</a><nav class="nav-links" aria-label="メインメニュー"><a href="index.html">ホーム</a><a href="anime.html">作品検索</a><a href="entities.html">人物・団体</a><a href="ranking.html">ランキング</a><a href="quiz.html">クイズ</a></nav><div class="nav-actions"><a class="nav-btn primary" href="mypage.html">マイページ</a></div></div></header>
+<main class="entity-detail">
+<p><a href="entities.html" style="color:#d99a3b;font-size:12px;text-decoration:none">← 人物・キャラクター・制作会社一覧へ戻る</a></p>
+<div id="entity-loading" class="entity-empty">情報を読み込んでいます…</div>
+<div id="entity-error" class="entity-empty" hidden></div>
+<div id="entity-content" hidden>
+<section class="entity-detail-hero"><div id="entity-avatar" class="entity-detail-avatar" aria-hidden="true">A</div><div><div id="entity-kicker" class="entity-detail-kicker">ANIXIA ENTITY PROFILE</div><h1 id="entity-name"></h1><div id="entity-subtitle" class="entity-detail-sub"></div></div></section>
+<div class="entity-detail-grid">
+<div>
+<section class="entity-panel"><h2 id="works-heading">関連作品</h2><div id="entity-works" class="entity-works"></div></section>
+<section class="entity-panel" style="margin-top:16px"><h2 id="related-heading">関連情報</h2><div id="entity-related" class="entity-works"></div></section>
+</div>
+<aside class="entity-panel"><h2>基本情報</h2><dl id="entity-info" class="entity-info"></dl></aside>
+</div>
+</div>
+</main>
+</body></html>
