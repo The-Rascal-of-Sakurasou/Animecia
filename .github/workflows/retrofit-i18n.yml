@@ -64,4 +64,5 @@ jobs:
             exit 0
           fi
           git commit -m "Apply shared ANIXIA language and design layer to all pages"
+          git pull --rebase origin main
           git push
