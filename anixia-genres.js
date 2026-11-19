@@ -15,7 +15,7 @@
       return;
     }
     $("grid").innerHTML = filtered.map(genre =>
-      `<a class="genre" href="anime.html?genre=${encodeURIComponent(genre.id)}"><div class="genre-name">${esc(genreName(genre))}</div><div class="genre-count">${en()?"Browse anime in this genre":"このジャンルの作品を見る"}</div></a>`
+      `<a class="genre" href="anime.html?genre=${encodeURIComponent(genre.id)}"><div class="genre-name">${esc(genreName(genre))}</div></a>`
     ).join("") || `<div class="empty">${en()?"No matching genres found.":"該当するジャンルがありません。"}</div>`;
   }
   async function load() {
