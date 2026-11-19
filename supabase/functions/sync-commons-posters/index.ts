@@ -184,6 +184,9 @@ async function searchImage(work: any) {
               const fileName = String(page.title || "").replace(/^File:/i, "");
               const logoFile = /logo|ロゴ/i.test(fileName);
               const posterFile = /poster|key[ -]?visual|cover|ポスター|キービジュアル|表紙/i.test(fileName);
+              const workHasVariantTerm = /\b(movie|film|ova|ona|special)\b/i.test(String(work.title_ja || "") + " " + String(work.title || ""));
+              const candidateHasVariantTerm = /\b(movie|film|ova|ona|special)\b/i.test(fileName);
+              if (candidateHasVariantTerm && !workHasVariantTerm) return null;
               if (!logoFile && !posterFile) return null;
               const width = Number(info.width || 0), height = Number(info.height || 0);
               const validShape = logoFile
@@ -238,8 +241,14 @@ async function searchImage(work: any) {
       const rawDescription = cleanHtml(info.extmetadata?.ImageDescription?.value);
       const fileName = norm(rawFileName);
       const description = norm(rawDescription);
-      const logoFile = /logo|ロゴ/i.test(rawFileName + " " + rawDescription);
-      const posterContext = logoFile || /poster|key[ -]?visual|cover|dvd|blu[ -]?ray|promotional|artwork|ポスター|キービジュアル|表紙/i.test(rawFileName + " " + rawDescription);
+      const workText = String(work.title_ja || "") + " " + String(work.title || "");
+      const workHasVariantTerm = /\b(movie|film|ova|ona|special)\b/i.test(workText);
+      const candidateHasVariantTerm = /\b(movie|film|ova|ona|special)\b/i.test(rawFileName + " " + rawDescription);
+      if (candidateHasVariantTerm && !workHasVariantTerm) return null;
+      const logoFile = /logo|ロゴ/i.test(rawFileName + " " + rawDescription) ||
+        (/\.svg$/i.test(String(page.title || "")) && fileName === target);
+      const posterFile = /poster|key[ -]?visual|cover|dvd|blu[ -]?ray|promotional|artwork|ポスター|キービジュアル|表紙/i.test(rawFileName + " " + rawDescription);
+      const posterContext = logoFile || posterFile;
       if (!posterContext) return null;
       const exact = fileName === target || description === target;
       const contains = fileName.includes(target) || description.includes(target);
@@ -264,7 +273,7 @@ async function searchImage(work: any) {
         }));
       }
       if (!license) return null;
-      return { page, info, license, score: (exact ? 100 : 90) + (yearMatch ? 10 : 0) + (logoFile ? 20 : 0) + (!logoFile ? 10 : 0) };
+      return { page, info, license, score: (exact ? 100 : 90) + (yearMatch ? 10 : 0) + (logoFile ? 20 : 0) + (posterFile ? 10 : 0) };
     }).filter(Boolean).sort((a: any, b: any) => b.score - a.score);
     if (ranked.length && (!ranked[1] || ranked[0].score > ranked[1].score)) {
       const best = ranked[0];
@@ -332,9 +341,11 @@ Deno.serve(async (req: Request) => {
   }
   const buildQuery = (startAt: number) => {
     let query = db.from("anime").select("id,title,title_ja,title_kana,release_year,poster_url,source_id")
-      .order("release_year", { ascending: false, nullsFirst: false });
+      .order("release_year", { ascending: false, nullsFirst: false })
+      .order("id", { ascending: true });
     if (requestedIds.length) query = query.in("id", requestedIds);
-    if (!force) query = query.is("poster_url", null);
+    // Keep pagination over the stable full catalog; filtering out updated rows here
+    // would shift offsets and cause later titles to be skipped.
     return query.range(startAt, startAt + limit - 1);
   };
   let { data: works, error: listError } = await buildQuery(offset);
@@ -353,6 +364,7 @@ Deno.serve(async (req: Request) => {
 
   const results = { scanned: (works || []).length, updated: 0, unmatched: [] as string[], errors: [] as string[] };
   for (const work of works || []) {
+    if (!force && work.poster_url) continue;
     try {
       const image = await searchImage(work);
       if (!image) { results.unmatched.push(work.title_ja || work.title || work.id); continue; }
