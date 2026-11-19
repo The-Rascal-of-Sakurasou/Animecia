@@ -5,8 +5,9 @@
   let page = 0;
   let lastCount = 0;
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
-  const displayTitle = a => a.title_ja || a.title_kana || a.title || "タイトル未設定";
-  const formatName = value => ({tv:"TV",movie:"劇場版",ova:"OVA",ona:"ONA",special:"特別編",web:"Web",other:"その他"}[value] || value || "形式未登録");
+  const en=()=>localStorage.getItem("anixia-language")==="en";
+  const displayTitle = a => en() ? (a.title || "Title unavailable") : (a.title_ja || a.title_kana || a.title || "タイトル未設定");
+  const formatName = value => ({tv:"TV",movie:en()?"Movie":"劇場版",ova:"OVA",ona:"ONA",special:en()?"Special":"特別編",web:"Web",other:en()?"Other":"その他"}[value] || value || (en()?"Format unavailable":"形式未登録"));
 
   function renderCard(a) {
     const meta = [a.release_year || "年未登録", formatName(a.format), a.season || ""].filter(Boolean).join(" · ");
@@ -34,17 +35,17 @@
 
     try {
       const genres = await ANIXIA.getGenres();
-      genres.forEach(g => $("genre").add(new Option(g.name_ja || g.name, g.id)));
+      genres.forEach(g => $("genre").add(new Option(en() ? g.name : (g.name_ja || g.name), g.id)));
     } catch (e) { console.warn("genre options unavailable", e); }
 
     try {
       const studios = await ANIXIA.getStudios();
-      studios.forEach(s => $("studio").add(new Option(s.name_ja || s.name, s.id)));
+      studios.forEach(s => $("studio").add(new Option(en() ? s.name : (s.name_ja || s.name), s.id)));
     } catch (e) { console.warn("studio options unavailable", e); }
 
     try {
       const tags = await ANIXIA.getTags();
-      tags.forEach(t => $("tag").add(new Option(t.name_ja || t.name, t.id)));
+      tags.forEach(t => $("tag").add(new Option(en() ? t.name : (t.name_ja || t.name), t.id)));
       const selected = new Set([
         ...params.getAll("tag"),
         ...(params.get("tags") || "").split(",").filter(Boolean)
