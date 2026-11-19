@@ -29,10 +29,11 @@
     const ids = [...new Set(items.map(row => row?.id).filter(Boolean))];
     if (!ids.length) return items;
     const result = await getClient().from("anime_titles")
-      .select("anime_id,title,is_primary")
+      .select("anime_id,title,title_type,is_primary")
       .in("anime_id", ids)
       .eq("language_code", "en")
-      .eq("title_type", "english")
+      .in("title_type", ["english", "main", "synonym"])
+      .order("title_type", { ascending: true })
       .order("is_primary", { ascending: false })
       .limit(500);
     if (result.error) {
@@ -40,7 +41,11 @@
       return items;
     }
     const byId = new Map();
-    for (const row of result.data || []) if (!byId.has(row.anime_id)) byId.set(row.anime_id, row.title);
+    for (const row of result.data || []) {
+      const title = String(row.title || "").trim();
+      if (!title || /[\\u3040-\\u30ff\\u3400-\\u9fff]/u.test(title)) continue;
+      if (!byId.has(row.anime_id)) byId.set(row.anime_id, title);
+    }
     return items.map(row => ({ ...row, title_en: byId.get(row.id) || row.title_en || null }));
   }
 
