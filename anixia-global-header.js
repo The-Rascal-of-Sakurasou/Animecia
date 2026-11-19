@@ -6,7 +6,7 @@
   if (!document.querySelector('link[data-anixia-unified-theme]')) {
     const theme = document.createElement("link");
     theme.rel = "stylesheet";
-    theme.href = new URL("site-theme.css?v=anixia-unified-all-pages-20261119c", document.currentScript?.src || location.href).href;
+    theme.href = new URL("site-theme.css?v=anixia-unified-all-pages-20261119f", document.currentScript?.src || location.href).href;
     theme.dataset.anixiaUnifiedTheme = "true";
     document.head.appendChild(theme);
   }
@@ -57,19 +57,65 @@
       ["コミュニティ", "/anixia/community.html"]
     ].map(([label, href]) => `<a href="${href}">${label}</a>`).join("");
 
-    // Reuse the existing action area to prevent duplicate account controls.
-    let actions = container.querySelector(".anixia-header-actions, .nav-actions, .header-actions, .userbar");
-    if (!actions) {
-      actions = document.createElement("div");
-      container.appendChild(actions);
-    }
+    // Consolidate every existing header control into one shared action area.
+    const actionAreas = Array.from(container.querySelectorAll(".anixia-header-actions, .nav-actions, .header-actions, .userbar"));
+    let actions = actionAreas.shift() || document.createElement("div");
+    if (!actions.isConnected) container.appendChild(actions);
     actions.className = "anixia-header-actions";
-    if (!actions.querySelector("a,button")) {
+
+    const controls = Array.from(new Set([
+      ...container.querySelectorAll("#language-toggle,.anixia-language,#account-link,#mypage-link,#home-logout,a,button"),
+      ...(document.getElementById("language-toggle") ? [document.getElementById("language-toggle")] : [])
+    ]));
+    const classify = (el) => {
+      const id = (el.id || "").toLowerCase();
+      const href = (el.getAttribute("href") || "").toLowerCase();
+      const label = (el.textContent || "").replace(/\\s+/g, "").toLowerCase();
+      if (id === "language-toggle" || el.classList.contains("anixia-language")) return "language";
+      if (id === "home-logout" || /ログアウト|log out|sign out/.test(label)) return "logout";
+      if (id === "mypage-link" || /mypage/.test(href) || /マイページ|my page/.test(label)) return "mypage";
+      if (id === "account-link" || /login/.test(href) || /ログイン|log in|sign in/.test(label)) return "login";
+      return "";
+    };
+    const chosen = {};
+    controls.forEach((el) => {
+      if (!el || !el.isConnected) return;
+      const kind = classify(el);
+      if (!kind) return;
+      if (!chosen[kind]) chosen[kind] = el;
+      else if (el !== chosen[kind]) el.remove();
+    });
+    // Remove obsolete action wrappers after extracting their useful controls.
+    actionAreas.forEach(area => area.remove());
+    Object.values(chosen).forEach(el => actions.appendChild(el));
+
+    if (!chosen.language) {
+      const language = document.createElement("button");
+      language.type = "button";
+      language.id = "language-toggle";
+      language.className = "anixia-language";
+      language.textContent = "EN";
+      language.setAttribute("aria-label", "Switch language");
+      actions.appendChild(language);
+    }
+    if (!chosen.mypage) {
       const account = document.createElement("a");
+      account.id = "mypage-link";
       account.href = "/anixia/mypage.html";
       account.textContent = "マイページ";
       actions.appendChild(account);
     }
+    if (!chosen.login) {
+      const login = document.createElement("a");
+      login.id = "account-link";
+      login.href = "/anixia/login.html";
+      login.textContent = "ログイン";
+      actions.appendChild(login);
+    }
+    actions.querySelectorAll("a,button").forEach((el) => {
+      if (el.id === "language-toggle") el.classList.add("anixia-language");
+      else if (el.id === "account-link" || el.id === "mypage-link" || el.id === "home-logout") el.classList.add("anixia-account");
+    });
 
     document.querySelectorAll(".auth-panel > a").forEach((link) => {
       if (link.textContent.trim().replace(/\\s+/g, "") === "ANIXIA") link.remove();
@@ -184,5 +230,5 @@
     .site-header .anixia-logo .anixia-logo-xia,.anixia-global-header .anixia-logo .anixia-logo-xia,.anixia-footer-logo .anixia-logo-xia{color:#1DA1F2!important}
     .site-header .anixia-logo .anixia-logo-xia::after,.anixia-global-header .anixia-logo .anixia-logo-xia::after,.anixia-footer-logo .anixia-logo-xia::after{content:none!important;display:none!important;background:none!important;border:0!important}
   `;
-  document.head.appendChild(brandFix);
+  document.head.appendChild(brandFix);\n  document.querySelectorAll("header,.site-header,.anixia-global-header,.global-header,.main-header,.site-navbar").forEach(el => { el.style.setProperty("background","#111","important"); el.style.setProperty("background-color","#111","important"); el.style.setProperty("color","#fff","important"); el.style.setProperty("border-bottom","1px solid #292929","important"); el.style.setProperty("box-shadow","none","important"); });
 })();
