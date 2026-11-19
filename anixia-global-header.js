@@ -2,6 +2,15 @@
   const HOME = "/anixia/";
   const LOGO_HTML = 'ANI<span class="anixia-logo-xia">XIA</span>';
 
+  // Always load the latest shared stylesheet, including pages without performance.js.
+  if (!document.querySelector('link[data-anixia-unified-theme]')) {
+    const theme = document.createElement("link");
+    theme.rel = "stylesheet";
+    theme.href = new URL("site-theme.css?v=anixia-unified-all-pages-20261119", document.currentScript?.src || location.href).href;
+    theme.dataset.anixiaUnifiedTheme = "true";
+    document.head.appendChild(theme);
+  }
+
   const install = () => {
     let header = document.querySelector("header.site-header, .site-header");
     if (!header) {
