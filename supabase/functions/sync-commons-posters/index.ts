@@ -14,7 +14,7 @@ const cleanHtml = (value: unknown) => String(value ?? "").replace(/<[^>]*>/g, " 
 function licenseInfo(meta: Record<string, any>) {
   const short = cleanHtml(meta?.LicenseShortName?.value);
   const rawUrl = cleanHtml(meta?.LicenseUrl?.value);
-  const url = rawUrl.startsWith("//") ? "https:" + rawUrl : rawUrl;
+  const url = rawUrl.startsWith("//") ? "https:" + rawUrl : rawUrl.startsWith("http://creativecommons.org/") ? rawUrl.replace(/^http:/i, "https:") : rawUrl;
   const artist = cleanHtml(meta?.Artist?.value || meta?.Author?.value);
   const credit = cleanHtml(meta?.Credit?.value || meta?.Attribution?.value);
   const normalized = short.toLowerCase();
@@ -95,7 +95,7 @@ async function searchImage(work: any) {
             const validShape = logoFile
               ? width >= 200 && height >= 80 && width / height >= 0.5 && width / height <= 6
               : width >= 200 && height >= 280 && width / height >= 0.38 && width / height <= 0.9;
-            if (info?.thumburl && info?.descriptionurl &&
+            if (info?.thumburl && info?.descriptionurl && String(info?.mime || "").startsWith("image/") &&
                 String(info.thumburl).startsWith("https://upload.wikimedia.org/") &&
                 validShape && license) {
               return {
@@ -146,7 +146,7 @@ async function searchImage(work: any) {
             const logoInfo = logoPage?.imageinfo?.[0];
             const width = Number(logoInfo?.width || 0), height = Number(logoInfo?.height || 0);
             const license = licenseInfo(logoInfo?.extmetadata || {});
-            if (logoInfo?.thumburl && logoInfo?.descriptionurl &&
+            if (logoInfo?.thumburl && logoInfo?.descriptionurl && String(logoInfo?.mime || "").startsWith("image/") &&
                 String(logoInfo.thumburl).startsWith("https://upload.wikimedia.org/") &&
                 width >= 200 && height >= 80 && width / height >= 0.5 &&
                 width / height <= 6 && license) {
@@ -180,7 +180,7 @@ async function searchImage(work: any) {
             const categoryPages = Array.isArray(categoryPayload?.query?.pages) ? categoryPayload.query.pages : [];
             const categoryMatches = categoryPages.map((page: any) => {
               const info = page.imageinfo?.[0];
-              if (!info?.thumburl || !info?.descriptionurl || !String(info.thumburl).startsWith("https://upload.wikimedia.org/")) return null;
+              if (!info?.thumburl || !info?.descriptionurl || !String(info?.mime || "").startsWith("image/") || !String(info.thumburl).startsWith("https://upload.wikimedia.org/")) return null;
               const fileName = String(page.title || "").replace(/^File:/i, "");
               const logoFile = /logo|ロゴ/i.test(fileName);
               const posterFile = /poster|key[ -]?visual|cover|ポスター|キービジュアル|表紙/i.test(fileName);
@@ -239,7 +239,8 @@ async function searchImage(work: any) {
       const fileName = norm(rawFileName);
       const description = norm(rawDescription);
       const logoFile = /logo|ロゴ/i.test(rawFileName + " " + rawDescription);
-      const posterContext = logoFile || /poster|key[ -]?visual|cover|dvd|blu[ -]?ray|promotional|artwork|ポスター|キービジュアル|表紙/i.test(rawFileName + " " + rawDescription);
+      const posterFile = /poster|key[ -]?visual|cover|dvd|blu[ -]?ray|promotional|artwork|ポスター|キービジュアル|表紙/i.test(rawFileName + " " + rawDescription);
+      const posterContext = logoFile || posterFile;
       if (!posterContext) return null;
       const exact = fileName === target || description === target;
       const contains = fileName.includes(target) || description.includes(target);
@@ -332,6 +333,7 @@ Deno.serve(async (req: Request) => {
   }
   const buildQuery = (startAt: number) => {
     let query = db.from("anime").select("id,title,title_ja,title_kana,release_year,poster_url,source_id")
+      .eq("is_published", true)
       .order("release_year", { ascending: false, nullsFirst: false });
     if (requestedIds.length) query = query.in("id", requestedIds);
     if (!force) query = query.is("poster_url", null);
