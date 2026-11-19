@@ -137,6 +137,28 @@ jobs:
           }
           console.log('\nResponsive smoke test passed for all representative pages and viewport widths.');
           NODE
+      - name: Check Japanese and English language switching
+        env:
+          BASE_URL: https://the-rascal-of-sakurasou.github.io/anixia/
+        run: |
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright';
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+          try {
+            await page.goto(process.env.BASE_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            await page.waitForSelector('#language-toggle', { timeout: 10000 });
+            await page.click('#language-toggle');
+            await page.waitForFunction(() => document.documentElement.lang === 'en');
+            if (await page.evaluate(() => localStorage.getItem('anixia-language')) !== 'en') throw new Error('English preference was not saved.');
+            await page.goto(new URL('anime.html', process.env.BASE_URL).href, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            await page.waitForFunction(() => document.documentElement.lang === 'en');
+            if (!(await page.locator('#language-toggle').textContent()).includes('日本語')) throw new Error('Language preference did not persist.');
+            await page.click('#language-toggle');
+            await page.waitForFunction(() => document.documentElement.lang === 'ja');
+            console.log('Japanese / English switching and cross-page persistence passed.');
+          } finally { await browser.close(); }
+          NODE
       - name: Upload failure screenshots
         if: always()
         uses: actions/upload-artifact@v4
