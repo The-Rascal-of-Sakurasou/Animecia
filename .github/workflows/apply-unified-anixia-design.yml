@@ -15,9 +15,6 @@ jobs:
   update:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    env:
-      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,16 +33,10 @@ jobs:
             git commit -m "Apply unified ANIXIA shell to all main pages"
             git push
           fi
-      - name: Validate SEO generation configuration
-        run: |
-          test -n "$SUPABASE_URL" || (echo "::error::SUPABASE_URL is missing" && exit 1)
-          test -n "$SUPABASE_SECRET_KEY" || (echo "::error::SUPABASE_SECRET_KEY is missing" && exit 1)
-      - name: Regenerate anime and genre SEO pages
-        run: node scripts/generate-anime-seo-pages.mjs
-      - name: Commit generated page updates
+      - name: Commit all page updates
         run: |
           if ! git diff --quiet; then
-            git add anime genre
-            git commit -m "Apply unified ANIXIA design to generated SEO pages"
+            git add -A
+            git commit -m "Apply unified ANIXIA design to every page"
             git push
           fi
