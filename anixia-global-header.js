@@ -132,11 +132,20 @@
     const duplicateObserver = new MutationObserver(removeDuplicateMyPageLinks);
     duplicateObserver.observe(document.body, {childList:true,subtree:true});
     const updateHeaderSpace = () => {
+      header.style.setProperty("position", "fixed", "important");
+      header.style.setProperty("top", "0", "important");
+      header.style.setProperty("left", "0", "important");
+      header.style.setProperty("right", "0", "important");
+      header.style.setProperty("width", "100%", "important");
+      header.style.setProperty("z-index", "2147483647", "important");
+      document.documentElement.style.setProperty("--anixia-header-height", header.offsetHeight + "px");
       document.body.style.setProperty("padding-top", header.offsetHeight + "px", "important");
     };
     updateHeaderSpace();
     if (window.ResizeObserver) new ResizeObserver(updateHeaderSpace).observe(header);
     window.addEventListener("resize", updateHeaderSpace, {passive:true});
+    window.addEventListener("orientationchange", updateHeaderSpace, {passive:true});
+    window.addEventListener("pageshow", updateHeaderSpace);
     setupAuth(header);
   }
 
@@ -228,10 +237,22 @@
       </div>`;
     document.querySelectorAll("footer").forEach(node => { if (node !== footer) node.remove(); });
     document.body.appendChild(footer);
-    const updateFooterSpace = () => document.body.style.setProperty("padding-bottom", (footer.offsetHeight + 18) + "px", "important");
+    const updateFooterSpace = () => {
+      footer.style.setProperty("position", "fixed", "important");
+      footer.style.setProperty("left", "0", "important");
+      footer.style.setProperty("right", "0", "important");
+      footer.style.setProperty("bottom", "0", "important");
+      footer.style.setProperty("width", "100%", "important");
+      footer.style.setProperty("z-index", "2147482999", "important");
+      const height = footer.getBoundingClientRect().height;
+      document.documentElement.style.setProperty("--anixia-footer-height", height + "px");
+      document.body.style.setProperty("padding-bottom", (height + 18) + "px", "important");
+    };
     updateFooterSpace();
     if (window.ResizeObserver) new ResizeObserver(updateFooterSpace).observe(footer);
     window.addEventListener("resize", updateFooterSpace, {passive:true});
+    window.addEventListener("orientationchange", updateFooterSpace, {passive:true});
+    window.addEventListener("pageshow", updateFooterSpace);
   }
 
   function init() {
