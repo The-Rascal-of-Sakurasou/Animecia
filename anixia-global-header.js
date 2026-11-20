@@ -221,7 +221,7 @@
     footer.style.setProperty("bottom", "0", "important");
     footer.style.setProperty("z-index", "2147482999", "important");
     footer.style.setProperty("margin", "0", "important");
-    footer.style.setProperty("max-height", "38vh", "important");
+    footer.style.setProperty("max-height", window.matchMedia("(max-width: 760px)").matches ? "20vh" : "24vh", "important");
     footer.style.setProperty("overflow-y", "auto", "important");
     footer.innerHTML = `
       <div class="anixia-footer-inner">
@@ -245,6 +245,9 @@
       footer.style.setProperty("bottom", "0", "important");
       footer.style.setProperty("width", "100%", "important");
       footer.style.setProperty("z-index", "2147482999", "important");
+      footer.style.setProperty("max-height", window.matchMedia("(max-width: 760px)").matches ? "20vh" : "24vh", "important");
+      footer.style.setProperty("overflow-y", "auto", "important");
+      footer.style.setProperty("box-sizing", "border-box", "important");
       const height = footer.getBoundingClientRect().height;
       document.documentElement.style.setProperty("--anixia-footer-height", height + "px");
       document.body.style.setProperty("padding-bottom", (height + 18) + "px", "important");
