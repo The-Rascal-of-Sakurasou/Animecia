@@ -24,15 +24,15 @@
     style.id = "anixia-global-header-style";
     style.textContent = `
       .site-header,.anixia-global-header{position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:9999!important;width:100%!important;background:#000!important;color:#fff!important;border:0!important;border-bottom:1px solid #222!important;box-shadow:none!important}
-      .anixia-global-header-inner{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:16px!important;width:100%!important;max-width:1500px!important;min-height:68px!important;margin:0!important;padding:8px 18px!important;box-sizing:border-box!important;text-align:left!important}
+      .anixia-global-header-inner{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto!important;align-items:center!important;column-gap:18px!important;row-gap:7px!important;width:100%!important;max-width:none!important;min-height:0!important;margin:0!important;padding:10px 24px!important;box-sizing:border-box!important;text-align:left!important}
       .anixia-global-header .anixia-logo{display:inline-flex!important;flex:0 0 auto!important;color:#03AF6A!important;text-decoration:none!important;font:850 25px/1 Inter,"Segoe UI",Arial,sans-serif!important;letter-spacing:0!important;word-spacing:0!important;gap:0!important;white-space:nowrap!important}
       .anixia-global-header .anixia-logo-xia{color:#1DA1F2!important}
-      .anixia-global-nav{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:2px!important;flex:0 1 auto!important;min-width:0!important;overflow-x:auto!important;scrollbar-width:none!important}
+      .anixia-global-nav{grid-column:1 / -1!important;grid-row:2!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:3px!important;flex-wrap:nowrap!important;width:100%!important;min-width:0!important;overflow-x:auto!important;scrollbar-width:none!important}
       .anixia-global-nav::-webkit-scrollbar{display:none!important}
       .anixia-global-nav a{display:inline-flex!important;align-items:center!important;min-height:36px!important;padding:7px 8px!important;border-radius:5px!important;color:#fff!important;background:transparent!important;text-decoration:none!important;font-size:12px!important;font-weight:650!important;white-space:nowrap!important}
       .anixia-global-nav a,.anixia-global-nav a:visited,.anixia-global-nav a:hover,.anixia-global-nav a:focus,.anixia-global-nav a[aria-current="page"]{color:#FFFFFF!important;opacity:1!important;background:transparent!important}
       .anixia-global-nav a:hover,.anixia-global-nav a[aria-current="page"]{background:rgba(255,255,255,.07)!important}
-      .anixia-header-actions{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:7px!important;flex:0 0 auto!important;margin:0!important}
+      .anixia-header-actions{grid-column:2!important;grid-row:1!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:7px!important;flex:0 0 auto!important;margin:0!important}
       .anixia-header-actions .anixia-header-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:36px!important;padding:0 12px!important;border:1px solid #03AF6A!important;border-radius:6px!important;background:#03AF6A!important;color:#fff!important;text-decoration:none!important;font-family:inherit!important;font-size:12px!important;font-weight:750!important;white-space:nowrap!important;cursor:pointer!important}
       .anixia-header-actions .anixia-header-button:hover{background:#028f56!important;border-color:#028f56!important;color:#FFFFFF!important}
       .anixia-header-actions #account-link,.anixia-header-actions #account-link:visited,.anixia-header-actions #account-link:hover{color:#FFFFFF!important}
@@ -49,10 +49,10 @@
       .anixia-admin-login{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:36px!important;margin-top:10px!important;padding:0 12px!important;border:1px solid #000!important;border-radius:6px!important;color:#000!important;background:#000!important;font-size:12px!important;font-weight:750!important;text-decoration:none!important;opacity:1!important;cursor:pointer!important}
       .anixia-admin-login,.anixia-admin-login:visited,.anixia-admin-login:hover,.anixia-admin-login:focus,.anixia-admin-login:active{color:#000!important;background:#000!important;background-color:#000!important;border-color:#000!important;outline:none!important;box-shadow:none!important;opacity:1!important}
       @media(max-width:900px){
-        .anixia-global-header-inner{flex-wrap:wrap!important;gap:8px 12px!important;padding:9px 14px!important}
-        .anixia-global-nav{order:3!important;flex:1 1 100%!important;width:100%!important}
+        .anixia-global-header-inner{grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto!important;gap:7px 12px!important;padding:9px 18px!important}
+        .anixia-global-nav{grid-column:1 / -1!important;grid-row:2!important;width:100%!important}
         .anixia-global-nav a{padding:6px 8px!important}
-        .anixia-header-actions{margin-left:0!important}
+        .anixia-header-actions{grid-column:2!important;grid-row:1!important;margin:0!important}
       }
       /* Mobile header: stack brand, actions and horizontally scrollable navigation. */
       @media(max-width:760px){
@@ -75,6 +75,8 @@
   function installHeader() {
     // Remove every page-specific header before creating the single shared header.
     document.querySelectorAll("body > header, header.site-header, header.anixia-global-header").forEach(node => node.remove());
+    // Remove stale page-specific My Page controls so only the shared header owns this action.
+    document.querySelectorAll("#mypage-link").forEach(node => node.remove());
     const header = document.createElement("header");
     header.className = "site-header anixia-global-header";
     header.setAttribute("role", "banner");
@@ -125,6 +127,10 @@
 
     // Keep the fixed header in the body; never reparent it during scrolling.
     document.body.prepend(header);
+    const removeDuplicateMyPageLinks = () => document.querySelectorAll("#mypage-link").forEach(node => { if (!header.contains(node)) node.remove(); });
+    removeDuplicateMyPageLinks();
+    const duplicateObserver = new MutationObserver(removeDuplicateMyPageLinks);
+    duplicateObserver.observe(document.body, {childList:true,subtree:true});
     const updateHeaderSpace = () => {
       document.body.style.setProperty("padding-top", header.offsetHeight + "px", "important");
     };
