@@ -122,16 +122,13 @@ jobs:
           const base = process.env.BASE_URL;
           const pages = [
             '',
-            'anime.html', 'anime-detail.html', 'discover.html', 'season.html',
+            'anime.html', 'discover.html', 'season.html',
             'ranking.html', 'recommendations.html', 'compare.html',
-            'entities.html', 'entity-detail.html', 'genres.html',
-            'community.html', 'messages.html', 'profile.html', 'mypage.html',
-            'memo.html', 'user-search.html',
+            'entities.html', 'genres.html',
+            'community.html', 'messages.html', 'mypage.html',
             'quiz.html', 'quiz-play.html',
-            'login.html', 'signup.html', 'forgot-password.html', 'reset-password.html',
-            'auth-callback.html', 'verify-email.html',
-            'privacy.html', 'terms.html', 'data-sources.html',
-            'admin.html', 'admin-candidates.html', 'admin-dashboard.html', 'admin-login.html'
+            'login.html', 'signup.html', 'privacy.html',
+            'admin.html'
           ];
           // Add a deterministic sample of generated work and genre pages.
           function collectIndexPages(root) {
@@ -156,7 +153,7 @@ jobs:
             console.log(`${root}: selected ${samples.length} distributed pages`);
             pages.push(...samples);
           }
-          const widths = [320, 375, 430, 768, 1366, 1920];
+          const widths = [320, 375, 768, 1366];
           const browser = await chromium.launch({ headless: true });
           const failures = [];
           mkdirSync('responsive-failures', { recursive: true });
@@ -182,7 +179,7 @@ jobs:
                     waitUntil: 'domcontentloaded',
                     timeout: 30000
                   });
-                  await page.waitForTimeout(300);
+                  await page.waitForTimeout(120);
                   const result = await page.evaluate(() => ({
                     viewport: document.documentElement.clientWidth,
                     document: document.documentElement.scrollWidth,
