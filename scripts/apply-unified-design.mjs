@@ -12,6 +12,7 @@ async function walk(dir) {
   }
   return files;
 }
+
 const allHtml = await walk(".");
 let patched = 0, skipped = 0;
 for (const file of allHtml) {
@@ -27,14 +28,15 @@ for (const file of allHtml) {
   await writeFile(file, html, "utf8");
   patched++;
 }
+
 const homePath = "anixia-home.js";
 let home = await readFile(homePath, "utf8");
 home = home.replace('      loadSection("new-works", { sort: "newest", limit: 5 })\n', "");
 await writeFile(homePath, home, "utf8");
+
 const indexPath = "index.html";
 let index = await readFile(indexPath, "utf8");
-index = index.replace('recent_label:"RECENTLY ADDED",recent_title:"最近追加された作品",recent_sub:"データベースに追加・更新された作品",view_database:"作品一覧 →",', "");
-index = index.replace('recent_label:"RECENTLY ADDED",recent_title:"Recently added",recent_sub:"New and updated database entries",view_database:"Browse all titles →", "");
+index = index.replace(/recent_label:"[^"]*",recent_title:"[^"]*",recent_sub:"[^"]*",view_database:"[^"]*",/g, "");
 await writeFile(indexPath, index, "utf8");
-// Apply the same shell to generated anime and genre detail pages.
+
 console.log(`Unified design references added to ${patched} HTML pages; ${skipped} already covered or intentionally skipped.`);
