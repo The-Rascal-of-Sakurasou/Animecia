@@ -59,7 +59,6 @@
     }
     await Promise.all([
       loadSection("popular-works", { sort: "popular", limit: 5 }),
-      loadSection("new-works", { sort: "newest", limit: 5 })
     ]);
     await loadGenres();
     try {
