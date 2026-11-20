@@ -4,8 +4,9 @@ for(const file of rootHtml){
  let html=await readFile(file,"utf8");
  if(!html.includes("anixia-unified-theme.css")){
   const tags='\n<link rel="stylesheet" href="/anixia/anixia-unified-theme.css?v=20261120-1">\n<script src="/anixia/anixia-global-header.js?v=20261120-1" defer></script>\n';
-  if(!/<\\/head>/i.test(html)) throw new Error("Missing </head> in "+file);
-  html=html.replace(/<\\/head>/i,tags+"</head>");
+  const closeHead=html.toLowerCase().lastIndexOf("</head>");
+  if(closeHead<0) throw new Error("Missing </head> in "+file);
+  html=html.slice(0,closeHead)+tags+"</head>"+html.slice(closeHead+7);
   await writeFile(file,html,"utf8");
  }
 }
