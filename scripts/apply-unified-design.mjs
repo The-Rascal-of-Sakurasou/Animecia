@@ -36,4 +36,5 @@ let index = await readFile(indexPath, "utf8");
 index = index.replace('recent_label:"RECENTLY ADDED",recent_title:"最近追加された作品",recent_sub:"データベースに追加・更新された作品",view_database:"作品一覧 →",', "");
 index = index.replace('recent_label:"RECENTLY ADDED",recent_title:"Recently added",recent_sub:"New and updated database entries",view_database:"Browse all titles →", "");
 await writeFile(indexPath, index, "utf8");
+// Apply the same shell to generated anime and genre detail pages.
 console.log(`Unified design references added to ${patched} HTML pages; ${skipped} already covered or intentionally skipped.`);
