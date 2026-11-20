@@ -154,7 +154,7 @@ body :where(.hero,.page-header,.anixia-search-panel) :where(.eyebrow,.anixia-eye
 img{max-width:100%;height:auto}
 @media(max-width:760px){
   body{overflow-x:hidden!important}
-  body :where(main){width:100%!important;max-width:100%!important}
+  body :where(main){max-width:100%!important;min-width:0!important}
   body :where(.panel,.card,.profile-card,.feature-card,.recommendation-card,.quick-card,.anixia-service-card){min-width:0!important}
   body :where(input,select,textarea){max-width:100%!important}
 }
@@ -182,4 +182,11 @@ body .quiz-card a:hover,body .diag-submit:hover{background:#028f56!important;bor
  body .diag-genres{grid-template-columns:repeat(2,minmax(0,1fr))!important}
  body .diag-fields{grid-template-columns:1fr!important}
  body .diag-results{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+
+/* Keep structural wrappers transparent; explicit panels and cards retain their surfaces. */
+body :where(main,section,article,aside,form,fieldset):not(.panel):not(.card):not([class*="-panel"]):not([class*="-card"]):not([class*="-hero"]):not(.hero):not(.page-header){
+  background:transparent!important;
+  box-shadow:none!important;
 }
