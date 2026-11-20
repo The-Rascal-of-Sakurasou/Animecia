@@ -188,7 +188,11 @@ jobs:
                     viewport: document.documentElement.clientWidth,
                     document: document.documentElement.scrollWidth,
                     body: document.body?.scrollWidth ?? 0,
-                    title: document.title
+                    title: document.title,
+                    header: (() => { const el = document.querySelector("body > .anixia-global-header"); if (!el) return null; const r = el.getBoundingClientRect(); const s = getComputedStyle(el); return {position:s.position,top:r.top,bottom:r.bottom,height:r.height}; })(),
+                    footer: (() => { const el = document.querySelector("body > footer.anixia-global-footer"); if (!el) return null; const r = el.getBoundingClientRect(); const s = getComputedStyle(el); return {position:s.position,top:r.top,bottom:r.bottom,height:r.height,maxHeight:s.maxHeight}; })(),
+                    bodyPaddingTop: parseFloat(getComputedStyle(document.body).paddingTop),
+                    bodyPaddingBottom: parseFloat(getComputedStyle(document.body).paddingBottom)
                   }));
                   let hasFailure = false;
                   if (!response?.ok()) {
@@ -197,6 +201,14 @@ jobs:
                   }
                   if (result.document > result.viewport + 2 || result.body > result.viewport + 2) {
                     failures.push(`${path || '/'} @ ${width}px: horizontal overflow (viewport=${result.viewport}, document=${result.document}, body=${result.body})`);
+                    hasFailure = true;
+                  }
+                  if (!result.header || result.header.position !== 'fixed' || Math.abs(result.header.top) > 2 || result.header.height < 1 || result.bodyPaddingTop < result.header.height - 2) {
+                    failures.push(`${path || '/'} @ ${width}px: header is not fixed at the top or body clearance is insufficient (${JSON.stringify({header:result.header,paddingTop:result.bodyPaddingTop})})`);
+                    hasFailure = true;
+                  }
+                  if (!result.footer || result.footer.position !== 'fixed' || Math.abs(result.footer.bottom - 900) > 2 || result.footer.height < 1 || result.bodyPaddingBottom < result.footer.height - 2) {
+                    failures.push(`${path || '/'} @ ${width}px: footer is not fixed at the bottom or body clearance is insufficient (${JSON.stringify({footer:result.footer,paddingBottom:result.bodyPaddingBottom})})`);
                     hasFailure = true;
                   }
                   for (const message of pageErrors) {
