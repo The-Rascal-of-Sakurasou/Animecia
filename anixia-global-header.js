@@ -98,7 +98,6 @@
           <a class="anixia-header-button" id="account-link" href="${ROOT}login.html">ログイン</a>
           <button class="anixia-header-button" id="home-logout" type="button" hidden>ログアウト</button>
           <button class="anixia-header-button" id="language-toggle" type="button">EN</button>
-          <a class="anixia-header-button" id="home-link" href="${ROOT}">ホーム</a>
           <a class="anixia-header-button" id="mypage-link" href="${ROOT}mypage.html">マイページ</a>
         </div>
       </div>`;
@@ -200,6 +199,14 @@
     footer.style.setProperty("background-color", "#000000", "important");
     footer.style.setProperty("color", "#FFFFFF", "important");
     footer.style.setProperty("width", "100%", "important");
+    footer.style.setProperty("position", "fixed", "important");
+    footer.style.setProperty("left", "0", "important");
+    footer.style.setProperty("right", "0", "important");
+    footer.style.setProperty("bottom", "0", "important");
+    footer.style.setProperty("z-index", "2147482999", "important");
+    footer.style.setProperty("margin", "0", "important");
+    footer.style.setProperty("max-height", "38vh", "important");
+    footer.style.setProperty("overflow-y", "auto", "important");
     footer.innerHTML = `
       <div class="anixia-footer-inner">
         <div class="anixia-footer-main"><a class="anixia-footer-logo" href="${ROOT}" aria-label="ANIXIA ホーム">ANI<span class="anixia-logo-xia">XIA</span></a></div>
@@ -213,7 +220,12 @@
         <div class="anixia-footer-bottom">© ANIXIA</div>
         <a class="anixia-admin-login" href="${ROOT}admin-login.html" aria-label="管理者ログイン">管理者ログイン</a>
       </div>`;
+    document.querySelectorAll("footer").forEach(node => { if (node !== footer) node.remove(); });
     document.body.appendChild(footer);
+    const updateFooterSpace = () => document.body.style.setProperty("padding-bottom", (footer.offsetHeight + 18) + "px", "important");
+    updateFooterSpace();
+    if (window.ResizeObserver) new ResizeObserver(updateFooterSpace).observe(footer);
+    window.addEventListener("resize", updateFooterSpace, {passive:true});
   }
 
   function init() {
