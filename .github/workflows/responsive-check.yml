@@ -252,6 +252,58 @@ jobs:
             console.log('Japanese / English switching and cross-page persistence passed.');
           } finally { await browser.close(); }
           NODE
+      - name: Verify home, quiz and recommendation page headers and panels
+        env:
+          BASE_URL: https://the-rascal-of-sakurasou.github.io/anixia/
+        run: |
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright';
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage({ viewport: { width: 1366, height: 900 } });
+          const checks = [
+            { path: '', panel: null },
+            { path: 'quiz.html', panel: '.quiz-hero' },
+            { path: 'recommendations.html', panel: '.diag-hero' }
+          ];
+          const failures = [];
+          try {
+            for (const item of checks) {
+              const response = await page.goto(new URL(item.path, process.env.BASE_URL).href, { waitUntil: 'domcontentloaded', timeout: 30000 });
+              await page.waitForSelector('body > header.anixia-global-header', { timeout: 15000 });
+              await page.waitForTimeout(250);
+              const result = await page.evaluate(panelSelector => {
+                const header = document.querySelectorAll('body > header.anixia-global-header');
+                const account = document.querySelectorAll('body > header.anixia-global-header #account-link');
+                const staleHeader = document.querySelectorAll('body > header:not(.anixia-global-header)');
+                const staleMyPage = document.querySelectorAll('#mypage-link');
+                const panel = panelSelector ? document.querySelector(panelSelector) : null;
+                const panelStyle = panel ? getComputedStyle(panel) : null;
+                return {
+                  headerCount: header.length,
+                  accountCount: account.length,
+                  staleHeaderCount: staleHeader.length,
+                  staleMyPageCount: staleMyPage.length,
+                  panelFound: panelSelector ? !!panel : true,
+                  panelBackground: panelStyle?.backgroundColor ?? null,
+                  panelBorder: panelStyle?.borderTopColor ?? null
+                };
+              }, item.panel);
+              if (!response?.ok()) failures.push(`${item.path || 'home'}: HTTP ${response?.status()}`);
+              if (result.headerCount !== 1 || result.accountCount !== 1 || result.staleHeaderCount !== 0 || result.staleMyPageCount !== 0) {
+                failures.push(`${item.path || 'home'}: duplicate or missing header/account control: ${JSON.stringify(result)}`);
+              }
+              if (!result.panelFound || (item.panel && (result.panelBackground !== 'rgb(255, 255, 255)' || result.panelBorder !== 'rgb(229, 231, 235)'))) {
+                failures.push(`${item.path}: panel does not match the shared white/neutral design: ${JSON.stringify(result)}`);
+              }
+              console.log(`Targeted page check ${item.path || 'home'}: ${JSON.stringify(result)}`);
+            }
+          } finally { await browser.close(); }
+          if (failures.length) {
+            console.error(failures.join('\\n'));
+            process.exit(1);
+          }
+          console.log('Home, quiz and recommendation header/panel checks passed.');
+          NODE
       - name: Upload failure screenshots
         if: always()
         uses: actions/upload-artifact@v4
