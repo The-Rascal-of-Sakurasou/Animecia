@@ -110,7 +110,7 @@
     if (logo) logo.style.setProperty("color", "#03AF6A", "important");
     const logoAccent = header.querySelector(".anixia-logo-xia");
     if (logoAccent) logoAccent.style.setProperty("color", "#1DA1F2", "important");
-    const current = location.pathname.replace(/^.*\\/anixia\\//, "");
+    const current = location.pathname.replace(/^.*\/anixia\//, "");
     header.querySelectorAll(".anixia-global-nav a").forEach(a => {
       const path = a.getAttribute("href").replace(ROOT, "");
       if (path === current || (!path && !current)) a.setAttribute("aria-current", "page");
