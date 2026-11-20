@@ -18,13 +18,18 @@ let patched = 0, skipped = 0;
 for (const file of allHtml) {
   if (file === "googlec7373bcce91aea2b.html") { skipped++; continue; }
   let html = await readFile(file, "utf8");
-  if (html.includes("anixia-unified-theme.css")) { skipped++; continue; }
   const isRoot = !file.includes("/");
   const prefix = isRoot ? "/anixia/" : relative(dirname(file), ".").split(sep).join("/") + "/";
-  const tags = '\n<link rel="stylesheet" href="' + prefix + 'anixia-unified-theme.css?v=20261120-1">\n<script src="' + prefix + 'anixia-global-header.js?v=20261120-1" defer></script>\n';
-  const closeHead = html.toLowerCase().lastIndexOf("</head>");
-  if (closeHead < 0) { skipped++; continue; }
-  html = html.slice(0, closeHead) + tags + "</head>" + html.slice(closeHead + 7);
+  if (!html.includes("anixia-unified-theme.css")) {
+    const tags = '\n<link rel="stylesheet" href="' + prefix + 'anixia-unified-theme.css?v=20261120-1">\n<script src="' + prefix + 'anixia-global-header.js?v=20261120-4" defer></script>\n';
+    const closeHead = html.toLowerCase().lastIndexOf("</head>");
+    if (closeHead < 0) { skipped++; continue; }
+    html = html.slice(0, closeHead) + tags + "</head>" + html.slice(closeHead + 7);
+  }
+  html = html.replace(/(src=["'][^"']*anixia-global-header\.js)(?:\?[^"']*)?(["'])/g, "$1?v=20261120-4$2");
+  if (file === "index.html") {
+    html = html.replace(/\s*<a[^>]*id=["']mypage-link["'][^>]*>[\s\S]*?<\/a>/i, "");
+  }
   await writeFile(file, html, "utf8");
   patched++;
 }
@@ -39,4 +44,4 @@ let index = await readFile(indexPath, "utf8");
 index = index.replace(/recent_label:"[^"]*",recent_title:"[^"]*",recent_sub:"[^"]*",view_database:"[^"]*",/g, "");
 await writeFile(indexPath, index, "utf8");
 
-console.log(`Unified design references added to ${patched} HTML pages; ${skipped} already covered or intentionally skipped.`);
+console.log(`Unified design references refreshed on ${patched} HTML pages; ${skipped} intentionally skipped.`);
