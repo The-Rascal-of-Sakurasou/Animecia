@@ -72,3 +72,92 @@ body>footer.anixia-global-footer{position:fixed!important;left:0!important;right
  .anixia-header-actions .anixia-header-button{padding:0 6px!important;font-size:10px!important}
  .anixia-global-header .anixia-logo{font-size:20px!important}
 }
+
+/* ANIXIA unified visual refinement — shared across all pages */
+:root{
+  --anixia-jt:#03AF6A;
+  --anixia-jt-hover:#028f56;
+  --anixia-twitter:#1DA1F2;
+  --anixia-page:#ffffff;
+  --anixia-surface:#f7f8fa;
+  --anixia-surface-strong:#f1f3f5;
+  --anixia-border:#e5e7eb;
+  --anixia-text:#17191d;
+  --anixia-muted:#69717d;
+  --anixia-radius:12px;
+  --anixia-shadow:0 3px 14px rgba(17,24,39,.055);
+}
+html,body{background:var(--anixia-page)!important;color:var(--anixia-text)!important}
+body :where(main){color:var(--anixia-text)!important}
+body :where(.panel,.card,.profile-card,.list-item,.review-item,.feature-card,.genre-card,.recommendation-card,.quick-card,.filter-area,.filters-panel,.search-box,.anixia-search-panel,.anixia-service-card,.anixia-section-card,.quiz-card,.question-card,.result-card,.diagnosis-card,.library-card,.stat-card,.ranking-card,.community-card){
+  background:var(--anixia-surface)!important;
+  color:var(--anixia-text)!important;
+  border:1px solid var(--anixia-border)!important;
+  border-radius:var(--anixia-radius)!important;
+  box-shadow:var(--anixia-shadow)!important;
+}
+body :where(.panel,.card,.profile-card,.feature-card,.genre-card,.recommendation-card,.quick-card,.anixia-service-card,.quiz-card,.question-card,.result-card,.diagnosis-card,.library-card,.stat-card,.ranking-card,.community-card) :where(h1,h2,h3,h4,p,span,strong,label,small,li,a){
+  color:var(--anixia-text);
+}
+body :where(.section-heading,.section-head,.section-header,.panel-head,.card-header){
+  color:var(--anixia-text)!important;
+  border-color:var(--anixia-border)!important;
+}
+body :where(.muted,.sub,.hint,.description,.meta,.section-desc,.section-description,.help-text){
+  color:var(--anixia-muted)!important;
+}
+body :where(button,input[type=button],input[type=submit],input[type=reset],.btn,.button,a[role=button],.nav-btn,.tab,.primary,.search-submit,.search-button,.action-button.primary,.anixia-search-form button){
+  background:var(--anixia-jt)!important;
+  border-color:var(--anixia-jt)!important;
+  color:#fff!important;
+  border-radius:8px!important;
+}
+body :where(button:hover,input[type=button]:hover,input[type=submit]:hover,.btn:hover,.button:hover,a[role=button]:hover,.search-submit:hover,.search-button:hover,.anixia-search-form button:hover){
+  background:var(--anixia-jt-hover)!important;
+  border-color:var(--anixia-jt-hover)!important;
+  color:#fff!important;
+}
+body :where(input,select,textarea,[contenteditable=true]){
+  background:#fff!important;
+  color:#17191d!important;
+  border:1px solid #d5d9df!important;
+  border-radius:8px!important;
+}
+body :where(input,select,textarea)::placeholder{color:#737b86!important;opacity:1}
+body :where(input,select,textarea):focus{
+  outline:0!important;
+  border-color:var(--anixia-jt)!important;
+  box-shadow:0 0 0 3px rgba(3,175,106,.12)!important;
+}
+body :where([role=listbox],[role=option],.suggestions,.suggestion-list,.autocomplete,.autocomplete-list,.search-suggestions,.search-suggest,.anixia-suggestions,.anixia-search-suggest,.search-dropdown){
+  background:#fff!important;
+  color:#17191d!important;
+  border:1px solid #d5d9df!important;
+  border-radius:9px!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.12)!important;
+}
+body :where([role=listbox],[role=option],.suggestions,.suggestion-list,.autocomplete,.autocomplete-list,.search-suggestions,.search-suggest,.anixia-suggestions,.anixia-search-suggest,.search-dropdown) *{color:#17191d!important}
+.anixia-global-header,.anixia-global-header *,.anixia-global-footer,.anixia-global-footer *{box-sizing:border-box!important}
+.anixia-global-header{background:#000!important;color:#fff!important}
+.anixia-global-header .anixia-logo{color:var(--anixia-jt)!important}
+.anixia-global-header .anixia-logo-xia{color:var(--anixia-twitter)!important}
+.anixia-global-nav a,.anixia-global-nav a:visited,.anixia-global-nav a:hover,.anixia-global-nav a:focus{color:#fff!important}
+.anixia-header-actions .anixia-header-button{background:var(--anixia-jt)!important;border-color:var(--anixia-jt)!important;color:#fff!important}
+.anixia-global-footer{background:#000!important;color:#fff!important}
+.anixia-global-footer .anixia-footer-logo{color:var(--anixia-jt)!important}
+.anixia-global-footer .anixia-logo-xia{color:var(--anixia-twitter)!important}
+.anixia-global-footer .anixia-footer-nav a,.anixia-global-footer .anixia-footer-bottom{color:#fff!important}
+.anixia-global-footer .anixia-admin-login,.anixia-global-footer .anixia-admin-login:visited,.anixia-global-footer .anixia-admin-login:hover{background:#000!important;border-color:#000!important;color:#000!important}
+body :where(.hero,.page-header,.anixia-search-panel){background:var(--anixia-surface)!important;color:var(--anixia-text)!important;border:1px solid var(--anixia-border)!important;box-shadow:var(--anixia-shadow)!important}
+body :where(.hero,.page-header,.anixia-search-panel) :where(h1,h2,h3,p,span,label){color:var(--anixia-text)!important}
+body :where(.hero,.page-header,.anixia-search-panel) :where(.eyebrow,.anixia-eyebrow){color:var(--anixia-jt)!important}
+img{max-width:100%;height:auto}
+@media(max-width:760px){
+  body{overflow-x:hidden!important}
+  body :where(main){width:100%!important;max-width:100%!important}
+  body :where(.panel,.card,.profile-card,.feature-card,.recommendation-card,.quick-card,.anixia-service-card){min-width:0!important}
+  body :where(input,select,textarea){max-width:100%!important}
+}
+@media(min-width:761px) and (max-width:1100px){
+  body :where(main){max-width:100%!important}
+}
