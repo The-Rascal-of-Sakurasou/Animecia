@@ -161,3 +161,25 @@ img{max-width:100%;height:auto}
 @media(min-width:761px) and (max-width:1100px){
   body :where(main){max-width:100%!important}
 }
+
+
+/* Quiz and recommendation pages: enforce the same neutral content panels. */
+body .quiz-page,body .diag-page{width:min(1100px,calc(100% - 36px))!important;margin:0 auto!important;padding:28px 0 170px!important;background:transparent!important;border:0!important;box-shadow:none!important}
+body .quiz-hero,body .quiz-card,body .quiz-state,
+body .diag-hero,body .diag-panel,body .diag-genre,body .diag-card,body .diag-state{
+  background:#fff!important;background-color:#fff!important;color:#111!important;
+  border:1px solid #e5e7eb!important;border-radius:12px!important;
+  box-shadow:0 3px 14px rgba(0,0,0,.045)!important;
+}
+body .quiz-hero *,body .quiz-card *,body .quiz-state *,
+body .diag-hero *,body .diag-panel *,body .diag-genre *,body .diag-card *,body .diag-state *{color:#111!important}
+body .quiz-hero small,body .diag-hero small{color:#03AF6A!important}
+body .quiz-card a,body .diag-submit{background:#03AF6A!important;border:1px solid #03AF6A!important;color:#fff!important}
+body .quiz-card a:hover,body .diag-submit:hover{background:#028f56!important;border-color:#028f56!important;color:#fff!important}
+@media(max-width:760px){
+ body .quiz-page,body .diag-page{width:calc(100% - 22px)!important;padding:20px 0 180px!important}
+ body .quiz-grid{grid-template-columns:1fr!important}
+ body .diag-genres{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body .diag-fields{grid-template-columns:1fr!important}
+ body .diag-results{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
