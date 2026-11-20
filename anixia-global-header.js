@@ -75,7 +75,7 @@
   function installHeader() {
     // Remove every page-specific header before creating the single shared header.
     document.querySelectorAll("body > header, header.site-header, header.anixia-global-header").forEach(node => node.remove());
-    // Remove stale page-specific My Page controls so only the shared header owns this action.
+    // Remove stale page-specific My Page controls; the account link is the single My Page entry.
     document.querySelectorAll("#mypage-link").forEach(node => node.remove());
     const header = document.createElement("header");
     header.className = "site-header anixia-global-header";
@@ -100,7 +100,6 @@
           <a class="anixia-header-button" id="account-link" href="${ROOT}login.html">ログイン</a>
           <button class="anixia-header-button" id="home-logout" type="button" hidden>ログアウト</button>
           <button class="anixia-header-button" id="language-toggle" type="button">EN</button>
-          <a class="anixia-header-button" id="mypage-link" href="${ROOT}mypage.html">マイページ</a>
         </div>
       </div>`;
     header.querySelectorAll(".anixia-global-nav a").forEach(a => {
@@ -171,7 +170,9 @@
     const logout = header.querySelector("#home-logout");
     const render = user => {
       const signedIn = !!(user && !user.is_anonymous);
-      login.hidden = signedIn;
+      login.hidden = false;
+      login.href = signedIn ? ROOT + "mypage.html" : ROOT + "login.html";
+      login.textContent = signedIn ? "マイページ" : "ログイン";
       logout.hidden = !signedIn;
     };
     try {
