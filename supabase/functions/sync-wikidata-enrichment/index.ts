@@ -59,6 +59,7 @@ function canonicalGenreJapaneseLabel(value: string | null): string | null {
     "ロボットもの": "ロボット",
     "心理描写を扱うアニメ・漫画": "心理",
     "超自然アニメおよび漫画": "超自然",
+    "スーパーナチュラルアニメおよび漫画": "超自然",
     "歴史アニメ・漫画": "歴史"
   };
   return aliases[value] || value;
