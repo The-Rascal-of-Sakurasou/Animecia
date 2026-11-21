@@ -103,8 +103,10 @@
     const result = await getClient().rpc("get_public_anime_detail", { p_anime_id: id });
     if (result.error) throw result.error;
     if (!result.data) return null;
-    const related = await attachEnglishTitles(result.data.related_works || []);
-    const [work] = await attachEnglishTitles([{ ...result.data, related_works: related }]);
+    const relatedTitles = await attachEnglishTitles(result.data.related_works || []);
+    const related = await attachPosterCredits(relatedTitles);
+    const [titledWork] = await attachEnglishTitles([{ ...result.data, related_works: related }]);
+    const [work] = await attachPosterCredits([titledWork]);
     return work;
   }
 
@@ -518,10 +520,15 @@
     const safeUrl = String(url || "").trim();
     const sourceUrl = String(credit?.source_url || "");
     const attribution = String(credit?.attribution || "");
-    if (!safeUrl || !sourceUrl.startsWith("https://") || !attribution) return "";
-    const safeAlt = String(alt ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-    const safeSrc = safeUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
-    return '<img data-anixia-poster src="' + safeSrc + '" alt="' + safeAlt + '" loading="lazy" decoding="async">';
+    const safeText = String(alt || "ANIXIA").trim() || "ANIXIA";
+    const safeAlt = safeText.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const safeTitle = safeAlt;
+    const hasVerifiedCredit = safeUrl && sourceUrl.startsWith("https://") && attribution;
+    const image = hasVerifiedCredit
+      ? '<img data-anixia-poster src="' + safeUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;") + '" alt="' + safeAlt + '" loading="lazy" decoding="async">'
+      : "";
+    const fallback = '<div class="anixia-poster-fallback"' + (hasVerifiedCredit ? ' hidden' : '') + ' role="img" aria-label="' + safeAlt + '"><span class="anixia-poster-brand">ANIXIA</span><strong class="anixia-poster-title">' + safeTitle + '</strong><small class="anixia-poster-caption">TITLE ARCHIVE</small></div>';
+    return image + fallback;
   }
 
   document.addEventListener("load", event => {
