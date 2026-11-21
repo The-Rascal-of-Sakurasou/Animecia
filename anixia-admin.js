@@ -671,7 +671,7 @@
         ].join("\n");
         if(!completed) await new Promise(resolve=>setTimeout(resolve,1000));
       }
-      if(!completed) $("anilist-poster-sync-message").textContent+="\\n安全上限に達しました。ボタンをもう一度押すと続きから実行します。";
+      if(!completed) $("anilist-poster-sync-message").textContent+="\n安全上限に達しました。ボタンをもう一度押すと続きから実行します。";
     }catch(e){
       console.error(e);
       $("anilist-poster-sync-message").textContent+="\\n同期を中断しました: "+(e.message||"管理者権限・API状態を確認してください。");
