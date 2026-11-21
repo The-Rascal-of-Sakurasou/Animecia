@@ -523,7 +523,7 @@
     const safeText = String(alt || "ANIXIA").trim() || "ANIXIA";
     const safeAlt = safeText.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
     const safeTitle = safeAlt;
-    const hasVerifiedCredit = safeUrl && sourceUrl.startsWith("https://") && attribution;
+    const hasVerifiedCredit = safeUrl.startsWith("https://") && sourceUrl.startsWith("https://") && attribution;
     const image = hasVerifiedCredit
       ? '<img data-anixia-poster src="' + safeUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;") + '" alt="' + safeAlt + '" loading="lazy" decoding="async">'
       : "";
