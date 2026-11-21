@@ -34,7 +34,8 @@ jobs:
             git commit -m "Apply unified ANIXIA shell to all main pages"
             git push
           fi
-      - name: Update generated genre pages\n        run: node scripts/update-genre-pages.mjs\n      - name: Commit all page updates
+      - name: Update generated genre pages
+        run: node scripts/update-genre-pages.mjs      - name: Commit all page updates
         run: |
           if ! git diff --quiet; then
             git add -A
