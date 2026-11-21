@@ -9,9 +9,9 @@ for (const entry of entries) {
   let html;
   try { html = await readFile(path, "utf8"); } catch { continue; }
   const before = html;
-  html = html.replace(/<small>評価[\\s\\S]*?<\\/small>/g, "<small>作品情報を見る →</small>");
+  html = html.replace(/<small>評価[\s\S]*?<\/small>/g, "<small>作品情報を見る →</small>");
   if (!html.includes("anixia-genre-pages.css")) {
-    html = html.replace("</style>", "</style><link rel=\\"stylesheet\\" href=\\"../../anixia-genre-pages.css?v=20261121-genre1\\">");
+    html = html.replace("</style>", `</style><link rel="stylesheet" href="../../anixia-genre-pages.css?v=20261121-genre1">`);
   }
   if (html !== before) { await writeFile(path, html, "utf8"); updated++; }
 }
