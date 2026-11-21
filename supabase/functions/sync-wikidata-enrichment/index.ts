@@ -629,20 +629,55 @@ Deno.serve(async (req: Request) => {
           name: label(e, "en") || label(e, "ja"),
           name_ja: japaneseLabel(e)
         })).filter(r => r.name);
-        if (genreRows.length) {
-          const saved = await db.from("genres").upsert(genreRows, { onConflict: "name", ignoreDuplicates: true });
+
+        // Resolve exact Japanese labels to the existing canonical ANIXIA genre.
+        // This prevents Wikidata's differently named concepts from creating
+        // duplicate visible genres such as "Action" / "action anime and manga".
+        const genreNames = [...new Set(genreRows.map(r => r.name))];
+        const genreJapaneseNames = [...new Set(genreRows.map(r => r.name_ja).filter(Boolean))] as string[];
+        const [existingByName, existingByJapaneseName] = await Promise.all([
+          genreNames.length
+            ? db.from("genres").select("id,name,name_ja").in("name", genreNames)
+            : Promise.resolve({ data: [], error: null }),
+          genreJapaneseNames.length
+            ? db.from("genres").select("id,name,name_ja").in("name_ja", genreJapaneseNames)
+            : Promise.resolve({ data: [], error: null })
+        ]);
+        if (existingByName.error) throw existingByName.error;
+        if (existingByJapaneseName.error) throw existingByJapaneseName.error;
+
+        const knownNames = new Map((existingByName.data || []).map((r: AnyRecord) => [String(r.name), String(r.id)]));
+        const knownJapaneseNames = new Map((existingByJapaneseName.data || []).map((r: AnyRecord) => [String(r.name_ja), String(r.id)]));
+        const pendingByKey = new Map<string, AnyRecord>();
+        for (const row of genreRows) {
+          if (row.name_ja && knownJapaneseNames.has(row.name_ja)) continue;
+          if (knownNames.has(row.name)) continue;
+          const key = row.name_ja ? `ja:${row.name_ja}` : `name:${row.name}`;
+          if (!pendingByKey.has(key)) pendingByKey.set(key, row);
+        }
+        const pendingGenreRows = [...pendingByKey.values()];
+        if (pendingGenreRows.length) {
+          const saved = await db.from("genres").upsert(pendingGenreRows, { onConflict: "name", ignoreDuplicates: true });
           if (saved.error) throw saved.error;
         }
-        const genreNames = genreRows.map(r => r.name);
-        const genreLookup = genreNames.length
-          ? await db.from("genres").select("id,name").in("name", genreNames)
-          : { data: [], error: null };
-        if (genreLookup.error) throw genreLookup.error;
-        const genreIdByName = new Map((genreLookup.data || []).map((r: AnyRecord) => [String(r.name), String(r.id)]));
+
+        const [allByName, allByJapaneseName] = await Promise.all([
+          genreNames.length
+            ? db.from("genres").select("id,name,name_ja").in("name", genreNames)
+            : Promise.resolve({ data: [], error: null }),
+          genreJapaneseNames.length
+            ? db.from("genres").select("id,name,name_ja").in("name_ja", genreJapaneseNames)
+            : Promise.resolve({ data: [], error: null })
+        ]);
+        if (allByName.error) throw allByName.error;
+        if (allByJapaneseName.error) throw allByJapaneseName.error;
+        const genreIdByName = new Map((allByName.data || []).map((r: AnyRecord) => [String(r.name), String(r.id)]));
+        const genreIdByJapaneseName = new Map((allByJapaneseName.data || []).map((r: AnyRecord) => [String(r.name_ja), String(r.id)]));
         const genreQidToId = new Map<string, string>();
         for (const e of genreEntities) {
           const name = label(e, "en") || label(e, "ja");
-          const id = name ? genreIdByName.get(name) : null;
+          const jaName = japaneseLabel(e);
+          const id = (jaName ? genreIdByJapaneseName.get(jaName) : null) || (name ? genreIdByName.get(name) : null);
           if (id) genreQidToId.set(e.id, id);
         }
         const genreExternalRows = [...genreQidToId.entries()].map(([externalId, genreId]) => ({
