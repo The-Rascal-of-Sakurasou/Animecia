@@ -33,7 +33,7 @@ async function fetchAnimePage(offset) {
   const url = new URL("/rest/v1/animecia_public_anime", supabaseUrl);
   url.searchParams.set(
     "select",
-    "id,title,title_japanese,title_english,title_native,english_title,description,synopsis,cover_image,banner_image,start_date,end_date,episodes,duration,status,format,season,season_year,source,average_score,popularity,favourites_count,updated_at"
+    "id,title,title_japanese,title_english,title_native,english_title,description,synopsis,cover_image,banner_image,start_date,end_date,episodes,duration,status,format,season,season_year,source,average_score,,updated_at"
   );
   // The public catalog view applies the same eligibility rules as the live site.
   url.searchParams.set("order", "id.asc");
@@ -210,12 +210,12 @@ const genrePage = (genre, works) => {
   const canonical = base + "/genre/" + encodeURIComponent(genre.id) + "/";
   const workHtml = works.map(work => {
     const workTitle = mainTitle(work);
-    const image = /^https?:\/\//i.test(String(work.cover_image || "")) ? work.cover_image : "";
-    return "<article class=\"work\">" +
-      (image ? "<img src=\"" + esc(image) + "\" alt=\"" + esc(workTitle) + "の画像\" loading=\"lazy\">" : "") +
-      "<div><h2><a href=\"" + base + "/anime/" + encodeURIComponent(work.id) + "/\">" + esc(workTitle) + "</a></h2>" +
+    const image = /^https?:\\/\\//i.test(String(work.cover_image || ""));
+    return "<article class=\\"work\\">" +
+      (image ? "<img src=\\" + esc(work.cover_image) + "\\" alt=\\""+ esc(workTitle) + "の画像\\" loading=\\"lazy\\">" : "") +
+      "<div><h2><a href=\\"" + base + "/anime/" + encodeURIComponent(work.id) + "/\\">" + esc(workTitle) + "</a></h2>" +
       "<p>" + esc(text(work.synopsis || work.description).slice(0, 120) || "作品情報を確認できます。") + "</p>" +
-      "<small>評価 " + (work.average_score ? esc(Number(work.average_score).toFixed(1)) : "—") + " / 人気度 " + (work.popularity ? esc(work.popularity) : "—") + "</small></div></article>";
+      "<small>作品情報を見る →</small></div></article>";
   }).join("");
   const schema = { "@context": "https://schema.org", "@type": "CollectionPage", name: title + "アニメ一覧 | ANIXIA", url: canonical, description: title + "に関連するアニメ作品をANIXIAで一覧できます。", inLanguage: "ja" };
   return "<!doctype html><html lang=\"ja\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">" +
@@ -223,7 +223,7 @@ const genrePage = (genre, works) => {
     "<meta property=\"og:title\" content=\"" + esc(title) + "アニメ一覧 | ANIXIA\"><meta property=\"og:url\" content=\"" + esc(canonical) + "\"><script type=\"application/ld+json\">" + jsonLd(schema) + "</script>" +
     "<link rel=\"stylesheet\" href=\"../../site-theme.css?v=anixia-shared-v3\">" +
     "<link rel=\"stylesheet\" href=\"../../anixia-unified-theme.css?v=20261120-1\"><script src=\"../../anixia-global-header.js?v=20261120-1\" defer></script>" +
-    "<style>body{margin:0;background:#f6f6f6;color:#222;font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Yu Gothic\",Meiryo,sans-serif;line-height:1.7}main{max-width:1000px;margin:0 auto;padding:28px 18px}.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.06)}.grid{display:grid;gap:14px}.work{display:grid;grid-template-columns:90px 1fr;gap:16px;padding:14px 0;border-bottom:1px solid #eee}.work img{width:90px;height:125px;object-fit:cover;border-radius:8px}.work h2{font-size:1.05rem;margin:0 0 6px}.work a{color:#111}.work p{margin:5px 0;font-size:.92rem;color:#555}</style></head><body><main><div class=\"card\"><p><small>ANIXIA / ジャンル</small></p>" +
+    "<style>body{margin:0;background:#f6f6f6;color:#222;font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Yu Gothic\",Meiryo,sans-serif;line-height:1.7}main{max-width:1000px;margin:0 auto;padding:28px 18px}.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.06)}.grid{display:grid;gap:14px}.work{display:grid;grid-template-columns:90px 1fr;gap:16px;padding:14px 0;border-bottom:1px solid #eee}.work img{width:90px;height:125px;object-fit:cover;border-radius:8px}.work h2{font-size:1.05rem;margin:0 0 6px}.work a{color:#111}.work p{margin:5px 0;font-size:.92rem;color:#555}</style><link rel="stylesheet" href="../../anixia-genre-pages.css?v=20261121-genre1"></head><body><main><div class=\"card\"><p><small>ANIXIA / ジャンル</small></p>" +
     "<h1>" + esc(title) + "のアニメ一覧</h1><p>" + esc(title) + "に関連する作品を、ANIXIAの作品データをもとに一覧表示しています。</p><section class=\"grid\">" + (workHtml || "<p>現在、このジャンルの作品は登録されていません。</p>") + "</section></div></main></body></html>";
 };
 const animeRows = [];
@@ -256,9 +256,9 @@ for (const anime of animeRows) {
 }
 for (const genre of genreMap.values()) {
   genre.works.sort((a, b) => {
-    const bp = Number(b.popularity) || 0; const ap = Number(a.popularity) || 0;
-    if (bp !== ap) return bp - ap;
-    return (Number(b.average_score) || 0) - (Number(a.average_score) || 0);
+    const dateDiff = String(b.start_date || "").localeCompare(String(a.start_date || ""));
+    if (dateDiff) return dateDiff;
+    return Number(b.id) - Number(a.id);
   });
   const dir = `genre/${genre.id}`;
   await mkdir(dir, { recursive: true });
