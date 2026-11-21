@@ -170,12 +170,11 @@
     const logout = header.querySelector("#home-logout");
     const render = user => {
       const signedIn = !!(user && !user.is_anonymous);
-      // マイページへの入口はログイン状態にかかわらず常時表示する。
-      // 未ログイン時はマイページ側でログイン案内を表示する。
+      // 未ログイン時はログイン、ログイン済みの場合はマイページを表示する。
       login.hidden = false;
-      login.href = ROOT + "mypage.html";
-      login.textContent = "マイページ";
-      login.setAttribute("aria-label", "マイページ");
+      login.href = ROOT + (signedIn ? "mypage.html" : "login.html");
+      login.textContent = signedIn ? "マイページ" : "ログイン";
+      login.setAttribute("aria-label", signedIn ? "マイページ" : "ログイン");
       logout.hidden = !signedIn;
     };
     try {
