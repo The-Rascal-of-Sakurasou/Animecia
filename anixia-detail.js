@@ -31,10 +31,12 @@
     const desc=(synopsis||name).slice(0,150);
     document.querySelector('meta[name="description"]').content=desc;
     $("poster").alt=isEnglish()?name+" poster":name+"のポスター";
-    $("poster").hidden=!a.poster_url;
-    $("poster-fallback").hidden=!!a.poster_url;
-    if(!a.poster_url) setPosterFallback(name);
-    if(a.poster_url){
+    const posterCredit=a.poster_credit||{};
+    const hasVerifiedPoster=!!(a.poster_url&&String(posterCredit.source_url||"").startsWith("https://")&&String(posterCredit.attribution||"").trim());
+    $("poster").hidden=!hasVerifiedPoster;
+    $("poster-fallback").hidden=hasVerifiedPoster;
+    if(!hasVerifiedPoster) setPosterFallback(name);
+    if(hasVerifiedPoster){
       $("poster").src=a.poster_url;
       $("poster").onload=()=>{$("poster").classList.toggle("anixia-poster-logo",$("poster").naturalWidth>$("poster").naturalHeight*1.15);};
       $("poster").onerror=()=>{$("poster").hidden=true;setPosterFallback(name);};
