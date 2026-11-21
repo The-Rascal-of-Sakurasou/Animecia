@@ -19,6 +19,13 @@
   ];
 
   function addStyles() {
+    if (!document.querySelector('link[data-anixia-screen-system="true"]')) {
+      const designSystem = document.createElement("link");
+      designSystem.rel = "stylesheet";
+      designSystem.href = ROOT + "anixia-screen-system.css?v=20261121-2";
+      designSystem.dataset.anixiaScreenSystem = "true";
+      document.head.appendChild(designSystem);
+    }
     if (document.getElementById("anixia-global-header-style")) return;
     const style = document.createElement("style");
     style.id = "anixia-global-header-style";
