@@ -127,10 +127,23 @@ Deno.serve(async (req: Request) => {
   if (!url || !serviceKey) return json({ error: "Supabase function secrets are incomplete." }, 500);
   const db = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
   const cronToken = req.headers.get("x-anixia-cron-token") || "";
-  const stored = await db.from("catalog_sync_secrets").select("secret_hash").eq("id", 1).maybeSingle();
-  if (!cronToken || stored.error || !stored.data?.secret_hash ||
-      !sameToken(await digestHex(cronToken), String(stored.data.secret_hash))) {
-    return json({ error: "Unauthorized" }, 401);
+  let authorized = false;
+  if (cronToken) {
+    const stored = await db.from("catalog_sync_secrets").select("secret_hash").eq("id", 1).maybeSingle();
+    if (stored.error) return json({ error: "Sync token validation failed." }, 500);
+    authorized = Boolean(stored.data?.secret_hash) &&
+      sameToken(await digestHex(cronToken), String(stored.data.secret_hash));
+  }
+  if (!authorized) {
+    const authHeader = req.headers.get("Authorization") || "";
+    const token = authHeader.replace(/^Bearer\\s+/i, "");
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!token || !anonKey) return json({ error: "Administrator login is required." }, 401);
+    const userClient = createClient(url, anonKey, { global: { headers: { Authorization: authHeader } } });
+    const { data: userData, error: userError } = await userClient.auth.getUser(token);
+    if (userError || !userData.user) return json({ error: "Could not verify administrator session." }, 401);
+    const { data: isAdmin, error: adminError } = await userClient.rpc("is_anixia_admin");
+    if (adminError || isAdmin !== true) return json({ error: "Administrator permission is required." }, 403);
   }
   const approval = await db.from("catalog_sources").select("rights_review_status,is_enabled")
     .eq("code", "anilist").single();
@@ -144,38 +157,21 @@ Deno.serve(async (req: Request) => {
   const force = body.force === true;
   const requestedIds = Array.isArray(body.animeIds)
     ? [...new Set(body.animeIds.map(String).filter(v => /^[0-9a-f-]{36}$/i.test(v)))].slice(0, 30) : [];
-  let offset = 0;
-  if (!requestedIds.length && !force) {
-    const state = await db.from("catalog_sync_state").select("next_offset").eq("source", "anilist-posters").maybeSingle();
-    if (state.error) return json({ error: state.error.message }, 500);
-    offset = Math.max(0, Number(state.data?.next_offset) || 0);
-  }
-  const buildQuery = (start: number) => {
+  const buildQuery = () => {
     let q = db.from("anime")
       .select("id,title,title_ja,title_kana,release_year,format,poster_url,poster_attempted_at")
-      .eq("is_published", true)
+      .is("poster_url", null)
       .order("release_year", { ascending: false, nullsFirst: false })
       .order("id", { ascending: true });
-    if (requestedIds.length) q = q.in("id", requestedIds);
-    return q.range(start, start + limit - 1);
+    if (!force) q = q.is("poster_attempted_at", null);
+    return q.limit(limit);
   };
-  let { data: works, error: listError } = await buildQuery(offset);
+  const { data: works, error: listError } = await buildQuery();
   if (listError) return json({ error: listError.message }, 500);
-  if (!requestedIds.length && !force && (!works || works.length === 0) && offset > 0) {
-    offset = 0;
-    const reset = await db.from("catalog_sync_state").upsert({
-      source: "anilist-posters", next_offset: 0, updated_at: new Date().toISOString()
-    }, { onConflict: "source" });
-    if (reset.error) return json({ error: reset.error.message }, 500);
-    const first = await buildQuery(0);
-    works = first.data;
-    listError = first.error;
-    if (listError) return json({ error: listError.message }, 500);
-  }
   const result = { scanned: (works || []).length, updated: 0, skipped: 0,
     unmatched: [] as string[], errors: [] as string[] };
   for (const work of (works || []) as Work[]) {
-    if (!force && (work.poster_url || work.poster_attempted_at)) { result.skipped++; continue; }
+    if (work.poster_url || (!force && work.poster_attempted_at)) { result.skipped++; continue; }
     try {
       const media = await findPoster(work);
       const attemptedAt = new Date().toISOString();
@@ -201,17 +197,12 @@ Deno.serve(async (req: Request) => {
       if (!updated?.id || updated.id !== work.id) throw new Error("DB update returned no matching anime row.");
       result.updated++;
     } catch (error) {
+      const attemptedAt = new Date().toISOString();
+      await db.from("anime").update({ poster_attempted_at: attemptedAt }).eq("id", work.id);
       result.errors.push((work.title_ja || work.title) + ": " +
         (error instanceof Error ? error.message : String(error)).slice(0, 180));
     }
   }
-  if (!requestedIds.length && !force) {
-    const nextOffset = (works || []).length < limit ? 0 : offset + limit;
-    const state = await db.from("catalog_sync_state").upsert({
-      source: "anilist-posters", next_offset: nextOffset, updated_at: new Date().toISOString()
-    }, { onConflict: "source" });
-    if (state.error) return json({ error: state.error.message, partial: result }, 500);
-  }
-  return json({ ...result, nextOffset: requestedIds.length || force ? null : offset + (works || []).length,
+  return json({ ...result, completed: (works || []).length < limit,
     message: "Only exact title matches with a compatible release year are imported; ambiguous matches are skipped." });
 });
