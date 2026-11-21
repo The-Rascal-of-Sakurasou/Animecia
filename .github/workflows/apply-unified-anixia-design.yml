@@ -35,7 +35,8 @@ jobs:
             git push
           fi
       - name: Update generated genre pages
-        run: node scripts/update-genre-pages.mjs      - name: Commit all page updates
+        run: node scripts/update-genre-pages.mjs
+      - name: Commit all page updates
         run: |
           if ! git diff --quiet; then
             git add -A
