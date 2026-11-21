@@ -661,7 +661,7 @@ Deno.serve(async (req: Request) => {
           "animated film", "anime film", "anime", "anthology series", "asmr",
           "association football video game", "children's film", "children's television series",
           "lgbt-related television series", "religious art", "visual novel", "mahjong manga",
-          "hentai"
+          "hentai", "crossover fiction", "speculative fiction"
         ]);
         const genreEntities = [...genreById.values()].filter(e => {
           const english = (label(e, "en") || "").toLocaleLowerCase();
