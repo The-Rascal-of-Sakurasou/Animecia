@@ -411,3 +411,28 @@ body .diag-hero{
   border-top:1px solid #e5e7eb!important;
   box-shadow:0 3px 14px rgba(0,0,0,.045)!important;
 }
+
+
+/* ANIXIA shared shell: keep the header in normal document flow and the footer at page end.
+   This avoids a permanently reserved footer overlay on short and long pages. */
+body{padding-top:0!important;padding-bottom:32px!important}
+body>header.anixia-global-header,
+body>header.site-header.anixia-global-header{
+  position:sticky!important;
+  top:0!important;
+  left:auto!important;
+  right:auto!important;
+  z-index:2147483647!important;
+  width:100%!important;
+}
+body>footer.anixia-global-footer{
+  position:static!important;
+  left:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  z-index:auto!important;
+  width:100%!important;
+  max-height:none!important;
+  overflow:visible!important;
+  margin:64px 0 0!important;
+}
