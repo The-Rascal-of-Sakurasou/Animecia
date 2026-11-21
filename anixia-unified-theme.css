@@ -2,7 +2,7 @@
 :root{color-scheme:light;--anixia-jt:#03AF6A;--anixia-twitter:#1DA1F2;--anixia-black:#000;--anixia-white:#fff;--anixia-text:#111;--anixia-border:#e5e7eb}
 *{box-sizing:border-box}
 html{min-height:100%;background:#fff!important;scroll-behavior:smooth}
-body{min-height:100vh!important;margin:0!important;padding-top:76px!important;padding-bottom:150px!important;color:#111!important;background:#fff!important;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif!important;line-height:1.65}
+body{min-height:100vh!important;margin:0!important;padding-top:0!important;padding-bottom:32px!important;color:#111!important;background:#fff!important;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif!important;line-height:1.65}
 body :where(h1,h2,h3,h4,h5,h6,p,span,strong,em,small,label,li,dt,dd,summary,a,div,section,article,main,aside,form,fieldset,legend){color:#111!important}
 body :where(main,section,article,.panel,.card,.profile-card,.list-item,.review-item,.feature-card,.genre-card,.recommendation-card,.quick-card,[class*="-panel"],[class*="-card"],[class*="-hero"],.hero,.page-header){background:#fff!important;color:#111!important;border-color:#e5e7eb!important;box-shadow:0 3px 14px rgba(0,0,0,.045)!important}
 body :where(h1,h2,h3,h4,h5,h6){color:#111!important}
