@@ -75,6 +75,33 @@
         .anixia-header-actions{gap:5px!important}
         .anixia-header-actions .anixia-header-button{min-height:33px!important;padding:0 8px!important;font-size:11px!important}
       }
+      /* Compact fixed footer: keep every link visible without covering page content. */
+      .anixia-global-footer{position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:2147482999!important;width:100%!important;margin:0!important;max-height:none!important;overflow:visible!important}
+      .anixia-footer-inner{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important;width:100%!important;max-width:none!important;margin:0!important;padding:9px 20px!important;box-sizing:border-box!important}
+      .anixia-footer-main{flex:0 0 auto!important;margin:0!important}
+      .anixia-footer-logo{font-size:21px!important}
+      .anixia-footer-nav{display:flex!important;align-items:center!important;justify-content:center!important;flex:1 1 auto!important;flex-wrap:nowrap!important;gap:8px 16px!important;min-width:0!important;margin:0!important;padding:0!important;border:0!important;overflow-x:auto!important;scrollbar-width:none!important}
+      .anixia-footer-nav::-webkit-scrollbar{display:none!important}
+      .anixia-footer-nav a{flex:0 0 auto!important;white-space:nowrap!important;font-size:11px!important}
+      .anixia-footer-bottom{flex:0 0 auto!important;padding:0!important;border:0!important;white-space:nowrap!important;font-size:10px!important}
+      .anixia-global-footer .anixia-admin-login{flex:0 0 auto!important;margin:0!important;min-height:28px!important;padding:0 9px!important;font-size:10px!important}
+      @media(max-width:760px){
+        .anixia-footer-inner{display:grid!important;grid-template-columns:minmax(0,1fr) auto auto!important;grid-template-rows:auto auto!important;gap:6px 10px!important;padding:7px 12px!important}
+        .anixia-footer-main{grid-column:1!important;grid-row:1!important}
+        .anixia-footer-logo{font-size:19px!important}
+        .anixia-footer-bottom{grid-column:2!important;grid-row:1!important}
+        .anixia-global-footer .anixia-admin-login{grid-column:3!important;grid-row:1!important;min-height:26px!important;padding:0 7px!important;font-size:9px!important}
+        .anixia-footer-nav{grid-column:1/-1!important;grid-row:2!important;justify-content:flex-start!important;gap:7px 14px!important;min-height:24px!important}
+        .anixia-footer-nav a{font-size:10px!important}
+      }
+      @media(max-width:360px){
+        .anixia-footer-inner{gap:5px 7px!important;padding:6px 9px!important}
+        .anixia-footer-logo{font-size:17px!important}
+        .anixia-footer-bottom{font-size:9px!important}
+        .anixia-global-footer .anixia-admin-login{font-size:8px!important;padding:0 5px!important}
+        .anixia-footer-nav{gap:6px 11px!important}
+        .anixia-footer-nav a{font-size:9px!important}
+      }
     `;
     document.head.appendChild(style);
   }
@@ -224,10 +251,12 @@
     footer.style.setProperty("background-color", "#000000", "important");
     footer.style.setProperty("color", "#FFFFFF", "important");
     footer.style.setProperty("width", "100%", "important");
-    footer.style.setProperty("position", "static", "important");
-    footer.style.setProperty("inset", "auto", "important");
-    footer.style.setProperty("z-index", "auto", "important");
-    footer.style.setProperty("margin", "48px 0 0", "important");
+    footer.style.setProperty("position", "fixed", "important");
+    footer.style.setProperty("left", "0", "important");
+    footer.style.setProperty("right", "0", "important");
+    footer.style.setProperty("bottom", "0", "important");
+    footer.style.setProperty("z-index", "2147482999", "important");
+    footer.style.setProperty("margin", "0", "important");
     footer.style.setProperty("max-height", "none", "important");
     footer.style.setProperty("overflow", "visible", "important");
     footer.innerHTML = `
@@ -246,16 +275,18 @@
     document.querySelectorAll("footer").forEach(node => { if (node !== footer) node.remove(); });
     document.body.appendChild(footer);
     const updateFooterSpace = () => {
-      footer.style.setProperty("position", "static", "important");
-      footer.style.setProperty("inset", "auto", "important");
+      footer.style.setProperty("position", "fixed", "important");
+      footer.style.setProperty("left", "0", "important");
+      footer.style.setProperty("right", "0", "important");
+      footer.style.setProperty("bottom", "0", "important");
       footer.style.setProperty("width", "100%", "important");
-      footer.style.setProperty("z-index", "auto", "important");
+      footer.style.setProperty("z-index", "2147482999", "important");
       footer.style.setProperty("max-height", "none", "important");
       footer.style.setProperty("overflow", "visible", "important");
       footer.style.setProperty("box-sizing", "border-box", "important");
       const height = footer.getBoundingClientRect().height;
       document.documentElement.style.setProperty("--anixia-footer-height", height + "px");
-      document.body.style.setProperty("padding-bottom", "32px", "important");
+      document.body.style.setProperty("padding-bottom", (height + 16) + "px", "important");
     };
     updateFooterSpace();
     if (window.ResizeObserver) new ResizeObserver(updateFooterSpace).observe(footer);
