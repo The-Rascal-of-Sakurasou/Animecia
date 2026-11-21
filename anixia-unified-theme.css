@@ -190,3 +190,171 @@ body :where(main,section,article,aside,form,fieldset):not(.panel):not(.card):not
   background:transparent!important;
   box-shadow:none!important;
 }
+
+
+/* =========================================================
+   ANIXIA page-wide layout pass — consistent neutral design
+   ========================================================= */
+:root{
+  --anixia-page:#fff;
+  --anixia-surface:#f7f9f8;
+  --anixia-border:#e7ece9;
+  --anixia-text:#171c19;
+  --anixia-muted:#68736d;
+  --anixia-jt:#03AF6A;
+  --anixia-blue:#1DA1F2;
+}
+html,body{width:100%;max-width:100%;background:var(--anixia-page)!important;color:var(--anixia-text)!important}
+body{overflow-x:clip!important}
+body>main{
+  width:min(1180px,calc(100% - 40px))!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin:0 auto!important;
+  padding:28px 0 48px!important;
+  box-sizing:border-box!important;
+}
+body :where(main,section,article,aside,form,fieldset){min-width:0}
+body :where(h1,h2,h3,h4,h5,h6){color:var(--anixia-text)!important;line-height:1.35}
+body :where(p,li,dt,dd,label,small){overflow-wrap:anywhere}
+body :where(.anixia-page,.discover-page,.entity-page,.anixia-detail,.entity-detail,.compare-page,.rank-page,.season-page,.anixia-mypage,.quiz-page,.diag-page,.play-page,.memo-page,.admin-page){
+  width:min(1180px,calc(100% - 40px))!important;
+  max-width:100%!important;
+  margin-left:auto!important;margin-right:auto!important;
+  padding-top:28px!important;padding-bottom:48px!important;
+}
+body :where(.anixia-page-hero,.discover-hero,.entity-hero,.anixia-detail-hero,.entity-detail-hero,.compare-hero,.rank-hero,.season-hero,.anixia-mypage-hero,.memo-hero,.quiz-hero,.diag-hero,.play-head,.hero,.page-header){
+  background:var(--anixia-surface)!important;
+  background-image:none!important;
+  color:var(--anixia-text)!important;
+  border:1px solid var(--anixia-border)!important;
+  border-radius:14px!important;
+  box-shadow:none!important;
+}
+body :where(.anixia-page-hero,.discover-hero,.entity-hero,.anixia-detail-hero,.entity-detail-hero,.compare-hero,.rank-hero,.season-hero,.anixia-mypage-hero,.memo-hero,.quiz-hero,.diag-hero,.play-head,.hero,.page-header) :where(h1,h2,h3,h4,p,small,span,strong,label){
+  color:var(--anixia-text)!important;
+}
+body :where(.anixia-page-hero,.discover-hero,.entity-hero,.anixia-detail-hero,.entity-detail-hero,.compare-hero,.rank-hero,.season-hero,.anixia-mypage-hero,.memo-hero,.quiz-hero,.diag-hero,.play-head,.hero,.page-header) :where(small,.eyebrow,.kicker,.memo-kicker,.anixia-detail-kicker){
+  color:var(--anixia-jt)!important;
+}
+body :where(.anixia-filter-panel,.anixia-filter-actions,.anixia-detail-panel,.entity-panel,.entity-search,.anixia-mypage-panel,.admin-panel,.auth-panel,.diag-panel,.memo-panel,.policy-box,.filter-area,.filters-panel,.search-box,.question-card,.result-card,.rank-row,.season-card,.discover-genre,.compare-hit,.quiz-card,.diag-genre,.profile-card,.panel,.stat-card,.review-item,.list-item){
+  background:var(--anixia-surface)!important;
+  background-image:none!important;
+  color:var(--anixia-text)!important;
+  border:1px solid var(--anixia-border)!important;
+  border-radius:12px!important;
+  box-shadow:none!important;
+}
+body :where(.anixia-filter-panel,.anixia-detail-panel,.entity-panel,.anixia-mypage-panel,.admin-panel,.auth-panel,.diag-panel,.memo-panel,.policy-box,.filter-area,.filters-panel,.search-box,.question-card,.result-card,.rank-row,.season-card,.discover-genre,.compare-hit,.quiz-card,.diag-genre,.profile-card,.panel,.stat-card,.review-item,.list-item) :where(h1,h2,h3,h4,p,span,strong,label,small,li,a,dt,dd){
+  color:var(--anixia-text)!important;
+}
+body :where(.anixia-filter-panel,.anixia-mypage-panel,.admin-panel,.auth-panel,.diag-panel,.memo-panel,.policy-box,.filter-area,.filters-panel,.search-box,.question-card,.result-card,.quiz-card,.diag-genre,.profile-card,.panel) :where(.hint,.help,.help-text,.muted,.meta,.description,.field-help,.diag-help,.message,.sub){
+  color:var(--anixia-muted)!important;
+}
+body :where(input,select,textarea,[contenteditable=true]){
+  width:auto;max-width:100%;min-width:0;
+  min-height:42px;
+  background:#fff!important;color:var(--anixia-text)!important;
+  border:1px solid var(--anixia-border)!important;border-radius:8px!important;
+  box-shadow:none!important;
+}
+body textarea{min-height:100px;resize:vertical}
+body :where(input,select,textarea)::placeholder{color:#7a847e!important;opacity:1}
+body :where(input,select,textarea):focus{
+  outline:0!important;border-color:var(--anixia-jt)!important;
+  box-shadow:0 0 0 3px rgba(3,175,106,.12)!important;
+}
+body :where(button,input[type=button],input[type=submit],input[type=reset],.btn,.button,.nav-btn,a[role=button],.primary,.search-submit,.search-button,.action-button.primary,.diag-submit,.play-actions button){
+  min-height:40px;border-radius:8px!important;
+  background:var(--anixia-jt)!important;border:1px solid var(--anixia-jt)!important;
+  color:#fff!important;font-weight:700!important;
+}
+body :where(button:hover,input[type=button]:hover,input[type=submit]:hover,.btn:hover,.button:hover,.nav-btn:hover,a[role=button]:hover,.primary:hover,.diag-submit:hover,.play-actions button:hover){
+  background:#028f56!important;border-color:#028f56!important;color:#fff!important;
+}
+body :where(.tabs,.rank-tabs,.entity-tabs,.anixia-mypage-tabs){display:flex;flex-wrap:wrap;gap:8px;min-width:0}
+body :where(.tabs,.rank-tabs,.entity-tabs,.anixia-mypage-tabs) button{
+  background:#fff!important;color:var(--anixia-text)!important;border:1px solid var(--anixia-border)!important;
+}
+body :where(.tabs,.rank-tabs,.entity-tabs,.anixia-mypage-tabs) button.active,
+body :where(.tabs,.rank-tabs,.entity-tabs,.anixia-mypage-tabs) button[aria-selected=true]{
+  background:var(--anixia-jt)!important;color:#fff!important;border-color:var(--anixia-jt)!important;
+}
+body :where(.anixia-filter-grid,.discover-genres,.entity-grid,.season-grid,.quiz-grid,.diag-genres,.diag-results,.anixia-mypage-grid,.rank-layout,.anixia-detail-grid,.entity-detail-grid){
+  min-width:0;
+}
+body :where(.anixia-filter-grid,.discover-genres,.entity-grid,.season-grid,.quiz-grid,.diag-genres,.diag-results,.anixia-mypage-grid,.rank-layout,.anixia-detail-grid,.entity-detail-grid)>*{min-width:0}
+body :where(.season-card,.discover-genre,.rank-row,.compare-hit,.entity-panel,.anixia-detail-panel,.anixia-mypage-panel,.memo-card){overflow-wrap:anywhere}
+body :where(.season-card,.memo-card,.discover-genre){background:#fff!important;border-color:var(--anixia-border)!important;color:var(--anixia-text)!important}
+body :where(.season-card,.memo-card,.discover-genre) :where(h2,h3,p,b,small,span){color:var(--anixia-text)!important}
+body :where(.rank-meta,.season-card-copy small,.memo-meta,.username,.bio,.meta,.sub,.muted,.empty,.rank-note,.rank-state,.season-state,.discover-state,.entity-empty,.anixia-library-empty){color:var(--anixia-muted)!important}
+body :where(.policy-box){width:min(900px,100%);margin:24px auto;padding:clamp(18px,3vw,32px);line-height:1.85}
+body :where(.auth-panel){width:100%;max-width:480px;margin:0 auto;padding:clamp(20px,4vw,30px)}
+body:has(.auth-panel)>main{width:min(480px,calc(100% - 32px))!important;padding:32px 0!important}
+body:has(.admin-panel)>main{width:min(900px,calc(100% - 32px))!important}
+body:has(.policy-box)>main{width:min(960px,calc(100% - 32px))!important}
+body :where(.admin-page){width:min(900px,calc(100% - 40px))!important}
+body :where(.admin-panel){padding:clamp(16px,3vw,26px)!important;margin-bottom:14px}
+body :where(.field,.admin-field,.anixia-field,.anixia-profile-field){min-width:0}
+body :where(.field input,.field select,.field textarea,.admin-field input,.admin-field select,.anixia-field input,.anixia-field select,.anixia-profile-field input,.anixia-profile-field select,.anixia-profile-field textarea){width:100%!important;min-width:0!important}
+body :where(.search-box,.compare-search,.entity-search){display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+body :where(.search-box input,.compare-search input,.entity-search input){flex:1 1 220px;width:100%;min-width:0}
+body :where(.anixia-search-form input){width:100%;min-width:0}
+body :where(.anixia-search-panel,.anixia-service-card,.anixia-section-card,.anixia-work-card){border-color:var(--anixia-border)!important}
+body :where(.anixia-service-card,.anixia-work-card){background:#fff!important;color:var(--anixia-text)!important}
+body :where(.anixia-service-card,.anixia-work-card) *{color:var(--anixia-text)}
+body :where(.anixia-logo,.anixia-footer-logo){white-space:nowrap!important}
+body img,body video,body iframe{max-width:100%}
+body table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse}
+body :where(pre,code){max-width:100%;overflow-wrap:anywhere;white-space:pre-wrap}
+body :where(.messenger,.layout,.chat,.sidebar,.profile-main,.profile-actions){min-width:0}
+body .layout{grid-template-columns:minmax(0,1fr) minmax(240px,300px)}
+body .messenger{max-width:100%}
+body .profile-actions{max-width:100%}
+body .profile-cover{max-width:100%}
+body .profile-stats{gap:10px 18px;flex-wrap:wrap}
+@media(max-width:1000px){
+  body :where(.anixia-filter-grid){grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  body :where(.season-grid){grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  body :where(.entity-grid,.discover-genres){grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  body .layout{grid-template-columns:minmax(0,1fr)!important}
+}
+@media(max-width:760px){
+  body>main{width:calc(100% - 24px)!important;padding:20px 0 36px!important}
+  body :where(.anixia-page,.discover-page,.entity-page,.anixia-detail,.entity-detail,.compare-page,.rank-page,.season-page,.anixia-mypage,.quiz-page,.diag-page,.play-page,.memo-page,.admin-page){
+    width:calc(100% - 24px)!important;padding-top:20px!important;padding-bottom:36px!important
+  }
+  body :where(.anixia-page-hero,.discover-hero,.entity-hero,.anixia-detail-hero,.entity-detail-hero,.compare-hero,.rank-hero,.season-hero,.anixia-mypage-hero,.memo-hero,.quiz-hero,.diag-hero,.play-head,.hero,.page-header){
+    padding:18px!important;margin-bottom:14px!important;border-radius:12px!important
+  }
+  body :where(.anixia-page-hero,.discover-hero,.entity-hero,.compare-hero,.rank-hero,.season-hero,.anixia-mypage-hero,.memo-hero,.quiz-hero,.diag-hero) h1{font-size:clamp(23px,6vw,30px)!important}
+  body :where(.anixia-filter-panel,.anixia-detail-panel,.entity-panel,.anixia-mypage-panel,.admin-panel,.auth-panel,.diag-panel,.memo-panel,.policy-box,.filter-area,.filters-panel,.search-box,.question-card,.result-card,.profile-card,.panel){padding:15px!important}
+  body :where(.anixia-filter-grid,.discover-genres,.entity-grid,.season-grid,.quiz-grid,.diag-genres,.diag-results,.anixia-mypage-grid,.rank-layout,.anixia-detail-grid,.entity-detail-grid){
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important
+  }
+  body :where(.anixia-detail-hero,.entity-detail-hero){grid-template-columns:minmax(0,1fr)!important;gap:16px!important}
+  body :where(.anixia-detail-poster-wrap){width:min(220px,70%);margin:0 auto}
+  body :where(.anixia-mypage-grid){display:grid;grid-template-columns:minmax(0,1fr)!important}
+  body :where(.rank-row){grid-template-columns:32px 58px minmax(0,1fr)!important;gap:9px!important;padding:9px!important}
+  body .rank-row img{width:58px!important}
+  body .rank-score{grid-column:3;white-space:normal!important}
+  body :where(.season-controls,.memo-head,.discover-head){align-items:stretch;flex-wrap:wrap}
+  body :where(.season-controls select){width:100%;min-width:0}
+  body :where(.search-box,.compare-search,.entity-search){align-items:stretch}
+  body :where(.search-box button,.compare-search button,.entity-search button){width:100%}
+  body :where(.profile-actions){position:static!important;justify-content:flex-start!important;margin-top:12px}
+  body :where(.profile-main){padding:0 15px 18px!important}
+  body :where(.profile-stats){gap:8px 14px!important}
+  body :where(.links){flex-wrap:wrap;justify-content:flex-start}
+  body :where(.messenger){height:calc(100dvh - 250px)!important;min-height:400px!important;grid-template-columns:minmax(0,1fr)!important}
+  body :where(.sidebar, .chat){min-width:0!important}
+  body :where(.policy-box){margin:0 auto!important}
+}
+@media(max-width:520px){
+  body :where(.anixia-filter-grid,.discover-genres,.entity-grid,.season-grid,.quiz-grid,.diag-genres,.diag-results,.anixia-mypage-grid,.rank-layout,.anixia-detail-grid,.entity-detail-grid){grid-template-columns:minmax(0,1fr)!important}
+  body :where(.anixia-detail-poster-wrap){width:min(190px,68%)}
+  body :where(.rank-row){grid-template-columns:28px 52px minmax(0,1fr)!important}
+  body .rank-row img{width:52px!important}
+  body :where(.profile-cover){height:110px!important}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}}
