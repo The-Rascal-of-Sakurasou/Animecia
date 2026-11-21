@@ -136,7 +136,7 @@ Deno.serve(async (req: Request) => {
   }
   if (!authorized) {
     const authHeader = req.headers.get("Authorization") || "";
-    const token = authHeader.replace(/^Bearer\\s+/i, "");
+    const token = authHeader.replace(/^Bearer\s+/i, "");
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
     if (!token || !anonKey) return json({ error: "Administrator login is required." }, 401);
     const userClient = createClient(url, anonKey, { global: { headers: { Authorization: authHeader } } });
