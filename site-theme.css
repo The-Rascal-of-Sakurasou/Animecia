@@ -4976,3 +4976,14 @@ body:has(>main>h1:first-child){display:block!important}
   body :where(.entity-grid,.quiz-grid,.anixia-detail-grid,.entity-detail-grid,.rank-layout){grid-template-columns:minmax(0,1fr)!important}
   body :where(.anixia-mypage-grid){grid-template-columns:minmax(0,1fr)!important}
 }
+
+
+/* Quiz and recommendation hero panels: match the shared white surface exactly. */
+body .quiz-hero,
+body .diag-hero{
+  background:#fff!important;
+  background-color:#fff!important;
+  border:1px solid #e5e7eb!important;
+  border-top:1px solid #e5e7eb!important;
+  box-shadow:0 3px 14px rgba(0,0,0,.045)!important;
+}
