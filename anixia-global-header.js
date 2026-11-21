@@ -22,7 +22,7 @@
     if (!document.querySelector('link[data-anixia-screen-system="true"]')) {
       const designSystem = document.createElement("link");
       designSystem.rel = "stylesheet";
-      designSystem.href = ROOT + "anixia-screen-system.css?v=20261121-2";
+      designSystem.href = ROOT + "anixia-screen-system.css?v=20261121-3";
       designSystem.dataset.anixiaScreenSystem = "true";
       document.head.appendChild(designSystem);
     }
