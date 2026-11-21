@@ -42,6 +42,43 @@
 @media(max-width:1000px){.anixia-filter-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.anixia-filter-grid .wide{grid-column:1/-1}.anixia-results-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:700px){.anixia-page{width:calc(100% - 22px);padding:22px 0 55px}.anixia-page-hero{padding:22px}.anixia-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.anixia-results-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.anixia-results-head{align-items:flex-start;flex-direction:column}}
 @media(max-width:430px){.anixia-filter-grid{grid-template-columns:1fr}.anixia-filter-grid .wide{grid-column:auto}}
+
+/* ANIXIA catalog redesign: light, readable, responsive database layout. */
+.anixia-page{width:min(1200px,calc(100% - 40px));padding:30px 0 56px;color:#111827}
+.anixia-page-hero{padding:24px 26px;border:1px solid #e5e7eb;border-left:4px solid #03AF6A;border-radius:12px;background:#fff;margin-bottom:18px}
+.anixia-page-hero small{color:#028F56;letter-spacing:.14em}
+.anixia-page-hero h1{color:#111827;font-size:clamp(25px,3vw,34px);letter-spacing:-.025em}
+.anixia-page-hero p{color:#667085;font-size:13px;line-height:1.8}
+.anixia-filter-panel{padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;box-shadow:0 2px 10px rgba(16,24,40,.035)}
+.anixia-filter-grid{grid-template-columns:minmax(220px,2fr) repeat(4,minmax(130px,1fr));gap:13px}
+.anixia-field label{color:#344054;font-size:12px}
+.anixia-field input,.anixia-field select{border:1px solid #d0d5dd;border-radius:8px;background:#fff;color:#111827;outline:none;transition:border-color .15s,box-shadow .15s}
+.anixia-field input:focus,.anixia-field select:focus{border-color:#03AF6A;box-shadow:0 0 0 3px rgba(3,175,106,.12)}
+.anixia-field .field-help{color:#667085}
+.anixia-filter-actions{border-top:1px solid #eef0f2;padding-top:14px}
+.anixia-filter-actions p{color:#667085}
+.anixia-filter-actions button{background:#03AF6A;color:#fff;border:1px solid #03AF6A;border-radius:8px;cursor:pointer;transition:background .15s,border-color .15s}
+.anixia-filter-actions button:hover{background:#028F56;border-color:#028F56}
+.anixia-filter-actions .secondary{background:#fff;color:#344054;border:1px solid #d0d5dd}
+.anixia-filter-actions .secondary:hover{background:#f9fafb;border-color:#98a2b3}
+.anixia-results-head{margin:24px 0 13px}
+.anixia-results-head strong{color:#111827;font-size:15px}
+.anixia-results-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:15px}
+.anixia-result-card{border:1px solid #e5e7eb;border-radius:10px;background:#fff;color:#111827;box-shadow:0 1px 3px rgba(16,24,40,.035);transition:transform .16s,border-color .16s,box-shadow .16s}
+.anixia-result-card:hover{transform:translateY(-2px);border-color:#8fd4b5;box-shadow:0 6px 18px rgba(16,24,40,.08)}
+.anixia-result-poster{background:#f1f5f3;color:#667085}
+.anixia-result-copy{padding:12px}
+.anixia-result-copy b{color:#111827;font-size:13px;line-height:1.55}
+.anixia-result-copy small{color:#667085}
+.anixia-state{border:1px dashed #d0d5dd;border-radius:10px;background:#fff;color:#667085}
+.anixia-pagination button{border:1px solid #d0d5dd;border-radius:8px;background:#fff;color:#344054;cursor:pointer}
+.anixia-pagination button:not(:disabled):hover{border-color:#03AF6A;color:#028F56}
+.anixia-pagination button:disabled{opacity:.4}
+.anixia-pagination span{color:#667085}
+.anixia-page :where(a,button,input,select):focus-visible{outline:3px solid rgba(29,161,242,.35);outline-offset:2px}
+@media(max-width:1000px){.anixia-filter-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.anixia-results-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:700px){.anixia-page{width:calc(100% - 24px);padding:22px 0 44px}.anixia-page-hero{padding:19px}.anixia-filter-panel{padding:14px}.anixia-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.anixia-results-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
+@media(max-width:430px){.anixia-filter-grid{grid-template-columns:minmax(0,1fr)}.anixia-filter-actions{align-items:stretch;flex-direction:column}.anixia-filter-actions>div{display:grid;grid-template-columns:1fr 1fr;gap:8px}.anixia-filter-actions button{width:100%;padding:10px 8px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="anixia-client.js?v=20261121-title-card-fallback2"></script>
