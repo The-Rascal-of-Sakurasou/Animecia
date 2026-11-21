@@ -1,0 +1,19 @@
+body{margin:0;background:#f7f9f8;color:#171a1d;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Yu Gothic",Meiryo,sans-serif;line-height:1.7}
+body>main{width:min(1180px,calc(100% - 40px));max-width:1180px;margin:0 auto;padding:32px 0 84px}
+body>main>.card{background:transparent;border:0;border-radius:0;padding:0;box-shadow:none}
+body>main>.card>p:first-child{margin:0 0 8px;color:#03AF6A;font-size:11px;font-weight:800;letter-spacing:.13em}
+body>main h1{margin:0 0 10px;font-size:clamp(28px,4vw,42px);line-height:1.25;letter-spacing:-.035em}
+body>main>.card>p:nth-of-type(2){max-width:760px;margin:0 0 24px;color:#687078;font-size:14px}
+body>main .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+body>main .work{min-width:0;display:grid;grid-template-columns:104px minmax(0,1fr);gap:16px;align-items:start;padding:14px;background:#fff;border:1px solid #e6e9ec;border-radius:13px;transition:border-color .18s,transform .18s,box-shadow .18s}
+body>main .work:hover{border-color:#a9d9c4;transform:translateY(-2px);box-shadow:0 8px 22px rgba(17,35,26,.06)}
+body>main .work img{display:block;width:104px;height:146px;aspect-ratio:2/3;object-fit:cover;border-radius:8px;background:#edf1ee}
+body>main .work h2{margin:1px 0 7px;font-size:15px;line-height:1.5}
+body>main .work h2 a{color:#171a1d;text-decoration:none}
+body>main .work h2 a:hover{color:#087d4c}
+body>main .work p{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;margin:0 0 10px;color:#626c66;font-size:12px;line-height:1.65}
+body>main .work small{color:#07804d;font-size:11px;font-weight:700}
+body>main a:focus-visible{outline:3px solid #1DA1F2;outline-offset:3px;border-radius:5px}
+@media(max-width:760px){body>main{width:calc(100% - 28px);padding:24px 0 70px}body>main .grid{grid-template-columns:1fr;gap:10px}body>main .work{grid-template-columns:88px minmax(0,1fr);gap:13px;padding:12px}body>main .work img{width:88px;height:124px}}
+@media(max-width:380px){body>main{width:calc(100% - 22px)}body>main .work{grid-template-columns:76px minmax(0,1fr);gap:11px}body>main .work img{width:76px;height:108px}body>main .work p{-webkit-line-clamp:3}}
+@media(prefers-reduced-motion:reduce){body>main .work{transition:none}}
