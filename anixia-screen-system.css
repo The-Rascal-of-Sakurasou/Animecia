@@ -1,0 +1,70 @@
+/* ANIXIA Screen System — shared layout primitives
+   Additive component layer. Existing page-specific behavior and selectors remain unchanged.
+*/
+:root{
+  --ax-green:#03AF6A;--ax-green-hover:#028F56;--ax-blue:#1DA1F2;
+  --ax-ink:#111827;--ax-muted:#667085;--ax-line:#E5E7EB;
+  --ax-surface:#fff;--ax-canvas:#F6F7F8;--ax-soft:#F1F5F3;
+  --ax-radius:14px;--ax-shadow:0 2px 12px rgba(16,24,40,.05);
+  --ax-content:1200px;
+}
+.anixia-screen{width:min(var(--ax-content),calc(100% - 40px));margin:0 auto;padding:28px 0 48px;color:var(--ax-ink)}
+.anixia-screen-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin:0 0 24px}
+.anixia-screen-eyebrow{margin:0 0 6px;color:var(--ax-green);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.anixia-screen-title{margin:0;color:var(--ax-ink);font-size:clamp(25px,3.2vw,34px);line-height:1.25;font-weight:850;letter-spacing:-.035em}
+.anixia-screen-description{max-width:720px;margin:9px 0 0;color:var(--ax-muted);font-size:14px;line-height:1.8}
+.anixia-screen-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.anixia-screen-section{margin:26px 0}
+.anixia-screen-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}
+.anixia-screen-section-title{margin:0;color:var(--ax-ink);font-size:19px;font-weight:800;letter-spacing:-.02em}
+.anixia-screen-panel{min-width:0;padding:20px;background:var(--ax-surface);border:1px solid var(--ax-line);border-radius:var(--ax-radius);box-shadow:var(--ax-shadow)}
+.anixia-screen-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.anixia-screen-card{min-width:0;padding:16px;background:#fff;border:1px solid var(--ax-line);border-radius:12px;transition:border-color .15s,box-shadow .15s}
+.anixia-screen-card:hover{border-color:#b8dccc;box-shadow:0 5px 18px rgba(16,24,40,.07)}
+.anixia-screen-card-title{margin:0 0 6px;font-size:15px;font-weight:800;color:var(--ax-ink)}
+.anixia-screen-card-copy{margin:0;color:var(--ax-muted);font-size:13px;line-height:1.7}
+.anixia-screen-button{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 15px;border:1px solid var(--ax-line);border-radius:9px;background:#fff;color:var(--ax-ink);font-size:13px;font-weight:750;text-decoration:none;cursor:pointer}
+.anixia-screen-button-primary{background:var(--ax-green);border-color:var(--ax-green);color:#fff}
+.anixia-screen-button-primary:hover{background:var(--ax-green-hover);border-color:var(--ax-green-hover);color:#fff}
+.anixia-screen-field{display:grid;gap:6px;min-width:0}
+.anixia-screen-field label{font-size:12px;font-weight:750;color:#344054}
+.anixia-screen-field input,.anixia-screen-field select,.anixia-screen-field textarea{width:100%;min-width:0;min-height:42px;padding:10px 12px;border:1px solid #D0D5DD;border-radius:9px;background:#fff;color:var(--ax-ink);font:inherit}
+.anixia-screen-field textarea{min-height:100px;resize:vertical}
+.anixia-screen-filter-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.anixia-screen-tabs{display:flex;gap:5px;overflow-x:auto;border-bottom:1px solid var(--ax-line);scrollbar-width:thin}
+.anixia-screen-tab{flex:0 0 auto;padding:11px 14px;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--ax-muted);font-size:13px;font-weight:750;cursor:pointer}
+.anixia-screen-tab[aria-selected=true]{border-bottom-color:var(--ax-green);color:var(--ax-green)}
+.anixia-screen-status{display:flex;align-items:center;gap:8px;padding:12px 14px;border:1px solid var(--ax-line);border-radius:10px;background:#fff;color:var(--ax-muted);font-size:13px;line-height:1.65}
+.anixia-screen-status[data-kind=success]{border-color:#B7E4CC;background:#F2FBF6;color:#176B43}
+.anixia-screen-status[data-kind=warning]{border-color:#F2D39B;background:#FFFAEB;color:#8A5A12}
+.anixia-screen-status[data-kind=error]{border-color:#F2B8B5;background:#FFF5F4;color:#A12D26}
+.anixia-screen-empty{padding:36px 18px;text-align:center;border:1px dashed #D0D5DD;border-radius:12px;background:#fff}
+.anixia-screen-empty strong{display:block;margin-bottom:5px;color:var(--ax-ink);font-size:15px}
+.anixia-screen-empty p{margin:0;color:var(--ax-muted);font-size:13px;line-height:1.7}
+.anixia-screen-poster{aspect-ratio:2/3;border-radius:9px;background:linear-gradient(145deg,#E9EEF0,#DCE5E1);display:grid;place-items:center;color:#61756C;font-size:12px;font-weight:750}
+.anixia-screen-list{display:grid;gap:10px}
+.anixia-screen-list-row{display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px;border:1px solid var(--ax-line);border-radius:11px;background:#fff}
+.anixia-screen-rank{font-size:18px;font-weight:850;color:var(--ax-muted);text-align:center}
+.anixia-screen-badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:99px;background:#EEF7F2;color:#167A4A;font-size:11px;font-weight:750}
+.anixia-screen-divider{height:1px;border:0;background:var(--ax-line);margin:18px 0}
+.anixia-screen-muted{color:var(--ax-muted)}
+.anixia-screen-two-col{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,.8fr);gap:16px}
+.anixia-screen-cover{min-height:190px;padding:22px;border-radius:14px;background:linear-gradient(135deg,#101827,#253B4B);color:#fff}
+.anixia-screen-cover *{color:inherit}
+@media(max-width:900px){
+ .anixia-screen-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .anixia-screen-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .anixia-screen-two-col{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:600px){
+ .anixia-screen{width:calc(100% - 26px);padding:20px 0 34px}
+ .anixia-screen-head{display:block;margin-bottom:18px}
+ .anixia-screen-actions{margin-top:14px}
+ .anixia-screen-panel{padding:14px}
+ .anixia-screen-grid{grid-template-columns:minmax(0,1fr)}
+ .anixia-screen-filter-grid{grid-template-columns:minmax(0,1fr)}
+ .anixia-screen-section-title{font-size:17px}
+ .anixia-screen-list-row{grid-template-columns:30px minmax(0,1fr);gap:8px}
+ .anixia-screen-list-row>.anixia-screen-badge{grid-column:2;justify-self:start}
+}
+@media(prefers-reduced-motion:reduce){.anixia-screen-card{transition:none}}
