@@ -210,12 +210,9 @@ const genrePage = (genre, works) => {
   const canonical = base + "/genre/" + encodeURIComponent(genre.id) + "/";
   const workHtml = works.map(work => {
     const workTitle = mainTitle(work);
-    const image = /^https?:\\/\\//i.test(String(work.cover_image || ""));
-    return "<article class=\\"work\\">" +
-      (image ? "<img src=\\" + esc(work.cover_image) + "\\" alt=\\""+ esc(workTitle) + "の画像\\" loading=\\"lazy\\">" : "") +
-      "<div><h2><a href=\\"" + base + "/anime/" + encodeURIComponent(work.id) + "/\\">" + esc(workTitle) + "</a></h2>" +
-      "<p>" + esc(text(work.synopsis || work.description).slice(0, 120) || "作品情報を確認できます。") + "</p>" +
-      "<small>作品情報を見る →</small></div></article>";
+    const image = String(work.cover_image || "");
+    const safeImage = /^https?:\/\//i.test(image) ? image : "";
+    return `<article class="work">${safeImage ? `<img src="${esc(safeImage)}" alt="${esc(workTitle)}の画像" loading="lazy" decoding="async">` : ""}<div><h2><a href="${base}/anime/${encodeURIComponent(work.id)}/">${esc(workTitle)}</a></h2><p>${esc(text(work.synopsis || work.description).slice(0, 120) || "作品情報を確認できます。")}</p><small>作品情報を見る →</small></div></article>`;
   }).join("");
   const schema = { "@context": "https://schema.org", "@type": "CollectionPage", name: title + "アニメ一覧 | ANIXIA", url: canonical, description: title + "に関連するアニメ作品をANIXIAで一覧できます。", inLanguage: "ja" };
   return "<!doctype html><html lang=\"ja\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">" +
