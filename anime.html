@@ -55,6 +55,7 @@
 <link rel="preconnect" href="https://bhgdjuwlxvbaeraaivmh.supabase.co">
 
 <link rel="stylesheet" href="/anixia/anixia-unified-theme.css?v=20261121-1">
+<link rel="stylesheet" href="/anixia/anixia-screen-system.css?v=20261121-1">
 <script src="/anixia/anixia-global-header.js?v=20261120-4" defer></script>
 </head>
 <body>
@@ -70,7 +71,7 @@
   </div>
 </header>
 <main class="anixia-page">
-  <section class="anixia-page-hero">
+  <section class="anixia-page-hero anixia-screen-cover">
     <small>ANIME DATABASE</small>
     <h1>アニメ作品を探す</h1>
     <p>タイトルやジャンル、放送時期などを組み合わせて、気になる作品を検索できます。</p>
@@ -90,7 +91,7 @@
     </div>
     <div class="anixia-filter-actions"><p id="result-summary" aria-live="polite">検索条件を設定してください。</p><div><button type="button" id="reset" class="secondary">条件をクリア</button> <button type="submit">検索する</button></div></div>
   </form>
-  <div class="anixia-results-head"><strong>検索結果</strong><span id="result-count"></span></div>
+  <div class="anixia-results-head anixia-screen-section-head"><strong>検索結果</strong><span id="result-count"></span></div>
   <section id="results" class="anixia-results-grid" aria-live="polite"><p class="anixia-state">作品情報を読み込んでいます…</p></section>
   <nav class="anixia-pagination" aria-label="検索結果ページ">
     <button type="button" id="prev" disabled>前へ</button><span id="page-label">1ページ目</span><button type="button" id="next" disabled>次へ</button>
