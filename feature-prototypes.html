@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>機能プロトタイプ | ANIXIA</title>
+<link rel="stylesheet" href="site-theme.css">
+<style>
+:root{color-scheme:light;--p:#03a96b;--ink:#182536;--muted:#687789;--line:#e5eaf0;--surface:#fff;--soft:#f5f7f9}
+body{background:#f5f7f9;color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif}
+.prototype-wrap{max-width:1120px;margin:0 auto;padding:28px 20px 72px}
+.prototype-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:22px}
+.prototype-head h1{font-size:clamp(24px,4vw,34px);margin:0 0 8px}
+.prototype-head p,.muted{color:var(--muted);line-height:1.7}
+.demo-note{border:1px solid #dce9e2;background:#f0faf5;border-radius:12px;padding:12px 14px;color:#246344;font-size:13px;max-width:310px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0}
+.tab,.btn{border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:#fff;color:var(--ink);font-weight:650;cursor:pointer}
+.tab[aria-selected=true],.btn.primary{background:var(--p);border-color:var(--p);color:#fff}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;margin:14px 0;box-shadow:0 5px 20px #18253608}
+.panel h2{font-size:20px;margin:0 0 8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.tile{border:1px solid var(--line);border-radius:13px;padding:16px;background:#fff}
+.tile h3{font-size:16px;margin:7px 0}
+.tile p{font-size:13px;color:var(--muted);line-height:1.6}
+.icon{font-size:28px}
+.progress{height:8px;background:#edf1f4;border-radius:9px;overflow:hidden;margin:10px 0}
+.progress span{display:block;height:100%;background:var(--p);border-radius:9px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.poll-option{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:10px;margin:8px 0;cursor:pointer}
+.poll-option:has(input:checked){border-color:var(--p);background:#f2fbf6}
+.result-bar{height:9px;background:#edf1f4;border-radius:10px;overflow:hidden;margin-top:6px}.result-bar span{display:block;height:100%;background:var(--p)}
+.tag{font-size:11px;border-radius:99px;background:#eef3f6;padding:4px 9px;color:#526274}
+.review{border:1px solid var(--line);border-radius:12px;padding:15px;margin:10px 0}
+.review p{line-height:1.7}
+.notice{padding:12px;border-radius:10px;background:#fff8e8;color:#775719;font-size:13px}
+input[type=text],select,textarea{width:100%;padding:11px;border:1px solid #dce2e8;border-radius:9px;font:inherit;background:#fff}
+textarea{min-height:90px;resize:vertical}
+.answer{display:block;text-align:left;width:100%;margin:8px 0;padding:13px;border:1px solid var(--line);border-radius:10px;background:white;cursor:pointer}
+.answer:hover,.answer:focus{border-color:var(--p)}
+[hidden]{display:none!important}
+@media(max-width:640px){.prototype-wrap{padding:20px 13px 50px}.prototype-head{display:block}.demo-note{margin-top:14px;max-width:none}.panel{padding:16px}}
+</style>
+</head>
+<body>
+<main class="prototype-wrap">
+  <div class="prototype-head">
+    <div><p class="tag">ANIXIA / DEVELOPMENT</p><h1>機能プロトタイプ</h1><p>現行画面にまだ十分な原型がない機能を、操作イメージとして確認するための試作品です。</p></div>
+    <div class="demo-note"><strong>デモ専用</strong><br>このページの操作・投票・審査結果は保存されません。Supabaseや実際のユーザー情報とは接続していません。</div>
+  </div>
+  <nav class="tabs" aria-label="プロトタイプ切替">
+    <button class="tab" aria-selected="true" data-panel="achievements">実績・進捗</button>
+    <button class="tab" aria-selected="false" data-panel="polls">作品投票</button>
+    <button class="tab" aria-selected="false" data-panel="moderation">レビュー管理</button>
+    <button class="tab" aria-selected="false" data-panel="intro">アニソンイントロクイズ</button>
+  </nav>
+
+  <section class="panel" data-view="achievements">
+    <div class="row"><div><h2>実績・視聴進捗</h2><p class="muted">視聴記録やレビューなど、利用状況に応じた実績をまとめて確認する画面案。</p></div><span class="tag">PROTOTYPE 01</span></div>
+    <div class="grid" style="margin-top:16px">
+      <article class="tile"><div class="icon">🏅</div><h3>アニメ入門</h3><p>視聴済み作品を1作品登録する</p><div class="progress"><span style="width:100%"></span></div><strong>1 / 1</strong> <span class="tag">獲得済み</span></article>
+      <article class="tile"><div class="icon">📚</div><h3>作品コレクター</h3><p>視聴済み作品を10作品登録する</p><div class="progress"><span style="width:60%"></span></div><strong>6 / 10</strong></article>
+      <article class="tile"><div class="icon">✍️</div><h3>レビュアー</h3><p>公開済みレビューを5件投稿する</p><div class="progress"><span style="width:40%"></span></div><strong>2 / 5</strong></article>
+      <article class="tile"><div class="icon">🧠</div><h3>クイズマスター</h3><p>クイズで累計100点を獲得する</p><div class="progress"><span style="width:25%"></span></div><strong>25 / 100</strong></article>
+    </div>
+    <div class="notice" style="margin-top:16px">実績の獲得条件・集計タイミング・重複防止は未確定です。実装時はサーバー側で判定し、ユーザーが獲得条件を改ざんできない設計にします。</div>
+  </section>
+
+  <section class="panel" data-view="polls" hidden>
+    <div class="row"><div><h2>作品投票</h2><p class="muted">テーマ別に作品へ投票し、結果を共有する画面案。</p></div><span class="tag">PROTOTYPE 02</span></div>
+    <h3>今、続編を一番見たい作品は？</h3>
+    <p class="muted">デモ投票・複数回答なし</p>
+    <div id="pollChoices">
+      <label class="poll-option"><input type="radio" name="poll" value="A"> 葬送のフリーレン</label>
+      <label class="poll-option"><input type="radio" name="poll" value="B"> リコリス・リコイル</label>
+      <label class="poll-option"><input type="radio" name="poll" value="C"> ノーゲーム・ノーライフ</label>
+    </div>
+    <button class="btn primary" id="voteButton">投票する</button>
+    <div id="pollResults" hidden style="margin-top:18px"><h3>デモ結果</h3><p>葬送のフリーレン <strong>45%</strong></p><div class="result-bar"><span style="width:45%"></span></div><p>リコリス・リコイル <strong>35%</strong></p><div class="result-bar"><span style="width:35%"></span></div><p>ノーゲーム・ノーライフ <strong>20%</strong></p><div class="result-bar"><span style="width:20%"></span></div></div>
+    <p class="notice" style="margin-top:16px">実運用では投票対象・期間・変更可否・不正投票対策・結果の公開範囲を仕様化する必要があります。</p>
+  </section>
+
+  <section class="panel" data-view="moderation" hidden>
+    <div class="row"><div><h2>レビュー通報・モデレーション</h2><p class="muted">ユーザー通報と管理者の確認を分離する画面案。</p></div><span class="tag">PROTOTYPE 03</span></div>
+    <div class="grid">
+      <div class="tile"><h3>ユーザー側：通報</h3><label for="reportReason">通報理由</label><select id="reportReason"><option>ネタバレ設定が不適切</option><option>誹謗中傷・嫌がらせ</option><option>スパム・宣伝</option><option>権利侵害の疑い</option><option>その他</option></select><label for="reportDetail" style="display:block;margin:12px 0 6px">補足（任意）</label><textarea id="reportDetail" placeholder="問題のある箇所を簡潔に記載"></textarea><button class="btn primary" id="reportButton" style="margin-top:10px">通報を送信（デモ）</button><p id="reportStatus" class="muted" aria-live="polite"></p></div>
+      <div class="tile"><h3>管理者側：審査キュー</h3><div class="review"><div class="row"><strong>レビュー #RV-104</strong><span class="tag">未確認</span></div><p>作品の感想を記載したレビュー本文のサンプルです。ネタバレ箇所の確認が必要です。</p><p class="muted">理由：ネタバレ設定が不適切</p><div class="row"><button class="btn" data-review-action="keep">問題なし</button><button class="btn" data-review-action="hide">非公開にする</button></div><p class="muted" id="reviewStatus" aria-live="polite"></p></div></div>
+    </div>
+    <p class="notice" style="margin-top:16px">この試作品は表示だけです。実装時は通報者の秘匿、管理者権限、審査履歴、異議申立て、誤通報対策を設計します。</p>
+  </section>
+
+  <section class="panel" data-view="intro" hidden>
+    <div class="row"><div><h2>アニソンイントロクイズ</h2><p class="muted">楽曲の一部を聴いて作品名を回答するクイズ画面案。</p></div><span class="tag">PROTOTYPE 04</span></div>
+    <div class="tile">
+      <p class="tag">QUESTION 01 / DEMO</p><h3>この楽曲が使われているアニメは？</h3>
+      <p class="muted">音源は未接続のため、ここでは再生UIの配置のみを確認できます。</p>
+      <button class="btn" id="playDemo" disabled>▶ 音源未設定</button>
+      <div id="introAnswers">
+        <button class="answer">A. 青春ブタ野郎シリーズ</button>
+        <button class="answer">B. STEINS;GATE</button>
+        <button class="answer">C. Angel Beats!</button>
+        <button class="answer">D. Re:ゼロから始める異世界生活</button>
+      </div>
+      <p id="introFeedback" aria-live="polite" class="muted"></p>
+    </div>
+    <p class="notice" style="margin-top:16px">音源を利用する場合は、楽曲・録音の権利者から必要な許諾を得た素材だけを使用します。現段階では音源ファイルや外部配信には接続していません。</p>
+  </section>
+  <p class="muted" style="font-size:12px;margin-top:24px">ANIXIA開発用試作品。実サービスの機能・データ・投票結果を示すものではありません。</p>
+</main>
+<script>
+(() => {
+ const tabs=[...document.querySelectorAll("[data-panel]")],views=[...document.querySelectorAll("[data-view]")];
+ tabs.forEach(tab=>tab.addEventListener("click",()=>{tabs.forEach(x=>x.setAttribute("aria-selected",String(x===tab)));views.forEach(v=>v.hidden=v.dataset.view!==tab.dataset.panel)}));
+ document.getElementById("voteButton").addEventListener("click",()=>{if(!document.querySelector('input[name="poll"]:checked')){alert("投票先を選択してください。");return}document.getElementById("pollResults").hidden=false;document.getElementById("voteButton").disabled=true;document.getElementById("voteButton").textContent="投票済み（デモ）"});
+ document.getElementById("reportButton").addEventListener("click",()=>{document.getElementById("reportStatus").textContent="デモ：通報内容を受け付けました。実際には送信・保存されていません。"});
+ document.querySelectorAll("[data-review-action]").forEach(b=>b.addEventListener("click",()=>{document.getElementById("reviewStatus").textContent=b.dataset.reviewAction==="keep"?"デモ：問題なしとして処理しました。":"デモ：非公開として処理しました。";document.querySelectorAll("[data-review-action]").forEach(x=>x.disabled=true)}));
+ document.querySelectorAll("#introAnswers .answer").forEach((b,i)=>b.addEventListener("click",()=>{document.getElementById("introFeedback").textContent="デモ画面のため正誤判定は行いません。選択："+b.textContent;b.disabled=true}));
+})();
+</script>
+</body>
+</html>
