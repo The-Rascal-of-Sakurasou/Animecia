@@ -2,7 +2,6 @@ User-agent: *
 
 Allow: /
 
-Disallow: /ANIXIA/admin.html
-Disallow: /ANIXIA/admin-dashboard.html
+Disallow: /anixia/admin
 
 Sitemap: https://the-rascal-of-sakurasou.github.io/anixia/sitemap.xml
