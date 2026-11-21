@@ -18,7 +18,7 @@
 .admin-warning{border-left:3px solid #f2a51a;padding:10px 12px;background:#241d12;color:#d8c39d;font-size:11px;line-height:1.7}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="anixia-client.js?v=20261121-title-card-fallback2"></script><script src="anixia-admin.js?v=season-metadata-backfill-20261119b" defer></script>
+<script src="anixia-client.js?v=20261121-anilist-poster-sync1"></script><script src="anixia-admin.js?v=20261121-anilist-poster-sync1" defer></script>
 <link rel="preconnect" href="https://trvnxggqzlhqdhoyiliy.supabase.co" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
@@ -91,6 +91,13 @@
 <button id="poster-sync-button" class="admin-button" type="button">利用条件を確認して画像を同期</button>
 <p id="poster-sync-message" class="admin-message" aria-live="polite"></p>
 <p><a href="https://commons.wikimedia.org/wiki/Commons:Licensing" target="_blank" rel="noopener noreferrer">Wikimedia Commonsのライセンス</a> · <a href="https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia" target="_blank" rel="noopener noreferrer">画像の再利用ガイド</a></p>
+<hr style="border:0;border-top:1px solid #30435f;margin:20px 0">
+<h3 style="color:#fff;font-size:15px">全作品のタイトル画像同期（AniList API）</h3>
+<p>AniList公式GraphQL APIで作品名・別名・公開年・形式を照合し、完全一致を確認できた作品だけにカバー画像を登録します。公開・非公開を問わず、画像未設定の全作品を対象にします。</p>
+<p class="admin-warning">曖昧な一致は登録しません。APIに画像がない作品、照合できない作品、通信エラーの作品は未取得として残します。人気度・ランキング・評価などの数値は取得・変更しません。既存画像は上書きしません。</p>
+<button id="anilist-poster-sync-button" class="admin-button" type="button">未設定作品の画像を全件同期</button>
+<p id="anilist-poster-sync-message" class="admin-message" aria-live="polite"></p>
+<p><a href="https://docs.anilist.co/" target="_blank" rel="noopener noreferrer">AniList APIドキュメント</a></p>
 </div>
 </section>
 <section id="admin-review-moderation" class="admin-panel" hidden>
