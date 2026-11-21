@@ -68,3 +68,79 @@
  .anixia-screen-list-row>.anixia-screen-badge{grid-column:2;justify-self:start}
 }
 @media(prefers-reduced-motion:reduce){.anixia-screen-card{transition:none}}
+
+
+/* Responsive usability layer — shared by every page through the global header.
+   Additive layout safeguards only; page content, data and feature behavior are untouched. */
+html{scroll-padding-top:120px}
+body{min-width:320px;overflow-x:hidden;padding-top:112px!important;padding-bottom:0!important}
+body :where(main,.anixia-shell,.container,.wrap,.page-container,.content,.layout,.page-layout){min-width:0;max-width:100%}
+body :where(img,video,iframe,canvas,svg){max-width:100%}
+body :where(input,select,textarea,button){max-width:100%}
+body :where(input,select,textarea){min-width:0}
+body :where(table){display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+body :where(pre,code){max-width:100%;overflow-x:auto}
+body :where(.grid,.cards,.anime-grid,.recommendation-grid,.quick,.discovery,.rank-layout,.anixia-screen-grid,.anixia-screen-filter-grid,.anixia-screen-two-col){min-width:0}
+body :where(.anixia-screen-panel,.panel,.card,.profile-card,.list-item,.review-item,.feature-card,.genre-card,.recommendation-card,.quick-card){min-width:0;overflow-wrap:anywhere}
+body :where(.anixia-global-header){max-width:100vw}
+body :where(.anixia-global-nav){overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+body :where(.anixia-global-nav a,.anixia-header-button,.anixia-footer-nav a){touch-action:manipulation}
+body :where(.anixia-global-footer){position:static!important;inset:auto!important;z-index:auto!important;max-height:none!important;overflow:visible!important}
+body :where(.anixia-footer-inner){display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:space-between!important;gap:12px 18px!important;padding:16px 20px!important}
+body :where(.anixia-footer-nav){display:flex!important;flex:1 1 420px!important;flex-wrap:wrap!important;justify-content:flex-start!important;gap:8px 16px!important;min-width:0!important;overflow:visible!important}
+body :where(.anixia-footer-nav a){white-space:normal!important}
+body :where(.anixia-footer-bottom){white-space:nowrap}
+body :where(.anixia-global-footer .anixia-admin-login){margin:0!important}
+body :where(.anixia-screen){padding-bottom:36px}
+@media(min-width:761px){
+ body :where(.anixia-global-header-inner){grid-template-columns:auto minmax(0,1fr) auto!important;grid-template-rows:auto!important;gap:12px 18px!important;padding:12px 22px!important}
+ body :where(.anixia-global-nav){grid-column:2!important;grid-row:1!important;flex-wrap:wrap!important;overflow:visible!important}
+ body :where(.anixia-header-actions){grid-column:3!important;grid-row:1!important}
+ body :where(.anixia-global-nav a){font-size:12px!important;padding:8px 9px!important}
+}
+@media(max-width:900px){
+ body{padding-top:112px!important}
+ body :where(.anixia-screen-grid){grid-template-columns:repeat(2,minmax(0,1fr))}
+ body :where(.anixia-screen-filter-grid){grid-template-columns:repeat(2,minmax(0,1fr))}
+ body :where(.anixia-screen-two-col){grid-template-columns:minmax(0,1fr)}
+ body :where(.anixia-footer-inner){justify-content:flex-start!important}
+}
+@media(max-width:760px){
+ html{scroll-padding-top:175px}
+ body{padding-top:164px!important}
+ body :where(main){padding-left:14px!important;padding-right:14px!important}
+ body :where(.anixia-global-header-inner){grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto auto!important;gap:8px!important;padding:9px 12px!important}
+ body :where(.anixia-global-header .anixia-logo){grid-row:1!important}
+ body :where(.anixia-header-actions){grid-row:2!important;display:flex!important;width:100%!important;flex-wrap:nowrap!important;gap:6px!important}
+ body :where(.anixia-header-actions .anixia-header-button){flex:1 1 0!important;min-width:0!important;min-height:38px!important;padding:0 7px!important;font-size:11px!important}
+ body :where(.anixia-global-nav){grid-row:3!important;display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;padding-bottom:3px!important}
+ body :where(.anixia-global-nav a){flex:0 0 auto!important;min-height:36px!important}
+ body :where(.anixia-footer-inner){display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:10px!important;padding:14px!important}
+ body :where(.anixia-footer-nav){flex:0 1 auto!important;width:100%!important;gap:9px 14px!important}
+ body :where(.anixia-footer-bottom){white-space:normal}
+ body :where(.anixia-screen){width:calc(100% - 28px);padding-top:20px}
+ body :where(.anixia-screen-head){display:block}
+ body :where(.anixia-screen-actions){margin-top:12px}
+ body :where(.anixia-screen-panel){padding:14px}
+ body :where(.anixia-screen-filter-grid){grid-template-columns:minmax(0,1fr)}
+ body :where(.anixia-screen-list-row){grid-template-columns:30px minmax(0,1fr)}
+ body :where(.section-head,.section-header,.result-header,.anixia-screen-section-head){align-items:flex-start;flex-wrap:wrap}
+ body :where(.filter-area,.filters-panel,.search-box){min-width:0}
+}
+@media(max-width:480px){
+ body{padding-top:158px!important}
+ body :where(.anixia-screen-grid,.cards,.anime-grid,.grid,.recommendation-grid,.quick){grid-template-columns:repeat(2,minmax(0,1fr))}
+ body :where(.anixia-screen-panel){padding:12px}
+ body :where(.anixia-screen-title){font-size:24px}
+ body :where(.anixia-screen-description){font-size:13px}
+ body :where(.anixia-footer-nav){gap:8px 12px}
+ body :where(.anixia-global-nav a){padding:7px 8px!important;font-size:11px!important}
+}
+@media(max-width:360px){
+ body :where(.anixia-screen-grid,.anixia-screen-filter-grid){grid-template-columns:minmax(0,1fr)}
+ body :where(.anixia-header-actions .anixia-header-button){font-size:10px!important;padding:0 5px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ body :where(*),body :where(*::before),body :where(*::after){scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
