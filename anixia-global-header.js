@@ -246,7 +246,7 @@
     footer.style.setProperty("width", "100%", "important");
     footer.style.setProperty("position", "static", "important");
     
-    footer.style.setProperty("margin", "0", "important");
+    footer.style.setProperty("margin", "64px 0 0", "important");
     footer.style.setProperty("max-height", "none", "important");
     footer.style.setProperty("overflow", "visible", "important");
     footer.innerHTML = `
