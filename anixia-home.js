@@ -49,14 +49,34 @@
       showRetryState("genre-links", t().genresFailed, loadGenres);
     }
   }
-  async function init() {
+  async function loadCatalogCount() {
+    const countEl = $("catalog-count");
+    if (!countEl) return;
+    const parent = countEl.parentElement;
+    const oldRetry = parent?.querySelector(".anixia-count-retry");
+    oldRetry?.remove();
+    countEl.setAttribute("aria-live", "polite");
+    countEl.setAttribute("aria-busy", "true");
     try {
       const count = await ANIXIA.getCatalogCount();
-      $("catalog-count").textContent = count.toLocaleString(language() === "ja" ? "ja-JP" : "en-US");
+      countEl.textContent = Number(count).toLocaleString(language() === "ja" ? "ja-JP" : "en-US");
+      countEl.removeAttribute("aria-busy");
     } catch (error) {
       console.error(error);
-      $("catalog-count").textContent = "—";
+      countEl.textContent = language() === "ja" ? "取得失敗" : "Unavailable";
+      countEl.removeAttribute("aria-busy");
+      if (parent) {
+        const retry = document.createElement("button");
+        retry.type = "button";
+        retry.className = "anixia-retry-button anixia-count-retry";
+        retry.textContent = t().retry;
+        retry.addEventListener("click", loadCatalogCount, { once: true });
+        parent.appendChild(retry);
+      }
     }
+  }
+  async function init() {
+    await loadCatalogCount();
     await Promise.all([
       loadSection("popular-works", { sort: "newest", limit: 5 }),
     ]);
