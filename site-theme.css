@@ -4559,3 +4559,20 @@ textarea::placeholder{
 
 /* Final shared canvas color: pure white on every page. */
 html,body{background:#FFFFFF!important;background-color:#FFFFFF!important;}
+
+
+/* Always show the branded title-card fallback when poster artwork is unavailable. */
+.anixia-poster-fallback:not([hidden]){
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-between!important;
+}
+#poster-fallback:not([hidden]){
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-between!important;
+  align-items:stretch!important;
+  box-sizing:border-box!important;
+  padding:clamp(10px,3%,18px)!important;
+  text-align:left!important;
+}
