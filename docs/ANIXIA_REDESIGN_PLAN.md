@@ -169,3 +169,12 @@ ANIXIAを、日本語を主軸としたアニメ総合データベース兼コ�
 - 評価ランキングはratingsテーブルを集計する既存RPCを利用し、5件以上の評価がある作品を対象とする。
 - モバイル表示、フォーカス、空状態、エラー・再試行を整備。
 - DB調査でprivate.anixia_catalog_quality_snapshotsのRLS無効を検知。別途セキュリティ確認が必要であり、今回の変更では自動修正していない。
+
+
+### 2026-11-21 Supabase RLS修正
+- `private.anixia_catalog_quality_snapshots` にRLSを有効化。
+- テーブルはprivateスキーマにあり、anon / authenticated / service_roleに直接SELECT権限がないことを確認。
+- 管理履歴の読み取りは管理者確認を行うSECURITY DEFINER RPC経由であることを確認し、直接テーブルアクセス用ポリシーは追加しない。
+- 実行後、RLS=true、FORCE RLS=false、ポリシー0件、postgresロールで既存5行の読み取りが可能であることを検証。
+- Security Advisorにはprivateテーブルの「RLS有効・ポリシーなし」が情報通知として残る。非公開テーブルとしての設計上の状態であり、一般ユーザー用ポリシーは作成しない。
+- Supabase MCPでSQLを直接実行。リポジトリへのmigrationファイル登録とmigration historyへの反映は未実施。
