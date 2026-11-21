@@ -21,7 +21,7 @@
   $("season-year").value=String(now.year);
   $("season-name").value=seasonFromMonth(now.month);
 
-  function updateCount(shown){$("season-count").textContent=total?(en()?shown.toLocaleString("en-US")+" / "+total.toLocaleString("en-US")+" titles":shown.toLocaleString("ja-JP")+" / "+total.toLocaleString("ja-JP")+"作品"):"";}
+  function updateCount(shown){$("season-count").textContent=shown?(en()?shown.toLocaleString("en-US")+" titles shown":shown.toLocaleString("ja-JP")+"作品を表示"):"";}
   function setState(message){$("season-grid").innerHTML='<p class="season-state">'+esc(message)+'</p>';$("season-more").hidden=true;$("season-count").textContent="";}
   function render(works,append){
     const seasonal=works.filter(work=>["tv","ona","web"].includes(String(work.format||"").toLowerCase()));
