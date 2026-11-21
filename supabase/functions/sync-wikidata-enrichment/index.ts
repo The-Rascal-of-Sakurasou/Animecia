@@ -60,7 +60,26 @@ function canonicalGenreJapaneseLabel(value: string | null): string | null {
     "心理描写を扱うアニメ・漫画": "心理",
     "超自然アニメおよび漫画": "超自然",
     "スーパーナチュラルアニメおよび漫画": "超自然",
-    "歴史アニメ・漫画": "歴史"
+    "歴史アニメ・漫画": "歴史",
+    "アクション映画": "アクション",
+    "アクション・シリーズ": "アクション",
+    "冒険映画": "アドベンチャー",
+    "コメディ映画": "コメディ",
+    "コメディテレビシリーズ": "コメディ",
+    "ドラマ映画": "ドラマ",
+    "ファンタジー映画": "ファンタジー",
+    "ホラー映画": "ホラー",
+    "ミステリ映画": "ミステリー",
+    "恋愛映画": "恋愛",
+    "SF映画": "SF",
+    "スポーツ映画": "スポーツ",
+    "スポ根": "スポーツ",
+    "スリラー": "サスペンス・スリラー",
+    "スリラー映画": "サスペンス・スリラー",
+    "青春映画": "青春・成長物語",
+    "タイムトラベル映画": "タイムトラベルを扱うアニメ・漫画",
+    "スチームパンク映画": "スチームパンク",
+    "アクション・コメディ映画": "アクション"
   };
   return aliases[value] || value;
 }
@@ -638,10 +657,19 @@ Deno.serve(async (req: Request) => {
           counts.staffLinks = staffRows.length;
         }
 
-        const genreEntities = [...genreById.values()];
+        const excludedGenreNames = new Set([
+          "animated film", "anime film", "anime", "anthology series", "asmr",
+          "association football video game", "children's film", "children's television series",
+          "lgbt-related television series", "religious art", "visual novel", "mahjong manga",
+          "hentai"
+        ]);
+        const genreEntities = [...genreById.values()].filter(e => {
+          const english = (label(e, "en") || "").toLocaleLowerCase();
+          return !excludedGenreNames.has(english);
+        });
         const genreRows = genreEntities.map(e => ({
           name: label(e, "en") || label(e, "ja"),
-          name_ja: japaneseLabel(e)
+          name_ja: canonicalGenreJapaneseLabel(japaneseLabel(e))
         })).filter(r => r.name);
 
         // Resolve exact Japanese labels to the existing canonical ANIXIA genre.
