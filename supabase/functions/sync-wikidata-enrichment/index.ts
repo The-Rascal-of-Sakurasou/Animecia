@@ -50,6 +50,19 @@ function japaneseLabel(entity: AnyRecord): string | null {
   if (primary) return primary;
   return aliases(entity, "ja").find(value => /[\u3040-\u30ff\u3400-\u9fff]/u.test(value)) || null;
 }
+function canonicalGenreJapaneseLabel(value: string | null): string | null {
+  if (!value) return null;
+  const aliases: Record<string, string> = {
+    "サイエンス・フィクション": "SF",
+    "日常": "日常系",
+    "スライス・オブ・ライフ": "日常系",
+    "ロボットもの": "ロボット",
+    "心理描写を扱うアニメ・漫画": "心理",
+    "超自然アニメおよび漫画": "超自然",
+    "歴史アニメ・漫画": "歴史"
+  };
+  return aliases[value] || value;
+}
 function aliases(entity: AnyRecord, lang: "ja" | "en"): string[] {
   const values = entity?.aliases?.[lang];
   if (!Array.isArray(values)) return [];
@@ -449,7 +462,7 @@ Deno.serve(async (req: Request) => {
         const studioMap = await ensureEntityRows(db, "studios", "studio_external_ids", "studio_id",
           studioEntities, e => ({
             name: label(e, "en") || label(e, "ja"),
-            name_ja: japaneseLabel(e), name_en: label(e, "en"),
+            name_ja: canonicalGenreJapaneseLabel(japaneseLabel(e)), name_en: label(e, "en"),
             wikipedia_url: WIKIDATA + e.id
           }));
         const organizationMap = await ensureEntityRows(db, "organizations", "organization_external_ids", "organization_id",
@@ -676,7 +689,7 @@ Deno.serve(async (req: Request) => {
         const genreQidToId = new Map<string, string>();
         for (const e of genreEntities) {
           const name = label(e, "en") || label(e, "ja");
-          const jaName = japaneseLabel(e);
+          const jaName = canonicalGenreJapaneseLabel(japaneseLabel(e));
           const id = (jaName ? genreIdByJapaneseName.get(jaName) : null) || (name ? genreIdByName.get(name) : null);
           if (id) genreQidToId.set(e.id, id);
         }
