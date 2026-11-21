@@ -358,3 +358,32 @@ body .profile-stats{gap:10px 18px;flex-wrap:wrap}
   body :where(.profile-cover){height:110px!important}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}}
+
+
+/* Centered account/verification utility pages keep their compact card width. */
+body:has(>main>.panel)>main,
+body:has(>main>.auth-panel)>main{
+  width:min(480px,calc(100% - 32px))!important;
+  max-width:480px!important;
+  margin:28px auto!important;
+  padding:24px 0!important;
+}
+body:has(>main>h1:first-child)>main{
+  display:block!important;
+  width:min(480px,calc(100% - 32px))!important;
+  max-width:480px!important;
+  margin:20px auto!important;
+  padding:24px!important;
+  background:var(--anixia-surface)!important;
+  color:var(--anixia-text)!important;
+  border:1px solid var(--anixia-border)!important;
+  border-radius:12px!important;
+  box-shadow:none!important;
+}
+body:has(>main>h1:first-child)>main :where(h1,h2,p,a){color:var(--anixia-text)!important}
+body:has(>main>h1:first-child)>main a{color:var(--anixia-jt)!important}
+body:has(>main>h1:first-child){display:block!important}
+@media(max-width:760px){
+ body:has(>main>.panel)>main,body:has(>main>.auth-panel)>main,
+ body:has(>main>h1:first-child)>main{width:calc(100% - 24px)!important;margin:18px auto!important;padding:18px!important}
+}
