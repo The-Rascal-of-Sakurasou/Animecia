@@ -668,7 +668,7 @@
           "一致候補なし: "+unmatched,
           "スキップ: "+skipped,
           "エラー: "+errors
-        ].join("\\n");
+        ].join("\n");
         if(!completed) await new Promise(resolve=>setTimeout(resolve,1000));
       }
       if(!completed) $("anilist-poster-sync-message").textContent+="\\n安全上限に達しました。ボタンをもう一度押すと続きから実行します。";
