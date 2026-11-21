@@ -554,8 +554,17 @@
     return result.data;
   }
 
+  async function syncAniListPosters(options = {}) {
+    const result = await getClient().functions.invoke("sync-anilist-posters", {
+      body: { limit: Math.min(20, Math.max(1, Number(options.limit) || 20)), force: options.force === true }
+    });
+    if (result.error) throw new Error(result.data?.error || result.error.message || "AniList画像同期に失敗しました。");
+    if (result.data?.error) throw new Error(result.data.error);
+    return result.data;
+  }
+
   w.ANIXIA = Object.freeze({
-    URL, getClient, listAnime, suggestCatalog, getAnime, getGenres, getStudios, getTags, posterMarkup, syncCommonsPosters,
+    URL, getClient, listAnime, suggestCatalog, getAnime, getGenres, getStudios, getTags, posterMarkup, syncCommonsPosters, syncAniListPosters,
     getCatalogCount, getPublicAnimeByIds, getUser, getUserAnimeState, toggleFavorite,
     saveWatchEntry, saveRating, getMyDashboard, createReview,
     listPendingReviews, moderateReview, updateProfile, listQuizzes, getQuiz, submitQuiz, isAdmin, syncAnnictCatalog, syncAnnictWorkDetails,
