@@ -180,4 +180,14 @@
 - PC・タブレット・スマートフォンのレイアウト、読み込み・空状態・エラー・再試行、キーボードフォーカスを改善。
 - 変更ファイル: ranking.html, anixia-ranking.js。
 - Supabase調査でsearch_public_animeのpopular順はanime.watchers_count、reviews順はanime.reviews_countを参照していることを確認。これらの列の更新元は未特定のため、UIから利用を外した。
-- DB調査時にprivate.anixia_catalog_quality_snapshotsでRLS無効の警告を確認。ランキング改修とは別件のセキュリティ課題として対応要否を要確認。
+- Supabase監査でprivate.anixia_catalog_quality_snapshotsのRLS無効を検出したため、2026-11-21にRLSを有効化。privateスキーマ内の管理用スナップショットで、anon/authenticated/service_roleへのテーブルSELECT権限がなく、読み取りは管理者チェック付きSECURITY DEFINER関数経由。直接利用ポリシーは作成せず、非公開テーブルとして閉じた状態を維持。
+
+
+## Supabaseセキュリティ修正（2026-11-21）
+- `private.anixia_catalog_quality_snapshots` のRow Level Security（RLS）を有効化。
+- 対象テーブルはprivateスキーマ内。anon / authenticated / service_roleに直接SELECT権限がないことを確認。
+- 管理履歴の読み取りは `public.admin_get_catalog_quality_history` 経由で、内部で `private.is_anixia_admin()` を実行し、管理者ユーザーを確認する構成。
+- テーブル所有者postgresによる読み取り検証は成功。RLS有効、ポリシー0件、既存5行を確認。
+- 一般ロール向けポリシーは追加しない。管理用の非公開データをData APIから直接読ませないため。
+- Supabase Security Advisorの `RLS Enabled No Policy` は、このprivateテーブルでは意図した状態を示す情報レベルの通知。ほかの既存セキュリティ通知は別途監査対象。
+- SQLはSupabase MCPから直接実行済み。GitHub内のmigrationファイルやSupabase migration historyへの登録は未実施。
