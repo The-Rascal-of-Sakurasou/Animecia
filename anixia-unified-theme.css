@@ -400,3 +400,14 @@ body:has(>main>h1:first-child){display:block!important}
 /* Footer admin link: keep the control readable against the black footer. */
 .anixia-global-footer .anixia-admin-login,.anixia-global-footer .anixia-admin-login:visited{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:30px!important;padding:0 10px!important;border:1px solid #03AF6A!important;border-radius:6px!important;background:#03AF6A!important;color:#fff!important;font-size:11px!important;font-weight:750!important;text-decoration:none!important;box-shadow:none!important}
 .anixia-global-footer .anixia-admin-login:hover{background:#028f56!important;border-color:#028f56!important;color:#fff!important}
+
+
+/* Final quiz/diagnosis hero override after all shared theme rules. */
+body .quiz-hero,
+body .diag-hero{
+  background:#fff!important;
+  background-color:#fff!important;
+  border:1px solid #e5e7eb!important;
+  border-top:1px solid #e5e7eb!important;
+  box-shadow:0 3px 14px rgba(0,0,0,.045)!important;
+}
