@@ -645,6 +645,38 @@
   }
   $("wikidata-episode-preview-button").addEventListener("click",()=>runWikidataEpisodeSync("preview"));
   $("wikidata-episode-sync-button").addEventListener("click",()=>runWikidataEpisodeSync("sync"));
+  $("anilist-poster-sync-button").addEventListener("click",async()=>{
+    const button=$("anilist-poster-sync-button");
+    button.disabled=true;
+    $("anilist-poster-sync-message").textContent="AniList APIで未設定作品の画像を照合しています…";
+    let batches=0, scanned=0, updated=0, skipped=0, unmatched=0, errors=0, completed=false;
+    try{
+      while(!completed && batches<100){
+        const result=await ANIXIA.syncAniListPosters({limit:20});
+        batches++;
+        scanned+=Number(result.scanned)||0;
+        updated+=Number(result.updated)||0;
+        skipped+=Number(result.skipped)||0;
+        unmatched+=(result.unmatched||[]).length;
+        errors+=(result.errors||[]).length;
+        completed=result.completed===true;
+        $("anilist-poster-sync-message").textContent=[
+          completed?"全件の照合が完了しました。":"画像照合を継続しています…",
+          "実行バッチ: "+batches,
+          "確認作品数: "+scanned,
+          "画像登録数: "+updated,
+          "一致候補なし: "+unmatched,
+          "スキップ: "+skipped,
+          "エラー: "+errors
+        ].join("\\n");
+        if(!completed) await new Promise(resolve=>setTimeout(resolve,1000));
+      }
+      if(!completed) $("anilist-poster-sync-message").textContent+="\\n安全上限に達しました。ボタンをもう一度押すと続きから実行します。";
+    }catch(e){
+      console.error(e);
+      $("anilist-poster-sync-message").textContent+="\\n同期を中断しました: "+(e.message||"管理者権限・API状態を確認してください。");
+    }finally{button.disabled=false;}
+  });
   $("poster-sync-button").addEventListener("click",async()=>{
     const button=$("poster-sync-button");
     button.disabled=true;
