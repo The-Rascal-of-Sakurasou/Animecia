@@ -1,9 +1,8 @@
-name: Apply unified ANIXIA design
+name: Update ANIXIA genre pages
 on:
   push:
     branches: [main]
     paths:
-      - "scripts/apply-unified-design.mjs"
       - "scripts/generate-anime-seo-pages.mjs"
       - "scripts/update-genre-pages.mjs"
       - ".github/workflows/apply-unified-anixia-design.yml"
@@ -11,7 +10,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: anixia-unified-design
+  group: anixia-genre-pages
   cancel-in-progress: false
 jobs:
   update:
@@ -23,23 +22,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Apply shared header, footer and theme to root pages
-        run: node scripts/apply-unified-design.mjs
-      - name: Commit root page updates
+      - name: Update generated genre pages
+        run: node scripts/update-genre-pages.mjs
+      - name: Commit generated genre pages
         run: |
           if ! git diff --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add '*.html' anixia-home.js
-            git commit -m "Apply unified ANIXIA shell to all main pages"
-            git push
-          fi
-      - name: Update generated genre pages
-        run: node scripts/update-genre-pages.mjs
-      - name: Commit all page updates
-        run: |
-          if ! git diff --quiet; then
-            git add -A
-            git commit -m "Apply unified ANIXIA design to every page"
+            git add genre
+            git commit -m "Apply responsive design to generated genre pages"
+            git pull --rebase origin main
             git push
           fi
