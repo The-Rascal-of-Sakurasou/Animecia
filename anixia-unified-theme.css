@@ -395,3 +395,8 @@ body:has(>main>h1:first-child){display:block!important}
   body :where(.entity-grid,.quiz-grid,.anixia-detail-grid,.entity-detail-grid,.rank-layout){grid-template-columns:minmax(0,1fr)!important}
   body :where(.anixia-mypage-grid){grid-template-columns:minmax(0,1fr)!important}
 }
+
+
+/* Footer admin link: keep the control readable against the black footer. */
+.anixia-global-footer .anixia-admin-login,.anixia-global-footer .anixia-admin-login:visited{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:30px!important;padding:0 10px!important;border:1px solid #03AF6A!important;border-radius:6px!important;background:#03AF6A!important;color:#fff!important;font-size:11px!important;font-weight:750!important;text-decoration:none!important;box-shadow:none!important}
+.anixia-global-footer .anixia-admin-login:hover{background:#028f56!important;border-color:#028f56!important;color:#fff!important}
