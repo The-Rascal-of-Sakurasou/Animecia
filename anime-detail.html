@@ -62,6 +62,12 @@
 @media(max-width:720px){.anixia-detail{width:calc(100% - 24px);padding:20px 0 58px}.anixia-detail-hero{grid-template-columns:112px minmax(0,1fr);gap:15px;padding:15px}.anixia-detail-grid{grid-template-columns:minmax(0,1fr)}.anixia-detail-grid>aside{position:static;grid-row:1}.anixia-detail-panel{padding:15px}.anixia-detail-info{grid-template-columns:95px minmax(0,1fr);gap:9px 10px}.anixia-detail-synopsis{font-size:12px;line-height:1.9}.anixia-detail h1{font-size:clamp(21px,6vw,30px)}}
 @media(max-width:420px){.anixia-detail-hero{grid-template-columns:90px minmax(0,1fr);gap:12px;padding:12px}.anixia-detail-kicker{font-size:9px}.anixia-detail h1{font-size:21px}.anixia-detail-subtitle{font-size:11px}.anixia-detail-meta span,.anixia-detail-tags span,.anixia-detail-tags a{font-size:10px;padding:5px 8px}.anixia-detail-info{grid-template-columns:82px minmax(0,1fr);font-size:11px}}
 @media(prefers-reduced-motion:reduce){.anixia-detail-related a{transition:none}}
+
+.anixia-detail-jump{position:sticky;top:112px;z-index:5;display:flex;gap:5px;overflow-x:auto;margin:14px 0 18px;padding:8px;border:1px solid var(--detail-line);border-radius:11px;background:rgba(255,255,255,.96);box-shadow:0 3px 12px rgba(20,40,28,.04);scrollbar-width:thin}
+.anixia-detail-jump a{flex:0 0 auto;padding:7px 11px;border-radius:7px;color:#53645a!important;text-decoration:none;font-size:11px;font-weight:750;white-space:nowrap}
+.anixia-detail-jump a:hover{background:#eff7f1;color:#168653!important}
+.anixia-detail [id]{scroll-margin-top:170px}
+@media(max-width:720px){.anixia-detail-jump{top:106px;margin:10px 0 14px;padding:6px}.anixia-detail-jump a{padding:7px 9px;font-size:10px}.anixia-detail [id]{scroll-margin-top:150px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="anixia-client.js?v=20261121-title-card-fallback2"></script>
@@ -97,33 +103,36 @@
 <p id="synopsis-source" class="anixia-detail-source" hidden></p>
 </div>
 </section>
+<nav class="anixia-detail-jump" aria-label="作品詳細内ナビゲーション">
+  <a href="#work-information">作品情報</a><a href="#series-information">シリーズ</a><a href="#related-information">関連作品</a><a href="#episode-information">エピソード</a><a href="#character-information">キャラクター</a><a href="#staff-information">スタッフ</a><a href="#review-information">レビュー</a>
+</nav>
 <div class="anixia-detail-grid anixia-screen-section">
 <div>
-<section class="anixia-detail-panel">
+<section id="work-information" class="anixia-detail-panel">
 <h2>作品情報</h2><dl id="info" class="anixia-detail-info"></dl>
 </section>
 <section class="anixia-detail-panel" style="margin-top:16px">
 <h2>タグ・テーマ</h2><div id="tags" class="anixia-detail-tags"></div>
 </section>
-<section class="anixia-detail-panel" style="margin-top:16px">
+<section id="series-information" class="anixia-detail-panel">
 <h2>シリーズ</h2><div id="series" class="anixia-detail-tags"></div>
 </section>
-<section class="anixia-detail-panel" style="margin-top:16px">
+<section id="related-information" class="anixia-detail-panel">
 <h2>関連作品</h2><div id="related-works" class="anixia-detail-related"></div>
 </section>
-<section class="anixia-detail-panel" style="margin-top:16px">
+<section id="episode-information" class="anixia-detail-panel">
 <h2>エピソード</h2><div id="episodes" class="anixia-detail-episodes"></div>
 </section>
 <section class="anixia-detail-panel" style="margin-top:16px">
 <h2>制作団体</h2><div id="organizations" class="anixia-detail-tags"></div>
 </section>
-<section class="anixia-detail-panel" style="margin-top:16px">
+<section id="character-information" class="anixia-detail-panel">
 <h2>キャラクター</h2><div id="characters" class="anixia-detail-tags"></div>
 </section>
-<section class="anixia-detail-panel" style="margin-top:16px">
+<section id="staff-information" class="anixia-detail-panel">
 <h2>スタッフ</h2><div id="staff" class="anixia-detail-tags"></div>
 </section>
-<section class="anixia-detail-panel" style="margin-top:16px">
+<section id="review-information" class="anixia-detail-panel">
 <h2>レビュー</h2><div id="reviews"></div>
 </section>
 <section class="anixia-detail-panel" style="margin-top:16px">
