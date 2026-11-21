@@ -58,7 +58,7 @@
       $("catalog-count").textContent = "—";
     }
     await Promise.all([
-      loadSection("popular-works", { sort: "popular", limit: 5 }),
+      loadSection("popular-works", { sort: "newest", limit: 5 }),
     ]);
     await loadGenres();
     try {
