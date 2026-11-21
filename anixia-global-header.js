@@ -217,14 +217,12 @@
     footer.style.setProperty("background-color", "#000000", "important");
     footer.style.setProperty("color", "#FFFFFF", "important");
     footer.style.setProperty("width", "100%", "important");
-    footer.style.setProperty("position", "fixed", "important");
-    footer.style.setProperty("left", "0", "important");
-    footer.style.setProperty("right", "0", "important");
-    footer.style.setProperty("bottom", "0", "important");
-    footer.style.setProperty("z-index", "2147482999", "important");
-    footer.style.setProperty("margin", "0", "important");
-    footer.style.setProperty("max-height", window.matchMedia("(max-width: 760px)").matches ? "20vh" : "24vh", "important");
-    footer.style.setProperty("overflow-y", "auto", "important");
+    footer.style.setProperty("position", "static", "important");
+    footer.style.setProperty("inset", "auto", "important");
+    footer.style.setProperty("z-index", "auto", "important");
+    footer.style.setProperty("margin", "48px 0 0", "important");
+    footer.style.setProperty("max-height", "none", "important");
+    footer.style.setProperty("overflow", "visible", "important");
     footer.innerHTML = `
       <div class="anixia-footer-inner">
         <div class="anixia-footer-main"><a class="anixia-footer-logo" href="${ROOT}" aria-label="ANIXIA ホーム">ANI<span class="anixia-logo-xia">XIA</span></a></div>
@@ -241,18 +239,16 @@
     document.querySelectorAll("footer").forEach(node => { if (node !== footer) node.remove(); });
     document.body.appendChild(footer);
     const updateFooterSpace = () => {
-      footer.style.setProperty("position", "fixed", "important");
-      footer.style.setProperty("left", "0", "important");
-      footer.style.setProperty("right", "0", "important");
-      footer.style.setProperty("bottom", "0", "important");
+      footer.style.setProperty("position", "static", "important");
+      footer.style.setProperty("inset", "auto", "important");
       footer.style.setProperty("width", "100%", "important");
-      footer.style.setProperty("z-index", "2147482999", "important");
-      footer.style.setProperty("max-height", window.matchMedia("(max-width: 760px)").matches ? "20vh" : "24vh", "important");
-      footer.style.setProperty("overflow-y", "auto", "important");
+      footer.style.setProperty("z-index", "auto", "important");
+      footer.style.setProperty("max-height", "none", "important");
+      footer.style.setProperty("overflow", "visible", "important");
       footer.style.setProperty("box-sizing", "border-box", "important");
       const height = footer.getBoundingClientRect().height;
       document.documentElement.style.setProperty("--anixia-footer-height", height + "px");
-      document.body.style.setProperty("padding-bottom", (height + 18) + "px", "important");
+      document.body.style.setProperty("padding-bottom", "32px", "important");
     };
     updateFooterSpace();
     if (window.ResizeObserver) new ResizeObserver(updateFooterSpace).observe(footer);
