@@ -7,16 +7,16 @@
   const title = a => en() ? (a.title_en || (a.title && !hasJapanese(a.title) ? a.title : "English title unavailable")) : (a.title_ja || a.title_kana || a.title || "タイトル未登録");
   const genreTitle = g => en() ? (g.name && !hasJapanese(g.name) ? g.name : "Genre name unavailable") : (g.name_ja || g.name || "ジャンル名未登録");
   const format = v => ({tv:"TV",movie:en()?"Movie":"劇場版",ova:"OVA",ona:"ONA",special:en()?"Special":"特別編",web:"Web"}[v] || v || "");
-  async function works(id, sort) {
+  async function works(id) {
     try {
-      const result = await ANIXIA.listAnime({sort, limit:5});
+      const result = await ANIXIA.listAnime({sort:"newest", limit:8});
       $(id).innerHTML = result.data.length ? result.data.map(a =>
         `<a class="discover-card" href="anime-detail.html?id=${encodeURIComponent(a.id)}"><div class="anixia-poster anixia-list-poster">${ANIXIA.posterMarkup(a.poster_url,title(a),a.poster_credit)}</div><div><b>${esc(title(a))}</b><small>${esc([a.release_year,format(a.format)].filter(Boolean).join(" · "))}</small></div></a>`
       ).join("") : `<p class="discover-state">${en()?"Anime will appear here once catalog data is available.":"作品データが登録されると、ここに表示されます。"}</p>`;
     } catch (e) {
       console.error(e);
       $(id).innerHTML = `<div class="discover-state"><p>${en()?"Could not load anime.":"作品を読み込めませんでした。"}</p><button type="button" class="discover-retry">${en()?"Retry":"再試行"}</button></div>`;
-      $(id).querySelector(".discover-retry")?.addEventListener("click", () => works(id, sort), { once: true });
+      $(id).querySelector(".discover-retry")?.addEventListener("click", () => works(id), { once: true });
     }
   }
   async function init() {
@@ -30,7 +30,7 @@
       $("discover-genres").innerHTML = `<div class="discover-state"><p>${en()?"Could not load genres.":"ジャンルを読み込めませんでした。"}</p><button type="button" id="discover-genres-retry">${en()?"Retry":"再試行"}</button></div>`;
       $("discover-genres-retry")?.addEventListener("click", init, { once: true });
     }
-    await Promise.all([works("discover-popular","popular"), works("discover-new","newest")]);
+    await works("discover-new");
   }
   init();
 })();
